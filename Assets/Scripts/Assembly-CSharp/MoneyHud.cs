@@ -1,0 +1,52 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MoneyHud : MonoBehaviour
+{
+	[SerializeField]
+	private GameObject m_parent;
+
+	[SerializeField]
+	private Text m_txtMoney;
+
+	[SerializeField]
+	private Text m_txtMoneyBg;
+
+	[SerializeField]
+	private MoneyHudGainItem m_moneyHudGainItemDefault;
+
+	private void Awake()
+	{
+		m_moneyHudGainItemDefault.gameObject.SetActive(value: false);
+	}
+
+	private void Update()
+	{
+		m_txtMoney.text = "$" + CommonReferences.Instance.GetPlayerController().GetInventory().GetMoney();
+		m_txtMoneyBg.text = m_txtMoney.text;
+	}
+
+	public void GainMoney(int i_amount)
+	{
+		MoneyHudGainItem moneyHudGainItem = Object.Instantiate(m_moneyHudGainItemDefault, m_moneyHudGainItemDefault.transform.parent);
+		moneyHudGainItem.Initialize(i_amount, i_isGain: true);
+		moneyHudGainItem.gameObject.SetActive(value: true);
+	}
+
+	public void LoseMoney(int i_amount)
+	{
+		MoneyHudGainItem moneyHudGainItem = Object.Instantiate(m_moneyHudGainItemDefault, m_moneyHudGainItemDefault.transform.parent);
+		moneyHudGainItem.Initialize(i_amount, i_isGain: false);
+		moneyHudGainItem.gameObject.SetActive(value: true);
+	}
+
+	public void Show()
+	{
+		m_parent.SetActive(value: true);
+	}
+
+	public void Hide()
+	{
+		m_parent.SetActive(value: false);
+	}
+}

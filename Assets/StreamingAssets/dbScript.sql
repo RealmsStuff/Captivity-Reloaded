@@ -1,0 +1,79 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "tbl_player" (
+	"idPlayer"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"idNpcDeflower"	INTEGER,
+	"skinColor"	INTEGER NOT NULL DEFAULT 1,
+	"eyeColor"	INTEGER NOT NULL DEFAULT 0,
+	"isFirstTimeStart"	INTEGER NOT NULL DEFAULT 1,
+	"codeKeypad"	INTEGER NOT NULL DEFAULT 0000
+);
+CREATE TABLE IF NOT EXISTS "tbl_input" (
+	"nameKey"	TEXT NOT NULL DEFAULT 'NO_NAME',
+	"keyCode"	TEXT NOT NULL DEFAULT 'NO_KEY'
+);
+CREATE TABLE IF NOT EXISTS "tbl_relationship" (
+	"idRelationship"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"idPlayer"	INTEGER NOT NULL,
+	"idNpc"	INTEGER NOT NULL,
+	"timesKilled"	INTEGER NOT NULL DEFAULT 0,
+	"damageTaken"	INTEGER NOT NULL DEFAULT 0,
+	"timesKO"	INTEGER NOT NULL DEFAULT 0,
+	"timesRaped"	INTEGER NOT NULL DEFAULT 0,
+	"timesOrgasmed"	INTEGER NOT NULL DEFAULT 0,
+	"timesMindBroken"	INTEGER NOT NULL DEFAULT 0,
+	"litreCumTaken"	REAL NOT NULL DEFAULT 0,
+	"numOfFetusInserted"	INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS "tbl_clothing" (
+	"idClothing"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"isUnlocked"	INTEGER NOT NULL DEFAULT 0,
+	"isEquipped"	INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS "tbl_challenge" (
+	"idChallenge"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"stateChallenge"	INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS "tbl_npc" (
+	"idNpc"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"nameNpc"	INTEGER NOT NULL DEFAULT 'DEFAULT_NAME'
+);
+CREATE TABLE IF NOT EXISTS "tbl_birth" (
+	"idBirth"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"idNpcOffspring"	INTEGER NOT NULL,
+	"idPlayer"	INTEGER NOT NULL,
+	"idNpc"	INTEGER,
+	"isEgg"	INTEGER NOT NULL DEFAULT 0,
+	"timesBirth"	INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS "tbl_interactionRelationship" (
+	"idInteractionRelationship"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"idInteraction"	INTEGER NOT NULL,
+	"idPlayer"	INTEGER NOT NULL,
+	"idNpc"	INTEGER NOT NULL,
+	"timesInteraction"	INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS "tbl_interaction" (
+	"idInteraction"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"nameInteraction"	TEXT NOT NULL DEFAULT 'DEFAULT_NAME' UNIQUE,
+	"descriptionInteraction"	TEXT
+);
+CREATE TABLE IF NOT EXISTS "tbl_stage" (
+	"idStage"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"highscore"	INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO "tbl_player" VALUES (1,NULL,1,0,1,3848);
+INSERT INTO "tbl_input" VALUES ('MoveLeft','A');
+INSERT INTO "tbl_input" VALUES ('MoveRight','D');
+INSERT INTO "tbl_input" VALUES ('Jump','W');
+INSERT INTO "tbl_input" VALUES ('Walk','LeftShift');
+INSERT INTO "tbl_input" VALUES ('Crouch','LeftControl');
+INSERT INTO "tbl_input" VALUES ('Dash','Space');
+INSERT INTO "tbl_input" VALUES ('Fire','Mouse0');
+INSERT INTO "tbl_input" VALUES ('Reload','Mouse1');
+INSERT INTO "tbl_input" VALUES ('Use','F');
+INSERT INTO "tbl_input" VALUES ('PickUp','E');
+INSERT INTO "tbl_input" VALUES ('EquipPrevious','Q');
+INSERT INTO "tbl_input" VALUES ('DropWeapon','G');
+INSERT INTO "tbl_input" VALUES ('DrugSelection','R');
+INSERT INTO "tbl_input" VALUES ('Expose','S');
+COMMIT;
