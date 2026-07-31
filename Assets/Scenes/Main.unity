@@ -124866,6 +124866,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7493}
     m_Modifications:
+    - target: {fileID: 1052411077028529595, guid: 0b24b806b283af840881fed29a4e615f,
+        type: 3}
+      propertyPath: m_spawnChance01
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052411077028529595, guid: 0b24b806b283af840881fed29a4e615f,
+        type: 3}
+      propertyPath: m_npcsPossibleToSpawn.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052411077028529595, guid: 0b24b806b283af840881fed29a4e615f,
+        type: 3}
+      propertyPath: m_npcsPossibleToSpawn.Array.data[0]
+      value: 
+      objectReference: {fileID: 1430388823}
     - target: {fileID: 1749881500950661386, guid: 0b24b806b283af840881fed29a4e615f,
         type: 3}
       propertyPath: m_weapon
@@ -132950,6 +132965,21 @@ PrefabInstance:
       objectReference: {fileID: 20239}
     - target: {fileID: 6310001115598424708, guid: c5e52fabf1b179f4680e019ea45e2898,
         type: 3}
+      propertyPath: m_colorBlood.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310001115598424708, guid: c5e52fabf1b179f4680e019ea45e2898,
+        type: 3}
+      propertyPath: m_colorBlood.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310001115598424708, guid: c5e52fabf1b179f4680e019ea45e2898,
+        type: 3}
+      propertyPath: m_colorBlood.r
+      value: 0.5754717
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310001115598424708, guid: c5e52fabf1b179f4680e019ea45e2898,
+        type: 3}
       propertyPath: m_stageAppearance
       value: 
       objectReference: {fileID: 562837369}
@@ -133033,6 +133063,11 @@ PrefabInstance:
       propertyPath: m_particlesCumThrust.Array.data[0]
       value: 
       objectReference: {fileID: 20239}
+    - target: {fileID: 6310001116630138842, guid: c5e52fabf1b179f4680e019ea45e2898,
+        type: 3}
+      propertyPath: isBlackCharacter
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5e52fabf1b179f4680e019ea45e2898, type: 3}
 --- !u!1001 &6316871679076484403
