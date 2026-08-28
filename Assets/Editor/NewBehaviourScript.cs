@@ -1,95 +1,136 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
-public class SpriteToAssetConverter
+public class MaterialReplacer : EditorWindow
 {
-    [MenuItem("Assets/Create Trimmed Sprite Asset")]
-    public static void CreateTrimmedAsset()
+    // Paths specified in your prompt
+    private const string OLD_MAT_1_PATH = "Assets/Resources/materials/SpriteDiffuse.mat";
+    private const string OLD_MAT_2_PATH = "Assets/Material/Sprite-Unlit-Default.mat";
+    private const string NEW_MAT_PATH = "Assets/Material/Sprite-Lit-Default.mat";
+
+    [MenuItem("Tools/Swap Specific Materials")]
+    public static void ReplaceMaterials()
     {
-        if (Selection.activeObject is Sprite sourceSprite)
+        // 1. Load the materials
+        Material oldMat1 = AssetDatabase.LoadAssetAtPath<Material>(OLD_MAT_1_PATH);
+        Material oldMat2 = AssetDatabase.LoadAssetAtPath<Material>(OLD_MAT_2_PATH);
+        Material newMat = AssetDatabase.LoadAssetAtPath<Material>(NEW_MAT_PATH);
+
+        // Check if the replacement material exists
+        if (newMat == null)
         {
-            Texture2D texture = sourceSprite.texture;
-            string texturePath = AssetDatabase.GetAssetPath(texture);
-            TextureImporter importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+            UnityEngine.Debug.LogError($"[MaterialReplacer] Target material NOT found at path: {NEW_MAT_PATH}. Aborting operation.");
+            return;
+        }
 
-            // Temporary make texture readable to analyze pixels
-            bool wasReadable = importer.isReadable;
-            if (!wasReadable)
+        if (oldMat1 == null && oldMat2 == null)
+        {
+            UnityEngine.Debug.LogWarning("[MaterialReplacer] Neither of the source materials could be found at the specified paths. Check your file paths.");
+            return;
+        }
+
+        // Confirmation Dialog
+        bool proceed = EditorUtility.DisplayDialog(
+            "Replace Materials",
+            $"Are you sure you want to replace references to:\n- {OLD_MAT_1_PATH}\n- {OLD_MAT_2_PATH}\n\nWith:\n- {NEW_MAT_PATH}?",
+            "Yes, Replace All", "Cancel"
+        );
+
+        if (!proceed) return;
+
+        int replacementsCount = 0;
+
+        // 2. Replace in current Scene(s)
+        replacementsCount += ProcessSceneObjects(oldMat1, oldMat2, newMat);
+
+        // 3. Replace in all Prefabs in the Project
+        replacementsCount += ProcessPrefabs(oldMat1, oldMat2, newMat);
+
+        // Save Project Changes
+        AssetDatabase.SaveAssets();
+
+        UnityEngine.Debug.Log($"<color=green>[MaterialReplacer] Complete!</color> Replaced material on {replacementsCount} renderer component(s).");
+    }
+
+    private static int ProcessSceneObjects(Material old1, Material old2, Material newMat)
+    {
+        int count = 0;
+        // Find all Renderers (SpriteRenderer, MeshRenderer, etc.) including inactive ones
+        Renderer[] sceneRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>(true);
+
+        foreach (Renderer renderer in sceneRenderers)
+        {
+            bool changed = ReplaceInRenderer(renderer, old1, old2, newMat);
+            if (changed)
             {
-                importer.isReadable = true;
-                importer.SaveAndReimport();
+                count++;
+                // Mark scene as dirty so Unity knows changes need saving
+                EditorSceneManager.MarkSceneDirty(renderer.gameObject.scene);
             }
+        }
 
-            Rect rect = sourceSprite.rect;
-            int minX = (int)rect.xMax;
-            int maxX = (int)rect.xMin;
-            int minY = (int)rect.yMax;
-            int maxY = (int)rect.yMin;
+        return count;
+    }
 
-            // Find the boundary of non-transparent pixels
-            Color[] pixels = texture.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
-            bool foundPixel = false;
+    private static int ProcessPrefabs(Material old1, Material old2, Material newMat)
+    {
+        int count = 0;
+        // Search for all prefab assets in the project
+        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab");
 
-            for (int y = 0; y < (int)rect.height; y++)
+        foreach (string guid in prefabGuids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+            if (prefab == null) continue;
+
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            bool prefabModified = false;
+
+            foreach (Renderer renderer in renderers)
             {
-                for (int x = 0; x < (int)rect.width; x++)
+                if (ReplaceInRenderer(renderer, old1, old2, newMat))
                 {
-                    Color color = pixels[y * (int)rect.width + x];
-                    if (color.a > 0.05f) // Transparency threshold
-                    {
-                        int globalX = (int)rect.x + x;
-                        int globalY = (int)rect.y + y;
-
-                        if (globalX < minX) minX = globalX;
-                        if (globalX > maxX) maxX = globalX;
-                        if (globalY < minY) minY = globalY;
-                        if (globalY > maxY) maxY = globalY;
-                        foundPixel = true;
-                    }
+                    prefabModified = true;
+                    count++;
                 }
             }
 
-            // Restore readability setting
-            if (!wasReadable)
+            // Save changes back to the prefab asset if updated
+            if (prefabModified)
             {
-                importer.isReadable = false;
-                importer.SaveAndReimport();
+                PrefabUtility.SavePrefabAsset(prefab);
             }
-
-            if (!foundPixel)
-            {
-                UnityEngine.Debug.LogError("No non-transparent pixels were found in the selected sprite.");
-                return;
-            }
-
-            // Create the tight bounding box
-            Rect trimmedRect = new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
-
-            // Calculate the pivot position relative to the new trimmed bounds
-            Vector2 pixelPivot = sourceSprite.pivot;
-            Vector2 customPivot = new Vector2(
-                (pixelPivot.x - trimmedRect.x) / trimmedRect.width,
-                (pixelPivot.y - trimmedRect.y) / trimmedRect.height
-            );
-
-            // Create the new trimmed Sprite
-            Sprite trimmedSprite = Sprite.Create(texture, trimmedRect, customPivot, sourceSprite.pixelsPerUnit);
-
-            // Generate path and save
-            string originalPath = AssetDatabase.GetAssetPath(Selection.activeObject);
-            string folderPath = originalPath.Substring(0, originalPath.LastIndexOf('/'));
-            string newPath = $"{folderPath}/{sourceSprite.name}.asset";
-
-            AssetDatabase.CreateAsset(trimmedSprite, newPath);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
-            UnityEngine.Debug.Log($"Created trimmed sprite asset ({trimmedRect.width}x{trimmedRect.height}) at: {newPath}");
         }
-        else
+
+        return count;
+    }
+
+    private static bool ReplaceInRenderer(Renderer renderer, Material old1, Material old2, Material newMat)
+    {
+        // Use sharedMaterials to avoid instantiating new materials in memory
+        Material[] mats = renderer.sharedMaterials;
+        bool hasChanged = false;
+
+        for (int i = 0; i < mats.Length; i++)
         {
-            UnityEngine.Debug.LogWarning("Please select the Sprite sub-asset (expanded from the PNG) in the Project window.");
+            if ((old1 != null && mats[i] == old1) || (old2 != null && mats[i] == old2))
+            {
+                mats[i] = newMat;
+                hasChanged = true;
+            }
         }
+
+        if (hasChanged)
+        {
+            Undo.RecordObject(renderer, "Swap Materials");
+            renderer.sharedMaterials = mats;
+        }
+
+        return hasChanged;
     }
 }

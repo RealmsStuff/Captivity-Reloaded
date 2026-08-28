@@ -32,9 +32,9 @@ public class PlayerController : MonoBehaviour
         m_managerInput = CommonReferences.Instance.GetManagerInput();
 
         // Automatically detect mobile platforms, or defer to inspector toggle
-        #if UNITY_ANDROID && !UNITY_EDITOR
+        //#if UNITY_ANDROID && !UNITY_EDITOR
                 m_useMobileControls = true;
-        #endif
+        //#endif
     }
 
     public bool GetIsMobileControlsEnabled()
@@ -96,6 +96,11 @@ public class PlayerController : MonoBehaviour
     public bool GetIsStrugglePressed()
     {
         return m_mobileStrugglePressed;
+    }
+
+    public bool GetIsWavePressed()
+    {
+        return m_mobileWavePressed;
     }
     public void TriggerMobileFireDown()
     {

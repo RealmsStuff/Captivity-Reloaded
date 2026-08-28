@@ -32,12 +32,9 @@ public class RaperSmasher : RaperGame
         {
             if (CommonReferences.Instance.GetPlayerController().GetIsStrugglePressed())
             {
-                // Process the struggle hit
-                HandleHit();
-                HandleHit();
-                HandleHit();
-                HandleHit();
-                HandleHit();
+                // On mobile, alternating A/D keys isn't required. Single button tap grants 
+                // boosted power (1.75x) to match PC alternating key speeds.
+                HandleHit(1.75f);
                 return;
             }
         }
@@ -129,16 +126,20 @@ public class RaperSmasher : RaperGame
 		CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames().HideHudSmasher();
 	}
 
-	private void HandleHit()
+	private float CalculateHitPower(float modifier = 1f)
 	{
-		float num = 0f;
-		float strengthCurrent = CommonReferences.Instance.GetPlayer().GetStrengthCurrent();
-		float strengthMax = CommonReferences.Instance.GetPlayer().GetStrengthMax();
+		Player player = m_player != null ? m_player : CommonReferences.Instance.GetPlayer();
+		if (player == null) return 1f * modifier;
+
+		float strengthCurrent = player.GetStrengthCurrent();
+		float strengthMax = player.GetStrengthMax();
+		if (strengthMax <= 0f) strengthMax = 100f;
+
 		float num2 = strengthCurrent / strengthMax * 100f;
-		num = m_escapePowerPlayer01 - m_escapePowerPlayer01 / 2f / 100f * (100f - num2);
+		float num = m_escapePowerPlayer01 - m_escapePowerPlayer01 / 2f / 100f * (100f - num2);
 		num -= num / 4f / 100f * (100f - num2);
 		num *= 2f - m_difficulty02;
-		if (m_player.GetStrengthCurrent() <= 0f)
+		if (strengthCurrent <= 0f)
 		{
 			num *= 0.5f;
 		}
@@ -151,8 +152,24 @@ public class RaperSmasher : RaperGame
 			num *= 0.75f;
 			break;
 		}
-		m_meterCurrent += num;
-		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_audioHit);
+
+		if (float.IsNaN(num) || float.IsInfinity(num) || num <= 0f)
+		{
+			num = 1f;
+		}
+
+		return num * modifier;
+	}
+
+	private void HandleHit(float powerMultiplier = 1f)
+	{
+		m_meterCurrent += CalculateHitPower(powerMultiplier);
+
+		if (m_audioHit != null)
+		{
+			CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_audioHit);
+		}
+
 		if (m_meterCurrent >= GetMeterMax())
 		{
 			Lose();
@@ -161,28 +178,7 @@ public class RaperSmasher : RaperGame
 
 	private void HandleAutoEscape()
 	{
-		float num = 0f;
-		float strengthCurrent = CommonReferences.Instance.GetPlayer().GetStrengthCurrent();
-		float strengthMax = CommonReferences.Instance.GetPlayer().GetStrengthMax();
-		float num2 = strengthCurrent / strengthMax * 100f;
-		num = m_escapePowerPlayer01 - m_escapePowerPlayer01 / 2f / 100f * (100f - num2);
-		num -= num / 4f / 100f * (100f - num2);
-		num *= 2f - m_difficulty02;
-		if (m_player.GetStrengthCurrent() <= 0f)
-		{
-			num *= 0.5f;
-		}
-		switch (ManagerDB.GetDifficulty())
-		{
-		case "Casual":
-			num *= 1.25f;
-			break;
-		case "Hard":
-			num *= 0.75f;
-			break;
-		}
-		num *= 0.2f;
-		m_meterCurrent += num;
+		m_meterCurrent += CalculateHitPower(0.2f);
 		if (m_meterCurrent >= GetMeterMax())
 		{
 			Lose();

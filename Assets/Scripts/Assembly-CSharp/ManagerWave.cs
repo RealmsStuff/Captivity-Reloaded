@@ -66,9 +66,25 @@ public class ManagerWave : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Z) && !m_isWave && m_isWaitingForNextWave)
+		bool isMobileWavePressed = CommonReferences.Instance != null 
+			&& CommonReferences.Instance.GetPlayerController() != null 
+			&& CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled() 
+			&& CommonReferences.Instance.GetPlayerController().GetIsWavePressed();
+
+		if ((Input.GetKeyDown(KeyCode.Z) || isMobileWavePressed) && !m_isWave && m_isWaitingForNextWave)
 		{
-			StopCoroutine(m_coroutineWaitForNextWave);
+			SkipWaitingForNextWave();
+		}
+	}
+
+	public void SkipWaitingForNextWave()
+	{
+		if (!m_isWave && m_isWaitingForNextWave)
+		{
+			if (m_coroutineWaitForNextWave != null)
+			{
+				StopCoroutine(m_coroutineWaitForNextWave);
+			}
 			m_isWaitingForNextWave = false;
 			StartNewWave();
 		}
