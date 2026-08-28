@@ -109,7 +109,7 @@
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -128,6 +128,15 @@
         "com.unity.2d.tilemap.extras": "2.2.7",
         "com.unity.2d.aseprite": "1.1.6"
       }
+    },
+    "com.unity.ide.rider": {
+      "version": "3.0.40",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ext.nunit": "1.0.6"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
       "version": "2.0.22",

@@ -1,115 +1,136 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Diagnostics;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
 
-public class SpriteMaterialConverter : EditorWindow
+public class MaterialReplacer : EditorWindow
 {
-    [MenuItem("Tools/Sprite Material Converter")]
-    public static void ShowWindow()
+    // Paths specified in your prompt
+    private const string OLD_MAT_1_PATH = "Assets/Resources/materials/SpriteDiffuse.mat";
+    private const string OLD_MAT_2_PATH = "Assets/Material/Sprite-Unlit-Default.mat";
+    private const string NEW_MAT_PATH = "Assets/Material/Sprite-Lit-Default.mat";
+
+    [MenuItem("Tools/Swap Specific Materials")]
+    public static void ReplaceMaterials()
     {
-        GetWindow<SpriteMaterialConverter>("Sprite Converter");
-    }
+        // 1. Load the materials
+        Material oldMat1 = AssetDatabase.LoadAssetAtPath<Material>(OLD_MAT_1_PATH);
+        Material oldMat2 = AssetDatabase.LoadAssetAtPath<Material>(OLD_MAT_2_PATH);
+        Material newMat = AssetDatabase.LoadAssetAtPath<Material>(NEW_MAT_PATH);
 
-    void OnGUI()
-    {
-        GUILayout.Label("Convert Sprite Materials", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("This tool searches for SpriteRenderers using a material or shader containing 'Diffuse' and replaces it with 'Sprite-Lit-Default'.", MessageType.Info);
-
-        GUILayout.Space(10);
-
-        if (GUILayout.Button("1. Convert in Active Scene", GUILayout.Height(30)))
+        // Check if the replacement material exists
+        if (newMat == null)
         {
-            ConvertInScene();
+            UnityEngine.Debug.LogError($"[MaterialReplacer] Target material NOT found at path: {NEW_MAT_PATH}. Aborting operation.");
+            return;
         }
 
-        GUILayout.Space(5);
-
-        if (GUILayout.Button("2. Convert ALL Prefabs (Project Wide)", GUILayout.Height(30)))
+        if (oldMat1 == null && oldMat2 == null)
         {
-            if (EditorUtility.DisplayDialog("Warning", "This will modify all prefabs in your project. It cannot be undone. Make sure you have a backup!", "Do it", "Cancel"))
-            {
-                ConvertInPrefabs();
-            }
+            UnityEngine.Debug.LogWarning("[MaterialReplacer] Neither of the source materials could be found at the specified paths. Check your file paths.");
+            return;
         }
+
+        // Confirmation Dialog
+        bool proceed = EditorUtility.DisplayDialog(
+            "Replace Materials",
+            $"Are you sure you want to replace references to:\n- {OLD_MAT_1_PATH}\n- {OLD_MAT_2_PATH}\n\nWith:\n- {NEW_MAT_PATH}?",
+            "Yes, Replace All", "Cancel"
+        );
+
+        if (!proceed) return;
+
+        int replacementsCount = 0;
+
+        // 2. Replace in current Scene(s)
+        replacementsCount += ProcessSceneObjects(oldMat1, oldMat2, newMat);
+
+        // 3. Replace in all Prefabs in the Project
+        replacementsCount += ProcessPrefabs(oldMat1, oldMat2, newMat);
+
+        // Save Project Changes
+        AssetDatabase.SaveAssets();
+
+        UnityEngine.Debug.Log($"<color=green>[MaterialReplacer] Complete!</color> Replaced material on {replacementsCount} renderer component(s).");
     }
 
-    private void ConvertInScene()
+    private static int ProcessSceneObjects(Material old1, Material old2, Material newMat)
     {
-        Material litMat = FindLitMaterial();
-        if (litMat == null) return;
-
-        SpriteRenderer[] renderers = FindObjectsOfType<SpriteRenderer>();
         int count = 0;
+        // Find all Renderers (SpriteRenderer, MeshRenderer, etc.) including inactive ones
+        Renderer[] sceneRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>(true);
 
-        foreach (SpriteRenderer sr in renderers)
+        foreach (Renderer renderer in sceneRenderers)
         {
-            if (IsTargetMaterial(sr.sharedMaterial))
+            bool changed = ReplaceInRenderer(renderer, old1, old2, newMat);
+            if (changed)
             {
-                Undo.RecordObject(sr, "Convert Sprite Material");
-                sr.sharedMaterial = litMat;
-                EditorUtility.SetDirty(sr);
                 count++;
+                // Mark scene as dirty so Unity knows changes need saving
+                EditorSceneManager.MarkSceneDirty(renderer.gameObject.scene);
             }
         }
-        Debug.Log($"<color=green><b>Success:</b></color> Converted {count} SpriteRenderers in the current scene.");
+
+        return count;
     }
 
-    private void ConvertInPrefabs()
+    private static int ProcessPrefabs(Material old1, Material old2, Material newMat)
     {
-        Material litMat = FindLitMaterial();
-        if (litMat == null) return;
-
-        string[] allPrefabs = AssetDatabase.FindAssets("t:Prefab");
         int count = 0;
-        int prefabCount = 0;
+        // Search for all prefab assets in the project
+        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab");
 
-        foreach (string guid in allPrefabs)
+        foreach (string guid in prefabGuids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
-            SpriteRenderer[] renderers = prefab.GetComponentsInChildren<SpriteRenderer>(true);
-            bool modified = false;
+            if (prefab == null) continue;
 
-            foreach (SpriteRenderer sr in renderers)
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            bool prefabModified = false;
+
+            foreach (Renderer renderer in renderers)
             {
-                if (IsTargetMaterial(sr.sharedMaterial))
+                if (ReplaceInRenderer(renderer, old1, old2, newMat))
                 {
-                    sr.sharedMaterial = litMat;
-                    modified = true;
+                    prefabModified = true;
                     count++;
                 }
             }
 
-            if (modified)
+            // Save changes back to the prefab asset if updated
+            if (prefabModified)
             {
-                EditorUtility.SetDirty(prefab);
-                prefabCount++;
+                PrefabUtility.SavePrefabAsset(prefab);
             }
         }
 
-        AssetDatabase.SaveAssets();
-        Debug.Log($"<color=green><b>Success:</b></color> Converted {count} SpriteRenderers across {prefabCount} prefabs.");
+        return count;
     }
 
-    private bool IsTargetMaterial(Material mat)
+    private static bool ReplaceInRenderer(Renderer renderer, Material old1, Material old2, Material newMat)
     {
-        if (mat == null) return false;
+        // Use sharedMaterials to avoid instantiating new materials in memory
+        Material[] mats = renderer.sharedMaterials;
+        bool hasChanged = false;
 
-        // Checks if the material name OR the shader name contains "Diffuse"
-        return mat.name.Contains("Diffuse") || (mat.shader != null && mat.shader.name.Contains("Diffuse"));
-    }
-
-    private Material FindLitMaterial()
-    {
-        // Try to find the default URP 2D lit material
-        string[] guids = AssetDatabase.FindAssets("Sprite-Lit-Default t:Material");
-        if (guids.Length > 0)
+        for (int i = 0; i < mats.Length; i++)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            return AssetDatabase.LoadAssetAtPath<Material>(path);
+            if ((old1 != null && mats[i] == old1) || (old2 != null && mats[i] == old2))
+            {
+                mats[i] = newMat;
+                hasChanged = true;
+            }
         }
 
-        Debug.LogError("Could not find 'Sprite-Lit-Default' material! Are you sure the 2D URP package is installed and setup?");
-        return null;
+        if (hasChanged)
+        {
+            Undo.RecordObject(renderer, "Swap Materials");
+            renderer.sharedMaterials = mats;
+        }
+
+        return hasChanged;
     }
 }

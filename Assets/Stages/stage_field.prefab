@@ -4093,7 +4093,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b2e5ae92a98662b4d8b8c08b51e95d38, type: 2}
+  - {fileID: 2100000, guid: 97dcba7bd83dac04ab882c27506d4be5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5051,7 +5051,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1749881501125112007
 Transform:
   m_ObjectHideFlags: 0
@@ -5314,7 +5314,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1749881501194416380
 Transform:
   m_ObjectHideFlags: 0
@@ -5484,7 +5484,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 09ebe1f0495b5ff449895fa3fa77029b, type: 2}
+  - {fileID: 2100000, guid: 97dcba7bd83dac04ab882c27506d4be5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8354,7 +8354,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 09ebe1f0495b5ff449895fa3fa77029b, type: 2}
+  - {fileID: 2100000, guid: 97dcba7bd83dac04ab882c27506d4be5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9094,7 +9094,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 09ebe1f0495b5ff449895fa3fa77029b, type: 2}
+  - {fileID: 2100000, guid: 97dcba7bd83dac04ab882c27506d4be5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9575,7 +9575,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1749881501854687599
 Transform:
   m_ObjectHideFlags: 0
@@ -12082,6 +12082,7 @@ Transform:
   - {fileID: 1749881501854687599}
   - {fileID: 1749881501194416380}
   - {fileID: 1749881501125112007}
+  - {fileID: 3120090287098021997}
   m_Father: {fileID: 1749881501084797100}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12782,7 +12783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1749881502070050925
 Transform:
   m_ObjectHideFlags: 0
@@ -15384,7 +15385,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 09ebe1f0495b5ff449895fa3fa77029b, type: 2}
+  - {fileID: 2100000, guid: 97dcba7bd83dac04ab882c27506d4be5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15708,3 +15709,59 @@ Transform:
   m_Father: {fileID: 1749881501084797100}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3453563204303034645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3120090287098021997}
+  - component: {fileID: 1052411077028529595}
+  m_Layer: 15
+  m_Name: SpawnerLeft (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3120090287098021997
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453563204303034645}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -21.93, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1749881501924026417}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
+--- !u!114 &1052411077028529595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453563204303034645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74270d9599131d386a9599b01b92aa57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_npcsPossibleToSpawn:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_spawnChance01: 0.33
+  m_numWaveBeforeCanSpawn: 0
+  m_delayBetweenSpawns: 1
+  m_delayRandomOffsetDelaySpawn: 0.5
+  m_delayBeforeStartSpawning: 0
+  m_delayRandomOffsetBeforeStartSpawning: 0
+  m_isSpawnOutOfSight: 0
+  m_isEnabled: 1
