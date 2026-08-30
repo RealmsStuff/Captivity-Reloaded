@@ -73,7 +73,6 @@ public abstract class Challenge : MonoBehaviour
 			DeActivate();
 			if (m_isCanBeCompletedWithBrokenMind || (!CommonReferences.Instance.GetPlayer().IsDead() && CommonReferences.Instance.GetPlayer().GetNumOfHeartsCurrent() != 0))
 			{
-				m_state = 1;
 				CommonReferences.Instance.GetManagerChallenge().CompleteChallenge(this);
 			}
 		}

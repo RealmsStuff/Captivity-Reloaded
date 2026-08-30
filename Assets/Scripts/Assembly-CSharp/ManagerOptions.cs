@@ -28,6 +28,10 @@ public class ManagerOptions : MonoBehaviour
 
 	private List<InputBox> m_inputBoxes = new List<InputBox>();
 
+	private List<InputBox> m_controllerInputBoxes = new List<InputBox>();
+
+	private RectTransform m_controllerInputParent;
+
 	private InputBox m_inputBoxSelected;
 
 	[Header("---Volume")]
@@ -67,6 +71,12 @@ public class ManagerOptions : MonoBehaviour
 	[SerializeField]
 	private Text m_txtVolumeHitsound;
 
+	private Slider m_sliderAimAssist;
+
+	private Text m_txtAimAssist;
+
+	private float m_aimAssistOriginal;
+
 	[SerializeField]
 	private Dropdown m_dropDownDifficulty;
 
@@ -98,12 +108,18 @@ public class ManagerOptions : MonoBehaviour
 			return;
 		}
 		ConfigureOptionsLayout();
+		UpdateInputBindingDisplay();
 		m_txtVolumeMaster.text = m_sliderMaster.value.ToString();
 		m_txtVolumeMusic.text = m_sliderMusic.value.ToString();
 		m_txtVolumeAmbience.text = m_sliderAmbience.value.ToString();
 		m_txtVolumeVoice.text = m_sliderVoice.value.ToString();
 		m_txtVolumeSFX.text = m_sliderSFX.value.ToString();
 		m_txtVolumeHitsound.text = m_sliderHitsound.value.ToString();
+		if (m_sliderAimAssist != null)
+		{
+			m_txtAimAssist.text = Mathf.RoundToInt(m_sliderAimAssist.value) + "%";
+			CommonReferences.Instance.GetManagerInput().SetAimAssistStrength(m_sliderAimAssist.value / 100f);
+		}
 		if (m_inputBoxSelected != null)
 		{
 			List<KeyCode> anyKey = CommonReferences.Instance.GetManagerInput().GetAnyKey();
@@ -123,6 +139,7 @@ public class ManagerOptions : MonoBehaviour
 	private void BuildInputBoxes()
 	{
 		ClearInputBoxes();
+		CreateControllerInputParent();
 		List<InputButtonXGame> inputButtons = ManagerDB.GetInputButtons();
 		for (int i = 0; i < inputButtons.Count; i++)
 		{
@@ -130,7 +147,49 @@ public class ManagerOptions : MonoBehaviour
 			inputBox.Initialize(inputButtons[i]);
 			inputBox.gameObject.SetActive(value: true);
 			m_inputBoxes.Add(inputBox);
+			InputBox inputBox2 = UnityEngine.Object.Instantiate(m_inputBoxDefault, m_controllerInputParent);
+			inputBox2.InitializeDisplay(inputButtons[i].GetName(), CommonReferences.Instance.GetManagerInput().GetControllerBindingName(inputButtons[i].GetInputButton()));
+			inputBox2.gameObject.SetActive(value: true);
+			m_controllerInputBoxes.Add(inputBox2);
 		}
+	}
+
+	private void CreateControllerInputParent()
+	{
+		RectTransform rectTransform = m_inputBoxDefault.transform.parent as RectTransform;
+		if (m_controllerInputParent == null)
+		{
+			GameObject gameObject = new GameObject("ControllerInputBoxes", typeof(RectTransform), typeof(VerticalLayoutGroup));
+			m_controllerInputParent = gameObject.GetComponent<RectTransform>();
+			m_controllerInputParent.SetParent(rectTransform.parent, worldPositionStays: false);
+			VerticalLayoutGroup component = rectTransform.GetComponent<VerticalLayoutGroup>();
+			VerticalLayoutGroup component2 = gameObject.GetComponent<VerticalLayoutGroup>();
+			component2.padding = component.padding;
+			component2.childAlignment = component.childAlignment;
+			component2.spacing = component.spacing;
+			component2.childForceExpandWidth = component.childForceExpandWidth;
+			component2.childForceExpandHeight = component.childForceExpandHeight;
+			component2.childControlWidth = component.childControlWidth;
+			component2.childControlHeight = component.childControlHeight;
+			component2.childScaleWidth = component.childScaleWidth;
+			component2.childScaleHeight = component.childScaleHeight;
+		}
+		m_controllerInputParent.anchorMin = rectTransform.anchorMin;
+		m_controllerInputParent.anchorMax = rectTransform.anchorMax;
+		m_controllerInputParent.pivot = rectTransform.pivot;
+		m_controllerInputParent.sizeDelta = rectTransform.sizeDelta;
+		m_controllerInputParent.anchoredPosition = rectTransform.anchoredPosition;
+	}
+
+	private void UpdateInputBindingDisplay()
+	{
+		if (m_controllerInputParent == null)
+		{
+			return;
+		}
+		bool flag = CommonReferences.Instance.GetManagerInput().IsControllerLastUsed();
+		m_inputBoxDefault.transform.parent.gameObject.SetActive(!flag);
+		m_controllerInputParent.gameObject.SetActive(flag);
 	}
 
 	private void ClearInputBoxes()
@@ -140,6 +199,11 @@ public class ManagerOptions : MonoBehaviour
 			UnityEngine.Object.Destroy(m_inputBoxes[i].gameObject);
 		}
 		m_inputBoxes.Clear();
+		for (int i = 0; i < m_controllerInputBoxes.Count; i++)
+		{
+			UnityEngine.Object.Destroy(m_controllerInputBoxes[i].gameObject);
+		}
+		m_controllerInputBoxes.Clear();
 		m_inputBoxDefault.gameObject.SetActive(value: false);
 	}
 
@@ -210,6 +274,32 @@ public class ManagerOptions : MonoBehaviour
 		m_dropDownDisplayMode.RefreshShownValue();
 		m_dropDownResolution.RefreshShownValue();
 		UpdateResolutionAvailability(m_dropDownDisplayMode.value);
+	}
+
+	private void CreateAimAssistControl()
+	{
+		if (m_sliderAimAssist != null)
+		{
+			return;
+		}
+		GameObject gameObject = UnityEngine.Object.Instantiate(m_sliderHitsound.transform.parent.gameObject, m_sliderHitsound.transform.parent.parent);
+		gameObject.name = "ControllerAimAssist";
+		m_sliderAimAssist = gameObject.GetComponentInChildren<Slider>(includeInactive: true);
+		m_sliderAimAssist.minValue = 0f;
+		m_sliderAimAssist.maxValue = 100f;
+		m_sliderAimAssist.wholeNumbers = true;
+		Text[] componentsInChildren = gameObject.GetComponentsInChildren<Text>(includeInactive: true);
+		for (int i = 0; i < componentsInChildren.Length; i++)
+		{
+			if (componentsInChildren[i].text == "Hitsound")
+			{
+				componentsInChildren[i].text = "Controller aim assist";
+			}
+			else
+			{
+				m_txtAimAssist = componentsInChildren[i];
+			}
+		}
 	}
 
 	private void CreateDisplayControls()
@@ -297,6 +387,21 @@ public class ManagerOptions : MonoBehaviour
 		{
 			return;
 		}
+		RectTransform rectTransform = m_inputBoxDefault.transform.parent.parent as RectTransform;
+		RectTransform rectTransform2 = m_sliderMaster.transform.parent.parent.parent as RectTransform;
+		if (rectTransform != null)
+		{
+			rectTransform.anchoredPosition = new Vector2(-315f, 34f);
+		}
+		if (rectTransform2 != null)
+		{
+			rectTransform2.anchoredPosition = new Vector2(315f, 153f);
+		}
+		if (m_controllerInputParent != null)
+		{
+			RectTransform rectTransform3 = m_inputBoxDefault.transform.parent as RectTransform;
+			m_controllerInputParent.anchoredPosition = rectTransform3.anchoredPosition;
+		}
 		if (m_dropDownDisplayMode != null)
 		{
 			RectTransform component = m_innerOptions.transform.Find("lbl_difficulty").GetComponent<RectTransform>();
@@ -354,6 +459,7 @@ public class ManagerOptions : MonoBehaviour
 			ManagerDB.SetInputButton(m_buttonsOriginal[i].GetName(), m_buttonsOriginal[i].GetKeyCode());
 		}
 		CommonReferences.Instance.GetManagerInput().SetButtonsToSavedButtons();
+		CommonReferences.Instance.GetManagerInput().SetAimAssistStrength(m_aimAssistOriginal);
 		GetComponentInParent<ScreenTitle>().CloseOptions();
 		CommonReferences.Instance.GetManagerAudio().SetVolumesToSaved();
 	}
@@ -366,6 +472,7 @@ public class ManagerOptions : MonoBehaviour
 		PlayerPrefs.SetInt("VolumeVoice", (int)m_sliderVoice.value);
 		PlayerPrefs.SetInt("VolumeSFX", (int)m_sliderSFX.value);
 		PlayerPrefs.SetInt("VolumeHitsound", (int)m_sliderHitsound.value);
+		PlayerPrefs.SetFloat("ControllerAimAssist", m_sliderAimAssist.value / 100f);
 		PlayerPrefs.SetString("Difficulty", m_dropDownDifficulty.options[m_dropDownDifficulty.value].text);
 		if (m_toggleGunFlash.isOn)
 		{
@@ -397,11 +504,15 @@ public class ManagerOptions : MonoBehaviour
 		m_sliderVoice.value = PlayerPrefs.GetInt("VolumeVoice");
 		m_sliderSFX.value = PlayerPrefs.GetInt("VolumeSFX");
 		m_sliderHitsound.value = PlayerPrefs.GetInt("VolumeHitsound");
+		CreateAimAssistControl();
+		m_aimAssistOriginal = PlayerPrefs.HasKey("ControllerAimAssist") ? PlayerPrefs.GetFloat("ControllerAimAssist") : 0.35f;
+		m_sliderAimAssist.value = m_aimAssistOriginal * 100f;
 		BuildInputBoxes();
 		BuildDropDownDifficulty();
 		BuildToggleReduceGunFlash();
 		BuildDisplayOptions();
 		ConfigureOptionsLayout();
+		UpdateInputBindingDisplay();
 		m_parentOptions.SetActive(value: true);
 		m_isOpen = true;
 	}

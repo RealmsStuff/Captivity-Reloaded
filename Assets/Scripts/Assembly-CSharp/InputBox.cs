@@ -18,6 +18,17 @@ public class InputBox : MonoBehaviour
 		m_txtKey.text = m_button.GetKeyCode().ToString();
 	}
 
+	public void InitializeDisplay(string i_name, string i_binding)
+	{
+		m_txtInputName.text = i_name;
+		m_txtKey.text = i_binding;
+		Button component = GetComponent<Button>();
+		if (component != null)
+		{
+			component.enabled = false;
+		}
+	}
+
 	public void SetToListenInput()
 	{
 		m_txtKey.text = "Press a button to set...";

@@ -56,7 +56,8 @@ public class WaveHud : MonoBehaviour
 		int l_secsPassed = 0;
 		while (l_secsPassed < i_secsWait)
 		{
-			m_txtsTimer[0].text = i_secsWait - l_secsPassed + " ('z' to skip)";
+			string text = CommonReferences.Instance.GetManagerInput().GetWaveSkipBindingName();
+			m_txtsTimer[0].text = i_secsWait - l_secsPassed + " ('" + text + "' to skip)";
 			m_txtsTimer[1].text = m_txtsTimer[0].text;
 			l_secsPassed++;
 			yield return new WaitForSeconds(1f);

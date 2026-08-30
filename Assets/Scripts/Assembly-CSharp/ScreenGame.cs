@@ -38,7 +38,15 @@ public class ScreenGame : Screen
 		{
 			HandleDebugKeys();
 		}
-		if (Input.GetKeyDown(KeyCode.Escape) && !CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen() && !CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing() && !CommonReferences.Instance.GetManagerHud().GetHubMainMenu().IsOpen())
+		if (Input.GetKeyDown(KeyCode.Escape) || CommonReferences.Instance.GetManagerInput().IsPausePressed())
+		{
+			HandleEscapeInput();
+		}
+	}
+
+	public void HandleEscapeInput()
+	{
+		if (!CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen() && !CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing() && !CommonReferences.Instance.GetManagerHud().GetHubMainMenu().IsOpen())
 		{
 			if (CommonReferences.Instance.GetManagerHud().GetManagerEquippablesHud().GetIsShowing())
 			{

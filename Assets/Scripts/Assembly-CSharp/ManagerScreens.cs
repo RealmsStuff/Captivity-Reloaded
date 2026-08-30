@@ -28,6 +28,8 @@ public class ManagerScreens : MonoBehaviour
 
 	public void OpenScreenTitle()
 	{
+		Time.timeScale = 1f;
+		CommonReferences.Instance.GetManagerInput().BlockControllerSubmitUntilRelease();
 		OpenScreen(m_screenTitle);
 	}
 

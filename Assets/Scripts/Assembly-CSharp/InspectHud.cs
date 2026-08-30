@@ -26,6 +26,14 @@ public class InspectHud : MonoBehaviour
 		m_txt.text = "";
 	}
 
+	private void Update()
+	{
+		if ((m_objNoteBox.activeSelf || m_objInspectBox.activeSelf) && CommonReferences.Instance.GetManagerInput().IsControllerLastUsed() && UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonEast.wasPressedThisFrame)
+		{
+			Close();
+		}
+	}
+
 	private void ListenToCloseEvents()
 	{
 		CommonReferences.Instance.GetPlayer().OnGetHit += Close;

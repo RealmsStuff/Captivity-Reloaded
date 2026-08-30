@@ -114,7 +114,7 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 			num6 = 90f;
 			break;
 		}
-		Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
 		float num7 = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
 		num7 += num;
 		float num8 = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
@@ -160,7 +160,7 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 
 	private void HandleArmOneHanded()
 	{
-		Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
 		float num = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
 		num = ((!CommonReferences.Instance.GetPlayer().GetIsFacingLeft()) ? (num + m_angleToAddToArmLower / 2f) : (num + m_angleToAddToArmLower / 2f));
 		num += 60f;
@@ -188,7 +188,7 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 
 	private void HandleSmgHoldRightArm()
 	{
-		Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
 		vector.Normalize();
 		float num = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
 		num -= 45f;
@@ -212,7 +212,7 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 
 	private void HandleSmgHoldLeftArm()
 	{
-		Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
 		float num = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
 		num += 60f;
 		float num2 = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
@@ -234,7 +234,7 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 	{
 		if (!m_isShooting)
 		{
-			Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(m_weapon.transform.position);
+			Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(m_weapon.transform.position) - Camera.main.WorldToScreenPoint(m_weapon.transform.position);
 			float num = ((!m_player.GetIsFacingLeft()) ? (Mathf.Atan2(vector.y, vector.x) * 57.29578f) : (Mathf.Atan2(vector.y, 0f - vector.x) * 57.29578f));
 			if (m_player.GetIsFacingLeft())
 			{
@@ -263,8 +263,8 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 	private IEnumerator CoroutineShootGun(Gun i_gun)
 	{
 		m_isShooting = true;
-		_ = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
-		Vector3 vector = Input.mousePosition - Camera.main.WorldToScreenPoint(GetRArmLower().transform.position);
+		_ = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmLower().transform.position) - Camera.main.WorldToScreenPoint(GetRArmLower().transform.position);
 		_ = Mathf.Atan2(vector.y, vector.x) * 57.29578f;
 		float l_angleFrom = i_gun.GetDamage() * 3;
 		float l_angleTo = 0f;

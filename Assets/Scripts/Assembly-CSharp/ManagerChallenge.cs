@@ -70,9 +70,13 @@ public class ManagerChallenge : MonoBehaviour
 
 	public void CompleteChallenge(Challenge i_challenge)
 	{
+		if (i_challenge == null || i_challenge.GetState() != 0)
+		{
+			return;
+		}
+		i_challenge.SetState(1);
 		CommonReferences.Instance.GetManagerHud().CompleteChallenge(i_challenge);
 		ManagerDB.CompleteChallenge(i_challenge);
-		i_challenge.SetState(1);
 		foreach (Clothing item in i_challenge.GetRewardsClothing())
 		{
 			ManagerDB.UnlockClothing(item);

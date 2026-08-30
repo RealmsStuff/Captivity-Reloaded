@@ -357,6 +357,11 @@ public class ManagerHud : MonoBehaviour
 		m_keypadHud.Show(i_keypad);
 	}
 
+	public KeypadHud GetKeypadHud()
+	{
+		return m_keypadHud;
+	}
+
 	public void ShowNote(Note i_note)
 	{
 		m_inspectHud.ShowNote(i_note);

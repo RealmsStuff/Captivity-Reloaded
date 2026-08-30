@@ -53,10 +53,15 @@ public class UtilityTools : MonoBehaviour
 
 	public Vector3 GetPosMousePerspectiveCamera()
 	{
+		Player player = CommonReferences.Instance.GetPlayer();
+		ManagerInput managerInput = CommonReferences.Instance.GetManagerInput();
+		if (player != null && managerInput.IsControllerAiming())
+		{
+			return managerInput.GetAimWorldPosition(player.transform.position);
+		}
         // If mobile controls are active, fake the mouse position to be straight in front of the player
         if (CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled())
         {
-            Player player = CommonReferences.Instance.GetPlayer();
             if (player != null)
             {
                 Vector3 playerPos = player.transform.position;
@@ -68,8 +73,7 @@ public class UtilityTools : MonoBehaviour
             }
         }
 
-        return CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity()
-			.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
+		return managerInput.GetAimWorldPosition(player != null ? player.transform.position : Vector3.zero);
 	}
 
 	public Vector2 GetCalculateTopOfSprite(SpriteRenderer i_sprite)

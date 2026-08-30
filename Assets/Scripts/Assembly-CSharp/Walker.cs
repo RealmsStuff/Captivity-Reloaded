@@ -197,6 +197,10 @@ public class Walker : NPC
 
 	public void Climb(Ledge i_ledge)
 	{
+		if (m_coroutineClimb != null || GetRigidbody2D().bodyType == RigidbodyType2D.Static)
+		{
+			return;
+		}
 		if (m_coroutineJump != null)
 		{
 			StopCoroutine(m_coroutineJump);
@@ -221,7 +225,16 @@ public class Walker : NPC
 			PlaceFeetOnPos(i_ledge.GetPos());
 			CheckCurrentPlatform();
 			GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-			m_animator.Play("Climb");
+			int num = Animator.StringToHash("Climb");
+			int num2 = Animator.StringToHash("Base Layer.Climb");
+			if (m_animator.HasState(0, num))
+			{
+				m_animator.Play(num, 0);
+			}
+			else if (m_animator.HasState(0, num2))
+			{
+				m_animator.Play(num2, 0);
+			}
 			Timer timer = new Timer(m_durationClimb);
 			yield return timer.CoroutinePlayAndWaitForEnd();
 			GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;

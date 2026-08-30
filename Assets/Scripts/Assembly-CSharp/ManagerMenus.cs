@@ -15,6 +15,8 @@ public class ManagerMenus : MonoBehaviour
 
 	private bool m_isFirstMenu = true;
 
+	private float m_nextMenuOpenTime;
+
 	private void Start()
 	{
 		CloseAllMenus();
@@ -24,6 +26,11 @@ public class ManagerMenus : MonoBehaviour
 
 	public void OpenMenu(Menu i_menu)
 	{
+		if (i_menu == null || (m_menuCurrent == i_menu && Time.unscaledTime < m_nextMenuOpenTime))
+		{
+			return;
+		}
+		m_nextMenuOpenTime = Time.unscaledTime + 0.25f;
 		CloseAllMenus();
 		i_menu.Open();
 		m_menuCurrent = i_menu;

@@ -1065,6 +1065,29 @@ public class Player : Actor
 		}
 	}
 
+	public void EquipNextWeapon(bool i_onlyUsables, bool i_backwards = false)
+	{
+		List<Weapon> list = new List<Weapon>();
+		foreach (Weapon allEquippable in CommonReferences.Instance.GetPlayerController().GetInventory().GetAllEquippables())
+		{
+			if ((allEquippable is Usable) == i_onlyUsables)
+			{
+				list.Add(allEquippable);
+			}
+		}
+		if (list.Count == 0)
+		{
+			return;
+		}
+		int num = list.IndexOf(m_weaponEquipped);
+		if (num < 0)
+		{
+			num = i_backwards ? 0 : -1;
+		}
+		int num2 = i_backwards ? -1 : 1;
+		EquipWeapon(list[(num + num2 + list.Count) % list.Count]);
+	}
+
 	private IEnumerator CoroutineWaitForShootCancelAfterEquip()
 	{
 		m_isCanAttack = false;
@@ -1402,11 +1425,12 @@ public class Player : Actor
 
 	public void DropEquippedEquippable()
 	{
-		if (!(GetEquippableEquipped() == null) && GetEquippableEquipped().GetIsCanDrop())
+		Weapon equippableEquipped = GetEquippableEquipped();
+		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
-			GetEquippableEquipped().Drop(0.25f);
-			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(GetEquippableEquipped());
-			m_weaponEquipped = null;
+			equippableEquipped.Drop(0.25f);
+			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(equippableEquipped);
+			ClearDroppedEquippable(equippableEquipped);
 			if (CommonReferences.Instance.GetManagerHud().GetManagerEquippablesHud().GetIsShowing())
 			{
 				CommonReferences.Instance.GetManagerHud().GetManagerEquippablesHud().Hide();
@@ -1416,31 +1440,50 @@ public class Player : Actor
 
 	public void DropEquippedEquippableWithPlayerForce()
 	{
-		if (!(GetEquippableEquipped() == null) && GetEquippableEquipped().GetIsCanDrop())
+		Weapon equippableEquipped = GetEquippableEquipped();
+		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
-			GetEquippableEquipped().Drop(GetVelocity());
-			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(GetEquippableEquipped());
-			m_weaponEquipped = null;
+			equippableEquipped.Drop(GetVelocity());
+			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(equippableEquipped);
+			ClearDroppedEquippable(equippableEquipped);
 		}
 	}
 
 	public void DropEquippedEquippable(float i_powerDrop01)
 	{
-		if (!(GetEquippableEquipped() == null) && GetEquippableEquipped().GetIsCanDrop())
+		Weapon equippableEquipped = GetEquippableEquipped();
+		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
-			GetEquippableEquipped().Drop(i_powerDrop01);
-			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(GetEquippableEquipped());
-			m_weaponEquipped = null;
+			equippableEquipped.Drop(i_powerDrop01);
+			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(equippableEquipped);
+			ClearDroppedEquippable(equippableEquipped);
 		}
 	}
 
 	public void DropEquippedEquippable(Vector2 i_forceDrop)
 	{
-		if (!(GetEquippableEquipped() == null) && GetEquippableEquipped().GetIsCanDrop())
+		Weapon equippableEquipped = GetEquippableEquipped();
+		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
-			GetEquippableEquipped().Drop(i_forceDrop);
-			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(GetEquippableEquipped());
+			equippableEquipped.Drop(i_forceDrop);
+			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(equippableEquipped);
+			ClearDroppedEquippable(equippableEquipped);
+		}
+	}
+
+	private void ClearDroppedEquippable(Weapon i_droppedEquippable)
+	{
+		if (m_weaponPrevious == i_droppedEquippable)
+		{
+			m_weaponPrevious = null;
+		}
+		if (m_weaponEquipped == i_droppedEquippable)
+		{
 			m_weaponEquipped = null;
+		}
+		else if (m_isHoldingGrapple)
+		{
+			m_isHoldingGrapple = false;
 		}
 	}
 
@@ -1837,6 +1880,11 @@ public class Player : Actor
 				break;
 			}
 		}
+	}
+
+	public float GetRangePickUp()
+	{
+		return m_rangePickUp;
 	}
 
 	public void InteractTry()
@@ -2740,6 +2788,10 @@ public class Player : Actor
 		private IEnumerator CoroutineSetIsExposing(bool i_isExposing)
 		{
 			int l_layerIndex = m_animator.GetLayerIndex("Expose");
+			if (l_layerIndex < 0)
+			{
+				yield break;
+			}
 			float l_weightFrom = m_animator.GetLayerWeight(l_layerIndex);
 			float l_weightTo = (i_isExposing ? 1 : 0);
 			float l_timeToMove = (i_isExposing ? 0.5f : 0.25f);

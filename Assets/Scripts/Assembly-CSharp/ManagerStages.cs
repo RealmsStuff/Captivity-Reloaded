@@ -94,7 +94,7 @@ public class ManagerStages : MonoBehaviour
 		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().CenterCamera();
 		CommonReferences.Instance.GetManagerHud().ClosePauseMenu();
 		CommonReferences.Instance.GetPlayerController().ResetInventory();
-		CommonReferences.Instance.GetPlayer().SetPos(i_stageToOpen.GetWaypointStart().GetPos());
+		CommonReferences.Instance.GetPlayer().PlaceFeetOnPos(i_stageToOpen.GetWaypointStart().GetPos());
 		CommonReferences.Instance.GetPlayer().EnterStage();
 		CommonReferences.Instance.GetPlayer().Spawn();
 		CommonReferences.Instance.GetManagerHud().GetManagerOverlay().PlayOverlay(Color.black, i_isUseOverlayWithHole: false, i_isDestroyOverlayAfterAnimation: true, 1f, 1f, 0f);
