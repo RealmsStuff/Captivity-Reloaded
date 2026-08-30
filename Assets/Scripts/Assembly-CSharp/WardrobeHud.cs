@@ -31,6 +31,8 @@ public class WardrobeHud : MonoBehaviour
 
 	private SkeletonPlayer m_skeletonShowcase;
 
+	private Material m_showcaseMaterial;
+
 	private List<Clothing> m_clothes = new List<Clothing>();
 
 	private List<GameObject> m_tabs = new List<GameObject>();
@@ -51,13 +53,18 @@ public class WardrobeHud : MonoBehaviour
 
 	private Vector2 m_windowContainerSize = new Vector2(-1f, -1f);
 
+	private ClothingHudItem m_clothingItemLastClicked;
+
+	private float m_clothingItemNextClickTime;
+
 	private void LateUpdate()
 	{
 		if (IsShowing())
 		{
 			ConfigureWindow();
 		}
-		if (IsShowing() && Input.GetKeyDown(KeyCode.Escape))
+		bool flag = CommonReferences.Instance.GetManagerInput().IsControllerLastUsed() && UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonEast.wasPressedThisFrame;
+		if (IsShowing() && (Input.GetKeyDown(KeyCode.Escape) || flag))
 		{
 			Hide();
 		}
@@ -102,6 +109,7 @@ public class WardrobeHud : MonoBehaviour
 		CreateClothingItems();
 		CreatePlayerShowcase();
 		AddAlreadyEquippedClothes();
+		ConfigureShowcaseRendering();
 	}
 
 	private void ConfigureWindow()
@@ -342,6 +350,38 @@ public class WardrobeHud : MonoBehaviour
 		}
 	}
 
+	private void ConfigureShowcaseRendering()
+	{
+		if (m_skeletonShowcase == null)
+		{
+			return;
+		}
+		if (m_showcaseMaterial == null)
+		{
+			Shader shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+			if (shader == null)
+			{
+				shader = Shader.Find("Sprites/Default");
+			}
+			if (shader != null)
+			{
+				m_showcaseMaterial = new Material(shader);
+				m_showcaseMaterial.name = "Wardrobe Preview Material";
+			}
+		}
+		foreach (Transform transform in m_skeletonShowcase.GetComponentsInChildren<Transform>(includeInactive: true))
+		{
+			transform.gameObject.layer = 9;
+		}
+		if (m_showcaseMaterial != null)
+		{
+			foreach (SpriteRenderer spriteRenderer in m_skeletonShowcase.GetComponentsInChildren<SpriteRenderer>(includeInactive: true))
+			{
+				spriteRenderer.sharedMaterial = m_showcaseMaterial;
+			}
+		}
+	}
+
 	private void AddAlreadyEquippedClothes()
 	{
 		foreach (Clothing item in CommonReferences.Instance.GetPlayer().GetSkeletonPlayer().GetClothesEquipped())
@@ -352,6 +392,12 @@ public class WardrobeHud : MonoBehaviour
 
 	public void ClickClothingItem(ClothingHudItem i_clothingItemSelected)
 	{
+		if (i_clothingItemSelected == null || (m_clothingItemLastClicked == i_clothingItemSelected && Time.unscaledTime < m_clothingItemNextClickTime))
+		{
+			return;
+		}
+		m_clothingItemLastClicked = i_clothingItemSelected;
+		m_clothingItemNextClickTime = Time.unscaledTime + 0.25f;
 		if (m_clothingItemsSelected.Contains(i_clothingItemSelected))
 		{
 			UnSelectClothingItem(i_clothingItemSelected);
@@ -368,6 +414,7 @@ public class WardrobeHud : MonoBehaviour
 	{
 		m_clothingItemsSelected.Add(i_clothingItem);
 		m_skeletonShowcase.EquipClothing(i_clothingItem.GetClothing());
+		ConfigureShowcaseRendering();
 		UnEquipIncompatibleClothes(i_clothingItem);
 		i_clothingItem.SetIsSelected(i_isSelected: true);
 	}
@@ -427,6 +474,8 @@ public class WardrobeHud : MonoBehaviour
 
 	private void ClearAllData()
 	{
+		m_clothingItemLastClicked = null;
+		m_clothingItemNextClickTime = 0f;
 		m_clothes.Clear();
 		foreach (GameObject tab in m_tabs)
 		{
@@ -446,6 +495,11 @@ public class WardrobeHud : MonoBehaviour
 		if ((bool)m_skeletonShowcase)
 		{
 			UnityEngine.Object.Destroy(m_skeletonShowcase.gameObject);
+		}
+		if ((bool)m_showcaseMaterial)
+		{
+			UnityEngine.Object.Destroy(m_showcaseMaterial);
+			m_showcaseMaterial = null;
 		}
 		m_clothingItemsSelected.Clear();
 	}

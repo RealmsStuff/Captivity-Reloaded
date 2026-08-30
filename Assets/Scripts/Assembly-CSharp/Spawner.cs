@@ -52,7 +52,7 @@ public class Spawner : MonoBehaviour
 	private void SetSpawnFeetPos()
 	{
 		int mask = LayerMask.GetMask("Platform");
-		RaycastHit2D raycastHit2D = Physics2D.Raycast(base.transform.position, Vector2.down, 4f, mask);
+		RaycastHit2D raycastHit2D = Physics2D.Raycast(base.transform.position, Vector2.down, Mathf.Infinity, mask);
 		if ((bool)raycastHit2D)
 		{
 			m_posSpawnFeet = raycastHit2D.point;

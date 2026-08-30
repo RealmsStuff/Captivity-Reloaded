@@ -96,7 +96,11 @@ public class Flier : NPC
 		while (true)
 		{
 			yield return new WaitForSeconds(0.2f);
-			GetRigidbody2D().velocity = GetRigidbody2D().velocity * (1f - m_frictionAir01);
+			Rigidbody2D rigidbody2D = GetRigidbody2D();
+			if (rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
+			{
+				rigidbody2D.velocity *= 1f - m_frictionAir01;
+			}
 		}
 	}
 

@@ -23,12 +23,18 @@ public class KeypadHud : MonoBehaviour
 
 	private Coroutine m_coroutineFailCode;
 
+	private string m_lastKeyPressed;
+
+	private float m_nextKeyPressTime;
+
 	private void Awake()
 	{
 		m_keypadObject.SetActive(value: false);
 		m_imgOverlay.SetActive(value: false);
 		m_txtInput.text = "";
 		m_isCanPressKeys = true;
+		m_lastKeyPressed = null;
+		m_nextKeyPressTime = 0f;
 	}
 
 	private void Update()
@@ -64,6 +70,8 @@ public class KeypadHud : MonoBehaviour
 		m_keypadObject.SetActive(value: true);
 		m_imgOverlay.SetActive(value: true);
 		m_isCanPressKeys = true;
+		m_lastKeyPressed = null;
+		m_nextKeyPressTime = 0f;
 		ListenToCloseKeypadEvents();
 	}
 
@@ -80,8 +88,19 @@ public class KeypadHud : MonoBehaviour
 		StopListenToCloseKeypadEvents();
 	}
 
+	public bool IsShowing()
+	{
+		return m_keypadObject.activeSelf;
+	}
+
 	public void PressKey(string i_key)
 	{
+		if (string.IsNullOrEmpty(i_key) || (m_lastKeyPressed == i_key && Time.unscaledTime < m_nextKeyPressTime))
+		{
+			return;
+		}
+		m_lastKeyPressed = i_key;
+		m_nextKeyPressTime = Time.unscaledTime + 0.15f;
 		if (m_isCanPressKeys && !m_keypadCurrent.GetIsCompleted())
 		{
 			m_txtInput.text += i_key;

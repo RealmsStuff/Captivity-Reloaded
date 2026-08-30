@@ -101,7 +101,7 @@ public abstract class Interactable : MonoBehaviour
 			if (Vector2.Distance(CommonReferences.Instance.GetPlayer().GetPos(), base.transform.position) < 2.25f)
 			{
 				string text = "";
-				text = text + "Press " + CommonReferences.Instance.GetManagerInput().GetKeyAssignedToButton(InputButton.Use).ToString() + " ";
+				text = text + "Press " + CommonReferences.Instance.GetManagerInput().GetPromptBindingName(InputButton.Use) + " ";
 				if (m_priceToActivate > 0)
 				{
 					text = text + "(" + m_priceToActivate + "$) ";
@@ -109,6 +109,16 @@ public abstract class Interactable : MonoBehaviour
 				text += "to use";
 				m_notificationInteract = CommonReferences.Instance.GetManagerHud().GetManagerNotification().CreateNotification(text, ColorTextNotification.UnlockDoor, i_isContinues: true);
 			}
+		}
+		else if (Vector2.Distance(CommonReferences.Instance.GetPlayer().GetPos(), base.transform.position) <= 2.25f)
+		{
+			string text2 = "Press " + CommonReferences.Instance.GetManagerInput().GetPromptBindingName(InputButton.Use) + " ";
+			if (m_priceToActivate > 0)
+			{
+				text2 = text2 + "(" + m_priceToActivate + ((char)36).ToString() + ") ";
+			}
+			text2 += "to use";
+			m_notificationInteract.SetText(text2);
 		}
 		else if (Vector2.Distance(CommonReferences.Instance.GetPlayer().GetPos(), base.transform.position) > 2.25f)
 		{

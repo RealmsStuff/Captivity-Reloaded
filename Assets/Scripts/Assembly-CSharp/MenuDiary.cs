@@ -128,6 +128,8 @@ public class MenuDiary : Menu
 			}
 		}
 		m_dropDownNpcs.AddOptions(list2);
+		m_dropDownNpcs.SetValueWithoutNotify(0);
+		m_dropDownNpcs.RefreshShownValue();
 	}
 
 	public void OnDropdownValueChanged()
@@ -341,7 +343,7 @@ public class MenuDiary : Menu
 		{
 			return -1;
 		}
-		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpc FROM tbl_relationship WHERE timesRaped = (SELECT MAX(timesRaped) FROM tbl_relationship)", 0));
+		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpc FROM tbl_relationship ORDER BY timesRaped DESC, idNpc ASC LIMIT 1", 0));
 	}
 
 	private int GetTimesMindBrokenTotal()
@@ -380,15 +382,16 @@ public class MenuDiary : Menu
 		{
 			return -1;
 		}
-		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpc FROM tbl_relationship WHERE numOfFetusInserted = (SELECT MAX(numOfFetusInserted) FROM tbl_relationship)", 0));
+		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpc FROM tbl_relationship ORDER BY numOfFetusInserted DESC, idNpc ASC LIMIT 1", 0));
 	}
 
 	private int GetIdNpcGivenBirthMostTo()
 	{
-		if (ManagerDB.GetExecuteReader("SELECT idNpcOffspring, MAX(timesBirth) FROM tbl_birth", 0) == DBNull.Value)
+		object executeReader = ManagerDB.GetExecuteReader("SELECT MAX(timesBirth) FROM tbl_birth", 0);
+		if (executeReader == DBNull.Value || Convert.ToInt32(executeReader) == 0)
 		{
 			return -1;
 		}
-		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpcOffspring FROM tbl_birth WHERE timesBirth = (SELECT MAX(timesBirth) FROM tbl_birth)", 0));
+		return Convert.ToInt32(ManagerDB.GetExecuteReader("SELECT idNpcOffspring FROM tbl_birth ORDER BY timesBirth DESC, idNpcOffspring ASC LIMIT 1", 0));
 	}
 }

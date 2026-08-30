@@ -30,6 +30,11 @@ public class Notification : MonoBehaviour
 		return m_numPosY;
 	}
 
+	public void SetText(string i_text)
+	{
+		m_txt.text = i_text;
+	}
+
 	private IEnumerator CoroutineAnimateFadeOut(float i_delay)
 	{
 		yield return new WaitForSeconds(i_delay);

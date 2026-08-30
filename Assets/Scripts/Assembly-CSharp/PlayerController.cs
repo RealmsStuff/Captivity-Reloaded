@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     private Player m_player;
     private Inventory m_inventory;
     private ManagerInput m_managerInput;
+
+    private Notification m_pickUpPrompt;
     private bool m_isForceIgnoreInput;
 
     [Header("Mobile Settings")]
@@ -17,7 +19,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 m_leftJoystickInput;
     private bool m_mobileJumpPressed;
     private bool m_mobileInteractPressed;
-    private bool m_mobileEscapePressed;
     private bool m_mobileReloadPressed; // Declared
     private bool m_mobileDashPressed;   // Declared
     private bool m_mobileFirePressed;   // For semi-automatic (one shot per tap)
@@ -31,20 +32,26 @@ public class PlayerController : MonoBehaviour
         LoadInventory();
         m_managerInput = CommonReferences.Instance.GetManagerInput();
 
-        // Automatically detect mobile platforms, or defer to inspector toggle
-        //#if UNITY_ANDROID && !UNITY_EDITOR
-                m_useMobileControls = true;
-        //#endif
+        // Automatically detect mobile platforms, or defer to the inspector toggle for testing.
+#if UNITY_ANDROID || UNITY_IOS
+        m_useMobileControls = true;
+#endif
     }
 
     public bool GetIsMobileControlsEnabled()
     {
-        return m_useMobileControls;
+        return IsUsingMobileInput();
+    }
+
+    private bool IsUsingMobileInput()
+    {
+        return m_useMobileControls && (m_managerInput == null || !m_managerInput.IsControllerAiming());
     }
 
     private void Update()
     {
-        if (!m_isForceIgnoreInput && m_player.GetStatePlayerCurrent() != StatePlayer.BeingRaped && !m_player.IsDead() && !CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused())
+		HandlePickUpPrompt();
+        if (!m_isForceIgnoreInput && m_player.GetStatePlayerCurrent() != StatePlayer.BeingRaped && !m_player.IsDead() && !CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused() && !CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen() && !CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing() && !CommonReferences.Instance.GetManagerHud().GetHubMainMenu().IsOpen())
         {
             HandleInput();
         }
@@ -52,7 +59,7 @@ public class PlayerController : MonoBehaviour
         // Automatic Facing Direction
         if (!m_isForceIgnoreInput && m_player.GetIsCanSwitchFacingSide() && !m_player.GetIsBeingRaped())
         {
-            if (m_useMobileControls)
+            if (IsUsingMobileInput())
             {
                 // 1. Face the direction the left joystick is pushed
                 ApplyMobileFacing();
@@ -72,7 +79,6 @@ public class PlayerController : MonoBehaviour
         // Reset single-frame mobile presses AFTER all other scripts have read them
         m_mobileJumpPressed = false;
         m_mobileInteractPressed = false;
-        m_mobileEscapePressed = false;
         m_mobileReloadPressed = false;
         m_mobileDashPressed = false;
         m_mobileFirePressed = false;
@@ -116,9 +122,26 @@ public class PlayerController : MonoBehaviour
     // Direct inputs from the mobile UI Buttons
     public void TriggerMobileJump() => m_mobileJumpPressed = true;
     public void TriggerMobileInteract() => m_mobileInteractPressed = true;
-    public void TriggerMobileEscape() => m_mobileEscapePressed = true;
+    public void TriggerMobileEscape()
+    {
+        CommonReferences.Instance.GetManagerScreens().GetScreenGame().HandleEscapeInput();
+    }
     public void TriggerMobileReload() => m_mobileReloadPressed = true; // Implemented
     public void TriggerMobileDash() => m_mobileDashPressed = true;     // Implemented
+	public void TriggerMobileNextWeapon()
+	{
+		if (m_player != null)
+		{
+			m_player.EquipNextWeapon(i_onlyUsables: false);
+		}
+	}
+	public void TriggerMobileNextMedicine()
+	{
+		if (m_player != null)
+		{
+			m_player.EquipNextWeapon(i_onlyUsables: true);
+		}
+	}
 
     private void ApplyMobileFacing()
     {
@@ -173,13 +196,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInput()
     {
-        // 1. Handle Escape Button (Pause / Back / Escape Struggle)
-        if (m_useMobileControls && m_mobileEscapePressed)
-        {
-            CommonReferences.Instance.GetManagerHud().OpenPauseMenu();
-        }
-
-        // 2. Handle Default Gun Shooting
+        // Handle Default Gun Shooting
         if ((bool)m_player.GetEquippableEquipped() && !m_player.GetIsUsingUsable() && m_player.GetIsThinking() && m_player.GetIsCanAttack() && !m_player.GetIsEquipping() && !CommonReferences.Instance.GetManagerHud().GetManagerEquippablesHud().GetIsShowing() && !m_player.IsExposing())
         {
             if (m_player.GetEquippableEquipped() is Gun)
@@ -188,7 +205,7 @@ public class PlayerController : MonoBehaviour
 
                 bool wantsFire = false;
 
-                if (m_useMobileControls)
+                if (IsUsingMobileInput())
                 {
                     // If semi-automatic, look for the tap. If automatic, look for the hold.
                     wantsFire = gun.GetIsSemiFire() ? m_mobileFirePressed : m_mobileFireHeld;
@@ -213,7 +230,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 // Non-gun weapon attacking (melee, etc.)
-                bool wantsMelee = m_useMobileControls ? m_mobileFirePressed : m_managerInput.IsButton(InputButton.Fire);
+                bool wantsMelee = IsUsingMobileInput() ? m_mobileFirePressed : m_managerInput.IsButton(InputButton.Fire);
                 if (wantsMelee)
                 {
                     m_player.UseEquippedEquippable(i_isAltFire: false);
@@ -221,7 +238,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        bool wantsReload = m_useMobileControls ? m_mobileReloadPressed : m_managerInput.IsButton(InputButton.Reload);
+        bool wantsReload = IsUsingMobileInput() ? m_mobileReloadPressed : m_managerInput.IsButton(InputButton.Reload);
 
         if (wantsReload && m_player.GetEquippableEquipped() is Gun && m_player.GetStatePlayerCurrent() != StatePlayer.Grappling && !m_player.GetIsEquipping() && !m_player.GetIsReloading() && !m_player.IsExposing())
         {
@@ -232,13 +249,13 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (m_managerInput.IsButtonDown(InputButton.PickUp))
+        if (m_managerInput.IsButtonDown(InputButton.PickUp) || (IsUsingMobileInput() && m_mobileInteractPressed))
         {
             m_player.PickUpTry();
         }
 
         // 3. Handle Interact Button
-        bool wantsInteract = m_useMobileControls ? m_mobileInteractPressed : m_managerInput.IsButtonDown(InputButton.Use);
+        bool wantsInteract = IsUsingMobileInput() ? m_mobileInteractPressed : m_managerInput.IsButtonDown(InputButton.Use);
         if (wantsInteract)
         {
             bool flag = true;
@@ -282,11 +299,81 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha4)) ShowWeaponsHud(WeaponType.Rifle);
             if (Input.GetKeyDown(KeyCode.Alpha5)) ShowWeaponsHud(WeaponType.Special);
 
-            if (m_managerInput.IsButtonDown(InputButton.DrugSelection)) ShowWeaponsHud(WeaponType.Usable);
-            if (m_managerInput.IsButtonDown(InputButton.EquipPrevious)) m_player.EquipPreviousWeapon();
+			if (m_managerInput.IsControllerButtonDown(InputButton.DrugSelection))
+			{
+				m_player.EquipNextWeapon(i_onlyUsables: true);
+			}
+			else if (m_managerInput.IsControllerPreviousDrugPressed())
+			{
+				m_player.EquipNextWeapon(i_onlyUsables: true, i_backwards: true);
+			}
+			else if (m_managerInput.IsButtonDown(InputButton.DrugSelection))
+			{
+				ShowWeaponsHud(WeaponType.Usable);
+			}
+			if (m_managerInput.IsControllerButtonDown(InputButton.EquipPrevious))
+			{
+				m_player.EquipNextWeapon(i_onlyUsables: false);
+			}
+			else if (m_managerInput.IsControllerPreviousWeaponPressed())
+			{
+				m_player.EquipNextWeapon(i_onlyUsables: false, i_backwards: true);
+			}
+			else if (m_managerInput.IsButtonDown(InputButton.EquipPrevious))
+			{
+				m_player.EquipPreviousWeapon();
+			}
         }
         HandleInputMovement();
     }
+
+	private void HandlePickUpPrompt()
+	{
+		ScreenGame screenGame = CommonReferences.Instance.GetManagerScreens().GetScreenGame();
+		ManagerHud managerHud = CommonReferences.Instance.GetManagerHud();
+		bool flag = screenGame.gameObject.activeInHierarchy && !screenGame.IsPaused() && !m_player.IsDead() && !managerHud.GetVendorHud().GetIsOpen() && !managerHud.GetWardrobeHud().IsShowing() && !managerHud.GetHubMainMenu().IsOpen();
+		Weapon weapon = null;
+		if (flag && CommonReferences.Instance.GetManagerStages().GetStageCurrent() != null)
+		{
+			float num = m_player.GetRangePickUp();
+			foreach (Item allItem in CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetAllItems())
+			{
+				Weapon weapon2 = allItem as Weapon;
+				if (weapon2 != null && weapon2.GetIsPickUpable() && !weapon2.IsPickedUp() && weapon2.isActiveAndEnabled)
+				{
+					float num2 = Vector2.Distance(weapon2.transform.position, m_player.transform.position);
+					if (num2 <= num)
+					{
+						num = num2;
+						weapon = weapon2;
+					}
+				}
+			}
+		}
+		if (weapon == null)
+		{
+			DestroyPickUpPrompt();
+			return;
+		}
+		string text = "Press " + m_managerInput.GetPromptBindingName(InputButton.PickUp) + " to pick up " + weapon.GetName();
+		if (m_pickUpPrompt == null)
+		{
+			m_pickUpPrompt = managerHud.GetManagerNotification().CreateNotification(text, ColorTextNotification.Equippable, i_isContinues: true);
+		}
+		else
+		{
+			m_pickUpPrompt.SetText(text);
+		}
+	}
+
+	private void DestroyPickUpPrompt()
+	{
+		if (m_pickUpPrompt != null)
+		{
+			CommonReferences.Instance.GetManagerHud().GetManagerNotification().DestroyNotification(m_pickUpPrompt);
+			m_pickUpPrompt = null;
+		}
+	}
 
     private void ShowWeaponsHud(WeaponType i_weaponType)
     {
@@ -301,7 +388,7 @@ public class PlayerController : MonoBehaviour
         if (m_player.GetStatePlayerCurrent() != StatePlayer.Dashing)
         {
             // Crouch check
-            bool isCrouchPressed = m_useMobileControls ? (m_leftJoystickInput.y < -0.5f) : m_managerInput.IsButton(InputButton.Crouch);
+            bool isCrouchPressed = IsUsingMobileInput() ? (m_leftJoystickInput.y < -0.5f) : m_managerInput.IsButton(InputButton.Crouch);
             if (isCrouchPressed)
             {
                 m_player.SetIsCrouching(i_isCrouching: true);
@@ -321,7 +408,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputWalk()
     {
-        if (m_useMobileControls)
+        if (IsUsingMobileInput())
         {
             if (m_leftJoystickInput.x < -0.2f)
             {
@@ -341,7 +428,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputJump()
     {
-        bool wantsJump = m_useMobileControls ? m_mobileJumpPressed : m_managerInput.IsButtonDown(InputButton.Jump);
+        bool wantsJump = IsUsingMobileInput() ? m_mobileJumpPressed : m_managerInput.IsButtonDown(InputButton.Jump);
         if (wantsJump && m_player.GetStateActorCurrent() != StateActor.Jumping && !m_player.IsCrouching())
         {
             m_player.Jump();
@@ -350,11 +437,11 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputDash()
     {
-        bool wantsDash = m_useMobileControls ? m_mobileDashPressed : m_managerInput.IsButtonDown(InputButton.Dash);
+        bool wantsDash = IsUsingMobileInput() ? m_mobileDashPressed : m_managerInput.IsButtonDown(InputButton.Dash);
         if (wantsDash)
         {
-            bool isMovingLeft = m_useMobileControls ? (m_leftJoystickInput.x < -0.2f) : m_managerInput.IsButton(InputButton.MoveLeft);
-            bool isMovingRight = m_useMobileControls ? (m_leftJoystickInput.x > 0.2f) : m_managerInput.IsButton(InputButton.MoveRight);
+            bool isMovingLeft = IsUsingMobileInput() ? (m_leftJoystickInput.x < -0.2f) : m_managerInput.IsButton(InputButton.MoveLeft);
+            bool isMovingRight = IsUsingMobileInput() ? (m_leftJoystickInput.x > 0.2f) : m_managerInput.IsButton(InputButton.MoveRight);
 
             if (isMovingLeft) m_player.Dash(i_left: true);
             else if (isMovingRight) m_player.Dash(i_left: false);
@@ -365,9 +452,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputSprint()
     {
-        bool isMovingLeft = m_useMobileControls ? (m_leftJoystickInput.x < -0.2f) : m_managerInput.IsButton(InputButton.MoveLeft);
-        bool isMovingRight = m_useMobileControls ? (m_leftJoystickInput.x > 0.2f) : m_managerInput.IsButton(InputButton.MoveRight);
-        bool isWalkPressed = m_useMobileControls ? false : m_managerInput.IsButton(InputButton.Walk);
+        bool isMovingLeft = IsUsingMobileInput() ? (m_leftJoystickInput.x < -0.2f) : m_managerInput.IsButton(InputButton.MoveLeft);
+        bool isMovingRight = IsUsingMobileInput() ? (m_leftJoystickInput.x > 0.2f) : m_managerInput.IsButton(InputButton.MoveRight);
+        bool isWalkPressed = IsUsingMobileInput() ? false : m_managerInput.IsButton(InputButton.Walk);
 
         if (m_player.GetIsSprinting() && !isWalkPressed)
         {
@@ -410,7 +497,7 @@ public class PlayerController : MonoBehaviour
         {
             m_player.SetIsExposing(i_isExposing: false);
         }
-        else if (!m_useMobileControls && m_managerInput.IsButton(InputButton.Expose))
+        else if (!IsUsingMobileInput() && m_managerInput.IsButton(InputButton.Expose))
         {
             m_player.SetIsExposing(i_isExposing: true);
         }

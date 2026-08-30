@@ -12,6 +12,10 @@ public class MenuChallenges : Menu
 
 	private List<ChallengeItemHud> m_challengeItems = new List<ChallengeItemHud>();
 
+	private int m_lastDropdownValue = -1;
+
+	private float m_nextDropdownChangeTime;
+
 	private void Start()
 	{
 		m_challengeItemDefault.gameObject.SetActive(value: false);
@@ -32,11 +36,21 @@ public class MenuChallenges : Menu
 	public override void Open()
 	{
 		base.Open();
-		m_dropDownStages.value = 0;
+		m_lastDropdownValue = -1;
+		m_nextDropdownChangeTime = 0f;
+		m_dropDownStages.SetValueWithoutNotify(0);
+		m_dropDownStages.RefreshShownValue();
 	}
 
 	public void OnDropdownValueChanged()
 	{
+		int value = m_dropDownStages.value;
+		if (m_lastDropdownValue == value && Time.unscaledTime < m_nextDropdownChangeTime)
+		{
+			return;
+		}
+		m_lastDropdownValue = value;
+		m_nextDropdownChangeTime = Time.unscaledTime + 0.25f;
 		Stage stage = null;
 		foreach (Stage allStage in CommonReferences.Instance.GetManagerStages().GetAllStages())
 		{
@@ -92,6 +106,7 @@ public class MenuChallenges : Menu
 	{
 		foreach (ChallengeItemHud challengeItem in m_challengeItems)
 		{
+			challengeItem.gameObject.SetActive(value: false);
 			Object.Destroy(challengeItem.gameObject);
 		}
 		m_challengeItems.Clear();

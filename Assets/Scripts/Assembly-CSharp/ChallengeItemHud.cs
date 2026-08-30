@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,11 +34,17 @@ public class ChallengeItemHud : MonoBehaviour
 	public void Initialize(Challenge i_challenge)
 	{
 		m_challenge = i_challenge;
-		m_txtName.text = m_challenge.GetName();
-		if (m_challenge.GetRewardsClothing().Count > 0)
+		if (m_challenge == null)
 		{
-			m_imgReward.sprite = m_challenge.GetRewardsClothing()[0].GetIcon();
-			m_txtReward.text = i_challenge.GetRewardsClothing()[0].GetCatergoryClothing().ToString();
+			gameObject.SetActive(value: false);
+			return;
+		}
+		m_txtName.text = m_challenge.GetName();
+		Clothing clothing = GetFirstValidReward();
+		if (clothing != null)
+		{
+			m_imgReward.sprite = clothing.GetIcon();
+			m_txtReward.text = clothing.GetCatergoryClothing().ToString();
 		}
 		else
 		{
@@ -57,10 +64,29 @@ public class ChallengeItemHud : MonoBehaviour
 			SetToCompletedSeen();
 			break;
 		}
-		if (m_challenge.GetRewardsClothing().Count > 1)
+		if (GetValidRewards().Count > 1)
 		{
 			StartCoroutine(CoroutineAnimateIterateThroughRewards());
 		}
+	}
+
+	private List<Clothing> GetValidRewards()
+	{
+		List<Clothing> list = new List<Clothing>();
+		foreach (Clothing item in m_challenge.GetRewardsClothing())
+		{
+			if (item != null)
+			{
+				list.Add(item);
+			}
+		}
+		return list;
+	}
+
+	private Clothing GetFirstValidReward()
+	{
+		List<Clothing> validRewards = GetValidRewards();
+		return validRewards.Count > 0 ? validRewards[0] : null;
 	}
 
 	private void SetToOpen()
@@ -154,6 +180,11 @@ public class ChallengeItemHud : MonoBehaviour
 
 	private IEnumerator CoroutineAnimateIterateThroughRewards()
 	{
+		List<Clothing> validRewards = GetValidRewards();
+		if (validRewards.Count < 2)
+		{
+			yield break;
+		}
 		int l_index = 0;
 		while (true)
 		{
@@ -175,12 +206,12 @@ public class ChallengeItemHud : MonoBehaviour
 				yield return new WaitForFixedUpdate();
 			}
 			l_index++;
-			if (l_index > m_challenge.GetRewardsClothing().Count - 1)
+			if (l_index > validRewards.Count - 1)
 			{
 				l_index = 0;
 			}
-			m_imgReward.sprite = m_challenge.GetRewardsClothing()[l_index].GetIcon();
-			m_txtReward.text = m_challenge.GetRewardsClothing()[l_index].GetCatergoryClothing().ToString();
+			m_imgReward.sprite = validRewards[l_index].GetIcon();
+			m_txtReward.text = validRewards[l_index].GetCatergoryClothing().ToString();
 			l_weightFrom = l_colorInvisible;
 			l_weightTo = new Color(1f, 1f, 1f, 1f);
 			l_timeCurrent = 0f;

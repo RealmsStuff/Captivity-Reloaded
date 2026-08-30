@@ -388,7 +388,8 @@ public abstract class NPC : Actor
 
 	public void TakeKnockbackBullet(Bullet i_bullet, Bone i_bone)
 	{
-		Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+		Rigidbody2D component = GetComponent<Rigidbody2D>();
+		Vector2 velocity = component != null && component.bodyType == RigidbodyType2D.Dynamic ? component.velocity : Vector2.zero;
 		if (i_bullet.GetOwner().transform.position.x > base.transform.position.x)
 		{
 			velocity.x -= i_bullet.GetKockbackX();
@@ -397,19 +398,23 @@ public abstract class NPC : Actor
 		{
 			velocity.x += i_bullet.GetKockbackX();
 		}
-		if ((bool)i_bone.GetComponent<Rigidbody2D>() && m_isDead)
+		Rigidbody2D rigidbody2D = i_bone != null ? i_bone.GetComponent<Rigidbody2D>() : null;
+		if (rigidbody2D != null && rigidbody2D.bodyType == RigidbodyType2D.Dynamic && m_isDead)
 		{
 			if (((BodyPartActor)i_bone.GetBodyPart()).GetIsBodyPartDestroyed())
 			{
-				i_bone.GetComponent<Rigidbody2D>().velocity = velocity;
+				rigidbody2D.velocity = velocity;
 			}
 			else
 			{
-				i_bone.GetComponent<Rigidbody2D>().velocity = velocity * 3f;
+				rigidbody2D.velocity = velocity * 3f;
 			}
 			_ = (SkeletonActor)GetSkeleton();
 		}
-		GetComponent<Rigidbody2D>().velocity = velocity;
+		if (component != null && component.bodyType == RigidbodyType2D.Dynamic)
+		{
+			component.velocity = velocity;
+		}
 	}
 
 	public override void TakeDamage(float i_amount)

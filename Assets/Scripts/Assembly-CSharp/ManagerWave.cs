@@ -71,7 +71,7 @@ public class ManagerWave : MonoBehaviour
 			&& CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled() 
 			&& CommonReferences.Instance.GetPlayerController().GetIsWavePressed();
 
-		if ((Input.GetKeyDown(KeyCode.Z) || isMobileWavePressed) && !m_isWave && m_isWaitingForNextWave)
+		if ((CommonReferences.Instance.GetManagerInput().IsWaveSkipPressed() || isMobileWavePressed) && !m_isWave && m_isWaitingForNextWave)
 		{
 			SkipWaitingForNextWave();
 		}
