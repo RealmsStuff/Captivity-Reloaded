@@ -165,6 +165,21 @@ public class Spawner : MonoBehaviour
 			m_isEnabled = true;
 		}
 
+		public bool AddNpcVariant(NPC i_template, NPC i_variant)
+		{
+			if (i_template == null || i_variant == null || m_npcsPossibleToSpawn.Contains(i_variant)) return false;
+			for (int index = 0; index < m_npcsPossibleToSpawn.Count; index++)
+			{
+				NPC candidate = m_npcsPossibleToSpawn[index];
+				if (candidate != null && candidate.GetId() == i_template.GetId())
+				{
+					m_npcsPossibleToSpawn.Add(i_variant);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		private void OnDrawGizmos()
 		{
 			if (m_isEnabled)

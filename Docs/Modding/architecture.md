@@ -49,6 +49,8 @@ The registry resolves namespaced content IDs. The asset resolver resolves stable
 9. Build or bind runtime assets.
 10. Expose the completed registry to libraries, menus, stages and the save system.
 
+Runtime templates and their instantiated clones carry the same stable content identity component. Gameplay systems can therefore resolve `example.pack:enemy/name` or `core:clothing/name` directly instead of treating mutable Unity names or load-order-dependent numeric IDs as persistent keys.
+
 An external pack that fails steps 3 through 8 is disabled for that session. Core failure is fatal and must produce a clear error because the game cannot run without it.
 
 ## Core migration

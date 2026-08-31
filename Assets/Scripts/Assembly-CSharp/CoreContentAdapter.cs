@@ -24,11 +24,21 @@ public static class CoreContentAdapter
 				continue;
 			}
 
+			BindRuntimeIdentity(runtimeAsset, entry.Id, entry.Category);
 			ModLoaderRuntime.Registry.Register(new ContentRegistration(entry.Id, entry.Category, "core", "core/catalog.json", runtimeAsset), ModLoaderRuntime.LastReport);
 		}
 
 		Debug.Log("[ModLoader] Bound " + ModLoaderRuntime.Registry.Count + " packaged Core gameplay entries.");
-		ExternalEnemyFactory.Schedule(library.Actors);
+		ExternalEnemyFactory.Schedule(library.Actors, stageManager);
+	}
+
+	private static void BindRuntimeIdentity(Object i_runtimeAsset, ContentId i_id, ContentCategory i_category)
+	{
+		GameObject target = i_runtimeAsset is Component component ? component.gameObject : i_runtimeAsset as GameObject;
+		if (target == null) return;
+		RuntimeContentIdentity identity = target.GetComponent<RuntimeContentIdentity>();
+		if (identity == null) identity = target.AddComponent<RuntimeContentIdentity>();
+		identity.Configure(i_id, i_category);
 	}
 
 	private static T FindSceneObject<T>(T[] i_objects) where T : Component

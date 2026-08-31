@@ -5,6 +5,9 @@
   "displayName": "Prey Green Zombie",
   "description": "A green zombie variant reconstructed from the legacy Prey Mod artwork.",
   "extends": "core:enemy/zombie-1",
+  "spawn": {
+    "inheritTemplateSpawners": true
+  },
   "visual": {
     "type": "coreRigAtlas",
     "atlas": "assets/enemies/green-zombie.png",

@@ -59,6 +59,13 @@ namespace CaptivityReloaded.Modding
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemySpawnDefinition
+	{
+		[JsonProperty("inheritTemplateSpawners", Required = Required.Always)]
+		public bool InheritTemplateSpawners { get; set; }
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
 	public sealed class EnemyDefinitionDocument
 	{
 		[JsonProperty("schemaVersion", Required = Required.Always)]
@@ -84,6 +91,9 @@ namespace CaptivityReloaded.Modding
 
 		[JsonProperty("visual", Required = Required.Always)]
 		public EnemyVisualDefinition Visual { get; set; }
+
+		[JsonProperty("spawn")]
+		public EnemySpawnDefinition Spawn { get; set; }
 	}
 
 	public sealed class EnemyDefinition
@@ -96,6 +106,7 @@ namespace CaptivityReloaded.Modding
 		public string Description { get; }
 		public EnemyStatsDefinition Stats { get; }
 		public EnemyVisualDefinition Visual { get; }
+		public EnemySpawnDefinition Spawn { get; }
 
 		public EnemyDefinition(ContentId i_id, ContentId i_extends, string i_packId, string i_source, EnemyDefinitionDocument i_document)
 		{
@@ -107,6 +118,7 @@ namespace CaptivityReloaded.Modding
 			Description = i_document.Description ?? string.Empty;
 			Stats = i_document.Stats ?? new EnemyStatsDefinition();
 			Visual = i_document.Visual;
+			Spawn = i_document.Spawn ?? new EnemySpawnDefinition();
 		}
 	}
 

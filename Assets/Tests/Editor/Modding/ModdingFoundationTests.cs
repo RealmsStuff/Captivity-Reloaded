@@ -8,6 +8,28 @@ namespace CaptivityReloaded.Modding.Tests
 {
 	public class ContentIdTests
 	{
+		[Test]
+		public void RuntimeIdentity_SurvivesInstantiationWithItsStableId()
+		{
+			GameObject template = new GameObject("Content identity template");
+			GameObject clone = null;
+			try
+			{
+				RuntimeContentIdentity identity = template.AddComponent<RuntimeContentIdentity>();
+				ContentId id = ContentId.Parse("example.pack:enemy/test");
+				identity.Configure(id, ContentCategory.Enemy);
+				clone = Object.Instantiate(template);
+				Assert.That(RuntimeContentIdentity.TryResolve(clone.transform, out ContentId resolved, out ContentCategory category), Is.True);
+				Assert.That(resolved, Is.EqualTo(id));
+				Assert.That(category, Is.EqualTo(ContentCategory.Enemy));
+			}
+			finally
+			{
+				if (clone != null) Object.DestroyImmediate(clone);
+				Object.DestroyImmediate(template);
+			}
+		}
+
 		[TestCase("core:enemy/gremlin")]
 		[TestCase("example.pack:patch/player-art")]
 		[TestCase("author_name:stage/field-day")]
@@ -634,6 +656,7 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.enemies:enemy/acid-gremlin")));
 			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:enemy/gremlin")));
 			Assert.That(result.Definition.Visual.Regions, Has.Count.EqualTo(2));
+			Assert.That(result.Definition.Spawn.InheritTemplateSpawners, Is.False);
 		}
 
 		[Test]
@@ -691,6 +714,7 @@ namespace CaptivityReloaded.Modding.Tests
 			EnemyDefinition enemy = content.Enemies.Single();
 			Assert.That(enemy.Extends, Is.EqualTo(ContentId.Parse("core:enemy/zombie-1")));
 			Assert.That(enemy.Visual.Regions, Has.Count.EqualTo(13));
+			Assert.That(enemy.Spawn.InheritTemplateSpawners, Is.True);
 
 			string atlasPath = Path.Combine(prey.RootPath, enemy.Visual.Atlas);
 			Texture2D atlas = new Texture2D(2, 2);

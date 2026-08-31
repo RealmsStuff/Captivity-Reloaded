@@ -133,6 +133,9 @@ The first supported enemy shape extends an existing Core enemy and supplies a `c
     "bounty": 15,
     "healthIncreasePerWave": 2
   },
+  "spawn": {
+    "inheritTemplateSpawners": true
+  },
   "visual": {
     "type": "coreRigAtlas",
     "atlas": "assets/enemies/acid-gremlin.png",
@@ -154,6 +157,8 @@ Atlas coordinates use Unity's bottom-left origin. V1 exposes these regions for t
 - `body/leg-upper`, `body/leg-lower`, `body/foot-left`, `body/foot-right`
 
 The shared arm, hand and leg regions are applied to both sides of the rig. The two feet remain separate because the Core zombie artwork uses distinct left and right sprites. A definition may replace only a subset and inherit the remaining artwork from its Core template.
+
+`spawn.inheritTemplateSpawners` is optional and defaults to `false`. When enabled, the variant is added once to every Core stage spawner that can spawn its template, giving it the same selection weight as one existing entry in that spawner. Leaving it disabled registers and builds the enemy without changing Core stage encounters; a future custom stage can then reference it directly.
 
 ## Assets
 
