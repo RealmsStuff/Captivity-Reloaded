@@ -36,4 +36,11 @@ public class LibraryGuns : MonoBehaviour
 		}
 		return null;
 	}
+
+	public void AddRuntimeGun(Gun i_gun)
+	{
+		if (i_gun == null || m_guns.Contains(i_gun)) return;
+		i_gun.gameObject.SetActive(false);
+		m_guns.Add(i_gun);
+	}
 }

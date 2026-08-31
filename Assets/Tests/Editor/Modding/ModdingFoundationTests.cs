@@ -778,6 +778,58 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class WeaponDefinitionParserTests
+	{
+		private const string ValidWeapon = @"{
+  'schemaVersion': 1,
+  'type': 'weapon',
+  'id': 'example.weapons:item/weapon/toy-pistol',
+  'displayName': 'Toy Pistol',
+  'extends': 'core:item/weapon/pistol',
+  'visual': {
+    'type': 'coreWeaponSprites',
+    'pixelsPerUnit': 32,
+    'sprites': {
+      'body': 'assets/body.png',
+      'slide': 'assets/slide.png',
+      'base': 'assets/base.png'
+    }
+  }
+}";
+
+		[Test]
+		public void Parse_AcceptsAdditiveCorePistolDefinition()
+		{
+			WeaponDefinitionLoadResult result = WeaponDefinitionParser.Parse(ValidWeapon, "example.weapons", "weapon.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.weapons:item/weapon/toy-pistol")));
+			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:item/weapon/pistol")));
+			Assert.That(result.Definition.Visual.Sprites.Keys, Is.EquivalentTo(new[] { "body", "slide", "base" }));
+		}
+
+		[Test]
+		public void Parse_RejectsUnknownSlotsUnsafePathsAndArbitraryFields()
+		{
+			string invalidSlot = ValidWeapon.Replace("'body': 'assets/body.png'", "'barrel': '../body.png'");
+			WeaponDefinitionLoadResult slotResult = WeaponDefinitionParser.Parse(invalidSlot, "example.weapons", "weapon.json");
+			Assert.That(slotResult.Report.IsValid, Is.False);
+			Assert.That(slotResult.Report.Issues.Any(issue => issue.Code == "weapon.visual.slot"), Is.True);
+			Assert.That(slotResult.Report.Issues.Any(issue => issue.Code == "weapon.visual.asset-path"), Is.True);
+
+			string arbitraryField = ValidWeapon.Replace("'displayName'", "'script': 'WeaponHack.dll', 'displayName'");
+			WeaponDefinitionLoadResult fieldResult = WeaponDefinitionParser.Parse(arbitraryField, "example.weapons", "weapon.json");
+			Assert.That(fieldResult.Report.Issues.Any(issue => issue.Code == "weapon.json"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsNonPistolTemplatesUntilTheirSlotsArePublished()
+		{
+			string json = ValidWeapon.Replace("core:item/weapon/pistol", "core:item/weapon/m4b1");
+			WeaponDefinitionLoadResult result = WeaponDefinitionParser.Parse(json, "example.weapons", "weapon.json");
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "weapon.extends"), Is.True);
+		}
+	}
+
 	public class ModContentDiscoveryTests
 	{
 		[Test]
@@ -810,6 +862,37 @@ namespace CaptivityReloaded.Modding.Tests
 			finally
 			{
 				Object.DestroyImmediate(atlas);
+			}
+		}
+
+		[Test]
+		public void AdditiveNerfPistolExample_DiscoversWithAllPublishedSprites()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			Assert.That(packs.Report.IsValid, Is.True);
+			ModPack nerf = packs.Packs.Single(pack => pack.Manifest.Id == "somescrub.additive-nerf-pistol");
+			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { nerf });
+			Assert.That(content.Report.IsValid, Is.True);
+			Assert.That(content.Weapons, Has.Count.EqualTo(1));
+			WeaponDefinition weapon = content.Weapons.Single();
+			Assert.That(weapon.Extends, Is.EqualTo(ContentId.Parse("core:item/weapon/pistol")));
+			Assert.That(weapon.Visual.Sprites.Keys, Is.EquivalentTo(new[] { "body", "slide", "base" }));
+			foreach (string path in weapon.Visual.Sprites.Values)
+			{
+				string fullPath = Path.Combine(nerf.RootPath, path);
+				Assert.That(File.Exists(fullPath), Is.True, path);
+				Texture2D spriteTexture = new Texture2D(2, 2);
+				try
+				{
+					Assert.That(spriteTexture.LoadImage(File.ReadAllBytes(fullPath)), Is.True, path);
+					Assert.That(spriteTexture.width, Is.GreaterThan(0), path);
+					Assert.That(spriteTexture.height, Is.GreaterThan(0), path);
+				}
+				finally
+				{
+					Object.DestroyImmediate(spriteTexture);
+				}
 			}
 		}
 

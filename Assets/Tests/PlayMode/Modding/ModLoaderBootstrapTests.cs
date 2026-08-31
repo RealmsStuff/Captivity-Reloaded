@@ -18,6 +18,7 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(ModLoaderRuntime.AssetSlots, Is.Not.Null);
 			Assert.That(ModLoaderRuntime.EnemyDefinitions, Is.Not.Null);
 			Assert.That(ModLoaderRuntime.ClothingDefinitions, Is.Not.Null);
+			Assert.That(ModLoaderRuntime.WeaponDefinitions, Is.Not.Null);
 		}
 	}
 }

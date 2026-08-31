@@ -14,6 +14,7 @@ namespace CaptivityReloaded.Modding
 		public static IReadOnlyList<AssetPatchDefinition> AssetPatches { get; private set; } = new AssetPatchDefinition[0];
 		public static IReadOnlyList<EnemyDefinition> EnemyDefinitions { get; private set; } = new EnemyDefinition[0];
 		public static IReadOnlyList<ClothingDefinition> ClothingDefinitions { get; private set; } = new ClothingDefinition[0];
+		public static IReadOnlyList<WeaponDefinition> WeaponDefinitions { get; private set; } = new WeaponDefinition[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -28,6 +29,7 @@ namespace CaptivityReloaded.Modding
 			AssetPatches = new AssetPatchDefinition[0];
 			EnemyDefinitions = new EnemyDefinition[0];
 			ClothingDefinitions = new ClothingDefinition[0];
+			WeaponDefinitions = new WeaponDefinition[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -77,8 +79,10 @@ namespace CaptivityReloaded.Modding
 			AssetPatches = content.AssetPatches;
 			EnemyDefinitions = content.Enemies;
 			ClothingDefinitions = content.Clothing;
+			WeaponDefinitions = content.Weapons;
 			RegisterExternalEnemies(content.Enemies, report);
 			RegisterExternalClothing(content.Clothing, report);
+			RegisterExternalWeapons(content.Weapons, report);
 			LastReport = report;
 
 			foreach (ValidationIssue issue in report.Issues)
@@ -122,6 +126,23 @@ namespace CaptivityReloaded.Modding
 					continue;
 				}
 				Registry.Register(new ContentRegistration(enemy.Id, ContentCategory.Enemy, enemy.PackId, enemy.Source), io_report);
+			}
+		}
+
+		private static void RegisterExternalWeapons(IEnumerable<WeaponDefinition> i_weapons, ValidationReport io_report)
+		{
+			HashSet<ContentId> coreItems = new HashSet<ContentId>();
+			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
+				if (entry.Category == ContentCategory.Item) coreItems.Add(entry.Id);
+
+			foreach (WeaponDefinition weapon in i_weapons)
+			{
+				if (!coreItems.Contains(weapon.Extends))
+				{
+					io_report.Add(ValidationSeverity.Error, "weapon.extends-missing", "Weapon extends an unknown Core item: " + weapon.Extends, weapon.Source);
+					continue;
+				}
+				Registry.Register(new ContentRegistration(weapon.Id, ContentCategory.Item, weapon.PackId, weapon.Source), io_report);
 			}
 		}
 	}

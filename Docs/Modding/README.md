@@ -1,6 +1,6 @@
 # Captivity Reloaded modding specification
 
-This directory defines the draft contract for the built-in, data-driven content system. The runtime validates IDs and manifests, discovers desktop packs, resolves dependencies, loads the packaged Core catalog, applies explicit PNG asset patches and constructs atlas-driven enemy variants from Core rigs.
+This directory defines the draft contract for the built-in, data-driven content system. The runtime validates IDs and manifests, discovers desktop packs, resolves dependencies, loads the packaged Core catalog, applies explicit PNG asset patches, and constructs enemy, clothing, and pistol variants from Core templates.
 
 The long-term model separates the game into two layers:
 
@@ -18,11 +18,12 @@ The shipped game is represented by the required, read-only `core` content pack. 
 - [Asset replacement example](examples/shaded-girl) demonstrates explicit player sprite-slot replacement.
 - `ExampleMods/prey-green-zombie` is a working conversion of a legacy asset-bundle zombie overhaul into the atlas-driven enemy format.
 - `ExampleMods/femboy-refitted-shirt` converts one legacy multi-piece clothing replacement into an additive Core-template variant.
+- `ExampleMods/additive-nerf-pistol` converts legacy replacement artwork into a separate Core-template weapon while preserving the original pistol.
 
 ## Status
 
-Specification status: **Draft 0.4**
+Specification status: **Draft 0.5**
 
-Runtime status: **Foundation, asset replacement, Core-rig enemies, Core-template clothing and namespaced clothing saves implemented**
+Runtime status: **Foundation, asset replacement, Core-rig enemies, Core-template clothing, namespaced clothing saves, and the first additive weapon shape implemented**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

@@ -11,6 +11,7 @@ namespace CaptivityReloaded.Modding
 		public List<AssetPatchDefinition> AssetPatches { get; } = new List<AssetPatchDefinition>();
 		public List<EnemyDefinition> Enemies { get; } = new List<EnemyDefinition>();
 		public List<ClothingDefinition> Clothing { get; } = new List<ClothingDefinition>();
+		public List<WeaponDefinition> Weapons { get; } = new List<WeaponDefinition>();
 		public ValidationReport Report { get; } = new ValidationReport();
 	}
 
@@ -72,6 +73,12 @@ namespace CaptivityReloaded.Modding
 					ClothingDefinitionLoadResult loaded = ClothingDefinitionParser.Parse(json, i_pack.Manifest.Id, i_file);
 					io_result.Report.Merge(loaded.Report);
 					if (loaded.Report.IsValid) io_result.Clothing.Add(loaded.Definition);
+				}
+				else if (string.Equals(type, "weapon", StringComparison.Ordinal))
+				{
+					WeaponDefinitionLoadResult loaded = WeaponDefinitionParser.Parse(json, i_pack.Manifest.Id, i_file);
+					io_result.Report.Merge(loaded.Report);
+					if (loaded.Report.IsValid) io_result.Weapons.Add(loaded.Definition);
 				}
 				else
 				{

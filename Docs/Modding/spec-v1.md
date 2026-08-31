@@ -1,6 +1,6 @@
 # Draft Mod API v1 contract
 
-Status: Draft 0.4. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset patches and the first atlas-driven enemy factory are implemented. Other content-type schemas and gameplay factories remain draft work.
+Status: Draft 0.5. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset patches, enemy and clothing factories, and the first additive weapon shape are implemented. Other content-type schemas and gameplay factories remain draft work.
 
 ## Pack location
 
@@ -187,6 +187,32 @@ Additive clothing follows the same inheritance model. A definition extends one C
 Runtime construction derives stable kebab-case piece slots from the inherited template's published `clp_` piece names (for example `clp_shirtChest` becomes `piece/shirt-chest`). The optional `icon` region replaces the wardrobe icon. Undeclared pieces and the icon are inherited. `unlockedByDefault` defaults to `false`; unlock and equipped flags for external clothing are stored under the full content ID rather than its temporary runtime number.
 
 Region keys are validated during discovery against the published V1 clothing-slot catalog. The catalog is `icon` plus the semantic names derived from the Core wardrobe pieces: `arm-upper`, `belt`, `butt`, `chest`, `ear`, `glasses`, `hair`, `head`, `hips`, `l-arm-lower`, `l-arm-upper`, `l-foot`, `l-hand`, `l-leg-lower`, `l-leg-lower-armor`, `l-leg-lower-shoes`, `l-leg-lower-stocking`, `l-leg-upper`, `l-leg-upper-stocking`, `mask`, `neck`, their corresponding `r-` variants, `shirt-chest`, `shirt-collar`, `shirt-l-arm-lower`, `shirt-l-arm-upper`, `shirt-neck`, `shirt-r-arm-lower`, `shirt-r-arm-upper`, `shirt-spine`, `skirt-hips`, and `spine`, each prefixed with `piece/`. A published slot can still be unavailable on a particular inherited template; that template-specific mismatch is reported when the clothing is constructed.
+
+### Weapon definition draft
+
+The first additive weapon shape extends the Core pistol. It inherits the complete prefab, including firing behavior, statistics, ammunition, animation, audio, market availability, colliders, and attachment offsets. A definition supplies a new stable ID and may replace any subset of the three published pistol sprite slots:
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "example.toys:item/weapon/toy-pistol",
+  "displayName": "Toy Pistol",
+  "extends": "core:item/weapon/pistol",
+  "description": "A separate pistol variant.",
+  "visual": {
+    "type": "coreWeaponSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "body": "assets/weapons/toy-body.png",
+      "slide": "assets/weapons/toy-slide.png",
+      "base": "assets/weapons/toy-base.png"
+    }
+  }
+}
+```
+
+Each sprite is a separate safe pack-relative PNG. Valid V1 slots are `body`, `slide`, and `base`; undeclared slots retain Core artwork. Other weapon templates and bounded statistic overrides will be published after their rigs and gameplay assumptions are cataloged.
 
 ## Assets
 

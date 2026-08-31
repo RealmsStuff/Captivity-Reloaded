@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "somescrub.additive-nerf-pistol:item/weapon/nerf-pistol",
+  "displayName": "Nerf Pistol",
+  "extends": "core:item/weapon/pistol",
+  "description": "A toy-styled pistol using the Core pistol's firing behavior and statistics.",
+  "visual": {
+    "type": "coreWeaponSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "body": "assets/body.png",
+      "slide": "assets/slide.png",
+      "base": "assets/base.png"
+    }
+  }
+}

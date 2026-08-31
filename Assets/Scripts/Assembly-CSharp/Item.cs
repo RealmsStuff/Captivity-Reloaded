@@ -21,4 +21,10 @@ public abstract class Item : MonoBehaviour
 	{
 		return m_description;
 	}
+
+	public void ConfigureModItem(string i_name, string i_description)
+	{
+		m_name = i_name;
+		m_description = i_description ?? string.Empty;
+	}
 }
