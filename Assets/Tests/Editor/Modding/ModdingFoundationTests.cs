@@ -205,6 +205,126 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class AssetSlotRegistryTests
+	{
+		[Test]
+		public void Register_RejectsDuplicateAndNamespaceMismatch()
+		{
+			Texture2D baseline = new Texture2D(1, 1);
+			try
+			{
+				AssetSlotRegistry registry = new AssetSlotRegistry();
+				ValidationReport report = new ValidationReport();
+				AssetSlotRegistration slot = CreateSlot("core:weapon/pistol/body", baseline);
+				Assert.That(registry.Register(slot, report), Is.True);
+				Assert.That(registry.Register(slot, report), Is.False);
+				Assert.That(registry.Register(new AssetSlotRegistration(
+					ContentId.Parse("other:weapon/pistol/slide"),
+					ContentId.Parse("core:item/weapon/pistol"),
+					"core", "test", baseline), report), Is.False);
+				Assert.That(report.Issues.Any(issue => issue.Code == "asset-slot.duplicate"), Is.True);
+				Assert.That(report.Issues.Any(issue => issue.Code == "asset-slot.namespace"), Is.True);
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+			}
+		}
+
+		[Test]
+		public void Resolve_AppliesOneExplicitCompatiblePatch()
+		{
+			Texture2D baseline = new Texture2D(1, 1);
+			Texture2D replacement = new Texture2D(2, 2);
+			UnityEngine.Object applied = null;
+			try
+			{
+				AssetSlotRegistry registry = new AssetSlotRegistry();
+				AssetSlotRegistration slot = new AssetSlotRegistration(
+					ContentId.Parse("core:weapon/pistol/body"),
+					ContentId.Parse("core:item/weapon/pistol"),
+					"core", "test", baseline, typeof(Texture2D), asset => applied = asset);
+				registry.Register(slot, new ValidationReport());
+				ValidationReport report = new ValidationReport();
+				registry.Resolve(new[]
+				{
+					new AssetPatchRequest(ContentId.Parse("example.nerf:patch/pistol"), slot.Id, "example.nerf", "patch.json", replacement)
+				}, report);
+				Assert.That(report.IsValid, Is.True);
+				Assert.That(slot.ResolvedAsset, Is.SameAs(replacement));
+				Assert.That(applied, Is.SameAs(replacement));
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(replacement);
+			}
+		}
+
+		[Test]
+		public void Resolve_ConflictingPatchesRetainCoreBaseline()
+		{
+			Texture2D baseline = new Texture2D(1, 1);
+			Texture2D first = new Texture2D(2, 2);
+			Texture2D second = new Texture2D(3, 3);
+			try
+			{
+				AssetSlotRegistry registry = new AssetSlotRegistry();
+				AssetSlotRegistration slot = CreateSlot("core:weapon/pistol/body", baseline);
+				registry.Register(slot, new ValidationReport());
+				ValidationReport report = new ValidationReport();
+				registry.Resolve(new[]
+				{
+					new AssetPatchRequest(ContentId.Parse("example.first:patch/pistol"), slot.Id, "example.first", "first.json", first),
+					new AssetPatchRequest(ContentId.Parse("example.second:patch/pistol"), slot.Id, "example.second", "second.json", second)
+				}, report);
+				Assert.That(slot.ResolvedAsset, Is.SameAs(baseline));
+				Assert.That(report.Issues.Any(issue => issue.Code == "asset-patch.conflict"), Is.True);
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(first);
+				Object.DestroyImmediate(second);
+			}
+		}
+
+		[Test]
+		public void Resolve_RejectsUnknownSlotsAndWrongAssetTypes()
+		{
+			Texture2D baseline = new Texture2D(1, 1);
+			AudioClip wrongType = AudioClip.Create("test", 1, 1, 44100, false);
+			try
+			{
+				AssetSlotRegistry registry = new AssetSlotRegistry();
+				AssetSlotRegistration slot = CreateSlot("core:weapon/pistol/body", baseline);
+				registry.Register(slot, new ValidationReport());
+				ValidationReport report = new ValidationReport();
+				registry.Resolve(new[]
+				{
+					new AssetPatchRequest(ContentId.Parse("example.mod:patch/unknown"), ContentId.Parse("core:weapon/pistol/unknown"), "example.mod", "unknown.json", baseline),
+					new AssetPatchRequest(ContentId.Parse("example.mod:patch/wrong-type"), slot.Id, "example.mod", "wrong.json", wrongType)
+				}, report);
+				Assert.That(slot.ResolvedAsset, Is.SameAs(baseline));
+				Assert.That(report.Issues.Any(issue => issue.Code == "asset-patch.target"), Is.True);
+				Assert.That(report.Issues.Any(issue => issue.Code == "asset-patch.type"), Is.True);
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(wrongType);
+			}
+		}
+
+		private static AssetSlotRegistration CreateSlot(string i_id, Texture2D i_baseline)
+		{
+			return new AssetSlotRegistration(
+				ContentId.Parse(i_id),
+				ContentId.Parse("core:item/weapon/pistol"),
+				"core", "test", i_baseline, typeof(Texture2D));
+		}
+	}
+
 	public class CoreContentCatalogParserTests
 	{
 		[Test]

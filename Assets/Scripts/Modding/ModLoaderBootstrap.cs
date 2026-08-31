@@ -7,6 +7,7 @@ namespace CaptivityReloaded.Modding
 	public static class ModLoaderRuntime
 	{
 		public static ContentRegistry Registry { get; private set; } = new ContentRegistry();
+		public static AssetSlotRegistry AssetSlots { get; private set; } = new AssetSlotRegistry();
 		public static IReadOnlyList<ModPack> LoadedPacks { get; private set; } = new ModPack[0];
 		public static IReadOnlyList<CoreContentCatalogEntry> CoreContentCatalog { get; private set; } = new CoreContentCatalogEntry[0];
 		public static LegacyContentMap LegacyContentMap { get; private set; } = new LegacyContentMap(null);
@@ -16,6 +17,7 @@ namespace CaptivityReloaded.Modding
 		private static void Initialize()
 		{
 			Registry = new ContentRegistry();
+			AssetSlots = new AssetSlotRegistry();
 			ValidationReport report = new ValidationReport();
 			List<ModPack> packs = new List<ModPack>();
 			CoreContentCatalog = new CoreContentCatalogEntry[0];
