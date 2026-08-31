@@ -27,4 +27,9 @@ public abstract class Item : MonoBehaviour
 		m_name = i_name;
 		m_description = i_description ?? string.Empty;
 	}
+
+	public void SetModItemIcon(Sprite i_icon)
+	{
+		m_sprItem = i_icon;
+	}
 }

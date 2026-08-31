@@ -223,6 +223,29 @@ Each sprite is a separate safe pack-relative PNG. Valid V1 slots are `body`, `sl
 
 All statistics are optional and inherit the Core pistol value when omitted. Published overrides and bounds are: `damage` (0–10,000), `ammoMax` (1–100,000), `magazineSize` (1–100,000), `bulletsPerShot` (1–64), `penetration` (0–64), `rangeMultiplier` (0.05–1), `fireIntervalSeconds` (0.02–10), `recoil` (0–1), `movementRecoil` (0–1), and `knockbackX`/`knockbackY` (0–1,000). `ammoMax` and `magazineSize` must be supplied together, and the magazine cannot exceed total ammunition. Other weapon templates will be published after their rigs and gameplay assumptions are cataloged.
 
+### Usable definition draft
+
+Additive medicines and drugs inherit one packaged Core usable. The clone retains the Core effect implementation, usable type, audio, animation, equipment category, value, weight, stacking rules, market availability, and effect descriptions. JSON cannot select a class, status-effect type, method, or script:
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "usable",
+  "id": "example.medicine:item/usable/strong-aspirin",
+  "displayName": "Strong Aspirin",
+  "extends": "core:item/usable/aspirin",
+  "description": "An additive Aspirin variant.",
+  "visual": {
+    "type": "coreUsableSprites",
+    "icon": "assets/medicine/strong-aspirin.png",
+    "world": "assets/medicine/strong-aspirin-world.png",
+    "pixelsPerUnit": 32
+  }
+}
+```
+
+`extends` must be a known `core:item/usable/...` ID. `icon` is required. `world` is optional and defaults to the icon PNG, while still preserving the Core world sprite's pivot. Both are safe pack-relative PNG paths. Effect-parameter overrides are intentionally excluded until each reusable effect has a typed, bounded data contract.
+
 ## Assets
 
 External paths are forward-slash paths relative to the pack root:

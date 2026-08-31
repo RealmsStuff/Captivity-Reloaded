@@ -866,6 +866,57 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class UsableDefinitionParserTests
+	{
+		private const string ValidUsable = @"{
+  'schemaVersion': 1,
+  'type': 'usable',
+  'id': 'example.medicine:item/usable/strong-aspirin',
+  'displayName': 'Strong Aspirin',
+  'extends': 'core:item/usable/aspirin',
+  'description': 'An additive medicine that inherits Aspirin behavior.',
+  'visual': {
+    'type': 'coreUsableSprites',
+    'icon': 'assets/strong-aspirin.png',
+    'pixelsPerUnit': 32
+  }
+}";
+
+		[Test]
+		public void Parse_AcceptsCoreUsableWithSharedIconAndWorldSprite()
+		{
+			UsableDefinitionLoadResult result = UsableDefinitionParser.Parse(ValidUsable, "example.medicine", "usable.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.medicine:item/usable/strong-aspirin")));
+			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:item/usable/aspirin")));
+			Assert.That(result.Definition.Visual.World, Is.Null);
+		}
+
+		[Test]
+		public void Parse_AcceptsSeparateWorldSprite()
+		{
+			string json = ValidUsable.Replace("'pixelsPerUnit'", "'world': 'assets/strong-aspirin-world.png', 'pixelsPerUnit'");
+			UsableDefinitionLoadResult result = UsableDefinitionParser.Parse(json, "example.medicine", "usable.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Visual.World, Is.EqualTo("assets/strong-aspirin-world.png"));
+		}
+
+		[Test]
+		public void Parse_RejectsUnsafeAssetsNonUsableTemplatesAndArbitraryFields()
+		{
+			string invalid = ValidUsable
+				.Replace("core:item/usable/aspirin", "core:item/weapon/pistol")
+				.Replace("assets/strong-aspirin.png", "../strong-aspirin.png");
+			UsableDefinitionLoadResult result = UsableDefinitionParser.Parse(invalid, "example.medicine", "usable.json");
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "usable.extends"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "usable.visual.icon"), Is.True);
+
+			string arbitrary = ValidUsable.Replace("'description'", "'effectClass': 'CustomEffect', 'description'");
+			UsableDefinitionLoadResult fieldResult = UsableDefinitionParser.Parse(arbitrary, "example.medicine", "usable.json");
+			Assert.That(fieldResult.Report.Issues.Any(issue => issue.Code == "usable.json"), Is.True);
+		}
+	}
+
 	public class ModContentDiscoveryTests
 	{
 		[Test]

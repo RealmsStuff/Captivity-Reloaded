@@ -32,6 +32,7 @@ public static class CoreContentAdapter
 		ExternalEnemyFactory.Schedule(library.Actors, stageManager);
 		ExternalClothingFactory.Schedule(library.Clothes);
 		ExternalWeaponFactory.Schedule(library.Guns);
+		ExternalUsableFactory.Schedule(library.Usables);
 	}
 
 	private static void BindRuntimeIdentity(Object i_runtimeAsset, ContentId i_id, ContentCategory i_category)

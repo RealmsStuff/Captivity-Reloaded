@@ -15,6 +15,7 @@ namespace CaptivityReloaded.Modding
 		public static IReadOnlyList<EnemyDefinition> EnemyDefinitions { get; private set; } = new EnemyDefinition[0];
 		public static IReadOnlyList<ClothingDefinition> ClothingDefinitions { get; private set; } = new ClothingDefinition[0];
 		public static IReadOnlyList<WeaponDefinition> WeaponDefinitions { get; private set; } = new WeaponDefinition[0];
+		public static IReadOnlyList<UsableDefinition> UsableDefinitions { get; private set; } = new UsableDefinition[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -30,6 +31,7 @@ namespace CaptivityReloaded.Modding
 			EnemyDefinitions = new EnemyDefinition[0];
 			ClothingDefinitions = new ClothingDefinition[0];
 			WeaponDefinitions = new WeaponDefinition[0];
+			UsableDefinitions = new UsableDefinition[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -80,9 +82,11 @@ namespace CaptivityReloaded.Modding
 			EnemyDefinitions = content.Enemies;
 			ClothingDefinitions = content.Clothing;
 			WeaponDefinitions = content.Weapons;
+			UsableDefinitions = content.Usables;
 			RegisterExternalEnemies(content.Enemies, report);
 			RegisterExternalClothing(content.Clothing, report);
 			RegisterExternalWeapons(content.Weapons, report);
+			RegisterExternalUsables(content.Usables, report);
 			LastReport = report;
 
 			foreach (ValidationIssue issue in report.Issues)
@@ -143,6 +147,23 @@ namespace CaptivityReloaded.Modding
 					continue;
 				}
 				Registry.Register(new ContentRegistration(weapon.Id, ContentCategory.Item, weapon.PackId, weapon.Source), io_report);
+			}
+		}
+
+		private static void RegisterExternalUsables(IEnumerable<UsableDefinition> i_usables, ValidationReport io_report)
+		{
+			HashSet<ContentId> coreItems = new HashSet<ContentId>();
+			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
+				if (entry.Category == ContentCategory.Item) coreItems.Add(entry.Id);
+
+			foreach (UsableDefinition usable in i_usables)
+			{
+				if (!coreItems.Contains(usable.Extends))
+				{
+					io_report.Add(ValidationSeverity.Error, "usable.extends-missing", "Usable extends an unknown Core item: " + usable.Extends, usable.Source);
+					continue;
+				}
+				Registry.Register(new ContentRegistration(usable.Id, ContentCategory.Item, usable.PackId, usable.Source), io_report);
 			}
 		}
 	}
