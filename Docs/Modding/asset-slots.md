@@ -20,6 +20,12 @@ The first Core adapter publishes the three visual pieces changed by the legacy S
 | `core:weapon/pistol/slide` | `Sprite` | Moving upper slide |
 | `core:weapon/pistol/base` | `Sprite` | Lower grip/base |
 
+## Core player body slots
+
+Naked player artwork uses `core:player/body/<part>/<skin>`. Supported parts are `torso-lower`, `butt`, `hips`, `chest`, `neck`, `head`, `ear`, `arm-upper`, `arm-lower`, `hand`, `leg-upper`, `leg-lower`, and `foot`. Supported skins are `pale`, `white`, `tan`, and `black`, producing 52 stable slots.
+
+Left and right limbs intentionally share a slot because Core uses the same source sprite on both sides. The runtime binding updates the serialized skin variants as well as the currently visible renderer, so replacements survive skin changes and apply to gameplay and wardrobe instances loaded later.
+
 The adapter currently locates those renderers inside the packaged Pistol prefab. That lookup is private to Core and can change without breaking a mod that uses the public slot IDs.
 
 ## External patch example

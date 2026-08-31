@@ -263,6 +263,31 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void AddBinding_ImmediatelyReceivesCurrentResolvedAsset()
+		{
+			Texture2D baseline = new Texture2D(1, 1);
+			Texture2D replacement = new Texture2D(2, 2);
+			UnityEngine.Object lateBound = null;
+			try
+			{
+				AssetSlotRegistry registry = new AssetSlotRegistry();
+				AssetSlotRegistration slot = CreateSlot("core:weapon/pistol/body", baseline);
+				registry.Register(slot, new ValidationReport());
+				registry.Resolve(new[]
+				{
+					new AssetPatchRequest(ContentId.Parse("example.mod:patch/pistol"), slot.Id, "example.mod", "patch.json", replacement)
+				}, new ValidationReport());
+				slot.AddBinding(asset => lateBound = asset);
+				Assert.That(lateBound, Is.SameAs(replacement));
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(replacement);
+			}
+		}
+
+		[Test]
 		public void Resolve_ConflictingPatchesRetainCoreBaseline()
 		{
 			Texture2D baseline = new Texture2D(1, 1);
@@ -443,6 +468,43 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void ConvertedShadedGirlExample_DiscoversAndDecodesAllBodySlots()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			ModPack shaded = packs.Packs.Single(pack => pack.Manifest.Id == "dudleytheschemer.shaded-girl");
+			AssetPatchDiscoveryResult definitions = AssetPatchDiscovery.Discover(new[] { shaded });
+			Assert.That(definitions.Report.IsValid, Is.True);
+			Assert.That(definitions.Definitions.Single().Replacements, Has.Count.EqualTo(52));
+
+			Texture2D baselineTexture = new Texture2D(32, 32);
+			List<Sprite> baselines = new List<Sprite>();
+			List<AssetPatchRequest> requests = null;
+			try
+			{
+				AssetSlotRegistry slots = new AssetSlotRegistry();
+				foreach (AssetReplacementDefinition replacement in definitions.Definitions.Single().Replacements)
+				{
+					Sprite baseline = Sprite.Create(baselineTexture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
+					baselines.Add(baseline);
+					slots.Register(new AssetSlotRegistration(replacement.SlotId, ContentId.Parse("core:player"),
+						"core", "test", baseline, typeof(Sprite)), new ValidationReport());
+				}
+				ValidationReport report = new ValidationReport();
+				requests = RuntimeSpritePatchLoader.Load(definitions.Definitions, new[] { shaded }, slots, report);
+				Assert.That(report.IsValid, Is.True);
+				Assert.That(requests, Has.Count.EqualTo(52));
+				Assert.That(requests.Select(request => request.TargetSlotId).Distinct().Count(), Is.EqualTo(52));
+			}
+			finally
+			{
+				DestroyRuntimeRequests(requests);
+				foreach (Sprite baseline in baselines) Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(baselineTexture);
+			}
+		}
+
+		[Test]
 		public void Load_DecodesPackRelativePngAndPreservesSpriteScale()
 		{
 			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModdingAssetPatchTests"));
@@ -501,6 +563,19 @@ namespace CaptivityReloaded.Modding.Tests
 				ModApiVersion = 1,
 				ContentRoots = new List<string> { "content" }
 			}, version, i_root);
+		}
+
+		private static void DestroyRuntimeRequests(IEnumerable<AssetPatchRequest> i_requests)
+		{
+			if (i_requests == null) return;
+			foreach (AssetPatchRequest request in i_requests)
+			{
+				Sprite sprite = request.ReplacementAsset as Sprite;
+				if (sprite == null) continue;
+				Texture2D texture = sprite.texture;
+				Object.DestroyImmediate(sprite);
+				Object.DestroyImmediate(texture);
+			}
 		}
 	}
 

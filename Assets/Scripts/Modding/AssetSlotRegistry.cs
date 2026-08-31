@@ -6,7 +6,7 @@ namespace CaptivityReloaded.Modding
 {
 	public sealed class AssetSlotRegistration
 	{
-		private readonly Action<UnityEngine.Object> m_apply;
+		private readonly List<Action<UnityEngine.Object>> m_bindings = new List<Action<UnityEngine.Object>>();
 
 		public ContentId Id { get; }
 		public ContentId OwnerId { get; }
@@ -26,13 +26,20 @@ namespace CaptivityReloaded.Modding
 			BaselineAsset = i_baselineAsset;
 			ResolvedAsset = i_baselineAsset;
 			AssetType = i_assetType ?? i_baselineAsset?.GetType() ?? typeof(UnityEngine.Object);
-			m_apply = i_apply;
+			if (i_apply != null) m_bindings.Add(i_apply);
 		}
 
 		internal void Apply(UnityEngine.Object i_asset)
 		{
 			ResolvedAsset = i_asset;
-			m_apply?.Invoke(i_asset);
+			foreach (Action<UnityEngine.Object> binding in m_bindings) binding(i_asset);
+		}
+
+		public void AddBinding(Action<UnityEngine.Object> i_apply)
+		{
+			if (i_apply == null) return;
+			m_bindings.Add(i_apply);
+			i_apply(ResolvedAsset);
 		}
 	}
 

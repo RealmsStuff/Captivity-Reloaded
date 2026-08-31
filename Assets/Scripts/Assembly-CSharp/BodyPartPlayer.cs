@@ -55,6 +55,45 @@ public class BodyPartPlayer : BodyPart
 		}
 	}
 
+	public Sprite GetSkinSprite(SkinColor i_skinColor)
+	{
+		switch (i_skinColor)
+		{
+		case SkinColor.Pale:
+			return m_sprPale;
+		case SkinColor.White:
+			return m_sprWhite;
+		case SkinColor.Tan:
+			return m_sprTan;
+		case SkinColor.Black:
+			return m_sprBlack;
+		default:
+			return null;
+		}
+	}
+
+	public void SetSkinSprite(SkinColor i_skinColor, Sprite i_sprite)
+	{
+		Sprite previous = GetSkinSprite(i_skinColor);
+		switch (i_skinColor)
+		{
+		case SkinColor.Pale:
+			m_sprPale = i_sprite;
+			break;
+		case SkinColor.White:
+			m_sprWhite = i_sprite;
+			break;
+		case SkinColor.Tan:
+			m_sprTan = i_sprite;
+			break;
+		case SkinColor.Black:
+			m_sprBlack = i_sprite;
+			break;
+		}
+		if (GetComponent<SpriteRenderer>().sprite == previous)
+			GetComponent<SpriteRenderer>().sprite = i_sprite;
+	}
+
 	public override void Explode()
 	{
 		base.Explode();
