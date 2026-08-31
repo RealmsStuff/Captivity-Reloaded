@@ -104,9 +104,9 @@ namespace CaptivityReloaded.Modding
 					continue;
 				}
 				if (!System.Enum.TryParse(record.Category, ignoreCase: false, out ContentCategory category) ||
-					(category != ContentCategory.Enemy && category != ContentCategory.Stage && category != ContentCategory.Item))
+					(category != ContentCategory.Enemy && category != ContentCategory.Stage && category != ContentCategory.Item && category != ContentCategory.Clothing))
 				{
-					result.Report.Add(ValidationSeverity.Error, "catalog.category", "Core adapter category must be Enemy, Stage, or Item: " + record.Category, i_source);
+					result.Report.Add(ValidationSeverity.Error, "catalog.category", "Core adapter category must be Enemy, Stage, Clothing, or Item: " + record.Category, i_source);
 					continue;
 				}
 				bool hasId = record.LegacyId.HasValue;

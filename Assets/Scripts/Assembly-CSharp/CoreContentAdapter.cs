@@ -50,6 +50,10 @@ public static class CoreContentAdapter
 				if (i_entry.LegacyId.HasValue && stage.GetId() == i_entry.LegacyId.Value) return stage;
 			}
 		}
+		if (i_entry.Category == ContentCategory.Clothing)
+		{
+			return i_library.Clothes == null || !i_entry.LegacyId.HasValue ? null : i_library.Clothes.GetClothing(i_entry.LegacyId.Value);
+		}
 		if (i_entry.Category == ContentCategory.Item)
 		{
 			Gun gun = i_library.Guns == null ? null : i_library.Guns.GetGun(i_entry.LegacyName);
