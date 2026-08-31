@@ -18,8 +18,11 @@ public class InspectHud : MonoBehaviour
 	[SerializeField]
 	private GameObject m_imgOverlay;
 
+	private int m_defaultNoteFontSize;
+
 	private void Awake()
 	{
+		m_defaultNoteFontSize = m_txt.fontSize;
 		m_objNoteBox.SetActive(value: false);
 		m_objInspectBox.SetActive(value: false);
 		m_imgOverlay.SetActive(value: false);
@@ -53,6 +56,7 @@ public class InspectHud : MonoBehaviour
 		CommonReferences.Instance.GetPlayer().SetIsForceIgnoreInput(i_isForceIgnoreInput: true);
 		m_objNoteBox.SetActive(value: true);
 		m_imgOverlay.SetActive(value: true);
+		m_txt.fontSize = ((i_note.GetFontSize() > 0) ? i_note.GetFontSize() : m_defaultNoteFontSize);
 		m_txt.text = i_note.GetText();
 		ListenToCloseEvents();
 		Time.timeScale = 0f;
@@ -71,6 +75,7 @@ public class InspectHud : MonoBehaviour
 	{
 		CommonReferences.Instance.GetPlayer().SetIsForceIgnoreInput(i_isForceIgnoreInput: false);
 		m_objNoteBox.SetActive(value: false);
+		m_txt.fontSize = m_defaultNoteFontSize;
 		m_txt.text = "";
 		m_objInspectBox.SetActive(value: false);
 		m_imgOverlay.SetActive(value: false);

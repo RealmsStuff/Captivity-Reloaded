@@ -6,6 +6,9 @@ public class Note : Interactable
 	[SerializeField]
 	private string m_text;
 
+	[SerializeField]
+	private int m_fontSize;
+
 	protected override void HandleActivation(Actor i_initiator, InteractableActivationType i_activationType)
 	{
 		CommonReferences.Instance.GetManagerHud().ShowNote(this);
@@ -14,6 +17,11 @@ public class Note : Interactable
 	public string GetText()
 	{
 		return m_text;
+	}
+
+	public int GetFontSize()
+	{
+		return m_fontSize;
 	}
 
 	public void SetText(string i_text)
