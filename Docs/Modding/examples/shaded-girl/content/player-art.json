@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "example.shaded-girl:patch/player-art",
+  "displayName": "Shaded Player Art",
+  "target": "core:player",
+  "replacements": {
+    "body/head/pale": "assets/sprites/head-pale.png",
+    "body/torso/pale": "assets/sprites/torso-pale.png",
+    "body/arm-left/pale": "assets/sprites/arm-left-pale.png",
+    "body/arm-right/pale": "assets/sprites/arm-right-pale.png"
+  }
+}
