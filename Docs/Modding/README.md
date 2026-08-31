@@ -1,6 +1,6 @@
 # Captivity Reloaded modding specification
 
-This directory defines the draft contract for the built-in, data-driven content system. It is intentionally documentation-first: no runtime loader is implemented yet.
+This directory defines the draft contract for the built-in, data-driven content system. The runtime foundation currently validates IDs and manifests, discovers desktop packs, resolves dependencies, loads the packaged Core manifest and exposes an empty registry. Content-definition parsing, asset replacement and gameplay factories are not implemented yet.
 
 The long-term model separates the game into two layers:
 
@@ -20,5 +20,7 @@ The shipped game is represented by the required, read-only `core` content pack. 
 ## Status
 
 Specification status: **Draft 0.1**
+
+Runtime status: **Foundation implemented; gameplay content unchanged**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

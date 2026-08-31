@@ -1,6 +1,6 @@
 # Draft Mod API v1 contract
 
-Status: Draft 0.1. This document defines the intended contract; the runtime implementation does not exist yet.
+Status: Draft 0.1. The manifest, ID, dependency and discovery foundation is implemented. Content-type schemas, asset resolution and gameplay factories remain draft work.
 
 ## Pack location
 

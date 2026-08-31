@@ -1,6 +1,6 @@
 # Acid Gremlin draft example
 
-This example is a contract illustration, not an installable mod yet. Runtime mod loading has not been implemented and the referenced PNG is intentionally not included.
+This example is a contract illustration, not an installable enemy yet. Manifest discovery exists, but enemy-definition parsing and runtime factories have not been implemented. The referenced PNG is intentionally not included.
 
 The intended pack contains:
 
