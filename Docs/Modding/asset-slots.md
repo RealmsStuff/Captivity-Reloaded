@@ -22,4 +22,22 @@ The first Core adapter publishes the three visual pieces changed by the legacy S
 
 The adapter currently locates those renderers inside the packaged Pistol prefab. That lookup is private to Core and can change without breaking a mod that uses the public slot IDs.
 
-External PNG decoding and JSON patch discovery are the next layer. The registry and runtime bindings deliberately land first so file-loaded assets pass through validation and deterministic conflict handling instead of directly mutating renderers.
+## External patch example
+
+Place a patch definition under one of the pack's declared `contentRoots` and keep its PNGs inside the same pack:
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "example.nerf:patch/starter-pistol",
+  "target": "core:weapon/pistol",
+  "replacements": {
+    "body": "assets/pistol/body.png",
+    "slide": "assets/pistol/slide.png",
+    "base": "assets/pistol/base.png"
+  }
+}
+```
+
+On Windows, the loader discovers these definitions recursively, accepts PNG files up to 32 MiB, and creates runtime sprites using the Core sprite's pixels-per-unit, normalized pivot, border and filter mode. Paths are resolved within the defining pack; absolute paths and traversal outside it are rejected.

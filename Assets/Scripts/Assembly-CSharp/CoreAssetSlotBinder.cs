@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public static class CoreAssetSlotBinder
 {
 	private static readonly ContentId PistolOwnerId = ContentId.Parse("core:item/weapon/pistol");
+	private static bool m_externalPatchesApplied;
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 	private static void Initialize()
@@ -31,6 +32,30 @@ public static class CoreAssetSlotBinder
 		RegisterSpriteSlot("core:weapon/pistol/body", FindDirectChild(pistol.transform, "bullet"), "Pistol main body renderer");
 		RegisterSpriteSlot("core:weapon/pistol/slide", FindDirectChild(pistol.transform, "slide"), "Pistol slide renderer");
 		RegisterSpriteSlot("core:weapon/pistol/base", FindDirectChild(pistol.transform, "base"), "Pistol base renderer");
+
+		if (!m_externalPatchesApplied && HasPistolSlots())
+		{
+			int issueStart = ModLoaderRuntime.LastReport.Issues.Count;
+			List<AssetPatchRequest> patches = RuntimeSpritePatchLoader.Load(
+				ModLoaderRuntime.AssetPatches, ModLoaderRuntime.LoadedPacks, ModLoaderRuntime.AssetSlots, ModLoaderRuntime.LastReport);
+			ModLoaderRuntime.AssetSlots.Resolve(patches, ModLoaderRuntime.LastReport);
+			for (int index = issueStart; index < ModLoaderRuntime.LastReport.Issues.Count; index++)
+			{
+				ValidationIssue issue = ModLoaderRuntime.LastReport.Issues[index];
+				if (issue.Severity == ValidationSeverity.Error) Debug.LogError("[ModLoader] " + issue);
+				else if (issue.Severity == ValidationSeverity.Warning) Debug.LogWarning("[ModLoader] " + issue);
+				else Debug.Log("[ModLoader] " + issue);
+			}
+			Debug.Log("[ModLoader] Public asset slots=" + ModLoaderRuntime.AssetSlots.Count + ", runtime replacements=" + patches.Count + ".");
+			m_externalPatchesApplied = true;
+		}
+	}
+
+	private static bool HasPistolSlots()
+	{
+		return ModLoaderRuntime.AssetSlots.TryGet(ContentId.Parse("core:weapon/pistol/body"), out _)
+			&& ModLoaderRuntime.AssetSlots.TryGet(ContentId.Parse("core:weapon/pistol/slide"), out _)
+			&& ModLoaderRuntime.AssetSlots.TryGet(ContentId.Parse("core:weapon/pistol/base"), out _);
 	}
 
 	private static Transform FindDirectChild(Transform i_parent, string i_name)

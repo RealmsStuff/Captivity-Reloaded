@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -322,6 +323,131 @@ namespace CaptivityReloaded.Modding.Tests
 				ContentId.Parse(i_id),
 				ContentId.Parse("core:item/weapon/pistol"),
 				"core", "test", i_baseline, typeof(Texture2D));
+		}
+	}
+
+	public class AssetPatchParserTests
+	{
+		private const string ValidPatch = @"{
+  'schemaVersion': 1,
+  'type': 'assetPatch',
+  'id': 'example.nerf:patch/starter-pistol',
+  'target': 'core:weapon/pistol',
+  'replacements': {
+    'body': 'assets/pistol/body.png',
+    'slide': 'assets/pistol/slide.png',
+    'base': 'assets/pistol/base.png'
+  }
+}";
+
+		[Test]
+		public void Parse_ExpandsRelativeKeysIntoStablePublicSlots()
+		{
+			AssetPatchLoadResult result = AssetPatchParser.Parse(ValidPatch, "example.nerf", "patch.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.nerf:patch/starter-pistol")));
+			Assert.That(result.Definition.Replacements.Select(item => item.SlotId), Is.EquivalentTo(new[]
+			{
+				ContentId.Parse("core:weapon/pistol/body"),
+				ContentId.Parse("core:weapon/pistol/slide"),
+				ContentId.Parse("core:weapon/pistol/base")
+			}));
+		}
+
+		[TestCase("../outside.png")]
+		[TestCase("assets\\outside.png")]
+		[TestCase("C:/outside.png")]
+		[TestCase("assets/not-a-png.txt")]
+		public void Parse_RejectsUnsafeOrUnsupportedAssetPaths(string i_path)
+		{
+			string json = ValidPatch.Replace("assets/pistol/body.png", i_path.Replace("\\", "\\\\"));
+			AssetPatchLoadResult result = AssetPatchParser.Parse(json, "example.nerf", "patch.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "asset-patch.asset-path"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsForeignPatchNamespaceAndUnsafeSlotKey()
+		{
+			string json = ValidPatch
+				.Replace("example.nerf:patch/starter-pistol", "other.pack:patch/starter-pistol")
+				.Replace("'body':", "'../body':");
+			AssetPatchLoadResult result = AssetPatchParser.Parse(json, "example.nerf", "patch.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "asset-patch.id"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "asset-patch.slot"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsUnknownFields()
+		{
+			AssetPatchLoadResult result = AssetPatchParser.Parse(ValidPatch.Replace("'target'", "'unexpected': true, 'target'"), "example.nerf", "patch.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "asset-patch.json"), Is.True);
+		}
+	}
+
+	public class RuntimeSpritePatchLoaderTests
+	{
+		[Test]
+		public void Load_DecodesPackRelativePngAndPreservesSpriteScale()
+		{
+			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModdingAssetPatchTests"));
+			string assetDirectory = Path.Combine(root, "assets");
+			Directory.CreateDirectory(assetDirectory);
+			Texture2D sourceTexture = new Texture2D(4, 6);
+			Texture2D baselineTexture = new Texture2D(8, 8);
+			Sprite baseline = Sprite.Create(baselineTexture, new Rect(0, 0, 8, 8), new Vector2(0.25f, 0.75f), 32f);
+			try
+			{
+				File.WriteAllBytes(Path.Combine(assetDirectory, "body.png"), sourceTexture.EncodeToPNG());
+				ModPack pack = CreatePack(root);
+				AssetPatchLoadResult parsed = AssetPatchParser.Parse(@"{
+  'schemaVersion': 1,
+  'type': 'assetPatch',
+  'id': 'example.nerf:patch/pistol',
+  'target': 'core:weapon/pistol',
+  'replacements': { 'body': 'assets/body.png' }
+}", "example.nerf", "patch.json");
+				AssetSlotRegistry slots = new AssetSlotRegistry();
+				slots.Register(new AssetSlotRegistration(
+					ContentId.Parse("core:weapon/pistol/body"), ContentId.Parse("core:item/weapon/pistol"),
+					"core", "test", baseline, typeof(Sprite)), new ValidationReport());
+				ValidationReport report = new ValidationReport();
+				List<AssetPatchRequest> requests = RuntimeSpritePatchLoader.Load(new[] { parsed.Definition }, new[] { pack }, slots, report);
+				Assert.That(report.IsValid, Is.True);
+				Assert.That(requests, Has.Count.EqualTo(1));
+				Sprite loaded = (Sprite)requests[0].ReplacementAsset;
+				Assert.That(loaded.texture.width, Is.EqualTo(4));
+				Assert.That(loaded.texture.height, Is.EqualTo(6));
+				Assert.That(loaded.pixelsPerUnit, Is.EqualTo(32f));
+				Assert.That(loaded.pivot.x / loaded.rect.width, Is.EqualTo(0.25f).Within(0.001f));
+				Assert.That(loaded.pivot.y / loaded.rect.height, Is.EqualTo(0.75f).Within(0.001f));
+				Texture2D loadedTexture = loaded.texture;
+				Object.DestroyImmediate(loaded);
+				Object.DestroyImmediate(loadedTexture);
+			}
+			finally
+			{
+				Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(baselineTexture);
+				Object.DestroyImmediate(sourceTexture);
+				if (Directory.Exists(root)) Directory.Delete(root, true);
+			}
+		}
+
+		private static ModPack CreatePack(string i_root)
+		{
+			SemanticVersion.TryParse("1.0.0", out SemanticVersion version);
+			return new ModPack(new ModManifest
+			{
+				SchemaVersion = 1,
+				Id = "example.nerf",
+				DisplayName = "Example Nerf",
+				Version = "1.0.0",
+				ModApiVersion = 1,
+				ContentRoots = new List<string> { "content" }
+			}, version, i_root);
 		}
 	}
 

@@ -1,6 +1,6 @@
 # Draft Mod API v1 contract
 
-Status: Draft 0.2. Manifest, ID, dependency, discovery, Core catalogs, save compatibility and the typed asset-slot resolver are implemented. External asset decoding, content-type schemas and gameplay factories remain draft work.
+Status: Draft 0.3. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset-patch discovery and runtime PNG sprite loading are implemented. Content-type schemas and gameplay factories remain draft work.
 
 ## Pack location
 
