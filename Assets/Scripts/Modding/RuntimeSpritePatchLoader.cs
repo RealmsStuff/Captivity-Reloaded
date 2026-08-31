@@ -55,7 +55,10 @@ namespace CaptivityReloaded.Modding
 						texture.name = definition.Id + "/" + replacement.SlotId.Path;
 						texture.filterMode = baseline.texture.filterMode;
 						Vector2 pivot = new Vector2(baseline.pivot.x / baseline.rect.width, baseline.pivot.y / baseline.rect.height);
-						Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, baseline.pixelsPerUnit, 0, SpriteMeshType.FullRect, baseline.border);
+						Rect rect = baseline.rect;
+						if (rect.xMin < 0 || rect.yMin < 0 || rect.xMax > texture.width || rect.yMax > texture.height)
+							rect = new Rect(0, 0, texture.width, texture.height);
+						Sprite sprite = Sprite.Create(texture, rect, pivot, baseline.pixelsPerUnit, 0, SpriteMeshType.FullRect, baseline.border);
 						sprite.name = texture.name;
 						requests.Add(new AssetPatchRequest(definition.Id, replacement.SlotId, definition.PackId, definition.Source, sprite));
 					}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "somescrub.simple-nerf-gun",
+  "displayName": "Simple Nerf Gun",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["@SomeScrub"],
+  "description": "Data-only conversion of the legacy starter pistol texture replacement.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

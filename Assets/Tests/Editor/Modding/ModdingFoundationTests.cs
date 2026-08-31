@@ -390,6 +390,59 @@ namespace CaptivityReloaded.Modding.Tests
 	public class RuntimeSpritePatchLoaderTests
 	{
 		[Test]
+		public void ConvertedLegacyNerfExample_DiscoversAndDecodesAllThreeSlots()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			Assert.That(packs.Report.IsValid, Is.True);
+			ModPack nerf = packs.Packs.Single(pack => pack.Manifest.Id == "somescrub.simple-nerf-gun");
+			AssetPatchDiscoveryResult definitions = AssetPatchDiscovery.Discover(new[] { nerf });
+			Assert.That(definitions.Report.IsValid, Is.True);
+			Assert.That(definitions.Definitions, Has.Count.EqualTo(1));
+
+			Texture2D baselineTexture = new Texture2D(32, 32);
+			List<Sprite> baselines = new List<Sprite>();
+			List<AssetPatchRequest> requests = null;
+			try
+			{
+				AssetSlotRegistry slots = new AssetSlotRegistry();
+				foreach (string part in new[] { "body", "slide", "base" })
+				{
+					Sprite baseline = Sprite.Create(baselineTexture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
+					baselines.Add(baseline);
+					slots.Register(new AssetSlotRegistration(
+						ContentId.Parse("core:weapon/pistol/" + part), ContentId.Parse("core:item/weapon/pistol"),
+						"core", "test", baseline, typeof(Sprite)), new ValidationReport());
+				}
+				ValidationReport report = new ValidationReport();
+				requests = RuntimeSpritePatchLoader.Load(definitions.Definitions, new[] { nerf }, slots, report);
+				Assert.That(report.IsValid, Is.True);
+				Assert.That(requests, Has.Count.EqualTo(3));
+				Assert.That(requests.Select(request => request.TargetSlotId), Is.EquivalentTo(new[]
+				{
+					ContentId.Parse("core:weapon/pistol/body"),
+					ContentId.Parse("core:weapon/pistol/slide"),
+					ContentId.Parse("core:weapon/pistol/base")
+				}));
+			}
+			finally
+			{
+				if (requests != null)
+				{
+					foreach (AssetPatchRequest request in requests)
+					{
+						Sprite sprite = (Sprite)request.ReplacementAsset;
+						Texture2D texture = sprite.texture;
+						Object.DestroyImmediate(sprite);
+						Object.DestroyImmediate(texture);
+					}
+				}
+				foreach (Sprite baseline in baselines) Object.DestroyImmediate(baseline);
+				Object.DestroyImmediate(baselineTexture);
+			}
+		}
+
+		[Test]
 		public void Load_DecodesPackRelativePngAndPreservesSpriteScale()
 		{
 			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModdingAssetPatchTests"));

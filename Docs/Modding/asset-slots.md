@@ -40,4 +40,4 @@ Place a patch definition under one of the pack's declared `contentRoots` and kee
 }
 ```
 
-On Windows, the loader discovers these definitions recursively, accepts PNG files up to 32 MiB, and creates runtime sprites using the Core sprite's pixels-per-unit, normalized pivot, border and filter mode. Paths are resolved within the defining pack; absolute paths and traversal outside it are rejected.
+On Windows, the loader discovers these definitions recursively, accepts PNG files up to 32 MiB, and creates runtime sprites using the Core sprite's pixels-per-unit, normalized pivot, border, filter mode and source rectangle when it fits the replacement texture. This lets same-sized legacy texture swaps keep their original alignment. Paths are resolved within the defining pack; absolute paths and traversal outside it are rejected.
