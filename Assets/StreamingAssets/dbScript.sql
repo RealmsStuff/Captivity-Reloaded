@@ -61,6 +61,12 @@ CREATE TABLE IF NOT EXISTS "tbl_stage" (
 	"idStage"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"highscore"	INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE IF NOT EXISTS "tbl_contentState" (
+	"contentId"	TEXT NOT NULL,
+	"category"	TEXT NOT NULL,
+	"stateJson"	TEXT NOT NULL DEFAULT '{}',
+	PRIMARY KEY("contentId", "category")
+);
 INSERT INTO "tbl_player" VALUES (1,NULL,1,0,1,3848);
 INSERT INTO "tbl_input" VALUES ('MoveLeft','A');
 INSERT INTO "tbl_input" VALUES ('MoveRight','D');

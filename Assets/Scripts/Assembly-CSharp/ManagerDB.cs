@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Threading.Tasks;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -43,6 +44,7 @@ public static class ManagerDB
 		public List<ChallengeData> challenges = new List<ChallengeData>();
 		public List<StageData> stages = new List<StageData>();
 		public List<InputData> inputs = new List<InputData>();
+		public List<ContentStateData> contentStates = new List<ContentStateData>();
 	}
 
 	[System.Serializable]
@@ -105,6 +107,14 @@ public static class ManagerDB
 		public string keyCode;
 	}
 
+	[System.Serializable]
+	public class ContentStateData
+	{
+		public string contentId;
+		public string category;
+		public string stateJson;
+	}
+
 	private static WebDatabaseState state = new WebDatabaseState();
 
 	private static void LoadWebState()
@@ -114,6 +124,7 @@ public static class ManagerDB
 		{
 			string json = PlayerPrefs.GetString("WebSaveData");
 			state = JsonUtility.FromJson<WebDatabaseState>(json);
+			if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
 		}
 		else
 		{
@@ -127,6 +138,7 @@ public static class ManagerDB
 			{
 				string json = File.ReadAllText(path);
 				state = JsonUtility.FromJson<WebDatabaseState>(json);
+				if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
 			}
 			catch (Exception e)
 			{
@@ -357,11 +369,17 @@ public static class ManagerDB
         m_pathToSaveFile = System.IO.Path.Combine(UnityEngine.Application.persistentDataPath, "xGameDB.db");
         m_pathToSaveFileUri = "URI=file:" + m_pathToSaveFile;
         CheckForSaveFile();
+		EnsureContentStateSchema();
         await Task.Yield();
 #endif
     }
 
 #if !UNITY_WEBGL && !UNITY_ANDROID
+	private static void EnsureContentStateSchema()
+	{
+		ExecuteNonQuery("CREATE TABLE IF NOT EXISTS tbl_contentState (contentId TEXT NOT NULL, category TEXT NOT NULL, stateJson TEXT NOT NULL DEFAULT '{}', PRIMARY KEY (contentId, category));");
+	}
+
     private static void OpenCon()
     {
         m_con = new SqliteConnection(m_pathToSaveFileUri);
@@ -1467,7 +1485,7 @@ public static class ManagerDB
             array[i] = UnityEngine.Random.Range(0, 9);
         }
         string text = array[0].ToString() + array[1] + array[2] + array[3];
-        ExecuteNonQuery("DELETE FROM tbl_interaction;\r\n        DELETE FROM tbl_interactionRelationship;\r\n        DELETE FROM tbl_npc;\r\n        DELETE FROM tbl_relationship;\r\n        DELETE FROM tbl_birth;\r\n        DELETE FROM tbl_clothing;\r\n        DELETE FROM tbl_challenge;\r\n        DELETE FROM tbl_stage;\r\n        DELETE FROM tbl_player;\r\n        INSERT INTO tbl_player (idPlayer, isFirstTimeStart, codeKeypad) VALUES (1, 1, " + text + ");");
+		ExecuteNonQuery("DELETE FROM tbl_interaction;\r\n        DELETE FROM tbl_interactionRelationship;\r\n        DELETE FROM tbl_npc;\r\n        DELETE FROM tbl_relationship;\r\n        DELETE FROM tbl_birth;\r\n        DELETE FROM tbl_clothing;\r\n        DELETE FROM tbl_challenge;\r\n        DELETE FROM tbl_stage;\r\n        DELETE FROM tbl_contentState;\r\n        DELETE FROM tbl_player;\r\n        INSERT INTO tbl_player (idPlayer, isFirstTimeStart, codeKeypad) VALUES (1, 1, " + text + ");");
 #endif
         ResetVolumes();
         SetDifficulty(Difficulty.Normal);
@@ -1605,6 +1623,61 @@ public static class ManagerDB
         ExecuteNonQuery("UPDATE tbl_input SET keyCode = '" + i_keyCodeToSet.ToString() + "' WHERE nameKey = '" + i_nameButton + "'");
 #endif
     }
+
+	public static void SaveContentState(SavedContentState i_state)
+	{
+		if (i_state == null) throw new ArgumentNullException(nameof(i_state));
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
+		ContentStateData stored = null;
+		foreach (ContentStateData candidate in state.contentStates)
+		{
+			if (candidate.contentId == i_state.ContentId.ToString() && candidate.category == i_state.Category.ToString())
+			{
+				stored = candidate;
+				break;
+			}
+		}
+		if (stored == null)
+		{
+			stored = new ContentStateData();
+			state.contentStates.Add(stored);
+		}
+		stored.contentId = i_state.ContentId.ToString();
+		stored.category = i_state.Category.ToString();
+		stored.stateJson = i_state.StateJson;
+		SaveWebState();
+#else
+		if (m_con.State != ConnectionState.Open) OpenCon();
+		using (SqliteCommand command = m_con.CreateCommand())
+		{
+			command.CommandText = "INSERT OR REPLACE INTO tbl_contentState (contentId, category, stateJson) VALUES (@contentId, @category, @stateJson);";
+			command.Parameters.AddWithValue("@contentId", i_state.ContentId.ToString());
+			command.Parameters.AddWithValue("@category", i_state.Category.ToString());
+			command.Parameters.AddWithValue("@stateJson", i_state.StateJson);
+			command.ExecuteNonQuery();
+		}
+#endif
+	}
+
+	public static List<SavedContentState> GetSavedContentStates()
+	{
+		List<SavedContentState> result = new List<SavedContentState>();
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (state.contentStates == null) return result;
+		foreach (ContentStateData stored in state.contentStates)
+		{
+			if (SavedContentState.TryCreate(stored.contentId, stored.category, stored.stateJson, out SavedContentState parsed)) result.Add(parsed);
+		}
+#else
+		DbDataReader reader = ExecuteReader("SELECT contentId, category, stateJson FROM tbl_contentState ORDER BY contentId, category");
+		while (reader.Read())
+		{
+			if (SavedContentState.TryCreate(reader["contentId"].ToString(), reader["category"].ToString(), reader["stateJson"].ToString(), out SavedContentState parsed)) result.Add(parsed);
+		}
+#endif
+		return result;
+	}
 
 #if !UNITY_WEBGL && !UNITY_ANDROID
     private static void CreateSaveFile()

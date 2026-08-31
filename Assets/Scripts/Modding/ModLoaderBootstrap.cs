@@ -9,6 +9,7 @@ namespace CaptivityReloaded.Modding
 		public static ContentRegistry Registry { get; private set; } = new ContentRegistry();
 		public static IReadOnlyList<ModPack> LoadedPacks { get; private set; } = new ModPack[0];
 		public static IReadOnlyList<CoreContentCatalogEntry> CoreContentCatalog { get; private set; } = new CoreContentCatalogEntry[0];
+		public static LegacyContentMap LegacyContentMap { get; private set; } = new LegacyContentMap(null);
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -18,6 +19,7 @@ namespace CaptivityReloaded.Modding
 			ValidationReport report = new ValidationReport();
 			List<ModPack> packs = new List<ModPack>();
 			CoreContentCatalog = new CoreContentCatalogEntry[0];
+			LegacyContentMap = new LegacyContentMap(null);
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -40,7 +42,11 @@ namespace CaptivityReloaded.Modding
 			{
 				CoreContentCatalogLoadResult catalog = CoreContentCatalogParser.Parse(coreCatalogAsset.text, "core/catalog.json");
 				report.Merge(catalog.Report);
-				if (catalog.Report.IsValid) CoreContentCatalog = catalog.Entries;
+				if (catalog.Report.IsValid)
+				{
+					CoreContentCatalog = catalog.Entries;
+					LegacyContentMap = new LegacyContentMap(catalog.Entries);
+				}
 			}
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN

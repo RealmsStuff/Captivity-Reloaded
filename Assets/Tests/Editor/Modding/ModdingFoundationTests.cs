@@ -260,4 +260,82 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Report.Issues.Count(issue => issue.Code == "catalog.legacy-selector"), Is.EqualTo(2));
 		}
 	}
+
+	public class ContentSaveKeyTests
+	{
+		private static CoreContentCatalogLoadResult LoadCatalog()
+		{
+			TextAsset asset = Resources.Load<TextAsset>("Modding/Core/catalog");
+			return CoreContentCatalogParser.Parse(asset.text, "core/catalog.json");
+		}
+
+		[Test]
+		public void LegacyMap_RoundTripsNumericCoreContentByCategory()
+		{
+			LegacyContentMap map = new LegacyContentMap(LoadCatalog().Entries);
+			Assert.That(map.Count, Is.EqualTo(205));
+			Assert.That(map.TryGetContentId(ContentCategory.Enemy, 12, out ContentId enemy), Is.True);
+			Assert.That(enemy, Is.EqualTo(ContentId.Parse("core:enemy/gremlin")));
+			Assert.That(map.TryGetContentId(ContentCategory.Stage, 1, out ContentId stage), Is.True);
+			Assert.That(stage, Is.EqualTo(ContentId.Parse("core:stage/shack")));
+			Assert.That(map.TryGetLegacyKey(enemy, out LegacyContentKey legacy), Is.True);
+			Assert.That(legacy.Category, Is.EqualTo(ContentCategory.Enemy));
+			Assert.That(legacy.Id, Is.EqualTo(12));
+		}
+
+		[Test]
+		public void LegacyMap_DoesNotConfuseEqualIdsAcrossCategoriesOrNamedItems()
+		{
+			LegacyContentMap map = new LegacyContentMap(LoadCatalog().Entries);
+			Assert.That(map.TryGetContentId(ContentCategory.Enemy, 1, out ContentId enemy), Is.True);
+			Assert.That(map.TryGetContentId(ContentCategory.Stage, 1, out ContentId stage), Is.True);
+			Assert.That(enemy, Is.Not.EqualTo(stage));
+			Assert.That(map.TryGetLegacyKey(ContentId.Parse("core:item/weapon/pistol"), out _), Is.False);
+		}
+
+		[Test]
+		public void LegacyResolver_TranslatesExistingRowsWithoutRewritingThem()
+		{
+			LegacyContentMap map = new LegacyContentMap(LoadCatalog().Entries);
+			Assert.That(ContentSaveResolver.TryResolveLegacy(ContentCategory.Clothing, 78, "{\"unlocked\":true}", map, new ContentRegistry(), out SavedContentResolution resolution), Is.True);
+			Assert.That(resolution.State.ContentId, Is.EqualTo(ContentId.Parse("core:clothing/hazmat-suit")));
+			Assert.That(resolution.State.StateJson, Is.EqualTo("{\"unlocked\":true}"));
+			Assert.That(resolution.Status, Is.EqualTo(SavedContentStatus.Missing));
+			Assert.That(ContentSaveResolver.TryResolveLegacy(ContentCategory.Clothing, 9999, "{}", map, new ContentRegistry(), out _), Is.False);
+		}
+
+		[Test]
+		public void SavedState_PreservesValidMissingModContent()
+		{
+			SavedContentState state = new SavedContentState(ContentId.Parse("example.pack:enemy/retired"), ContentCategory.Enemy, "{\"kills\":4}");
+			SavedContentResolution resolution = ContentSaveResolver.Resolve(state, new ContentRegistry());
+			Assert.That(resolution.Status, Is.EqualTo(SavedContentStatus.Missing));
+			Assert.That(resolution.State.ContentId, Is.EqualTo(ContentId.Parse("example.pack:enemy/retired")));
+			Assert.That(resolution.State.StateJson, Is.EqualTo("{\"kills\":4}"));
+			Assert.That(resolution.Registration, Is.Null);
+		}
+
+		[Test]
+		public void SavedState_ResolvesAvailableContentAndDetectsCategoryMismatch()
+		{
+			ContentRegistry registry = new ContentRegistry();
+			ContentId id = ContentId.Parse("example.pack:enemy/test");
+			registry.Register(new ContentRegistration(id, ContentCategory.Enemy, "example.pack", "enemy.json"), new ValidationReport());
+			SavedContentResolution available = ContentSaveResolver.Resolve(new SavedContentState(id, ContentCategory.Enemy, "{}"), registry);
+			SavedContentResolution mismatch = ContentSaveResolver.Resolve(new SavedContentState(id, ContentCategory.Stage, "{}"), registry);
+			Assert.That(available.Status, Is.EqualTo(SavedContentStatus.Available));
+			Assert.That(available.Registration, Is.Not.Null);
+			Assert.That(mismatch.Status, Is.EqualTo(SavedContentStatus.CategoryMismatch));
+		}
+
+		[Test]
+		public void SavedStateParser_RejectsInvalidKeysAndNumericCategoryNames()
+		{
+			Assert.That(SavedContentState.TryCreate("not-an-id", "Enemy", "{}", out _), Is.False);
+			Assert.That(SavedContentState.TryCreate("example.pack:enemy/test", "0", "{}", out _), Is.False);
+			Assert.That(SavedContentState.TryCreate("example.pack:enemy/test", "enemy", "{}", out _), Is.False);
+			Assert.That(SavedContentState.TryCreate("example.pack:enemy/test", "Enemy", "", out SavedContentState state), Is.True);
+			Assert.That(state.StateJson, Is.EqualTo("{}"));
+		}
+	}
 }
