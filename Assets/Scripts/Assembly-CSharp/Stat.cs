@@ -42,6 +42,11 @@ public class Stat
 		return m_valueBase;
 	}
 
+	public void SetValueBase(float i_valueBase)
+	{
+		m_valueBase = i_valueBase;
+	}
+
 	public StatModifier AddModifier(float i_valueModification)
 	{
 		StatModifier statModifier = new StatModifier(m_name, i_valueModification);

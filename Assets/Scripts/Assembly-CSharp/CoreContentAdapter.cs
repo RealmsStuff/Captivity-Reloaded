@@ -28,6 +28,7 @@ public static class CoreContentAdapter
 		}
 
 		Debug.Log("[ModLoader] Bound " + ModLoaderRuntime.Registry.Count + " packaged Core gameplay entries.");
+		ExternalEnemyFactory.Schedule(library.Actors);
 	}
 
 	private static T FindSceneObject<T>(T[] i_objects) where T : Component

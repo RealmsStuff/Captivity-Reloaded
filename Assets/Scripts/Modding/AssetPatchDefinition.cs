@@ -187,7 +187,7 @@ namespace CaptivityReloaded.Modding
 			}
 		}
 
-		internal static bool IsInside(string i_path, string i_root)
+		public static bool IsInside(string i_path, string i_root)
 		{
 			string path = Path.GetFullPath(i_path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
 			string root = Path.GetFullPath(i_root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;

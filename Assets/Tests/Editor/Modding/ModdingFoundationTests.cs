@@ -204,6 +204,25 @@ namespace CaptivityReloaded.Modding.Tests
 				Object.DestroyImmediate(asset);
 			}
 		}
+
+		[Test]
+		public void BindRuntimeAsset_UpgradesAValidatedDataRegistration()
+		{
+			RuntimeAssetStub asset = ScriptableObject.CreateInstance<RuntimeAssetStub>();
+			try
+			{
+				ContentId id = ContentId.Parse("example.pack:enemy/atlas-enemy");
+				ContentRegistry registry = new ContentRegistry();
+				registry.Register(new ContentRegistration(id, ContentCategory.Enemy, "example.pack", "enemy.json"), new ValidationReport());
+				Assert.That(registry.BindRuntimeAsset(id, asset, new ValidationReport()), Is.True);
+				Assert.That(registry.TryGet(id, out ContentRegistration resolved), Is.True);
+				Assert.That(resolved.RuntimeAsset, Is.SameAs(asset));
+			}
+			finally
+			{
+				Object.DestroyImmediate(asset);
+			}
+		}
 	}
 
 	public class AssetSlotRegistryTests
@@ -659,6 +678,39 @@ namespace CaptivityReloaded.Modding.Tests
 
 	public class ModContentDiscoveryTests
 	{
+		[Test]
+		public void ConvertedPreyZombieExample_DiscoversAndFitsItsAtlas()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			Assert.That(packs.Report.IsValid, Is.True);
+			ModPack prey = packs.Packs.Single(pack => pack.Manifest.Id == "draco66electro.prey-green-zombie");
+			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { prey });
+			Assert.That(content.Report.IsValid, Is.True);
+			Assert.That(content.Enemies, Has.Count.EqualTo(1));
+			EnemyDefinition enemy = content.Enemies.Single();
+			Assert.That(enemy.Extends, Is.EqualTo(ContentId.Parse("core:enemy/zombie-1")));
+			Assert.That(enemy.Visual.Regions, Has.Count.EqualTo(13));
+
+			string atlasPath = Path.Combine(prey.RootPath, enemy.Visual.Atlas);
+			Texture2D atlas = new Texture2D(2, 2);
+			try
+			{
+				Assert.That(atlas.LoadImage(File.ReadAllBytes(atlasPath)), Is.True);
+				Assert.That(atlas.width, Is.EqualTo(128));
+				Assert.That(atlas.height, Is.EqualTo(128));
+				foreach (AtlasRegionDefinition region in enemy.Visual.Regions.Values)
+				{
+					Assert.That(region.X + region.Width, Is.LessThanOrEqualTo(atlas.width));
+					Assert.That(region.Y + region.Height, Is.LessThanOrEqualTo(atlas.height));
+				}
+			}
+			finally
+			{
+				Object.DestroyImmediate(atlas);
+			}
+		}
+
 		[Test]
 		public void Discover_DispatchesEnemyDefinitionsFromDeclaredRoots()
 		{

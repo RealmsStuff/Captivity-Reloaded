@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "draco66electro.prey-green-zombie:enemy/green-zombie",
+  "displayName": "Prey Green Zombie",
+  "description": "A green zombie variant reconstructed from the legacy Prey Mod artwork.",
+  "extends": "core:enemy/zombie-1",
+  "visual": {
+    "type": "coreRigAtlas",
+    "atlas": "assets/enemies/green-zombie.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "body/torso-lower": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "body/butt": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "body/hips": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "body/chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "body/neck": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "body/head": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "body/arm-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "body/arm-lower": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "body/hand": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "body/leg-upper": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "body/leg-lower": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "body/foot-left": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "body/foot-right": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Captivity Reloaded modding specification
 
-This directory defines the draft contract for the built-in, data-driven content system. The runtime foundation currently validates IDs and manifests, discovers desktop packs, resolves dependencies, loads the packaged Core manifest and exposes an empty registry. Content-definition parsing, asset replacement and gameplay factories are not implemented yet.
+This directory defines the draft contract for the built-in, data-driven content system. The runtime validates IDs and manifests, discovers desktop packs, resolves dependencies, loads the packaged Core catalog, applies explicit PNG asset patches and constructs atlas-driven enemy variants from Core rigs.
 
 The long-term model separates the game into two layers:
 
@@ -16,11 +16,12 @@ The shipped game is represented by the required, read-only `core` content pack. 
 - [Open design decisions](decisions.md) lists choices that need project-manager approval before runtime code fixes the public contract.
 - [Enemy variant example](examples/acid-gremlin) demonstrates the target of one sprite sheet and one enemy JSON file.
 - [Asset replacement example](examples/shaded-girl) demonstrates explicit player sprite-slot replacement.
+- `ExampleMods/prey-green-zombie` is a working conversion of a legacy asset-bundle zombie overhaul into the atlas-driven enemy format.
 
 ## Status
 
-Specification status: **Draft 0.1**
+Specification status: **Draft 0.4**
 
-Runtime status: **Foundation implemented; gameplay content unchanged**
+Runtime status: **Foundation, asset replacement and Core-rig enemy construction implemented**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

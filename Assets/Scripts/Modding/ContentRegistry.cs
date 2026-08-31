@@ -19,7 +19,7 @@ namespace CaptivityReloaded.Modding
 		public ContentCategory Category { get; }
 		public string PackId { get; }
 		public string Source { get; }
-		public UnityEngine.Object RuntimeAsset { get; }
+		public UnityEngine.Object RuntimeAsset { get; private set; }
 
 		public ContentRegistration(ContentId i_id, ContentCategory i_category, string i_packId, string i_source, UnityEngine.Object i_runtimeAsset = null)
 		{
@@ -27,6 +27,11 @@ namespace CaptivityReloaded.Modding
 			Category = i_category;
 			PackId = i_packId;
 			Source = i_source ?? string.Empty;
+			RuntimeAsset = i_runtimeAsset;
+		}
+
+		internal void BindRuntimeAsset(UnityEngine.Object i_runtimeAsset)
+		{
 			RuntimeAsset = i_runtimeAsset;
 		}
 	}
@@ -69,6 +74,22 @@ namespace CaptivityReloaded.Modding
 		public bool TryGet(ContentId i_id, out ContentRegistration o_registration)
 		{
 			return m_entries.TryGetValue(i_id, out o_registration);
+		}
+
+		public bool BindRuntimeAsset(ContentId i_id, UnityEngine.Object i_runtimeAsset, ValidationReport io_report)
+		{
+			if (!m_entries.TryGetValue(i_id, out ContentRegistration registration))
+			{
+				io_report?.Add(ValidationSeverity.Error, "registry.bind-missing", "Cannot bind an unregistered content ID: " + i_id);
+				return false;
+			}
+			if (i_runtimeAsset == null)
+			{
+				io_report?.Add(ValidationSeverity.Error, "registry.bind-null", "Cannot bind a null runtime asset: " + i_id, registration.Source);
+				return false;
+			}
+			registration.BindRuntimeAsset(i_runtimeAsset);
+			return true;
 		}
 
 		public IReadOnlyList<ContentRegistration> GetByCategory(ContentCategory i_category)

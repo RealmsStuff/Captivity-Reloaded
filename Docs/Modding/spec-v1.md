@@ -1,6 +1,6 @@
 # Draft Mod API v1 contract
 
-Status: Draft 0.3. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset-patch discovery and runtime PNG sprite loading are implemented. Content-type schemas and gameplay factories remain draft work.
+Status: Draft 0.4. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset patches and the first atlas-driven enemy factory are implemented. Other content-type schemas and gameplay factories remain draft work.
 
 ## Pack location
 
@@ -115,7 +115,7 @@ V1 permits only fields explicitly marked as overridable for that content type. E
 
 ### Enemy definition draft
 
-The first supported enemy shape extends an existing enemy and supplies a `coreRigAtlas` visual. Parsing and validation are implemented; runtime rig construction remains the next milestone.
+The first supported enemy shape extends an existing Core enemy and supplies a `coreRigAtlas` visual. At runtime the loader clones that Core template, preserves its behaviour and rig, applies bounded stat overrides and replaces the declared sprite regions.
 
 ```json
 {
@@ -146,6 +146,14 @@ The first supported enemy shape extends an existing enemy and supplies a `coreRi
 ```
 
 Stat values are bounded, atlas rectangles require a non-negative origin and positive dimensions, and region names are semantic paths. Unknown gameplay fields, component names, assembly names and unsupported visual types invalidate the definition.
+
+Atlas coordinates use Unity's bottom-left origin. V1 exposes these regions for the current humanoid Core rig:
+
+- `body/torso-lower`, `body/butt`, `body/hips`, `body/chest`, `body/neck`, `body/head`
+- `body/arm-upper`, `body/arm-lower`, `body/hand`
+- `body/leg-upper`, `body/leg-lower`, `body/foot-left`, `body/foot-right`
+
+The shared arm, hand and leg regions are applied to both sides of the rig. The two feet remain separate because the Core zombie artwork uses distinct left and right sprites. A definition may replace only a subset and inherit the remaining artwork from its Core template.
 
 ## Assets
 

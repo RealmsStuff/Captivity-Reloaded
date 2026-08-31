@@ -706,6 +706,27 @@ public abstract class Actor : MonoBehaviour
 		return m_name;
 	}
 
+	public void ConfigureModIdentity(string i_name)
+	{
+		m_name = i_name;
+	}
+
+	public void ConfigureModStats(CaptivityReloaded.Modding.EnemyStatsDefinition i_stats)
+	{
+		if (i_stats == null) return;
+		if (i_stats.HealthMax.HasValue) SetBaseStat("HealthMax", i_stats.HealthMax.Value, ref m_healthMax);
+		if (i_stats.SpeedAcceleration.HasValue) SetBaseStat("SpeedAccel", i_stats.SpeedAcceleration.Value, ref m_speedAcceleration);
+		if (i_stats.SpeedMax.HasValue) SetBaseStat("SpeedMax", i_stats.SpeedMax.Value, ref m_speedMax);
+		if (i_stats.Traction.HasValue) SetBaseStat("Traction", i_stats.Traction.Value, ref m_traction01);
+	}
+
+	private void SetBaseStat(string i_name, float i_value, ref float io_serializedValue)
+	{
+		io_serializedValue = i_value;
+		Stat stat = GetStat(i_name);
+		if (stat != null) stat.SetValueBase(i_value);
+	}
+
 	public Animator GetAnimator()
 	{
 		return m_animator;

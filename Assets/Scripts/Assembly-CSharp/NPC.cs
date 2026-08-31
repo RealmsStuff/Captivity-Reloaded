@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public abstract class NPC : Actor
@@ -796,6 +797,17 @@ public abstract class NPC : Actor
 	public void SetId(int i_id)
 	{
 		m_id = i_id;
+	}
+
+	public void ConfigureModEnemy(string i_displayName, string i_description, EnemyStatsDefinition i_stats)
+	{
+		SetId(-1);
+		ConfigureModIdentity(i_displayName);
+		m_description = i_description ?? string.Empty;
+		if (i_stats == null) return;
+		if (i_stats.Bounty.HasValue) m_bounty = i_stats.Bounty.Value;
+		if (i_stats.HealthIncreasePerWave.HasValue) m_amountIncreaseHealthMaxPerWave = i_stats.HealthIncreasePerWave.Value;
+		ConfigureModStats(i_stats);
 	}
 
 	public Stage GetStageAppearance()
