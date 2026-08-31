@@ -978,6 +978,18 @@ public static class ManagerDB
 
     private static async Task AddClothingIfNotExists(Clothing i_clothing)
     {
+		if (TryGetExternalClothingId(i_clothing, out ContentId contentId))
+		{
+			if (!TryGetClothingContentState(contentId, out _))
+			{
+				bool unlocked = false;
+				foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+					if (definition.Id == contentId) unlocked = definition.UnlockedByDefault;
+				SaveClothingContentState(contentId, new ClothingContentState { Unlocked = unlocked });
+			}
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		GetWebClothing(i_clothing.GetId());
 		SaveWebState();
@@ -1026,6 +1038,23 @@ public static class ManagerDB
 #endif
     }
 
+	public static List<Clothing> GetUnlockedClothes()
+	{
+		List<Clothing> result = new List<Clothing>();
+		foreach (int id in GetIdsUnlockedClothes())
+		{
+			Clothing clothing = Library.Instance.Clothes.GetClothing(id);
+			if (clothing != null) result.Add(clothing);
+		}
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved) || !saved.Unlocked) continue;
+			if (ModLoaderRuntime.Registry.TryGet(definition.Id, out ContentRegistration registration) && registration.RuntimeAsset is Clothing clothing)
+				result.Add(clothing);
+		}
+		return result;
+	}
+
     public static void EquipClothes(List<Clothing> i_clothes)
     {
 #if UNITY_WEBGL || UNITY_ANDROID
@@ -1035,6 +1064,7 @@ public static class ManagerDB
 		}
 		foreach (var ec in i_clothes)
 		{
+			if (TryGetExternalClothingId(ec, out _)) continue;
 			var c = GetWebClothing(ec.GetId());
 			c.isEquipped = 1;
 		}
@@ -1043,9 +1073,11 @@ public static class ManagerDB
         ExecuteNonQuery("UPDATE tbl_clothing SET isEquipped = 0");
         foreach (Clothing i_clothe in i_clothes)
         {
+			if (TryGetExternalClothingId(i_clothe, out _)) continue;
             ExecuteNonQuery("UPDATE tbl_clothing SET isEquipped = 1 WHERE idClothing = " + i_clothe.GetId());
         }
 #endif
+		SaveExternalClothingEquipment(i_clothes);
     }
 
     public static List<int> GetIdsEquippedClothes()
@@ -1068,8 +1100,33 @@ public static class ManagerDB
 #endif
     }
 
+	public static List<Clothing> GetEquippedClothes()
+	{
+		List<Clothing> result = new List<Clothing>();
+		foreach (int id in GetIdsEquippedClothes())
+		{
+			Clothing clothing = Library.Instance.Clothes.GetClothing(id);
+			if (clothing != null) result.Add(clothing);
+		}
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved) || !saved.Unlocked || !saved.Equipped) continue;
+			if (ModLoaderRuntime.Registry.TryGet(definition.Id, out ContentRegistration registration) && registration.RuntimeAsset is Clothing clothing)
+				result.Add(clothing);
+		}
+		return result;
+	}
+
     public static async void UnlockClothing(Clothing i_clothing)
     {
+		if (TryGetExternalClothingId(i_clothing, out ContentId contentId))
+		{
+			if (!TryGetClothingContentState(contentId, out ClothingContentState saved)) saved = new ClothingContentState();
+			saved.Unlocked = true;
+			SaveClothingContentState(contentId, saved);
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		var c = GetWebClothing(i_clothing.GetId());
 		c.isUnlocked = 1;
@@ -1092,7 +1149,52 @@ public static class ManagerDB
 #else
         await ExecuteNonQueryAsync("UPDATE tbl_clothing SET isUnlocked = 1");
 #endif
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved)) saved = new ClothingContentState();
+			saved.Unlocked = true;
+			SaveClothingContentState(definition.Id, saved);
+		}
     }
+
+	private static bool TryGetExternalClothingId(Clothing i_clothing, out ContentId o_contentId)
+	{
+		o_contentId = default;
+		return RuntimeContentIdentity.TryResolve(i_clothing, out o_contentId, out ContentCategory category) &&
+			category == ContentCategory.Clothing && o_contentId.Namespace != "core";
+	}
+
+	private static bool TryGetClothingContentState(ContentId i_id, out ClothingContentState o_state)
+	{
+		foreach (SavedContentState saved in GetSavedContentStates())
+		{
+			if (saved.Category == ContentCategory.Clothing && saved.ContentId == i_id)
+				return ClothingContentState.TryParse(saved.StateJson, out o_state);
+		}
+		o_state = null;
+		return false;
+	}
+
+	private static void SaveClothingContentState(ContentId i_id, ClothingContentState i_state)
+	{
+		SaveContentState(new SavedContentState(i_id, ContentCategory.Clothing, i_state.ToJson()));
+	}
+
+	private static void SaveExternalClothingEquipment(List<Clothing> i_clothes)
+	{
+		HashSet<ContentId> selected = new HashSet<ContentId>();
+		foreach (Clothing clothing in i_clothes)
+			if (TryGetExternalClothingId(clothing, out ContentId id)) selected.Add(id);
+
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved))
+				saved = new ClothingContentState { Unlocked = definition.UnlockedByDefault };
+			saved.Equipped = selected.Contains(definition.Id);
+			if (saved.Equipped) saved.Unlocked = true;
+			SaveClothingContentState(definition.Id, saved);
+		}
+	}
 
     public static async void SetSkinColor(SkinColor i_skinColor)
     {

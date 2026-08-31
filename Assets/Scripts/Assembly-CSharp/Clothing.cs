@@ -25,6 +25,7 @@ public class Clothing : MonoBehaviour
 
 	public void Initialize()
 	{
+		m_clothingPieces.Clear();
 		ClothingPiece[] componentsInChildren = GetComponentsInChildren<ClothingPiece>(includeInactive: true);
 		foreach (ClothingPiece item in componentsInChildren)
 		{
@@ -59,6 +60,11 @@ public class Clothing : MonoBehaviour
 	public Sprite GetIcon()
 	{
 		return m_sprIcon;
+	}
+
+	public void SetIcon(Sprite i_icon)
+	{
+		m_sprIcon = i_icon;
 	}
 
 	public bool IsCompatibleWithClothing(Clothing i_clothingToCheck)

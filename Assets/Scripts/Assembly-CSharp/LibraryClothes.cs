@@ -70,6 +70,14 @@ public class LibraryClothes : MonoBehaviour
 		return null;
 	}
 
+	public void AddRuntimeClothing(Clothing i_clothing)
+	{
+		if (i_clothing == null || m_clothes.Contains(i_clothing)) return;
+		i_clothing.Initialize();
+		i_clothing.gameObject.SetActive(false);
+		m_clothes.Add(i_clothing);
+	}
+
 	public void ClearAndReassignIds()
 	{
 		for (int i = 0; i < GetAllClothes().Count; i++)

@@ -299,10 +299,7 @@ public class WardrobeHud : MonoBehaviour
 
 	private void RetrieveAllClothes()
 	{
-		foreach (int idsUnlockedClothe in ManagerDB.GetIdsUnlockedClothes())
-		{
-			m_clothes.Add(Library.Instance.Clothes.GetClothing(idsUnlockedClothe));
-		}
+		m_clothes.AddRange(ManagerDB.GetUnlockedClothes());
 	}
 
 	private void CreateClothingItems()

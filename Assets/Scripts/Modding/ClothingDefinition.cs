@@ -41,6 +41,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("description")]
 		public string Description { get; set; }
 
+		[JsonProperty("unlockedByDefault")]
+		public bool UnlockedByDefault { get; set; }
+
 		[JsonProperty("visual", Required = Required.Always)]
 		public ClothingVisualDefinition Visual { get; set; }
 	}
@@ -54,6 +57,7 @@ namespace CaptivityReloaded.Modding
 		public string DisplayName { get; }
 		public string Description { get; }
 		public ClothingVisualDefinition Visual { get; }
+		public bool UnlockedByDefault { get; }
 
 		public ClothingDefinition(ContentId i_id, ContentId i_extends, string i_packId, string i_source, ClothingDefinitionDocument i_document)
 		{
@@ -63,6 +67,7 @@ namespace CaptivityReloaded.Modding
 			Source = i_source;
 			DisplayName = i_document.DisplayName;
 			Description = i_document.Description ?? string.Empty;
+			UnlockedByDefault = i_document.UnlockedByDefault;
 			Visual = i_document.Visual;
 		}
 	}

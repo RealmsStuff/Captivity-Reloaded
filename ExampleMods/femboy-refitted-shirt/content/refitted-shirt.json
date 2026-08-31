@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "mousai.femboy-refitted-shirt:clothing/refitted-shirt",
+  "displayName": "Femboy Refitted Shirt",
+  "description": "The default shirt refitted to the Femboy edition body.",
+  "extends": "core:clothing/shirt-default",
+  "unlockedByDefault": true,
+  "visual": {
+    "type": "coreClothingAtlas",
+    "atlas": "assets/clothing/refitted-shirt.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "piece/shirt-spine": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "piece/shirt-chest": { "x": 32, "y": 0, "width": 32, "height": 32 },
+      "icon": { "x": 32, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

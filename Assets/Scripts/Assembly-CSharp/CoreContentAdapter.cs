@@ -30,6 +30,7 @@ public static class CoreContentAdapter
 
 		Debug.Log("[ModLoader] Bound " + ModLoaderRuntime.Registry.Count + " packaged Core gameplay entries.");
 		ExternalEnemyFactory.Schedule(library.Actors, stageManager);
+		ExternalClothingFactory.Schedule(library.Clothes);
 	}
 
 	private static void BindRuntimeIdentity(Object i_runtimeAsset, ContentId i_id, ContentCategory i_category)

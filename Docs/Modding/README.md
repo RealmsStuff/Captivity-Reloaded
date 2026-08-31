@@ -17,11 +17,12 @@ The shipped game is represented by the required, read-only `core` content pack. 
 - [Enemy variant example](examples/acid-gremlin) demonstrates the target of one sprite sheet and one enemy JSON file.
 - [Asset replacement example](examples/shaded-girl) demonstrates explicit player sprite-slot replacement.
 - `ExampleMods/prey-green-zombie` is a working conversion of a legacy asset-bundle zombie overhaul into the atlas-driven enemy format.
+- `ExampleMods/femboy-refitted-shirt` converts one legacy multi-piece clothing replacement into an additive Core-template variant.
 
 ## Status
 
 Specification status: **Draft 0.4**
 
-Runtime status: **Foundation, asset replacement, Core-rig enemies and clothing-definition discovery implemented**
+Runtime status: **Foundation, asset replacement, Core-rig enemies, Core-template clothing and namespaced clothing saves implemented**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

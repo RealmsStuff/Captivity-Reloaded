@@ -712,8 +712,8 @@ namespace CaptivityReloaded.Modding.Tests
     'atlas': 'assets/clothing/refitted-shirt.png',
     'pixelsPerUnit': 32,
     'regions': {
-      'piece/spine': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },
-      'piece/chest': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }
+      'piece/shirt-spine': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },
+      'piece/shirt-chest': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }
     }
   }
 }";
@@ -726,6 +726,7 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.clothes:clothing/refitted-shirt")));
 			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:clothing/shirt-default")));
 			Assert.That(result.Definition.Visual.Regions, Has.Count.EqualTo(2));
+			Assert.That(result.Definition.UnlockedByDefault, Is.False);
 		}
 
 		[Test]
@@ -741,8 +742,59 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class ClothingContentStateTests
+	{
+		[Test]
+		public void State_RoundTripsUnlockAndEquipmentFlags()
+		{
+			ClothingContentState state = new ClothingContentState { Unlocked = true, Equipped = true };
+			Assert.That(ClothingContentState.TryParse(state.ToJson(), out ClothingContentState restored), Is.True);
+			Assert.That(restored.Unlocked, Is.True);
+			Assert.That(restored.Equipped, Is.True);
+		}
+
+		[Test]
+		public void State_RejectsUnknownFields()
+		{
+			Assert.That(ClothingContentState.TryParse("{\"legacyId\":12}", out _), Is.False);
+		}
+	}
+
 	public class ModContentDiscoveryTests
 	{
+		[Test]
+		public void ConvertedFemboyShirtExample_DiscoversAndFitsItsAtlas()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			Assert.That(packs.Report.IsValid, Is.True);
+			ModPack femboy = packs.Packs.Single(pack => pack.Manifest.Id == "mousai.femboy-refitted-shirt");
+			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { femboy });
+			Assert.That(content.Report.IsValid, Is.True);
+			Assert.That(content.Clothing, Has.Count.EqualTo(1));
+			ClothingDefinition clothing = content.Clothing.Single();
+			Assert.That(clothing.Extends, Is.EqualTo(ContentId.Parse("core:clothing/shirt-default")));
+			Assert.That(clothing.Visual.Regions, Has.Count.EqualTo(3));
+			Assert.That(clothing.UnlockedByDefault, Is.True);
+
+			Texture2D atlas = new Texture2D(2, 2);
+			try
+			{
+				Assert.That(atlas.LoadImage(File.ReadAllBytes(Path.Combine(femboy.RootPath, clothing.Visual.Atlas))), Is.True);
+				Assert.That(atlas.width, Is.EqualTo(64));
+				Assert.That(atlas.height, Is.EqualTo(32));
+				foreach (AtlasRegionDefinition region in clothing.Visual.Regions.Values)
+				{
+					Assert.That(region.X + region.Width, Is.LessThanOrEqualTo(atlas.width));
+					Assert.That(region.Y + region.Height, Is.LessThanOrEqualTo(atlas.height));
+				}
+			}
+			finally
+			{
+				Object.DestroyImmediate(atlas);
+			}
+		}
+
 		[Test]
 		public void ConvertedPreyZombieExample_DiscoversAndFitsItsAtlas()
 		{
@@ -836,7 +888,7 @@ namespace CaptivityReloaded.Modding.Tests
   'visual': {
     'type': 'coreClothingAtlas',
     'atlas': 'assets/test-shirt.png',
-    'regions': { 'piece/chest': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 } }
+    'regions': { 'piece/shirt-chest': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 } }
   }
 }");
 				SemanticVersion.TryParse("1.0.0", out SemanticVersion version);

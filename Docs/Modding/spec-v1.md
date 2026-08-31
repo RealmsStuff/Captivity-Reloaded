@@ -171,19 +171,20 @@ Additive clothing follows the same inheritance model. A definition extends one C
   "id": "example.clothes:clothing/refitted-shirt",
   "displayName": "Refitted Shirt",
   "extends": "core:clothing/shirt-default",
+  "unlockedByDefault": true,
   "visual": {
     "type": "coreClothingAtlas",
     "atlas": "assets/clothing/refitted-shirt.png",
     "pixelsPerUnit": 32,
     "regions": {
-      "piece/spine": { "x": 0, "y": 0, "width": 32, "height": 32 },
-      "piece/chest": { "x": 32, "y": 0, "width": 32, "height": 32 }
+      "piece/shirt-spine": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "piece/shirt-chest": { "x": 32, "y": 0, "width": 32, "height": 32 }
     }
   }
 }
 ```
 
-Parsing, discovery and registry placeholders are implemented. Runtime template construction, public piece-slot validation, wardrobe integration and namespaced unlock/equipment saves remain the next part of this phase.
+Runtime construction derives stable kebab-case piece slots from the inherited template's published `clp_` piece names (for example `clp_shirtChest` becomes `piece/shirt-chest`). The optional `icon` region replaces the wardrobe icon. Undeclared pieces and the icon are inherited. `unlockedByDefault` defaults to `false`; unlock and equipped flags for external clothing are stored under the full content ID rather than its temporary runtime number.
 
 ## Assets
 

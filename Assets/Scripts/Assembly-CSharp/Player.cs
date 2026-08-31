@@ -1711,10 +1711,7 @@ public class Player : Actor
 
 	private void EquipEquippedClothes()
 	{
-		foreach (int idsEquippedClothe in ManagerDB.GetIdsEquippedClothes())
-		{
-			GetSkeletonPlayer().EquipClothing(Library.Instance.Clothes.GetClothing(idsEquippedClothe));
-		}
+		foreach (Clothing clothing in ManagerDB.GetEquippedClothes()) GetSkeletonPlayer().EquipClothing(clothing);
 	}
 
 	public void EnterStage()
