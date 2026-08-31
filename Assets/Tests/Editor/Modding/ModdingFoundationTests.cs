@@ -786,6 +786,19 @@ namespace CaptivityReloaded.Modding.Tests
   'id': 'example.weapons:item/weapon/toy-pistol',
   'displayName': 'Toy Pistol',
   'extends': 'core:item/weapon/pistol',
+  'stats': {
+    'damage': 3,
+    'ammoMax': 120,
+    'magazineSize': 12,
+    'bulletsPerShot': 1,
+    'penetration': 0,
+    'rangeMultiplier': 1,
+    'fireIntervalSeconds': 0.12,
+    'recoil': 0.1,
+    'movementRecoil': 0,
+    'knockbackX': 0,
+    'knockbackY': 0
+  },
   'visual': {
     'type': 'coreWeaponSprites',
     'pixelsPerUnit': 32,
@@ -804,6 +817,8 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Report.IsValid, Is.True);
 			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.weapons:item/weapon/toy-pistol")));
 			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:item/weapon/pistol")));
+			Assert.That(result.Definition.Stats.Damage, Is.EqualTo(3));
+			Assert.That(result.Definition.Stats.MagazineSize, Is.EqualTo(12));
 			Assert.That(result.Definition.Visual.Sprites.Keys, Is.EquivalentTo(new[] { "body", "slide", "base" }));
 		}
 
@@ -827,6 +842,27 @@ namespace CaptivityReloaded.Modding.Tests
 			string json = ValidWeapon.Replace("core:item/weapon/pistol", "core:item/weapon/m4b1");
 			WeaponDefinitionLoadResult result = WeaponDefinitionParser.Parse(json, "example.weapons", "weapon.json");
 			Assert.That(result.Report.Issues.Any(issue => issue.Code == "weapon.extends"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsUnsafeStatRangesAndUnpairedAmmunitionOverrides()
+		{
+			string ranges = ValidWeapon
+				.Replace("'damage': 3", "'damage': 10001")
+				.Replace("'bulletsPerShot': 1", "'bulletsPerShot': 65")
+				.Replace("'recoil': 0.1", "'recoil': 1.1");
+			WeaponDefinitionLoadResult rangeResult = WeaponDefinitionParser.Parse(ranges, "example.weapons", "weapon.json");
+			Assert.That(rangeResult.Report.Issues.Any(issue => issue.Code == "weapon.stats.damage"), Is.True);
+			Assert.That(rangeResult.Report.Issues.Any(issue => issue.Code == "weapon.stats.bullets-per-shot"), Is.True);
+			Assert.That(rangeResult.Report.Issues.Any(issue => issue.Code == "weapon.stats.recoil"), Is.True);
+
+			string unpairedAmmo = ValidWeapon.Replace("'magazineSize': 12,", string.Empty);
+			WeaponDefinitionLoadResult ammoResult = WeaponDefinitionParser.Parse(unpairedAmmo, "example.weapons", "weapon.json");
+			Assert.That(ammoResult.Report.Issues.Any(issue => issue.Code == "weapon.stats.ammo-pair"), Is.True);
+
+			string oversizedMagazine = ValidWeapon.Replace("'magazineSize': 12", "'magazineSize': 121");
+			WeaponDefinitionLoadResult magazineResult = WeaponDefinitionParser.Parse(oversizedMagazine, "example.weapons", "weapon.json");
+			Assert.That(magazineResult.Report.Issues.Any(issue => issue.Code == "weapon.stats.magazine-size"), Is.True);
 		}
 	}
 

@@ -200,6 +200,13 @@ The first additive weapon shape extends the Core pistol. It inherits the complet
   "displayName": "Toy Pistol",
   "extends": "core:item/weapon/pistol",
   "description": "A separate pistol variant.",
+  "stats": {
+    "damage": 3,
+    "ammoMax": 120,
+    "magazineSize": 12,
+    "fireIntervalSeconds": 0.12,
+    "recoil": 0.1
+  },
   "visual": {
     "type": "coreWeaponSprites",
     "pixelsPerUnit": 32,
@@ -212,7 +219,9 @@ The first additive weapon shape extends the Core pistol. It inherits the complet
 }
 ```
 
-Each sprite is a separate safe pack-relative PNG. Valid V1 slots are `body`, `slide`, and `base`; undeclared slots retain Core artwork. Other weapon templates and bounded statistic overrides will be published after their rigs and gameplay assumptions are cataloged.
+Each sprite is a separate safe pack-relative PNG. Valid V1 slots are `body`, `slide`, and `base`; undeclared slots retain Core artwork.
+
+All statistics are optional and inherit the Core pistol value when omitted. Published overrides and bounds are: `damage` (0–10,000), `ammoMax` (1–100,000), `magazineSize` (1–100,000), `bulletsPerShot` (1–64), `penetration` (0–64), `rangeMultiplier` (0.05–1), `fireIntervalSeconds` (0.02–10), `recoil` (0–1), `movementRecoil` (0–1), and `knockbackX`/`knockbackY` (0–1,000). `ammoMax` and `magazineSize` must be supplied together, and the magazine cannot exceed total ammunition. Other weapon templates will be published after their rigs and gameplay assumptions are cataloged.
 
 ## Assets
 

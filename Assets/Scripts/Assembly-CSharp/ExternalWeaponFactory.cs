@@ -45,6 +45,7 @@ public static class ExternalWeaponFactory
 			clone.gameObject.name = definition.Id.ToString();
 			clone.gameObject.SetActive(false);
 			clone.ConfigureModItem(definition.DisplayName, definition.Description);
+			clone.ConfigureModWeaponStats(definition.Stats);
 			RuntimeContentIdentity identity = clone.GetComponent<RuntimeContentIdentity>();
 			if (identity == null) identity = clone.gameObject.AddComponent<RuntimeContentIdentity>();
 			identity.Configure(definition.Id, ContentCategory.Item);

@@ -551,6 +551,26 @@ public class Gun : Weapon
 		return m_ammoMax;
 	}
 
+	public void ConfigureModWeaponStats(CaptivityReloaded.Modding.WeaponStatsDefinition i_stats)
+	{
+		if (i_stats == null) return;
+		if (i_stats.Damage.HasValue) m_damage = i_stats.Damage.Value;
+		if (i_stats.BulletsPerShot.HasValue) m_bulletsExtraPerShot = i_stats.BulletsPerShot.Value - 1;
+		if (i_stats.Penetration.HasValue) m_penetration = i_stats.Penetration.Value;
+		if (i_stats.RangeMultiplier.HasValue) m_shootDistance01 = i_stats.RangeMultiplier.Value;
+		if (i_stats.FireIntervalSeconds.HasValue) m_delayBetweenShots = i_stats.FireIntervalSeconds.Value;
+		if (i_stats.Recoil.HasValue) m_recoilBase01 = i_stats.Recoil.Value;
+		if (i_stats.MovementRecoil.HasValue) m_recoilFactorMovement01 = i_stats.MovementRecoil.Value;
+		if (i_stats.KnockbackX.HasValue) m_knockbackX = i_stats.KnockbackX.Value;
+		if (i_stats.KnockbackY.HasValue) m_knockbackY = i_stats.KnockbackY.Value;
+		if (i_stats.AmmoMax.HasValue && i_stats.MagazineSize.HasValue)
+		{
+			m_ammoMax = i_stats.AmmoMax.Value;
+			m_ammoMagazineMax = i_stats.MagazineSize.Value;
+			FillEntireGun();
+		}
+	}
+
 	public int GetAmmoMaxTotal()
 	{
 		return m_ammoMax - GetAmmoMagazineMax();
