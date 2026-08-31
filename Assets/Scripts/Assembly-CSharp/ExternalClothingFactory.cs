@@ -94,7 +94,7 @@ public static class ExternalClothingFactory
 		{
 			SpriteRenderer renderer = piece.GetComponent<SpriteRenderer>();
 			if (renderer == null || renderer.sprite == null) continue;
-			string key = GetPieceKey(piece.name);
+			string key = ClothingSlotCatalog.FromCorePieceName(piece.name);
 			if (!slots.ContainsKey(key)) slots.Add(key, renderer.sprite);
 		}
 		return slots;
@@ -103,21 +103,8 @@ public static class ExternalClothingFactory
 	private static ClothingPiece FindPiece(Clothing i_clothing, string i_key)
 	{
 		foreach (ClothingPiece piece in i_clothing.GetClothingPieces())
-			if (GetPieceKey(piece.name) == i_key) return piece;
+			if (ClothingSlotCatalog.FromCorePieceName(piece.name) == i_key) return piece;
 		return null;
-	}
-
-	private static string GetPieceKey(string i_name)
-	{
-		string name = i_name != null && i_name.StartsWith("clp_", StringComparison.Ordinal) ? i_name.Substring(4) : i_name ?? string.Empty;
-		System.Text.StringBuilder result = new System.Text.StringBuilder("piece/");
-		for (int index = 0; index < name.Length; index++)
-		{
-			char character = name[index];
-			if (char.IsUpper(character) && index > 0) result.Append('-');
-			result.Append(char.ToLowerInvariant(character));
-		}
-		return result.ToString();
 	}
 
 	private static void Report(string i_code, string i_message, string i_source)

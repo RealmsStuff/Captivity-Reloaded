@@ -186,6 +186,8 @@ Additive clothing follows the same inheritance model. A definition extends one C
 
 Runtime construction derives stable kebab-case piece slots from the inherited template's published `clp_` piece names (for example `clp_shirtChest` becomes `piece/shirt-chest`). The optional `icon` region replaces the wardrobe icon. Undeclared pieces and the icon are inherited. `unlockedByDefault` defaults to `false`; unlock and equipped flags for external clothing are stored under the full content ID rather than its temporary runtime number.
 
+Region keys are validated during discovery against the published V1 clothing-slot catalog. The catalog is `icon` plus the semantic names derived from the Core wardrobe pieces: `arm-upper`, `belt`, `butt`, `chest`, `ear`, `glasses`, `hair`, `head`, `hips`, `l-arm-lower`, `l-arm-upper`, `l-foot`, `l-hand`, `l-leg-lower`, `l-leg-lower-armor`, `l-leg-lower-shoes`, `l-leg-lower-stocking`, `l-leg-upper`, `l-leg-upper-stocking`, `mask`, `neck`, their corresponding `r-` variants, `shirt-chest`, `shirt-collar`, `shirt-l-arm-lower`, `shirt-l-arm-upper`, `shirt-neck`, `shirt-r-arm-lower`, `shirt-r-arm-upper`, `shirt-spine`, `skirt-hips`, and `spine`, each prefixed with `piece/`. A published slot can still be unavailable on a particular inherited template; that template-specific mismatch is reported when the clothing is constructed.
+
 ## Assets
 
 External paths are forward-slash paths relative to the pack root:

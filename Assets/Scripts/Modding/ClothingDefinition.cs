@@ -136,7 +136,8 @@ namespace CaptivityReloaded.Modding
 			}
 			foreach (KeyValuePair<string, AtlasRegionDefinition> region in i_visual.Regions)
 			{
-				if (!ContentId.TryParse("slot:" + region.Key, out _)) io_report.Add(ValidationSeverity.Error, "clothing.visual.region-name", "Region name is not a safe semantic path: " + region.Key, i_source);
+				if (!ClothingSlotCatalog.IsPublished(region.Key))
+					io_report.Add(ValidationSeverity.Error, "clothing.visual.region-name", "Region is not a published V1 clothing slot: " + region.Key, i_source);
 				if (region.Value == null || region.Value.X < 0 || region.Value.Y < 0 || region.Value.Width <= 0 || region.Value.Height <= 0)
 					io_report.Add(ValidationSeverity.Error, "clothing.visual.region-rect", "Region rectangle must have a non-negative origin and positive size: " + region.Key, i_source);
 			}

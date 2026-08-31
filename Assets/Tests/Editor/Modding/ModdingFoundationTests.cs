@@ -740,6 +740,24 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Report.IsValid, Is.False);
 			Assert.That(result.Report.Issues.Any(issue => issue.Code == "clothing.json"), Is.True);
 		}
+
+		[Test]
+		public void Parse_RejectsUnknownClothingSlotsBeforeRuntimeConstruction()
+		{
+			string json = ValidClothing.Replace("piece/shirt-chest", "piece/shirt-chets");
+			ClothingDefinitionLoadResult result = ClothingDefinitionParser.Parse(json, "example.clothes", "shirt.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "clothing.visual.region-name"), Is.True);
+		}
+
+		[TestCase("clp_shirtChest", "piece/shirt-chest")]
+		[TestCase("clp_lLegLowerArmor", "piece/l-leg-lower-armor")]
+		[TestCase("clp_hair", "piece/hair")]
+		public void SlotCatalog_UsesStableNamesForCorePieces(string i_pieceName, string i_expectedSlot)
+		{
+			Assert.That(ClothingSlotCatalog.FromCorePieceName(i_pieceName), Is.EqualTo(i_expectedSlot));
+			Assert.That(ClothingSlotCatalog.IsPublished(i_expectedSlot), Is.True);
+		}
 	}
 
 	public class ClothingContentStateTests
