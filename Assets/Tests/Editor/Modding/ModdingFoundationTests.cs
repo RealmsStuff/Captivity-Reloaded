@@ -917,6 +917,80 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class StageDefinitionParserTests
+	{
+		private const string ValidStage = @"{
+  'schemaVersion': 1,
+  'type': 'stage',
+  'id': 'example.stages:stage/training-yard',
+  'displayName': 'Training Yard',
+  'extends': 'core:stage/field-day',
+  'description': 'A template-backed stage with data-defined encounters.',
+  'layout': {
+    'type': 'coreStageLayout',
+    'playerSpawn': { 'x': 4, 'y': 2 }
+  },
+  'waves': {
+    'firstWaveEnemyCount': 5
+  },
+  'spawners': [
+    {
+      'id': 'west-ground',
+      'position': { 'x': -12, 'y': 3 },
+      'enemies': [ 'core:enemy/zombie-1', 'example.stages:enemy/training-zombie' ],
+      'selectionWeight': 1,
+      'minimumWave': 0,
+      'delaySeconds': 1.5,
+      'delayJitterSeconds': 0.25,
+      'initialDelaySeconds': 1,
+      'initialDelayJitterSeconds': 0.25,
+      'spawnOutOfSight': true
+    }
+  ]
+}";
+
+		[Test]
+		public void Parse_AcceptsTemplateLayoutAndStableEnemyReferences()
+		{
+			StageDefinitionLoadResult result = StageDefinitionParser.Parse(ValidStage, "example.stages", "stage.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.stages:stage/training-yard")));
+			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:stage/field-day")));
+			Assert.That(result.Definition.Layout.PlayerSpawn.X, Is.EqualTo(4));
+			Assert.That(result.Definition.Waves.FirstWaveEnemyCount, Is.EqualTo(5));
+			Assert.That(result.Definition.Spawners.Single().Enemies, Is.EquivalentTo(new[]
+			{
+				ContentId.Parse("core:enemy/zombie-1"),
+				ContentId.Parse("example.stages:enemy/training-zombie")
+			}));
+		}
+
+		[Test]
+		public void Parse_RejectsUnsafeSpawnerTimingDuplicateReferencesAndHubInheritance()
+		{
+			string json = ValidStage
+				.Replace("core:stage/field-day", "core:stage/hub")
+				.Replace("'delayJitterSeconds': 0.25", "'delayJitterSeconds': 2")
+				.Replace("'core:enemy/zombie-1', 'example.stages:enemy/training-zombie'", "'core:enemy/zombie-1', 'core:enemy/zombie-1'");
+			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.extends"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.spawner.delay-jitter"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.spawner.duplicate-enemy"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsOutOfBoundsCoordinatesAndUnknownPrefabFields()
+		{
+			string coordinates = ValidStage.Replace("'x': -12", "'x': 100001");
+			StageDefinitionLoadResult coordinateResult = StageDefinitionParser.Parse(coordinates, "example.stages", "stage.json");
+			Assert.That(coordinateResult.Report.Issues.Any(issue => issue.Code == "stage.spawner.position"), Is.True);
+
+			string arbitrary = ValidStage.Replace("'description'", "'prefab': 'Assets/CustomStage.prefab', 'description'");
+			StageDefinitionLoadResult fieldResult = StageDefinitionParser.Parse(arbitrary, "example.stages", "stage.json");
+			Assert.That(fieldResult.Report.Issues.Any(issue => issue.Code == "stage.json"), Is.True);
+		}
+	}
+
 	public class ModContentDiscoveryTests
 	{
 		[Test]

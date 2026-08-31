@@ -16,6 +16,7 @@ namespace CaptivityReloaded.Modding
 		public static IReadOnlyList<ClothingDefinition> ClothingDefinitions { get; private set; } = new ClothingDefinition[0];
 		public static IReadOnlyList<WeaponDefinition> WeaponDefinitions { get; private set; } = new WeaponDefinition[0];
 		public static IReadOnlyList<UsableDefinition> UsableDefinitions { get; private set; } = new UsableDefinition[0];
+		public static IReadOnlyList<StageDefinition> StageDefinitions { get; private set; } = new StageDefinition[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -32,6 +33,7 @@ namespace CaptivityReloaded.Modding
 			ClothingDefinitions = new ClothingDefinition[0];
 			WeaponDefinitions = new WeaponDefinition[0];
 			UsableDefinitions = new UsableDefinition[0];
+			StageDefinitions = new StageDefinition[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -83,10 +85,12 @@ namespace CaptivityReloaded.Modding
 			ClothingDefinitions = content.Clothing;
 			WeaponDefinitions = content.Weapons;
 			UsableDefinitions = content.Usables;
+			StageDefinitions = content.Stages;
 			RegisterExternalEnemies(content.Enemies, report);
 			RegisterExternalClothing(content.Clothing, report);
 			RegisterExternalWeapons(content.Weapons, report);
 			RegisterExternalUsables(content.Usables, report);
+			RegisterExternalStages(content.Stages, report);
 			LastReport = report;
 
 			foreach (ValidationIssue issue in report.Issues)
@@ -164,6 +168,39 @@ namespace CaptivityReloaded.Modding
 					continue;
 				}
 				Registry.Register(new ContentRegistration(usable.Id, ContentCategory.Item, usable.PackId, usable.Source), io_report);
+			}
+		}
+
+		private static void RegisterExternalStages(IEnumerable<StageDefinition> i_stages, ValidationReport io_report)
+		{
+			HashSet<ContentId> coreStages = new HashSet<ContentId>();
+			HashSet<ContentId> knownEnemies = new HashSet<ContentId>();
+			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
+			{
+				if (entry.Category == ContentCategory.Stage) coreStages.Add(entry.Id);
+				else if (entry.Category == ContentCategory.Enemy) knownEnemies.Add(entry.Id);
+			}
+			foreach (ContentRegistration enemy in Registry.GetByCategory(ContentCategory.Enemy)) knownEnemies.Add(enemy.Id);
+
+			foreach (StageDefinition stage in i_stages)
+			{
+				if (!coreStages.Contains(stage.Extends))
+				{
+					io_report.Add(ValidationSeverity.Error, "stage.extends-missing", "Stage extends an unknown Core stage: " + stage.Extends, stage.Source);
+					continue;
+				}
+				bool referencesValid = true;
+				foreach (StageSpawnerDefinition spawner in stage.Spawners)
+				{
+					foreach (ContentId enemyId in spawner.Enemies)
+					{
+						if (knownEnemies.Contains(enemyId)) continue;
+						io_report.Add(ValidationSeverity.Error, "stage.enemy-missing", "Stage references an unknown enemy: " + enemyId, stage.Source);
+						referencesValid = false;
+					}
+				}
+				if (referencesValid)
+					Registry.Register(new ContentRegistration(stage.Id, ContentCategory.Stage, stage.PackId, stage.Source), io_report);
 			}
 		}
 	}

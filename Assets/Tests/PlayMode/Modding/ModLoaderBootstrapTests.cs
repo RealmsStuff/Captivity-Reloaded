@@ -20,6 +20,7 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(ModLoaderRuntime.ClothingDefinitions, Is.Not.Null);
 			Assert.That(ModLoaderRuntime.WeaponDefinitions, Is.Not.Null);
 			Assert.That(ModLoaderRuntime.UsableDefinitions, Is.Not.Null);
+			Assert.That(ModLoaderRuntime.StageDefinitions, Is.Not.Null);
 		}
 	}
 }

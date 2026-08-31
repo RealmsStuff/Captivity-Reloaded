@@ -1,6 +1,6 @@
 # Draft Mod API v1 contract
 
-Status: Draft 0.5. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset patches, enemy and clothing factories, and the first additive weapon shape are implemented. Other content-type schemas and gameplay factories remain draft work.
+Status: Draft 0.6. Manifest, ID, dependency, discovery, Core catalogs, save compatibility, typed asset slots, asset patches, enemy/clothing/weapon/usable factories, and discovery for template-backed stages are implemented. Other content-type schemas and gameplay factories remain draft work.
 
 ## Pack location
 
@@ -245,6 +245,49 @@ Additive medicines and drugs inherit one packaged Core usable. The clone retains
 ```
 
 `extends` must be a known `core:item/usable/...` ID. `icon` is required. `world` is optional and defaults to the icon PNG, while still preserving the Core world sprite's pivot. Both are safe pack-relative PNG paths. Effect-parameter overrides are intentionally excluded until each reusable effect has a typed, bounded data contract.
+
+### Stage definition draft
+
+The first stage format separates encounter composition and level identity from Unity prefabs while inheriting a packaged Core layout, navigation map, lighting, ambience, vendors, and interactables. A later authored-layout type will replace geometry and navigation; it will be a new explicit `layout.type` rather than silently changing this contract.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "example.stages:stage/training-yard",
+  "displayName": "Training Yard",
+  "extends": "core:stage/field-day",
+  "description": "A template-backed custom encounter.",
+  "layout": {
+    "type": "coreStageLayout",
+    "playerSpawn": { "x": 4, "y": 2 }
+  },
+  "waves": {
+    "firstWaveEnemyCount": 5
+  },
+  "spawners": [
+    {
+      "id": "west-ground",
+      "position": { "x": -12, "y": 3 },
+      "enemies": [
+        "core:enemy/zombie-1",
+        "example.stages:enemy/training-zombie"
+      ],
+      "selectionWeight": 1,
+      "minimumWave": 0,
+      "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25,
+      "initialDelaySeconds": 1,
+      "initialDelayJitterSeconds": 0.25,
+      "spawnOutOfSight": true
+    }
+  ]
+}
+```
+
+V1 `extends` references a non-hub Core stage. Coordinates must be finite and between -100,000 and 100,000. A stage has 1–256 uniquely named spawners; each contains 1–64 unique `enemy/...` content IDs. Enemy references are resolved only against enabled Core content and loaded mod dependencies. Selection weights are relative values from 0.001–1,000. `minimumWave` is 0–10,000, delays are bounded to 0–300 seconds, active spawn delays must be at least 0.02 seconds, and jitter cannot exceed its base delay. `firstWaveEnemyCount` is 1–1,000.
+
+The stage runtime factory and namespaced high-score persistence are the next implementation step. Until those land, valid stage files are discovered and registered but are not shown in the Locations menu.
 
 ## Assets
 

@@ -13,6 +13,7 @@ namespace CaptivityReloaded.Modding
 		public List<ClothingDefinition> Clothing { get; } = new List<ClothingDefinition>();
 		public List<WeaponDefinition> Weapons { get; } = new List<WeaponDefinition>();
 		public List<UsableDefinition> Usables { get; } = new List<UsableDefinition>();
+		public List<StageDefinition> Stages { get; } = new List<StageDefinition>();
 		public ValidationReport Report { get; } = new ValidationReport();
 	}
 
@@ -86,6 +87,12 @@ namespace CaptivityReloaded.Modding
 					UsableDefinitionLoadResult loaded = UsableDefinitionParser.Parse(json, i_pack.Manifest.Id, i_file);
 					io_result.Report.Merge(loaded.Report);
 					if (loaded.Report.IsValid) io_result.Usables.Add(loaded.Definition);
+				}
+				else if (string.Equals(type, "stage", StringComparison.Ordinal))
+				{
+					StageDefinitionLoadResult loaded = StageDefinitionParser.Parse(json, i_pack.Manifest.Id, i_file);
+					io_result.Report.Merge(loaded.Report);
+					if (loaded.Report.IsValid) io_result.Stages.Add(loaded.Definition);
 				}
 				else
 				{
