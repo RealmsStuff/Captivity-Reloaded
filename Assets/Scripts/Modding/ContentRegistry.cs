@@ -19,13 +19,15 @@ namespace CaptivityReloaded.Modding
 		public ContentCategory Category { get; }
 		public string PackId { get; }
 		public string Source { get; }
+		public UnityEngine.Object RuntimeAsset { get; }
 
-		public ContentRegistration(ContentId i_id, ContentCategory i_category, string i_packId, string i_source)
+		public ContentRegistration(ContentId i_id, ContentCategory i_category, string i_packId, string i_source, UnityEngine.Object i_runtimeAsset = null)
 		{
 			Id = i_id;
 			Category = i_category;
 			PackId = i_packId;
 			Source = i_source ?? string.Empty;
+			RuntimeAsset = i_runtimeAsset;
 		}
 	}
 

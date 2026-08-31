@@ -8,6 +8,7 @@ namespace CaptivityReloaded.Modding
 	{
 		public static ContentRegistry Registry { get; private set; } = new ContentRegistry();
 		public static IReadOnlyList<ModPack> LoadedPacks { get; private set; } = new ModPack[0];
+		public static IReadOnlyList<CoreContentCatalogEntry> CoreContentCatalog { get; private set; } = new CoreContentCatalogEntry[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -16,6 +17,7 @@ namespace CaptivityReloaded.Modding
 			Registry = new ContentRegistry();
 			ValidationReport report = new ValidationReport();
 			List<ModPack> packs = new List<ModPack>();
+			CoreContentCatalog = new CoreContentCatalogEntry[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -27,6 +29,18 @@ namespace CaptivityReloaded.Modding
 				ManifestLoadResult core = ModManifestParser.Parse(coreManifestAsset.text, "core/manifest.json", i_isCore: true);
 				report.Merge(core.Report);
 				if (core.Report.IsValid) packs.Add(new ModPack(core.Manifest, core.Version, "core"));
+			}
+
+			TextAsset coreCatalogAsset = Resources.Load<TextAsset>("Modding/Core/catalog");
+			if (coreCatalogAsset == null)
+			{
+				report.Add(ValidationSeverity.Error, "bootstrap.catalog-missing", "Packaged Core content catalog could not be loaded.");
+			}
+			else
+			{
+				CoreContentCatalogLoadResult catalog = CoreContentCatalogParser.Parse(coreCatalogAsset.text, "core/catalog.json");
+				report.Merge(catalog.Report);
+				if (catalog.Report.IsValid) CoreContentCatalog = catalog.Entries;
 			}
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN

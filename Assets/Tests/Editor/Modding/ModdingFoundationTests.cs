@@ -161,6 +161,10 @@ namespace CaptivityReloaded.Modding.Tests
 
 	public class ContentRegistryTests
 	{
+		private sealed class RuntimeAssetStub : ScriptableObject
+		{
+		}
+
 		[Test]
 		public void Register_RejectsDuplicateContentId()
 		{
@@ -180,6 +184,55 @@ namespace CaptivityReloaded.Modding.Tests
 			ContentRegistration registration = new ContentRegistration(ContentId.Parse("other.pack:enemy/test"), ContentCategory.Enemy, "example.pack", "enemy.json");
 			Assert.That(registry.Register(registration, report), Is.False);
 			Assert.That(report.Issues.Any(issue => issue.Code == "registry.namespace"), Is.True);
+		}
+
+		[Test]
+		public void Register_PreservesRuntimeAssetReference()
+		{
+			RuntimeAssetStub asset = ScriptableObject.CreateInstance<RuntimeAssetStub>();
+			try
+			{
+				ContentRegistration registration = new ContentRegistration(ContentId.Parse("core:enemy/gremlin"), ContentCategory.Enemy, "core", "core/catalog.json", asset);
+				ContentRegistry registry = new ContentRegistry();
+				Assert.That(registry.Register(registration, new ValidationReport()), Is.True);
+				Assert.That(registry.TryGet(ContentId.Parse("core:enemy/gremlin"), out ContentRegistration resolved), Is.True);
+				Assert.That(resolved.RuntimeAsset, Is.SameAs(asset));
+			}
+			finally
+			{
+				Object.DestroyImmediate(asset);
+			}
+		}
+	}
+
+	public class CoreContentCatalogParserTests
+	{
+		[Test]
+		public void PackagedCatalog_MapsAllCanonicalEnemiesAndStages()
+		{
+			TextAsset asset = Resources.Load<TextAsset>("Modding/Core/catalog");
+			Assert.That(asset, Is.Not.Null);
+			CoreContentCatalogLoadResult result = CoreContentCatalogParser.Parse(asset.text, "core/catalog.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Entries.Count(entry => entry.Category == ContentCategory.Enemy), Is.EqualTo(21));
+			Assert.That(result.Entries.Count(entry => entry.Category == ContentCategory.Stage), Is.EqualTo(7));
+			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:enemy/gremlin")).LegacyId, Is.EqualTo(12));
+			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:stage/field-day")).LegacyId, Is.EqualTo(6));
+		}
+
+		[Test]
+		public void Parse_RejectsDuplicateLegacyIdsWithinCategory()
+		{
+			const string json = @"{
+  'schemaVersion': 1,
+  'entries': [
+    { 'id': 'core:enemy/first', 'category': 'Enemy', 'legacyId': 1 },
+    { 'id': 'core:enemy/second', 'category': 'Enemy', 'legacyId': 1 }
+  ]
+}";
+			CoreContentCatalogLoadResult result = CoreContentCatalogParser.Parse(json, "core/catalog.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "catalog.duplicate-legacy-id"), Is.True);
 		}
 	}
 }
