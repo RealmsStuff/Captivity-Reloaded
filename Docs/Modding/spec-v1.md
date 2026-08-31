@@ -113,6 +113,40 @@ An `extends` field inherits from an existing compatible definition:
 
 V1 permits only fields explicitly marked as overridable for that content type. Engine components, arbitrary C# class names and private prefab hierarchy paths are not valid fields.
 
+### Enemy definition draft
+
+The first supported enemy shape extends an existing enemy and supplies a `coreRigAtlas` visual. Parsing and validation are implemented; runtime rig construction remains the next milestone.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.enemies:enemy/acid-gremlin",
+  "displayName": "Acid Gremlin",
+  "extends": "core:enemy/gremlin",
+  "description": "An atlas-driven Gremlin variant.",
+  "stats": {
+    "healthMax": 24,
+    "speedAcceleration": 12,
+    "speedMax": 4.5,
+    "traction": 0.8,
+    "bounty": 15,
+    "healthIncreasePerWave": 2
+  },
+  "visual": {
+    "type": "coreRigAtlas",
+    "atlas": "assets/enemies/acid-gremlin.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "body/head": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "body/torso": { "x": 32, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}
+```
+
+Stat values are bounded, atlas rectangles require a non-negative origin and positive dimensions, and region names are semantic paths. Unknown gameplay fields, component names, assembly names and unsupported visual types invalidate the definition.
+
 ## Assets
 
 External paths are forward-slash paths relative to the pack root:

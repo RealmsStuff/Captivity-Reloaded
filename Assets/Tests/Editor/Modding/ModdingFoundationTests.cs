@@ -579,6 +579,84 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class EnemyDefinitionParserTests
+	{
+		private const string ValidEnemy = @"{
+  'schemaVersion': 1,
+  'type': 'enemy',
+  'id': 'example.enemies:enemy/acid-gremlin',
+  'displayName': 'Acid Gremlin',
+  'extends': 'core:enemy/gremlin',
+  'description': 'A data-driven test enemy.',
+  'stats': {
+    'healthMax': 24,
+    'speedAcceleration': 12,
+    'speedMax': 4.5,
+    'traction': 0.8,
+    'bounty': 15,
+    'healthIncreasePerWave': 2
+  },
+  'visual': {
+    'type': 'coreRigAtlas',
+    'atlas': 'assets/enemies/acid-gremlin.png',
+    'pixelsPerUnit': 32,
+    'regions': {
+      'body/head': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },
+      'body/torso': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }
+    }
+  }
+}";
+
+		[Test]
+		public void Parse_AcceptsCoreRigAtlasEnemyWithBoundedOverrides()
+		{
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(ValidEnemy, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.enemies:enemy/acid-gremlin")));
+			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:enemy/gremlin")));
+			Assert.That(result.Definition.Visual.Regions, Has.Count.EqualTo(2));
+		}
+
+		[Test]
+		public void Parse_RejectsForeignNamespaceAndUnsafeAtlas()
+		{
+			string json = ValidEnemy
+				.Replace("example.enemies:enemy/acid-gremlin", "other.pack:enemy/acid-gremlin")
+				.Replace("assets/enemies/acid-gremlin.png", "../acid-gremlin.png");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.id"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.visual.atlas"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsUnsafeRegionsAndOutOfRangeStats()
+		{
+			string json = ValidEnemy
+				.Replace("'healthMax': 24", "'healthMax': 0")
+				.Replace("'traction': 0.8", "'traction': 2")
+				.Replace("'body/head'", "'../head'")
+				.Replace("'width': 32", "'width': 0");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.stats.health-max"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.stats.traction"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.visual.region-name"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.visual.region-rect"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsUnknownGameplayFieldsAndUnsupportedVisualTypes()
+		{
+			string json = ValidEnemy
+				.Replace("'healthMax'", "'arbitraryScript': 'Hack.dll', 'healthMax'")
+				.Replace("'coreRigAtlas'", "'arbitraryPrefab'");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.json"), Is.True);
+		}
+	}
+
 	public class CoreContentCatalogParserTests
 	{
 		[Test]
