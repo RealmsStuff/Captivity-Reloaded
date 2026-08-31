@@ -216,8 +216,12 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Report.IsValid, Is.True);
 			Assert.That(result.Entries.Count(entry => entry.Category == ContentCategory.Enemy), Is.EqualTo(21));
 			Assert.That(result.Entries.Count(entry => entry.Category == ContentCategory.Stage), Is.EqualTo(7));
+			Assert.That(result.Entries.Count(entry => entry.Category == ContentCategory.Item), Is.EqualTo(33));
 			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:enemy/gremlin")).LegacyId, Is.EqualTo(12));
 			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:stage/field-day")).LegacyId, Is.EqualTo(6));
+			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:item/weapon/pistol")).LegacyName, Is.EqualTo("Pistol"));
+			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:item/usable/morphine")).LegacyName, Is.EqualTo("Morphine"));
+			Assert.That(result.Entries.Single(entry => entry.Id == ContentId.Parse("core:item/consumable/ammo-box")).LegacyName, Is.EqualTo("Ammo Box"));
 		}
 
 		[Test]
@@ -232,7 +236,22 @@ namespace CaptivityReloaded.Modding.Tests
 }";
 			CoreContentCatalogLoadResult result = CoreContentCatalogParser.Parse(json, "core/catalog.json");
 			Assert.That(result.Report.IsValid, Is.False);
-			Assert.That(result.Report.Issues.Any(issue => issue.Code == "catalog.duplicate-legacy-id"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "catalog.duplicate-legacy-selector"), Is.True);
+		}
+
+		[Test]
+		public void Parse_RequiresExactlyOneLegacySelector()
+		{
+			const string json = @"{
+  'schemaVersion': 1,
+  'entries': [
+    { 'id': 'core:item/weapon/missing', 'category': 'Item' },
+    { 'id': 'core:item/weapon/ambiguous', 'category': 'Item', 'legacyId': 1, 'legacyName': 'Pistol' }
+  ]
+}";
+			CoreContentCatalogLoadResult result = CoreContentCatalogParser.Parse(json, "core/catalog.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Count(issue => issue.Code == "catalog.legacy-selector"), Is.EqualTo(2));
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace CaptivityReloaded.Modding.Tests
 		{
 			yield return null;
 			Assert.That(ModLoaderRuntime.LoadedPacks.Any(pack => pack.Manifest.Id == "core"), Is.True);
-			Assert.That(ModLoaderRuntime.CoreContentCatalog.Count, Is.EqualTo(28));
+			Assert.That(ModLoaderRuntime.CoreContentCatalog.Count, Is.EqualTo(61));
 			Assert.That(ModLoaderRuntime.Registry, Is.Not.Null);
 		}
 	}

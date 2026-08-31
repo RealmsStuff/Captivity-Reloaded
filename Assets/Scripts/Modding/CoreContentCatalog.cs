@@ -22,21 +22,26 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("category", Required = Required.Always)]
 		public string Category { get; set; }
 
-		[JsonProperty("legacyId", Required = Required.Always)]
-		public int LegacyId { get; set; }
+		[JsonProperty("legacyId")]
+		public int? LegacyId { get; set; }
+
+		[JsonProperty("legacyName")]
+		public string LegacyName { get; set; }
 	}
 
 	public sealed class CoreContentCatalogEntry
 	{
 		public ContentId Id { get; }
 		public ContentCategory Category { get; }
-		public int LegacyId { get; }
+		public int? LegacyId { get; }
+		public string LegacyName { get; }
 
-		internal CoreContentCatalogEntry(ContentId i_id, ContentCategory i_category, int i_legacyId)
+		internal CoreContentCatalogEntry(ContentId i_id, ContentCategory i_category, int? i_legacyId, string i_legacyName)
 		{
 			Id = i_id;
 			Category = i_category;
 			LegacyId = i_legacyId;
+			LegacyName = i_legacyName ?? string.Empty;
 		}
 	}
 
@@ -90,7 +95,7 @@ namespace CaptivityReloaded.Modding
 
 			List<CoreContentCatalogEntry> entries = new List<CoreContentCatalogEntry>();
 			HashSet<ContentId> contentIds = new HashSet<ContentId>();
-			HashSet<string> legacyIds = new HashSet<string>();
+			HashSet<string> legacySelectors = new HashSet<string>(System.StringComparer.Ordinal);
 			foreach (CoreContentCatalogRecord record in document.Entries)
 			{
 				if (record == null || !ContentId.TryParse(record.Id, out ContentId id) || id.Namespace != "core")
@@ -99,14 +104,26 @@ namespace CaptivityReloaded.Modding
 					continue;
 				}
 				if (!System.Enum.TryParse(record.Category, ignoreCase: false, out ContentCategory category) ||
-					(category != ContentCategory.Enemy && category != ContentCategory.Stage))
+					(category != ContentCategory.Enemy && category != ContentCategory.Stage && category != ContentCategory.Item))
 				{
-					result.Report.Add(ValidationSeverity.Error, "catalog.category", "Core adapter category must be Enemy or Stage: " + record.Category, i_source);
+					result.Report.Add(ValidationSeverity.Error, "catalog.category", "Core adapter category must be Enemy, Stage, or Item: " + record.Category, i_source);
 					continue;
 				}
-				if (record.LegacyId < 0)
+				bool hasId = record.LegacyId.HasValue;
+				bool hasName = !string.IsNullOrWhiteSpace(record.LegacyName);
+				if (hasId == hasName)
+				{
+					result.Report.Add(ValidationSeverity.Error, "catalog.legacy-selector", "Every Core entry must declare exactly one of legacyId or legacyName: " + id, i_source);
+					continue;
+				}
+				if (hasId && record.LegacyId.Value < 0)
 				{
 					result.Report.Add(ValidationSeverity.Error, "catalog.legacy-id", "Legacy IDs must be non-negative: " + id, i_source);
+					continue;
+				}
+				if (hasName && record.LegacyName.Trim() != record.LegacyName)
+				{
+					result.Report.Add(ValidationSeverity.Error, "catalog.legacy-name", "Legacy names cannot have leading or trailing whitespace: " + id, i_source);
 					continue;
 				}
 				if (!contentIds.Add(id))
@@ -114,13 +131,13 @@ namespace CaptivityReloaded.Modding
 					result.Report.Add(ValidationSeverity.Error, "catalog.duplicate-id", "Duplicate Core content ID: " + id, i_source);
 					continue;
 				}
-				string legacyKey = category + ":" + record.LegacyId;
-				if (!legacyIds.Add(legacyKey))
+				string legacyKey = category + ":" + (hasId ? "id:" + record.LegacyId.Value : "name:" + record.LegacyName);
+				if (!legacySelectors.Add(legacyKey))
 				{
-					result.Report.Add(ValidationSeverity.Error, "catalog.duplicate-legacy-id", "Duplicate " + category + " legacy ID: " + record.LegacyId, i_source);
+					result.Report.Add(ValidationSeverity.Error, "catalog.duplicate-legacy-selector", "Duplicate " + category + " legacy selector: " + legacyKey, i_source);
 					continue;
 				}
-				entries.Add(new CoreContentCatalogEntry(id, category, record.LegacyId));
+				entries.Add(new CoreContentCatalogEntry(id, category, record.LegacyId, record.LegacyName));
 			}
 
 			result.Entries = entries;

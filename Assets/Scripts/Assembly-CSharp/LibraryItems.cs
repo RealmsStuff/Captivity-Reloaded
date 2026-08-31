@@ -9,4 +9,9 @@ public class LibraryItems : MonoBehaviour
 	{
 		return Object.Instantiate(m_ammoBox);
 	}
+
+	public AmmoBox GetAmmoBoxTemplate()
+	{
+		return m_ammoBox;
+	}
 }

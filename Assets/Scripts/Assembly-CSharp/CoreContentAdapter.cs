@@ -17,7 +17,8 @@ public static class CoreContentAdapter
 			Object runtimeAsset = Resolve(entry, library, stageManager);
 			if (runtimeAsset == null)
 			{
-				ModLoaderRuntime.LastReport.Add(ValidationSeverity.Warning, "adapter.core-missing", "Core " + entry.Category + " legacy ID " + entry.LegacyId + " could not be resolved.", "core/catalog.json");
+				string selector = entry.LegacyId.HasValue ? "legacy ID " + entry.LegacyId.Value : "legacy name '" + entry.LegacyName + "'";
+				ModLoaderRuntime.LastReport.Add(ValidationSeverity.Warning, "adapter.core-missing", "Core " + entry.Category + " " + selector + " could not be resolved.", "core/catalog.json");
 				continue;
 			}
 
@@ -40,13 +41,31 @@ public static class CoreContentAdapter
 	{
 		if (i_entry.Category == ContentCategory.Enemy)
 		{
-			return i_library.Actors == null ? null : i_library.Actors.GetNpc(i_entry.LegacyId);
+			return i_library.Actors == null || !i_entry.LegacyId.HasValue ? null : i_library.Actors.GetNpc(i_entry.LegacyId.Value);
 		}
 		if (i_entry.Category == ContentCategory.Stage)
 		{
 			foreach (Stage stage in i_stageManager.GetAllStages())
 			{
-				if (stage.GetId() == i_entry.LegacyId) return stage;
+				if (i_entry.LegacyId.HasValue && stage.GetId() == i_entry.LegacyId.Value) return stage;
+			}
+		}
+		if (i_entry.Category == ContentCategory.Item)
+		{
+			Gun gun = i_library.Guns == null ? null : i_library.Guns.GetGun(i_entry.LegacyName);
+			if (gun != null) return gun;
+			if (i_library.Usables != null)
+			{
+				foreach (GameObject usableObject in i_library.Usables.GetAllUsables())
+				{
+					Usable usable = usableObject.GetComponent<Usable>();
+					if (usable != null && usable.GetName() == i_entry.LegacyName) return usable;
+				}
+			}
+			if (i_library.Items != null)
+			{
+				AmmoBox ammoBox = i_library.Items.GetAmmoBoxTemplate();
+				if (ammoBox != null && ammoBox.GetName() == i_entry.LegacyName) return ammoBox;
 			}
 		}
 		return null;
