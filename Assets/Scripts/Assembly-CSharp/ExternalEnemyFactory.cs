@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using CaptivityReloaded.Modding;
 using UnityEngine;
 
@@ -68,61 +67,44 @@ public static class ExternalEnemyFactory
 
 	private static bool ApplyAtlas(NPC i_clone, EnemyDefinition i_definition, string i_packRoot)
 	{
-		string path = System.IO.Path.GetFullPath(System.IO.Path.Combine(i_packRoot, i_definition.Visual.Atlas));
-		if (!AssetPatchDiscovery.IsInside(path, i_packRoot) || !File.Exists(path))
-		{
-			Report("enemy.factory-atlas", "Enemy atlas is missing or outside its pack.", path);
-			return false;
-		}
-		try
-		{
-			FileInfo file = new FileInfo(path);
-			if (file.Length <= 0 || file.Length > 32 * 1024 * 1024) throw new InvalidDataException("Atlas size must be between 1 byte and 32 MiB.");
-			Texture2D atlas = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-			if (!atlas.LoadImage(File.ReadAllBytes(path), false)) throw new InvalidDataException("Unity could not decode the enemy atlas.");
-			atlas.name = i_definition.Id + "/atlas";
-			atlas.filterMode = FilterMode.Point;
+		if (!RuntimePngAssetLoader.TryLoad(i_packRoot, i_definition.Visual.Atlas, i_definition.Id + "/atlas",
+			FilterMode.Point, ModLoaderRuntime.LastReport, "enemy.factory-atlas", "enemy.factory-atlas-decode",
+			i_definition.Source, out Texture2D atlas)) return false;
 
-			foreach (KeyValuePair<string, AtlasRegionDefinition> region in i_definition.Visual.Regions)
-			{
-				if (!RigParts.TryGetValue(region.Key, out string[] objectNames))
-				{
-					Report("enemy.factory-region", "Core rig does not expose region: " + region.Key, i_definition.Source);
-					UnityEngine.Object.Destroy(atlas);
-					return false;
-				}
-				AtlasRegionDefinition area = region.Value;
-				Rect rect = new Rect(area.X, area.Y, area.Width, area.Height);
-				if (rect.xMax > atlas.width || rect.yMax > atlas.height)
-				{
-					Report("enemy.factory-region-bounds", "Atlas region is outside the PNG: " + region.Key, i_definition.Source);
-					UnityEngine.Object.Destroy(atlas);
-					return false;
-				}
-				foreach (string objectName in objectNames)
-				{
-					Transform part = FindRecursive(i_clone.transform, objectName);
-					SpriteRenderer renderer = part == null ? null : part.GetComponent<SpriteRenderer>();
-					if (renderer == null || renderer.sprite == null)
-					{
-						Report("enemy.factory-rig-part", "Template is missing required renderer: " + objectName, i_definition.Source);
-						UnityEngine.Object.Destroy(atlas);
-						return false;
-					}
-					Sprite baseline = renderer.sprite;
-					Vector2 pivot = new Vector2(baseline.pivot.x / baseline.rect.width, baseline.pivot.y / baseline.rect.height);
-					Sprite sprite = Sprite.Create(atlas, rect, pivot, i_definition.Visual.PixelsPerUnit, 0, SpriteMeshType.FullRect, baseline.border);
-					sprite.name = i_definition.Id + "/" + region.Key;
-					renderer.sprite = sprite;
-				}
-			}
-			return true;
-		}
-		catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException || exception is InvalidDataException)
+		foreach (KeyValuePair<string, AtlasRegionDefinition> region in i_definition.Visual.Regions)
 		{
-			Report("enemy.factory-atlas-decode", exception.Message, path);
-			return false;
+			if (!RigParts.TryGetValue(region.Key, out string[] objectNames))
+			{
+				Report("enemy.factory-region", "Core rig does not expose region: " + region.Key, i_definition.Source);
+				UnityEngine.Object.Destroy(atlas);
+				return false;
+			}
+			AtlasRegionDefinition area = region.Value;
+			Rect rect = new Rect(area.X, area.Y, area.Width, area.Height);
+			if (rect.xMax > atlas.width || rect.yMax > atlas.height)
+			{
+				Report("enemy.factory-region-bounds", "Atlas region is outside the PNG: " + region.Key, i_definition.Source);
+				UnityEngine.Object.Destroy(atlas);
+				return false;
+			}
+			foreach (string objectName in objectNames)
+			{
+				Transform part = FindRecursive(i_clone.transform, objectName);
+				SpriteRenderer renderer = part == null ? null : part.GetComponent<SpriteRenderer>();
+				if (renderer == null || renderer.sprite == null)
+				{
+					Report("enemy.factory-rig-part", "Template is missing required renderer: " + objectName, i_definition.Source);
+					UnityEngine.Object.Destroy(atlas);
+					return false;
+				}
+				Sprite baseline = renderer.sprite;
+				Vector2 pivot = new Vector2(baseline.pivot.x / baseline.rect.width, baseline.pivot.y / baseline.rect.height);
+				Sprite sprite = Sprite.Create(atlas, rect, pivot, i_definition.Visual.PixelsPerUnit, 0, SpriteMeshType.FullRect, baseline.border);
+				sprite.name = i_definition.Id + "/" + region.Key;
+				renderer.sprite = sprite;
+			}
 		}
+		return true;
 	}
 
 	private static Transform FindRecursive(Transform i_root, string i_name)
