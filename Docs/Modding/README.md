@@ -22,6 +22,6 @@ The shipped game is represented by the required, read-only `core` content pack. 
 
 Specification status: **Draft 0.4**
 
-Runtime status: **Foundation, asset replacement and Core-rig enemy construction implemented**
+Runtime status: **Foundation, asset replacement, Core-rig enemies and clothing-definition discovery implemented**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

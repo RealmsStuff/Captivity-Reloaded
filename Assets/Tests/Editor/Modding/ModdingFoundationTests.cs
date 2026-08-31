@@ -699,6 +699,48 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class ClothingDefinitionParserTests
+	{
+		private const string ValidClothing = @"{
+  'schemaVersion': 1,
+  'type': 'clothing',
+  'id': 'example.clothes:clothing/refitted-shirt',
+  'displayName': 'Refitted Shirt',
+  'extends': 'core:clothing/shirt-default',
+  'visual': {
+    'type': 'coreClothingAtlas',
+    'atlas': 'assets/clothing/refitted-shirt.png',
+    'pixelsPerUnit': 32,
+    'regions': {
+      'piece/spine': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },
+      'piece/chest': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }
+    }
+  }
+}";
+
+		[Test]
+		public void Parse_AcceptsCoreTemplateClothingAtlas()
+		{
+			ClothingDefinitionLoadResult result = ClothingDefinitionParser.Parse(ValidClothing, "example.clothes", "shirt.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.clothes:clothing/refitted-shirt")));
+			Assert.That(result.Definition.Extends, Is.EqualTo(ContentId.Parse("core:clothing/shirt-default")));
+			Assert.That(result.Definition.Visual.Regions, Has.Count.EqualTo(2));
+		}
+
+		[Test]
+		public void Parse_RejectsForeignNamespaceUnsafeAtlasAndUnknownFields()
+		{
+			string json = ValidClothing
+				.Replace("example.clothes:clothing/refitted-shirt", "another.pack:clothing/refitted-shirt")
+				.Replace("assets/clothing/refitted-shirt.png", "../refitted-shirt.png")
+				.Replace("'displayName'", "'script': 'Legacy.dll', 'displayName'");
+			ClothingDefinitionLoadResult result = ClothingDefinitionParser.Parse(json, "example.clothes", "shirt.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "clothing.json"), Is.True);
+		}
+	}
+
 	public class ModContentDiscoveryTests
 	{
 		[Test]
@@ -770,6 +812,48 @@ namespace CaptivityReloaded.Modding.Tests
 				Assert.That(result.Enemies, Has.Count.EqualTo(1));
 				Assert.That(result.Enemies[0].Id, Is.EqualTo(ContentId.Parse("example.enemies:enemy/test")));
 				Assert.That(result.AssetPatches, Is.Empty);
+			}
+			finally
+			{
+				if (Directory.Exists(root)) Directory.Delete(root, true);
+			}
+		}
+
+		[Test]
+		public void Discover_DispatchesClothingDefinitionsFromDeclaredRoots()
+		{
+			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModClothingDiscoveryTests"));
+			string content = Path.Combine(root, "content");
+			Directory.CreateDirectory(content);
+			try
+			{
+				File.WriteAllText(Path.Combine(content, "clothing.json"), @"{
+  'schemaVersion': 1,
+  'type': 'clothing',
+  'id': 'example.clothes:clothing/test-shirt',
+  'displayName': 'Test Shirt',
+  'extends': 'core:clothing/shirt-default',
+  'visual': {
+    'type': 'coreClothingAtlas',
+    'atlas': 'assets/test-shirt.png',
+    'regions': { 'piece/chest': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 } }
+  }
+}");
+				SemanticVersion.TryParse("1.0.0", out SemanticVersion version);
+				ModPack pack = new ModPack(new ModManifest
+				{
+					SchemaVersion = 1,
+					Id = "example.clothes",
+					DisplayName = "Example Clothes",
+					Version = "1.0.0",
+					ModApiVersion = 1,
+					ContentRoots = new List<string> { "content" }
+				}, version, root);
+				ModContentDiscoveryResult result = ModContentDiscovery.Discover(new[] { pack });
+				Assert.That(result.Report.IsValid, Is.True);
+				Assert.That(result.Clothing, Has.Count.EqualTo(1));
+				Assert.That(result.Clothing[0].Id, Is.EqualTo(ContentId.Parse("example.clothes:clothing/test-shirt")));
+				Assert.That(result.Enemies, Is.Empty);
 			}
 			finally
 			{

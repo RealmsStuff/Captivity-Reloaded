@@ -13,6 +13,7 @@ namespace CaptivityReloaded.Modding
 		public static LegacyContentMap LegacyContentMap { get; private set; } = new LegacyContentMap(null);
 		public static IReadOnlyList<AssetPatchDefinition> AssetPatches { get; private set; } = new AssetPatchDefinition[0];
 		public static IReadOnlyList<EnemyDefinition> EnemyDefinitions { get; private set; } = new EnemyDefinition[0];
+		public static IReadOnlyList<ClothingDefinition> ClothingDefinitions { get; private set; } = new ClothingDefinition[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -26,6 +27,7 @@ namespace CaptivityReloaded.Modding
 			LegacyContentMap = new LegacyContentMap(null);
 			AssetPatches = new AssetPatchDefinition[0];
 			EnemyDefinitions = new EnemyDefinition[0];
+			ClothingDefinitions = new ClothingDefinition[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -74,7 +76,9 @@ namespace CaptivityReloaded.Modding
 			report.Merge(content.Report);
 			AssetPatches = content.AssetPatches;
 			EnemyDefinitions = content.Enemies;
+			ClothingDefinitions = content.Clothing;
 			RegisterExternalEnemies(content.Enemies, report);
+			RegisterExternalClothing(content.Clothing, report);
 			LastReport = report;
 
 			foreach (ValidationIssue issue in report.Issues)
@@ -85,6 +89,23 @@ namespace CaptivityReloaded.Modding
 			}
 
 			Debug.Log("[ModLoader] Validation complete. Packs=" + LoadedPacks.Count + ", registry entries=" + Registry.Count + ", valid=" + report.IsValid + ".");
+		}
+
+		private static void RegisterExternalClothing(IEnumerable<ClothingDefinition> i_clothing, ValidationReport io_report)
+		{
+			HashSet<ContentId> coreClothing = new HashSet<ContentId>();
+			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
+				if (entry.Category == ContentCategory.Clothing) coreClothing.Add(entry.Id);
+
+			foreach (ClothingDefinition clothing in i_clothing)
+			{
+				if (!coreClothing.Contains(clothing.Extends))
+				{
+					io_report.Add(ValidationSeverity.Error, "clothing.extends-missing", "Clothing extends unknown Core clothing: " + clothing.Extends, clothing.Source);
+					continue;
+				}
+				Registry.Register(new ContentRegistration(clothing.Id, ContentCategory.Clothing, clothing.PackId, clothing.Source), io_report);
+			}
 		}
 
 		private static void RegisterExternalEnemies(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)

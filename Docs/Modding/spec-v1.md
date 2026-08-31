@@ -160,6 +160,31 @@ The shared arm, hand and leg regions are applied to both sides of the rig. The t
 
 `spawn.inheritTemplateSpawners` is optional and defaults to `false`. When enabled, the variant is added once to every Core stage spawner that can spawn its template, giving it the same selection weight as one existing entry in that spawner. Leaving it disabled registers and builds the enemy without changing Core stage encounters; a future custom stage can then reference it directly.
 
+### Clothing definition draft
+
+Additive clothing follows the same inheritance model. A definition extends one Core clothing template so attachment bones, offsets, sorting, colliders, tearing behaviour, category and compatibility rules remain intact. Its atlas replaces explicitly named template pieces:
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.clothes:clothing/refitted-shirt",
+  "displayName": "Refitted Shirt",
+  "extends": "core:clothing/shirt-default",
+  "visual": {
+    "type": "coreClothingAtlas",
+    "atlas": "assets/clothing/refitted-shirt.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "piece/spine": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "piece/chest": { "x": 32, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}
+```
+
+Parsing, discovery and registry placeholders are implemented. Runtime template construction, public piece-slot validation, wardrobe integration and namespaced unlock/equipment saves remain the next part of this phase.
+
 ## Assets
 
 External paths are forward-slash paths relative to the pack root:
