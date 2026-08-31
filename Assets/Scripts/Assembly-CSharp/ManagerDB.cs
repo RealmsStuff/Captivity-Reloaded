@@ -1432,6 +1432,12 @@ public static class ManagerDB
 
     private static void AddStageIfNotExists(Stage i_stage)
     {
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+		{
+			if (!TryGetStageContentState(contentId, out _))
+				SaveStageContentState(contentId, new StageContentState());
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		if (!IsStageExists(i_stage))
 		{
@@ -1486,6 +1492,8 @@ public static class ManagerDB
 
     public static int GetHighscore(Stage i_stage)
     {
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+			return TryGetStageContentState(contentId, out StageContentState saved) ? saved.Highscore : 0;
 #if UNITY_WEBGL || UNITY_ANDROID
 		var s = GetWebStage(i_stage.GetId());
 		return s.highscore;
@@ -1502,6 +1510,12 @@ public static class ManagerDB
 
     public static async void SetHighscore(Stage i_stage, int i_highScoreNew)
     {
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+		{
+			SaveStageContentState(contentId, new StageContentState { Highscore = Math.Max(0, i_highScoreNew) });
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		var s = GetWebStage(i_stage.GetId());
 		s.highscore = i_highScoreNew;
@@ -1511,6 +1525,29 @@ public static class ManagerDB
         await ExecuteNonQueryAsync("UPDATE tbl_stage SET highscore = " + i_highScoreNew + " WHERE idStage = " + i_stage.GetId());
 #endif
     }
+
+	private static bool TryGetExternalStageId(Stage i_stage, out ContentId o_contentId)
+	{
+		o_contentId = default;
+		return RuntimeContentIdentity.TryResolve(i_stage, out o_contentId, out ContentCategory category) &&
+			category == ContentCategory.Stage && o_contentId.Namespace != "core";
+	}
+
+	private static bool TryGetStageContentState(ContentId i_id, out StageContentState o_state)
+	{
+		foreach (SavedContentState saved in GetSavedContentStates())
+		{
+			if (saved.Category == ContentCategory.Stage && saved.ContentId == i_id)
+				return StageContentState.TryParse(saved.StateJson, out o_state);
+		}
+		o_state = null;
+		return false;
+	}
+
+	private static void SaveStageContentState(ContentId i_id, StageContentState i_state)
+	{
+		SaveContentState(new SavedContentState(i_id, ContentCategory.Stage, i_state.ToJson()));
+	}
 
     public static bool IsFirstTimeStart()
     {

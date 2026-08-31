@@ -44,6 +44,7 @@ public class ManagerWave : MonoBehaviour
 	public void Initialize(Stage i_stage)
 	{
 		int num = 0;
+		m_spawners.Clear();
 		m_stateWaveCurrent = StateWave.Wait;
 		Spawner[] componentsInChildren = GetComponentsInChildren<Spawner>(includeInactive: false);
 		foreach (Spawner spawner in componentsInChildren)
@@ -292,5 +293,10 @@ public class ManagerWave : MonoBehaviour
 	public bool IsHighscoreAchieved()
 	{
 		return m_isHighscoreAchieved;
+	}
+
+	public void ConfigureModWave(int i_firstWaveEnemyCount)
+	{
+		m_numOfSpawnsFirstWave = i_firstWaveEnemyCount;
 	}
 }

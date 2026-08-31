@@ -778,6 +778,24 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class StageContentStateTests
+	{
+		[Test]
+		public void State_RoundTripsNamespacedHighscore()
+		{
+			StageContentState state = new StageContentState { Highscore = 17 };
+			Assert.That(StageContentState.TryParse(state.ToJson(), out StageContentState restored), Is.True);
+			Assert.That(restored.Highscore, Is.EqualTo(17));
+		}
+
+		[Test]
+		public void State_RejectsNegativeHighscoresAndUnknownFields()
+		{
+			Assert.That(StageContentState.TryParse("{\"highscore\":-1}", out _), Is.False);
+			Assert.That(StageContentState.TryParse("{\"legacyStageId\":6}", out _), Is.False);
+		}
+	}
+
 	public class WeaponDefinitionParserTests
 	{
 		private const string ValidWeapon = @"{
@@ -1024,6 +1042,22 @@ namespace CaptivityReloaded.Modding.Tests
 			{
 				Object.DestroyImmediate(atlas);
 			}
+		}
+
+		[Test]
+		public void TrainingYardStageExample_DiscoversWithCoreEnemies()
+		{
+			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
+			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
+			Assert.That(packs.Report.IsValid, Is.True);
+			ModPack trainingYard = packs.Packs.Single(pack => pack.Manifest.Id == "example.training-yard");
+			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { trainingYard });
+			Assert.That(content.Report.IsValid, Is.True);
+			Assert.That(content.Stages, Has.Count.EqualTo(1));
+			StageDefinition stage = content.Stages.Single();
+			Assert.That(stage.Extends, Is.EqualTo(ContentId.Parse("core:stage/field-day")));
+			Assert.That(stage.Spawners, Has.Count.EqualTo(2));
+			Assert.That(stage.Spawners.SelectMany(spawner => spawner.Enemies).All(enemy => enemy.Namespace == "core"), Is.True);
 		}
 
 		[Test]

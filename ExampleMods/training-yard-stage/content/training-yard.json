@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "example.training-yard:stage/training-yard",
+  "displayName": "Training Yard",
+  "extends": "core:stage/field-day",
+  "description": "A Field-Day layout variant with a simpler zombie encounter table.",
+  "layout": {
+    "type": "coreStageLayout",
+    "playerSpawn": { "x": 0, "y": 2 }
+  },
+  "waves": {
+    "firstWaveEnemyCount": 4
+  },
+  "spawners": [
+    {
+      "id": "west-ground",
+      "position": { "x": -16, "y": 4 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-2"],
+      "selectionWeight": 1,
+      "minimumWave": 0,
+      "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25,
+      "initialDelaySeconds": 1,
+      "initialDelayJitterSeconds": 0.25,
+      "spawnOutOfSight": true
+    },
+    {
+      "id": "east-ground",
+      "position": { "x": 16, "y": 4 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/death-hound"],
+      "selectionWeight": 1,
+      "minimumWave": 2,
+      "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25,
+      "initialDelaySeconds": 1,
+      "initialDelayJitterSeconds": 0.25,
+      "spawnOutOfSight": true
+    }
+  ]
+}

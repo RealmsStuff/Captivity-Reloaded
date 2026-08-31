@@ -20,25 +20,36 @@ public class MenuLocations : Menu
 	private UnityEngine.UI.Button m_btnGo;
 
 	private Stage m_stageSelected;
+	private ManagerStages m_managerStages;
 
 	private void Start()
 	{
 		m_btnGo.interactable = false;
 		m_stageMenuItemDefault.gameObject.SetActive(value: false);
+		m_managerStages = CommonReferences.Instance.GetManagerStages();
+		m_managerStages.OnRuntimeStageAdded += AddStageMenuItem;
 		BuildStageMenuItems();
+	}
+
+	private void OnDestroy()
+	{
+		if (m_managerStages != null) m_managerStages.OnRuntimeStageAdded -= AddStageMenuItem;
 	}
 
 	private void BuildStageMenuItems()
 	{
 		foreach (Stage allStage in CommonReferences.Instance.GetManagerStages().GetAllStages())
 		{
-			if (!(allStage is StageHub))
-			{
-				StageMenuItem stageMenuItem = Object.Instantiate(m_stageMenuItemDefault, m_stageMenuItemDefault.transform.parent);
-				stageMenuItem.SetStage(allStage);
-				stageMenuItem.gameObject.SetActive(value: true);
-			}
+			AddStageMenuItem(allStage);
 		}
+	}
+
+	private void AddStageMenuItem(Stage i_stage)
+	{
+		if (i_stage == null || i_stage is StageHub) return;
+		StageMenuItem stageMenuItem = Object.Instantiate(m_stageMenuItemDefault, m_stageMenuItemDefault.transform.parent);
+		stageMenuItem.SetStage(i_stage);
+		stageMenuItem.gameObject.SetActive(value: true);
 	}
 
 	public void Go()

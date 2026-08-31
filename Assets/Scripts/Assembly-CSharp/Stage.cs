@@ -253,4 +253,16 @@ public class Stage : MonoBehaviour
 	{
 		return m_description;
 	}
+
+	public void ConfigureModStage(int i_runtimeId, string i_name, string i_description, Vector2 i_playerSpawn)
+	{
+		m_id = i_runtimeId;
+		m_nameStage = i_name;
+		m_description = i_description ?? string.Empty;
+		if (m_waypointStart != null)
+		{
+			m_waypointStart.transform.localPosition = i_playerSpawn;
+			m_posStart = m_waypointStart.transform.position;
+		}
+	}
 }

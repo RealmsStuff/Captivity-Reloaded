@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
@@ -65,7 +66,7 @@ public class Spawner : MonoBehaviour
 
 	private IEnumerator CoroutineSpawn()
 	{
-		float num = (m_delayBeforeStartSpawning = Random.Range(0f - m_delayRandomOffsetBeforeStartSpawning, m_delayRandomOffsetBeforeStartSpawning));
+		float num = m_delayBeforeStartSpawning + Random.Range(0f - m_delayRandomOffsetBeforeStartSpawning, m_delayRandomOffsetBeforeStartSpawning);
 		if (num < 0f)
 		{
 			num = 0f;
@@ -178,6 +179,19 @@ public class Spawner : MonoBehaviour
 				}
 			}
 			return false;
+		}
+
+		public void ConfigureModSpawner(List<NPC> i_enemies, StageSpawnerDefinition i_definition)
+		{
+			m_npcsPossibleToSpawn = i_enemies ?? new List<NPC>();
+			m_spawnChance01 = i_definition.SelectionWeight;
+			m_numWaveBeforeCanSpawn = i_definition.MinimumWave;
+			m_delayBetweenSpawns = i_definition.DelaySeconds;
+			m_delayRandomOffsetDelaySpawn = i_definition.DelayJitterSeconds;
+			m_delayBeforeStartSpawning = i_definition.InitialDelaySeconds;
+			m_delayRandomOffsetBeforeStartSpawning = i_definition.InitialDelayJitterSeconds;
+			m_isSpawnOutOfSight = i_definition.SpawnOutOfSight;
+			m_isEnabled = true;
 		}
 
 		private void OnDrawGizmos()

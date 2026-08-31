@@ -19,11 +19,12 @@ The shipped game is represented by the required, read-only `core` content pack. 
 - `ExampleMods/prey-green-zombie` is a working conversion of a legacy asset-bundle zombie overhaul into the atlas-driven enemy format.
 - `ExampleMods/femboy-refitted-shirt` converts one legacy multi-piece clothing replacement into an additive Core-template variant.
 - `ExampleMods/additive-nerf-pistol` converts legacy replacement artwork into a separate Core-template weapon while preserving the original pistol.
+- `ExampleMods/training-yard-stage` demonstrates a separate template-backed stage with JSON-defined waves and spawners.
 
 ## Status
 
 Specification status: **Draft 0.5**
 
-Runtime status: **Foundation, asset replacement, Core-rig enemies, Core-template clothing, namespaced clothing saves, additive pistol/usable variants, and validated template-backed stage discovery implemented**
+Runtime status: **Foundation, asset replacement, Core-rig enemies, Core-template clothing, additive pistol/usable variants, and template-backed stages with namespaced high scores implemented**
 
 The schemas and examples may change before the first public Mod API release. Once Mod API v1 is released, existing public IDs and v1 fields should remain compatible for the lifetime of v1.

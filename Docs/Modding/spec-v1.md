@@ -285,9 +285,9 @@ The first stage format separates encounter composition and level identity from U
 }
 ```
 
-V1 `extends` references a non-hub Core stage. Coordinates must be finite and between -100,000 and 100,000. A stage has 1–256 uniquely named spawners; each contains 1–64 unique `enemy/...` content IDs. Enemy references are resolved only against enabled Core content and loaded mod dependencies. Selection weights are relative values from 0.001–1,000. `minimumWave` is 0–10,000, delays are bounded to 0–300 seconds, active spawn delays must be at least 0.02 seconds, and jitter cannot exceed its base delay. `firstWaveEnemyCount` is 1–1,000.
+V1 `extends` references a non-hub Core stage. Positions use stage-local Unity units; coordinates must be finite and between -100,000 and 100,000. A stage has 1–256 uniquely named spawners; each contains 1–64 unique `enemy/...` content IDs. Enemy references are resolved only against enabled Core content and loaded mod dependencies. Selection weights are relative values from 0.001–1,000. `minimumWave` is 0–10,000, delays are bounded to 0–300 seconds, active spawn delays must be at least 0.02 seconds, and jitter cannot exceed its base delay. `firstWaveEnemyCount` is 1–1,000.
 
-The stage runtime factory and namespaced high-score persistence are the next implementation step. Until those land, valid stage files are discovered and registered but are not shown in the Locations menu.
+At runtime, the loader clones the selected Core stage, keeps its layout systems, disables inherited spawners, installs the JSON spawners, changes the player start and first-wave count, and adds a separate Locations entry. High scores are stored under the full stage content ID; temporary negative runtime numbers are never used as persistent identity. `ExampleMods/training-yard-stage` is a disabled working example. Its provisional spawn coordinates still require a hands-on gameplay pass.
 
 ## Assets
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ManagerStages : MonoBehaviour
 {
+	public event System.Action<Stage> OnRuntimeStageAdded;
+
 	[SerializeField]
 	private int m_numStageStart;
 
@@ -177,5 +179,14 @@ public class ManagerStages : MonoBehaviour
 	public int GetMaxNumberOfNpcsOfSameTypeOnStageAtGivenMoment()
 	{
 		return m_maxNumOfNpcsOfSameType;
+	}
+
+	public void AddRuntimeStage(Stage i_stage)
+	{
+		if (i_stage == null || m_stages.Contains(i_stage)) return;
+		i_stage.gameObject.SetActive(false);
+		m_stages.Add(i_stage);
+		ManagerDB.AddStages(new List<Stage> { i_stage });
+		OnRuntimeStageAdded?.Invoke(i_stage);
 	}
 }
