@@ -12,6 +12,7 @@ namespace CaptivityReloaded.Modding
 		public static IReadOnlyList<CoreContentCatalogEntry> CoreContentCatalog { get; private set; } = new CoreContentCatalogEntry[0];
 		public static LegacyContentMap LegacyContentMap { get; private set; } = new LegacyContentMap(null);
 		public static IReadOnlyList<AssetPatchDefinition> AssetPatches { get; private set; } = new AssetPatchDefinition[0];
+		public static IReadOnlyList<EnemyDefinition> EnemyDefinitions { get; private set; } = new EnemyDefinition[0];
 		public static ValidationReport LastReport { get; private set; } = new ValidationReport();
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -24,6 +25,7 @@ namespace CaptivityReloaded.Modding
 			CoreContentCatalog = new CoreContentCatalogEntry[0];
 			LegacyContentMap = new LegacyContentMap(null);
 			AssetPatches = new AssetPatchDefinition[0];
+			EnemyDefinitions = new EnemyDefinition[0];
 
 			TextAsset coreManifestAsset = Resources.Load<TextAsset>("Modding/Core/manifest");
 			if (coreManifestAsset == null)
@@ -68,9 +70,11 @@ namespace CaptivityReloaded.Modding
 			DependencyResolutionResult dependencies = ModDependencyResolver.Resolve(packs);
 			report.Merge(dependencies.Report);
 			LoadedPacks = dependencies.OrderedPacks;
-			AssetPatchDiscoveryResult assetPatches = AssetPatchDiscovery.Discover(LoadedPacks);
-			report.Merge(assetPatches.Report);
-			AssetPatches = assetPatches.Definitions;
+			ModContentDiscoveryResult content = ModContentDiscovery.Discover(LoadedPacks);
+			report.Merge(content.Report);
+			AssetPatches = content.AssetPatches;
+			EnemyDefinitions = content.Enemies;
+			RegisterExternalEnemies(content.Enemies, report);
 			LastReport = report;
 
 			foreach (ValidationIssue issue in report.Issues)
@@ -81,6 +85,23 @@ namespace CaptivityReloaded.Modding
 			}
 
 			Debug.Log("[ModLoader] Validation complete. Packs=" + LoadedPacks.Count + ", registry entries=" + Registry.Count + ", valid=" + report.IsValid + ".");
+		}
+
+		private static void RegisterExternalEnemies(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)
+		{
+			HashSet<ContentId> coreEnemies = new HashSet<ContentId>();
+			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
+				if (entry.Category == ContentCategory.Enemy) coreEnemies.Add(entry.Id);
+
+			foreach (EnemyDefinition enemy in i_enemies)
+			{
+				if (!coreEnemies.Contains(enemy.Extends))
+				{
+					io_report.Add(ValidationSeverity.Error, "enemy.extends-missing", "Enemy extends an unknown Core enemy: " + enemy.Extends, enemy.Source);
+					continue;
+				}
+				Registry.Register(new ContentRegistration(enemy.Id, ContentCategory.Enemy, enemy.PackId, enemy.Source), io_report);
+			}
 		}
 	}
 }

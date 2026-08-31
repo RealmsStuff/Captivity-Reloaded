@@ -657,6 +657,76 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 	}
 
+	public class ModContentDiscoveryTests
+	{
+		[Test]
+		public void Discover_DispatchesEnemyDefinitionsFromDeclaredRoots()
+		{
+			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModContentDiscoveryTests"));
+			string content = Path.Combine(root, "content");
+			Directory.CreateDirectory(content);
+			try
+			{
+				File.WriteAllText(Path.Combine(content, "enemy.json"), @"{
+  'schemaVersion': 1,
+  'type': 'enemy',
+  'id': 'example.enemies:enemy/test',
+  'displayName': 'Test Enemy',
+  'extends': 'core:enemy/gremlin',
+  'visual': {
+    'type': 'coreRigAtlas',
+    'atlas': 'assets/test.png',
+    'regions': { 'body/head': { 'x': 0, 'y': 0, 'width': 16, 'height': 16 } }
+  }
+}");
+				SemanticVersion.TryParse("1.0.0", out SemanticVersion version);
+				ModPack pack = new ModPack(new ModManifest
+				{
+					SchemaVersion = 1,
+					Id = "example.enemies",
+					DisplayName = "Example Enemies",
+					Version = "1.0.0",
+					ModApiVersion = 1,
+					ContentRoots = new List<string> { "content" }
+				}, version, root);
+				ModContentDiscoveryResult result = ModContentDiscovery.Discover(new[] { pack });
+				Assert.That(result.Report.IsValid, Is.True);
+				Assert.That(result.Enemies, Has.Count.EqualTo(1));
+				Assert.That(result.Enemies[0].Id, Is.EqualTo(ContentId.Parse("example.enemies:enemy/test")));
+				Assert.That(result.AssetPatches, Is.Empty);
+			}
+			finally
+			{
+				if (Directory.Exists(root)) Directory.Delete(root, true);
+			}
+		}
+
+		[Test]
+		public void Discover_ReportsUnsupportedDefinitionTypes()
+		{
+			string root = Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/ModContentUnsupportedTests"));
+			string content = Path.Combine(root, "content");
+			Directory.CreateDirectory(content);
+			try
+			{
+				File.WriteAllText(Path.Combine(content, "unknown.json"), "{ 'type': 'arbitraryScript' }");
+				SemanticVersion.TryParse("1.0.0", out SemanticVersion version);
+				ModPack pack = new ModPack(new ModManifest
+				{
+					Id = "example.invalid",
+					ContentRoots = new List<string> { "content" }
+				}, version, root);
+				ModContentDiscoveryResult result = ModContentDiscovery.Discover(new[] { pack });
+				Assert.That(result.Report.IsValid, Is.False);
+				Assert.That(result.Report.Issues.Any(issue => issue.Code == "content.type"), Is.True);
+			}
+			finally
+			{
+				if (Directory.Exists(root)) Directory.Delete(root, true);
+			}
+		}
+	}
+
 	public class CoreContentCatalogParserTests
 	{
 		[Test]

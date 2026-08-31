@@ -16,6 +16,7 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(ModLoaderRuntime.LegacyContentMap.Count, Is.EqualTo(205));
 			Assert.That(ModLoaderRuntime.Registry, Is.Not.Null);
 			Assert.That(ModLoaderRuntime.AssetSlots, Is.Not.Null);
+			Assert.That(ModLoaderRuntime.EnemyDefinitions, Is.Not.Null);
 		}
 	}
 }

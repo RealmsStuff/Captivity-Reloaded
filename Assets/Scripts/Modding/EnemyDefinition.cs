@@ -146,8 +146,8 @@ namespace CaptivityReloaded.Modding
 			if (!string.Equals(document.Type, "enemy", StringComparison.Ordinal)) Error(result, "type", "Definition type must be 'enemy'.", i_source);
 			if (!ContentId.TryParse(document.Id, out ContentId id) || id.Namespace != i_packId || !id.Path.StartsWith("enemy/", StringComparison.Ordinal))
 				Error(result, "id", "Enemy ID must use the defining pack namespace and an enemy/ path.", i_source);
-			if (!ContentId.TryParse(document.Extends, out ContentId extends) || !extends.Path.StartsWith("enemy/", StringComparison.Ordinal) || extends == id)
-				Error(result, "extends", "extends must reference a different enemy content ID.", i_source);
+			if (!ContentId.TryParse(document.Extends, out ContentId extends) || extends.Namespace != "core" || !extends.Path.StartsWith("enemy/", StringComparison.Ordinal) || extends == id)
+				Error(result, "extends", "V1 extends must reference a Core enemy content ID.", i_source);
 			if (string.IsNullOrWhiteSpace(document.DisplayName)) Error(result, "display-name", "displayName is required.", i_source);
 
 			ValidateStats(document.Stats, result.Report, i_source);
