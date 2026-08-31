@@ -8,13 +8,15 @@ public static class CoreContentAdapter
 	{
 		Library[] libraries = Resources.FindObjectsOfTypeAll<Library>();
 		ManagerStages[] stageManagers = Resources.FindObjectsOfTypeAll<ManagerStages>();
+		ManagerChallenge[] challengeManagers = Resources.FindObjectsOfTypeAll<ManagerChallenge>();
 		Library library = FindSceneObject(libraries);
 		ManagerStages stageManager = FindSceneObject(stageManagers);
+		ManagerChallenge challengeManager = FindSceneObject(challengeManagers);
 		if (library == null || stageManager == null) return;
 
 		foreach (CoreContentCatalogEntry entry in ModLoaderRuntime.CoreContentCatalog)
 		{
-			Object runtimeAsset = Resolve(entry, library, stageManager);
+			Object runtimeAsset = Resolve(entry, library, stageManager, challengeManager);
 			if (runtimeAsset == null)
 			{
 				string selector = entry.LegacyId.HasValue ? "legacy ID " + entry.LegacyId.Value : "legacy name '" + entry.LegacyName + "'";
@@ -37,7 +39,7 @@ public static class CoreContentAdapter
 		return null;
 	}
 
-	private static Object Resolve(CoreContentCatalogEntry i_entry, Library i_library, ManagerStages i_stageManager)
+	private static Object Resolve(CoreContentCatalogEntry i_entry, Library i_library, ManagerStages i_stageManager, ManagerChallenge i_challengeManager)
 	{
 		if (i_entry.Category == ContentCategory.Enemy)
 		{
@@ -53,6 +55,13 @@ public static class CoreContentAdapter
 		if (i_entry.Category == ContentCategory.Clothing)
 		{
 			return i_library.Clothes == null || !i_entry.LegacyId.HasValue ? null : i_library.Clothes.GetClothing(i_entry.LegacyId.Value);
+		}
+		if (i_entry.Category == ContentCategory.Challenge && i_entry.LegacyId.HasValue && i_challengeManager != null)
+		{
+			foreach (Challenge challenge in i_challengeManager.GetAllChallenges())
+			{
+				if (challenge.GetId() == i_entry.LegacyId.Value) return challenge;
+			}
 		}
 		if (i_entry.Category == ContentCategory.Item)
 		{
