@@ -1369,7 +1369,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[Test]
 		public void Parse_AcceptsIndividualCoreClothingSprites()
 		{
-			string json = ValidClothing.Replace("'type': 'coreClothingAtlas',\n    'atlas': 'assets/clothing/refitted-shirt.png',\n    'pixelsPerUnit': 32,\n    'regions': {\n      'piece/shirt-spine': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },\n      'piece/shirt-chest': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }\n    }", "'type': 'coreClothingSprites', 'pixelsPerUnit': 32, 'sprites': { 'piece/shirt-chest': 'assets/chest.png' }");
+			string json = ValidClothing.Replace("\r\n", "\n").Replace("'type': 'coreClothingAtlas',\n    'atlas': 'assets/clothing/refitted-shirt.png',\n    'pixelsPerUnit': 32,\n    'regions': {\n      'piece/shirt-spine': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },\n      'piece/shirt-chest': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 }\n    }", "'type': 'coreClothingSprites', 'pixelsPerUnit': 32, 'sprites': { 'piece/shirt-chest': 'assets/chest.png' }");
 			ClothingDefinitionLoadResult result = ClothingDefinitionParser.Parse(json, "example.clothes", "shirt.json");
 			Assert.That(result.Report.IsValid, Is.True);
 			Assert.That(result.Definition.Visual.Sprites["piece/shirt-chest"], Is.EqualTo("assets/chest.png"));
@@ -2668,7 +2668,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[Test]
 		public void Parse_AcceptsReservedStageIndependentRuntimeTemplate()
 		{
-			string json = ValidStage.Replace("core:stage/field-day", "core:stage/mod-template")
+			string json = ValidStage.Replace("\r\n", "\n").Replace("core:stage/field-day", "core:stage/mod-template")
 				.Replace("'type': 'coreStageLayout',\n    'playerSpawn': { 'x': 4, 'y': 2 }",
 					"'type': 'tiledJson',\n    'path': 'levels/training-yard.json',\n    'pixelsPerUnit': 32");
 			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
@@ -2680,7 +2680,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[Test]
 		public void Parse_RejectsRuntimeTemplateWithPrefabLayoutOrInheritedObjects()
 		{
-			string prefabLayout = ValidStage.Replace("core:stage/field-day", "core:stage/mod-template");
+			string prefabLayout = ValidStage.Replace("\r\n", "\n").Replace("core:stage/field-day", "core:stage/mod-template");
 			StageDefinitionLoadResult prefabResult = StageDefinitionParser.Parse(
 				prefabLayout, "example.stages", "stage.json");
 			Assert.That(prefabResult.Report.Issues.Any(issue => issue.Code == "stage.runtime-template-layout"), Is.True);
@@ -2733,7 +2733,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[Test]
 		public void Parse_AcceptsPackRelativeTiledLayout()
 		{
-			string json = ValidStage.Replace("'type': 'coreStageLayout',\n    'playerSpawn': { 'x': 4, 'y': 2 }",
+			string json = ValidStage.Replace("\r\n", "\n").Replace("'type': 'coreStageLayout',\n    'playerSpawn': { 'x': 4, 'y': 2 }",
 				"'type': 'tiledJson',\n    'path': 'levels/training-yard.json',\n    'pixelsPerUnit': 32,\n    'hideInheritedVisuals': true");
 			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
 			Assert.That(result.Report.IsValid, Is.True);
@@ -2745,7 +2745,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[Test]
 		public void Parse_RejectsUnsafeTiledLayoutPathAndScale()
 		{
-			string json = ValidStage.Replace("'type': 'coreStageLayout',\n    'playerSpawn': { 'x': 4, 'y': 2 }",
+			string json = ValidStage.Replace("\r\n", "\n").Replace("'type': 'coreStageLayout',\n    'playerSpawn': { 'x': 4, 'y': 2 }",
 				"'type': 'tiledJson',\n    'path': '../training-yard.json',\n    'pixelsPerUnit': 0");
 			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
 			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.layout.path"), Is.True);
