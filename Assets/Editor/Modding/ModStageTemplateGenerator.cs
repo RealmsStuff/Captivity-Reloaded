@@ -33,6 +33,10 @@ namespace CaptivityReloaded.Editor.Modding
 		{
 			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
+			// A clean import can schedule this callback before all referenced prefabs
+			// have finished importing. Recheck after the delay so an already-valid
+			// committed template is not rebuilt with nondeterministic local file IDs.
+			if (!NeedsGeneration()) return;
 			Generate(overwrite: true);
 		}
 
