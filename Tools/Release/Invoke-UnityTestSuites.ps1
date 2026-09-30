@@ -26,9 +26,17 @@ foreach ($platform in @('EditMode', 'PlayMode')) {
 	$logPath = Join-Path $logRoot "$platform.log"
 	if (Test-Path $resultPath) { Remove-Item -LiteralPath $resultPath -Force }
 
-	& $UnityExe -batchmode -nographics -projectPath $ProjectRoot -runTests `
-		-testPlatform $platform -testResults $resultPath -logFile $logPath -quit
-	$exitCode = $LASTEXITCODE
+	$arguments = @(
+		'-batchmode',
+		'-nographics',
+		'-projectPath', ('"' + $ProjectRoot + '"'),
+		'-runTests',
+		'-testPlatform', $platform,
+		'-testResults', ('"' + $resultPath + '"'),
+		'-logFile', ('"' + $logPath + '"')
+	)
+	$process = Start-Process -FilePath $UnityExe -ArgumentList $arguments -Wait -PassThru
+	$exitCode = $process.ExitCode
 	if ($exitCode -ne 0 -or -not (Test-Path $resultPath)) {
 		$failures.Add("$platform did not produce a valid result (Unity exit $exitCode). See $logPath")
 		continue
