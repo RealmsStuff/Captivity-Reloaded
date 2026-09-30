@@ -3607,21 +3607,22 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
-		public void TiledNeutralStarter_UsesPackLocalVendorSprites()
+		public void TiledStarterKit_UsesPackLocalVendorSprites()
 		{
 			string root = Path.GetFullPath(Path.Combine(Application.dataPath,
 				"../ModSDK/MapTemplates/TiledStage"));
 			SemanticVersion.TryParse("1.1.0", out SemanticVersion version);
 			ModPack pack = new ModPack(new ModManifest
 			{
-				Id = "example.tiled-neutral-starter",
-				DisplayName = "Tiled Neutral Starter",
+				Id = "example.tiled-starter-kit",
+				DisplayName = "Tiled Starter Kit",
 				Version = "1.1.0",
 				ModApiVersion = 1,
 				ContentRoots = new List<string> { "content" }
 			}, version, root);
 			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { pack });
-			Assert.That(content.Report.IsValid, Is.True);
+			Assert.That(content.Report.IsValid, Is.True,
+				string.Join("\n", content.Report.Issues.Select(issue => issue.Code + ": " + issue.Message)));
 			TiledLevelDefinition level = content.Stages.Single().Layout.TiledLevel;
 			Assert.That(level.WeaponVendors.Single().VisualFile, Is.EqualTo("assets/skins/weapon-vendor-dark.png"));
 			Assert.That(level.UsableVendors.Single().VisualFile, Is.EqualTo("assets/skins/usable-vendor-dark.png"));
