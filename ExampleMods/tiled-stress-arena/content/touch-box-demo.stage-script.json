@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.tiled-stress-arena:stage-script/touch-box-demo",
+  "stage": "example.tiled-stress-arena:stage/stress-arena",
+  "sequences": [
+    {
+      "id": "enter-demo-box",
+      "trigger": "player-enter",
+      "objectId": "script-volume-demo",
+      "actions": [{ "type": "notify", "message": "Entered the scripted touch box." }]
+    },
+    {
+      "id": "exit-demo-box",
+      "trigger": "player-exit",
+      "objectId": "script-volume-demo",
+      "actions": [{ "type": "notify", "message": "Exited the scripted touch box." }]
+    }
+  ]
+}

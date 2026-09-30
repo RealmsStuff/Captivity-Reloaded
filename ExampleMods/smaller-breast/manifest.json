@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.smaller-breast",
+  "displayName": "Smaller Breast",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Legacy mod author"],
+  "description": "Faithful data-only conversion of the legacy Smaller Breast mod, including its body, clothing, icon, and paired-character edits.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "conflicts": [
+    "mousai.femboy-refitted-shirt"
+  ],
+  "overrides": [
+    "core:player/body/chest/pale",
+    "core:player/body/chest/white",
+    "core:player/body/chest/tan",
+    "core:player/body/chest/black",
+    "core:sprite/chest-5/image",
+    "core:sprite/chest-7/image",
+    "core:sprite/butt-6/image"
+  ],
+  "priority": 20,
+  "contentRoots": ["content"]
+}

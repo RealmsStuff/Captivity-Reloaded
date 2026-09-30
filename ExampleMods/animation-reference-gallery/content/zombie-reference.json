@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/zombie",
+  "displayName": "Animation Reference - Zombie",
+  "description": "Reference copy of the Zombie I humanoid animation family. It does not join normal spawners.",
+  "extends": "core:enemy/zombie-1",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-primary": "example.animation-reference-gallery:enemy-animation/zombie/attack-primary",
+    "await": "example.animation-reference-gallery:enemy-animation/zombie/await",
+    "chase": "example.animation-reference-gallery:enemy-animation/zombie/chase",
+    "climb": "example.animation-reference-gallery:enemy-animation/zombie/climb",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-3",
+    "finisher-phase-4": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-4",
+    "finisher-phase-5": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-5",
+    "finisher-phase-6": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-6",
+    "finisher-phase-7": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-7",
+    "finisher-phase-8": "example.animation-reference-gallery:enemy-animation/zombie/finisher-phase-8",
+    "get-up": "example.animation-reference-gallery:enemy-animation/zombie/get-up",
+    "idle": "example.animation-reference-gallery:enemy-animation/zombie/idle",
+    "jump": "example.animation-reference-gallery:enemy-animation/zombie/jump",
+    "move": "example.animation-reference-gallery:enemy-animation/zombie/move"
+  }
+}

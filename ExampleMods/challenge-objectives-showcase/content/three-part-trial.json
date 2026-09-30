@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "type": "challenge",
+  "id": "example.challenge-showcase:challenge/three-part-trial",
+  "displayName": "Three-Part Trial",
+  "description": "Kill three zombies, fire ten shots, then survive one wave in the same run.",
+  "steps": [
+    { "objective": "killCount", "count": 3, "enemies": ["core:enemy/zombie-1"] },
+    { "objective": "shotsFired", "count": 10 },
+    { "objective": "surviveWaves", "count": 1 }
+  ],
+  "rewardBundle": {
+    "currency": 500,
+    "items": [{ "id": "core:item/consumable/ammo-box", "amount": 2 }],
+    "weapons": [{ "id": "core:item/weapon/pistol", "amount": 1 }],
+    "content": ["core:clothing/hair-2"]
+  }
+}

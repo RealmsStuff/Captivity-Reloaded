@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/sqoid",
+  "enemy": "core:enemy/sqoid",
+  "prefab": "Assets/Actors/Npcs/npc_sqoid.prefab",
+  "controller": "Assets/AnimatorController/SkeletonSqoid.controller",
+  "sampleRoot": "SkeletonSqoid",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "skeleton-sqoid",
+      "parent": "root",
+      "unityPath": "SkeletonSqoid",
+      "unityPaths": [
+        "SkeletonSqoid"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "skeleton-sqoid",
+      "unityPath": "SkeletonSqoid/hips",
+      "unityPaths": [
+        "SkeletonSqoid/hips",
+        "SkeletonSqoid/hips/bp_hips"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonSqoid/hips/bp_hips",
+          "name": "hips_0",
+          "asset": "Assets/Sprite/hips_0.asset",
+          "pivotX": 0.5,
+          "pivotY": 0.479877472,
+          "width": 31.84776,
+          "height": 24.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 21
+        }
+      ]
+    },
+    {
+      "name": "background",
+      "parent": "hips",
+      "unityPath": "SkeletonSqoid/hips/bp_hips/bg",
+      "unityPaths": [
+        "SkeletonSqoid/hips/bp_hips/bg"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonSqoid/hips/bp_hips/bg",
+          "name": "bg",
+          "asset": "Assets/Sprite/bg.asset",
+          "pivotX": 0.499584854,
+          "pivotY": 0.367358238,
+          "width": 29.8725624,
+          "height": 18.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 19
+        }
+      ]
+    },
+    {
+      "name": "brain",
+      "parent": "hips",
+      "unityPath": "SkeletonSqoid/hips/bp_hips/brain",
+      "unityPaths": [
+        "SkeletonSqoid/hips/bp_hips/brain"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonSqoid/hips/bp_hips/brain",
+          "name": "brain",
+          "asset": "Assets/Sprite/brain.asset",
+          "pivotX": 0.5,
+          "pivotY": 0.5368543,
+          "width": 21.9741745,
+          "height": 12.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 20
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

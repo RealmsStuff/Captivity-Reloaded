@@ -1,0 +1,13 @@
+{
+  "type": "template",
+  "object": {
+    "class": "door", "id": 1, "name": "jacky-door", "point": true,
+    "properties": [
+      { "name": "doorType", "type": "string", "value": "jacky" },
+      { "name": "initiallyOpen", "type": "bool", "value": false },
+      { "name": "closedVisualFile", "type": "file", "value": "" },
+      { "name": "openVisualFile", "type": "file", "value": "" }
+    ],
+    "rotation": 0, "visible": true
+  }
+}

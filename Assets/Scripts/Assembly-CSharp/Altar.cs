@@ -53,6 +53,54 @@ public class Altar : Interactable
 
 	private bool m_isReleasedSpirit;
 
+	public void ConfigureModAltar(UnityEngine.Rendering.Universal.Light2D i_globalLight)
+	{
+		ResetModActivationLinks();
+		m_lightGlobal = i_globalLight;
+		m_isAltarWorking = false;
+		m_isAltarActive = false;
+		m_isReleasedSpirit = false;
+		m_priceToActivate = 0;
+		m_isSingleUse = false;
+		m_isContinuesActivation = false;
+		m_isCanBeUsedToActivate = true;
+		m_isCanBeTouchedToActivate = false;
+		m_isCanBeShotToActivate = false;
+		m_isCanBeActivatedByNPC = false;
+		m_isHideNotificationInteract = false;
+		m_isUnInteractable = false;
+		m_fetish1.SetActive(false);
+		m_fetish2.SetActive(false);
+		m_fetish3.SetActive(false);
+		m_fetish4.SetActive(false);
+		m_effectsWorking.SetActive(false);
+		m_effectsActive.SetActive(false);
+		AltarSpirit spirit = GetComponentInChildren<AltarSpirit>(includeInactive: true);
+		if (spirit != null) spirit.gameObject.SetActive(false);
+	}
+
+	public void ConfigureModFetishes(PickUpable i_fetish1, PickUpable i_fetish2,
+		PickUpable i_fetish3, PickUpable i_fetish4)
+	{
+		m_pickUpableFetish1 = i_fetish1;
+		m_pickUpableFetish2 = i_fetish2;
+		m_pickUpableFetish3 = i_fetish3;
+		m_pickUpableFetish4 = i_fetish4;
+	}
+
+	public bool HasUsableModTemplateStructure()
+	{
+		return m_fetish1 != null && m_fetish2 != null && m_fetish3 != null && m_fetish4 != null
+			&& m_effectsWorking != null && m_effectsActive != null
+			&& GetComponentInChildren<AltarSpirit>(includeInactive: true) != null;
+	}
+
+	public bool IsUsableModTemplate()
+	{
+		return m_pickUpableFetish1 != null && m_pickUpableFetish2 != null && m_pickUpableFetish3 != null
+			&& m_pickUpableFetish4 != null && HasUsableModTemplateStructure();
+	}
+
 	protected override void HandleActivation(Actor i_initiator, InteractableActivationType i_activationType)
 	{
 		if (!m_isReleasedSpirit)

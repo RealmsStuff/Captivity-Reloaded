@@ -2,6 +2,17 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+public interface ISmasherHudSource
+{
+	float GetMeterCurrent();
+	float GetMeterMax();
+	float GetTimeLeft();
+	float GetTimeMax();
+	KeyCode GetKeyCodeToPress();
+	bool UsesCircularInput();
+	string GetInputPrompt();
+}
+
 public class HudSmasher : MonoBehaviour
 {
 	[SerializeField]
@@ -43,7 +54,7 @@ public class HudSmasher : MonoBehaviour
 	[SerializeField]
 	private Image m_imgMeterTimeBar;
 
-	private RaperSmasher m_smasher;
+	private ISmasherHudSource m_smasher;
 
 	private Color m_colorMeterOriginal;
 
@@ -51,11 +62,15 @@ public class HudSmasher : MonoBehaviour
 
 	private Color m_colorMeterBarAuto;
 
+	private string m_textUpOriginal;
+	private Image m_inputGlyph;
+
 	private void Start()
 	{
 		m_colorMeterOriginal = m_imgMeterCurrent.color;
 		m_colorMeterBarNormal = m_imgMeterBar.color;
 		m_colorMeterBarAuto = new Color(0f, 0.25f, 1f);
+		m_textUpOriginal = m_txtUp.text;
 	}
 
 	private void Update()
@@ -70,6 +85,20 @@ public class HudSmasher : MonoBehaviour
 		Vector3 vector = m_imgMeterCurrent.GetComponent<RectTransform>().anchoredPosition;
 		vector.x = m_imgMeterBar.GetComponent<RectTransform>().rect.width / m_smasher.GetMeterMax() * meterCurrent - m_imgMeterBar.GetComponent<RectTransform>().rect.width;
 		m_imgMeterCurrent.GetComponent<RectTransform>().anchoredPosition = vector;
+		if (m_smasher.UsesCircularInput())
+		{
+			m_txtUp.text = m_smasher.GetInputPrompt();
+			RefreshCircularInputGlyph();
+			m_txtUp.color = m_colorArrowToPress;
+			m_txtLeft.gameObject.SetActive(false);
+			m_txtRight.gameObject.SetActive(false);
+			m_imgMeterBar.color = m_colorMeterBarNormal;
+			return;
+		}
+		if (m_inputGlyph != null) m_inputGlyph.gameObject.SetActive(false);
+		m_txtLeft.gameObject.SetActive(true);
+		m_txtRight.gameObject.SetActive(true);
+		m_txtUp.text = m_textUpOriginal;
 		if (CommonReferences.Instance.GetManagerInput().IsButton(InputButton.Jump))
 		{
 			m_txtUp.color = m_colorArrowToPress;
@@ -92,6 +121,28 @@ public class HudSmasher : MonoBehaviour
 		}
 	}
 
+	private void RefreshCircularInputGlyph()
+	{
+		Sprite sprite = InputGlyphLibrary.GetStruggleSprite();
+		if (sprite == null)
+		{
+			if (m_inputGlyph != null) m_inputGlyph.gameObject.SetActive(false);
+			return;
+		}
+		if (m_inputGlyph == null)
+		{
+			m_inputGlyph = InputGlyphLibrary.GetOrCreateImage(m_txtUp.transform, "CircularInputGlyph");
+			RectTransform rect = m_inputGlyph.rectTransform;
+			rect.anchorMin = new Vector2(0.5f, 0.5f);
+			rect.anchorMax = new Vector2(0.5f, 0.5f);
+			rect.pivot = new Vector2(0.5f, 0.5f);
+			rect.anchoredPosition = new Vector2(0f, 42f);
+			rect.sizeDelta = new Vector2(52f, 52f);
+		}
+		m_inputGlyph.sprite = sprite;
+		m_inputGlyph.gameObject.SetActive(true);
+	}
+
 	private void UpdateMeterTime()
 	{
 		float timeLeft = m_smasher.GetTimeLeft();
@@ -102,7 +153,7 @@ public class HudSmasher : MonoBehaviour
 
 	public void Thrust()
 	{
-		StartCoroutine(CoroutineAnimateThrust());
+		if (isActiveAndEnabled) StartCoroutine(CoroutineAnimateThrust());
 	}
 
 	private IEnumerator CoroutineAnimateThrust()
@@ -132,10 +183,10 @@ public class HudSmasher : MonoBehaviour
 		}
 	}
 
-	public void Show(RaperSmasher i_raperSmasher)
+	public void Show(ISmasherHudSource i_source)
 	{
 		base.gameObject.SetActive(value: true);
-		m_smasher = i_raperSmasher;
+		m_smasher = i_source;
 		UpdateMeterPos();
 	}
 

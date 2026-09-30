@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.smiling-blush-small-tweaks",
+  "displayName": "Smiling Blush + Small Tweaks",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Original author unknown"],
+  "description": "The legacy Small Tweaks artwork plus its twelve smiling player-mouth replacements.",
+  "dependencies": [
+    { "id": "core", "version": ">=0.1.0" },
+    { "id": "legacy.small-tweaks", "version": ">=1.0.0" }
+  ],
+  "contentRoots": ["content"],
+  "previewImages": ["preview.png"]
+}

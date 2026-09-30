@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/sqoid/attack-energy-blast",
+  "enemy": "core:enemy/sqoid",
+  "displayName": "sqoid attack-energy-blast",
+  "durationSeconds": 1.5,
+  "frameRate": 60.0,
+  "loop": false,
+  "tracks": [
+    {
+      "target": "sprite/hips",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": -9.536795E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0569438934,
+          "inTangent": -0.1952362,
+          "outTangent": -0.1952362
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": 8.117938E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 1.0,
+          "inTangent": 9.536795E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.9361663,
+          "inTangent": -0.218858466,
+          "outTangent": -0.218858466
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0793650746,
+          "inTangent": 1.26886812E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 5.676641E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": -9.536795E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": -9.536795E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": 3.973651E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "scale.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.2,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.7,
+          "inTangent": -4.768404E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": -7.94709E-09,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "scale.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.1,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 0.7,
+          "inTangent": 3.81467146E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 1.0,
+          "inTangent": -7.94709E-09,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 1.16666663,
+      "type": "attackHit"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [
+    "Loop disabled because this clip contains a gameplay animation event."
+  ],
+  "source": {
+    "unityClip": "Assets/AnimationClip/AttackEnergyBlast.anim",
+    "semanticName": "attack-energy-blast"
+  }
+}

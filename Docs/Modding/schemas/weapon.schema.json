@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/weapon.schema.json",
+  "title": "Captivity Reloaded Weapon",
+  "x-stability": "stable",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "visual"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" }, "type": { "const": "weapon", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/weaponId", "x-stability": "stable" }, "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/coreWeaponId", "x-stability": "stable" }, "description": { "type": "string", "x-stability": "stable" },
+    "stats": { "$ref": "#/$defs/stats", "x-stability": "stable" }, "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" },
+    "behavior": { "$ref": "#/$defs/behavior", "x-stability": "experimental" }
+  },
+  "allOf": [
+    { "if": { "properties": { "visual": { "properties": { "type": { "const": "coreWeaponSprites" } }, "required": ["type"] } } }, "then": { "required": ["extends"] } },
+    { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalWeaponSprites" } }, "required": ["type"] } } }, "then": {
+      "not": { "required": ["extends"] },
+      "properties": {
+        "stats": { "required": ["damage", "ammoMax", "magazineSize", "rangeMultiplier", "fireIntervalSeconds", "reloadSeconds", "equipSeconds", "weight", "value", "semiAutomatic", "marketable", "holdType", "reloadType", "weaponType"], "properties": { "reloadType": { "const": "Magazine" } } },
+        "visual": { "properties": { "sprites": { "required": ["body"], "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,47}$" } }, "hiddenSlots": { "maxItems": 0 } } },
+        "behavior": { "properties": { "animations": { "not": { "anyOf": [
+          { "required": ["idleState"] }, { "required": ["fireState"] }, { "required": ["reloadState"] },
+          { "required": ["fireSpeedMultiplier"] }, { "required": ["reloadSpeedMultiplier"] }
+        ] } } } }
+      },
+      "required": ["stats"]
+    } }
+  ],
+  "$defs": {
+    "weaponId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:item/weapon/[a-z0-9][a-z0-9._/-]*$" },
+    "prefabId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:prefab/[a-z0-9][a-z0-9._/-]*$" },
+    "coreWeaponId": { "type": "string", "pattern": "^core:item/weapon/[a-z0-9][a-z0-9._/-]*$" },
+    "path": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$" },
+    "pngPath": { "allOf": [{ "$ref": "#/$defs/path" }, { "pattern": "\\.[pP][nN][gG]$" }] },
+    "audioPath": { "allOf": [{ "$ref": "#/$defs/path" }, { "pattern": "\\.(?:[wW][aA][vV]|[oO][gG][gG])$" }] },
+    "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?$" },
+    "stats": { "type": "object", "additionalProperties": false, "properties": {
+      "damage": { "type": "integer", "minimum": 0, "maximum": 10000 }, "ammoMax": { "type": "integer", "minimum": 1, "maximum": 100000 }, "magazineSize": { "type": "integer", "minimum": 1, "maximum": 100000 },
+      "bulletsPerShot": { "type": "integer", "minimum": 1, "maximum": 64 }, "penetration": { "type": "integer", "minimum": 0, "maximum": 64 }, "rangeMultiplier": { "type": "number", "minimum": 0.05, "maximum": 1 },
+      "fireIntervalSeconds": { "type": "number", "minimum": 0.02, "maximum": 10 }, "recoil": { "type": "number", "minimum": 0, "maximum": 1 }, "movementRecoil": { "type": "number", "minimum": 0, "maximum": 1 },
+      "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "reloadSeconds": { "type": "number", "minimum": 0.01, "maximum": 60 },
+      "equipSeconds": { "type": "number", "minimum": 0, "maximum": 60 }, "weight": { "type": "integer", "minimum": 0, "maximum": 100000 }, "value": { "type": "integer", "minimum": 0, "maximum": 100000000 },
+      "infiniteAmmo": { "type": "boolean" }, "semiAutomatic": { "type": "boolean" }, "marketable": { "type": "boolean" },
+      "holdType": { "enum": ["OneHanded", "TwoHanded1", "TwoHanded2", "TwoHanded3"] }, "reloadType": { "enum": ["Magazine", "PumpAction", "SingleBarrel"] },
+      "weaponType": { "enum": ["Pistol", "Smg", "Shotgun", "Rifle", "Special"] }
+    }, "dependentRequired": { "ammoMax": ["magazineSize"], "magazineSize": ["ammoMax"] } },
+    "visual": { "type": "object", "additionalProperties": false, "required": ["type", "sprites"], "properties": {
+      "type": { "enum": ["coreWeaponSprites", "originalWeaponSprites"] }, "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024, "default": 32 },
+      "bundlePrefab": { "$ref": "#/$defs/prefabId", "x-stability": "experimental" },
+      "sprites": { "type": "object", "minProperties": 1, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
+      "hiddenSlots": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }, "x-stability": "experimental" },
+      "pivotX": { "type": "number", "minimum": 0, "maximum": 1, "x-stability": "experimental" }, "pivotY": { "type": "number", "minimum": 0, "maximum": 1, "x-stability": "experimental" },
+      "muzzleOffsetX": { "type": "number", "minimum": -10, "maximum": 10, "x-stability": "experimental" }, "muzzleOffsetY": { "type": "number", "minimum": -10, "maximum": 10, "x-stability": "experimental" },
+      "colliderWidth": { "type": "number", "minimum": 0.01, "maximum": 10, "x-stability": "experimental" }, "colliderHeight": { "type": "number", "minimum": 0.01, "maximum": 10, "x-stability": "experimental" },
+      "colliderOffsetX": { "type": "number", "minimum": -10, "maximum": 10, "x-stability": "experimental" }, "colliderOffsetY": { "type": "number", "minimum": -10, "maximum": 10, "x-stability": "experimental" },
+      "sortingOrder": { "type": "integer", "minimum": -100, "maximum": 100, "x-stability": "experimental" },
+      "parts": { "type": "object", "maxProperties": 16, "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,47}$" }, "additionalProperties": { "$ref": "#/$defs/part" }, "x-stability": "experimental" }
+    } },
+    "part": { "type": "object", "additionalProperties": false, "properties": {
+      "pivotX": { "type": "number", "minimum": 0, "maximum": 1 }, "pivotY": { "type": "number", "minimum": 0, "maximum": 1 },
+      "offsetX": { "type": "number", "minimum": -10, "maximum": 10 }, "offsetY": { "type": "number", "minimum": -10, "maximum": 10 },
+      "rotationDegrees": { "type": "number", "minimum": -360, "maximum": 360 }, "scaleX": { "type": "number", "minimum": -10, "maximum": 10 }, "scaleY": { "type": "number", "minimum": -10, "maximum": 10 },
+      "sortingOrder": { "type": "integer", "minimum": -100, "maximum": 100 }
+    } },
+    "behavior": { "type": "object", "additionalProperties": false, "properties": {
+      "burstCount": { "type": "integer", "minimum": 1, "maximum": 12 }, "burstIntervalSeconds": { "type": "number", "minimum": 0.02, "maximum": 2 },
+      "tracerColor": { "$ref": "#/$defs/color" }, "tracerThickness": { "type": "integer", "minimum": 1, "maximum": 32 }, "tracerFrames": { "type": "integer", "minimum": 1, "maximum": 60 },
+      "cameraShake": { "type": "boolean" }, "shooterKnockback": { "type": "boolean" }, "soundVolume": { "type": "number", "minimum": 0, "maximum": 1 }, "playShootSound": { "type": "boolean" }, "showMuzzleFlash": { "type": "boolean" },
+      "shootSounds": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/audioPath" } }, "reloadSounds": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/audioPath" } },
+      "muzzleFlashSprites": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/pngPath" } }, "effectPixelsPerUnit": { "type": "number", "minimum": 1, "maximum": 1024 },
+      "casingSprite": { "$ref": "#/$defs/pngPath" }, "casingOn": { "enum": ["shoot", "reload", "both"] }, "casingForceX": { "type": "number", "minimum": -100, "maximum": 100 }, "casingForceY": { "type": "number", "minimum": -100, "maximum": 100 }, "casingLifetimeSeconds": { "type": "number", "minimum": 0.1, "maximum": 60 },
+      "casingOffsetX": { "type": "number", "minimum": -10, "maximum": 10 }, "casingOffsetY": { "type": "number", "minimum": -10, "maximum": 10 }, "casingAngularVelocity": { "type": "number", "minimum": -10000, "maximum": 10000 }, "casingGravityScale": { "type": "number", "minimum": 0, "maximum": 20 },
+      "muzzleFlashOffsetX": { "type": "number", "minimum": -10, "maximum": 10 }, "muzzleFlashOffsetY": { "type": "number", "minimum": -10, "maximum": 10 }, "muzzleFlashDurationSeconds": { "type": "number", "minimum": 0.01, "maximum": 2 }, "muzzleLightIntensityMultiplier": { "type": "number", "minimum": 0, "maximum": 10 },
+      "projectile": { "$ref": "#/$defs/projectile" }, "melee": { "$ref": "#/$defs/melee" }, "charge": { "$ref": "#/$defs/charge" }, "beam": { "$ref": "#/$defs/beam" }, "throwable": { "$ref": "#/$defs/throwable" }, "alternateFire": { "$ref": "#/$defs/alternateFire" }, "animations": { "$ref": "#/$defs/animations" }, "ammunition": { "$ref": "#/$defs/ammunition" }
+    } },
+    "projectile": { "type": "object", "additionalProperties": false, "properties": {
+      "mode": { "enum": ["hitscan", "physical"], "default": "hitscan" }, "sprite": { "$ref": "#/$defs/pngPath" }, "pixelsPerUnit": { "type": "number", "minimum": 1, "maximum": 1024 },
+      "speed": { "type": "number", "minimum": 0.1, "maximum": 250 }, "gravity": { "type": "number", "minimum": -100, "maximum": 100 }, "lifetimeSeconds": { "type": "number", "minimum": 0.05, "maximum": 30 },
+      "impactSprites": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/pngPath" } }, "impactLifetimeSeconds": { "type": "number", "minimum": 0.02, "maximum": 10 },
+      "explosionRadius": { "type": "number", "minimum": 0, "maximum": 25 }, "explosionDamageMultiplier": { "type": "number", "minimum": 0, "maximum": 10 }
+    } },
+    "melee": { "type": "object", "additionalProperties": false, "properties": { "input": { "enum": ["primary", "alternate"], "default": "primary" }, "range": { "type": "number", "minimum": 0.1, "maximum": 10 }, "radius": { "type": "number", "minimum": 0.05, "maximum": 5 }, "damageMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "maxTargets": { "type": "integer", "minimum": 1, "maximum": 32 } } },
+    "charge": { "type": "object", "additionalProperties": false, "properties": { "seconds": { "type": "number", "minimum": 0.1, "maximum": 10 }, "minimumDamageMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 }, "maximumDamageMultiplier": { "type": "number", "minimum": 0.01, "maximum": 25 }, "chargingText": { "type": "string", "minLength": 1, "maxLength": 80 }, "readyText": { "type": "string", "minLength": 1, "maxLength": 80 }, "chargingColor": { "$ref": "#/$defs/color" }, "readyColor": { "$ref": "#/$defs/color" }, "tintStrength": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "beam": { "type": "object", "additionalProperties": false, "properties": { "input": { "enum": ["primary", "alternate"], "default": "primary" }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 10 }, "tickIntervalSeconds": { "type": "number", "minimum": 0.02, "maximum": 2 }, "damageMultiplier": { "type": "number", "minimum": 0, "maximum": 10 }, "ammoPerTick": { "type": "integer", "minimum": 0, "maximum": 1000 }, "color": { "$ref": "#/$defs/color" }, "thickness": { "type": "integer", "minimum": 1, "maximum": 32 } } },
+    "throwable": { "type": "object", "additionalProperties": false, "properties": {
+      "throwSpeed": { "type": "number", "minimum": 0.1, "maximum": 100 }, "gravity": { "type": "number", "minimum": 0, "maximum": 20 }, "angularVelocity": { "type": "number", "minimum": -10000, "maximum": 10000 }, "lifetimeSeconds": { "type": "number", "minimum": 0.1, "maximum": 120 },
+      "impactDamageMultiplier": { "type": "number", "minimum": 0, "maximum": 25 }, "destroyOnImpact": { "type": "boolean" }, "explodeOnImpact": { "type": "boolean" }, "fuseSeconds": { "type": "number", "minimum": 0.05, "maximum": 60 }, "explosionRadius": { "type": "number", "minimum": 0, "maximum": 25 },
+      "explosionDamageMultiplier": { "type": "number", "minimum": 0, "maximum": 25 }, "explosionForce": { "type": "number", "minimum": 0, "maximum": 1000 }, "tickIntervalSeconds": { "type": "number", "minimum": 0.05, "maximum": 10 },
+      "impactSounds": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/audioPath" } }, "tickSounds": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/audioPath" } }, "explosionSounds": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/$defs/audioPath" } }, "explosionColor": { "$ref": "#/$defs/color" }, "explosionStyle": { "enum": ["burst", "fire"] },
+      "igniteDurationSeconds": { "type": "number", "minimum": 0.1, "maximum": 60 }, "igniteDamagePerTick": { "type": "number", "minimum": 0, "maximum": 1000 }, "igniteTicksPerSecond": { "type": "number", "minimum": 0.1, "maximum": 20 }
+    } },
+    "alternateFire": { "type": "object", "additionalProperties": false, "required": ["mode"], "properties": { "mode": { "enum": ["hitscan", "projectile", "melee", "beam"] }, "damageMultiplier": { "type": "number", "minimum": 0, "maximum": 25 }, "ammoCost": { "type": "integer", "minimum": 0, "maximum": 10000 }, "cooldownSeconds": { "type": "number", "minimum": 0.02, "maximum": 30 }, "burstCount": { "type": "integer", "minimum": 1, "maximum": 12 }, "burstIntervalSeconds": { "type": "number", "minimum": 0.02, "maximum": 2 }, "recoilMultiplier": { "type": "number", "minimum": 0, "maximum": 10 } } },
+    "ammunition": { "type": "object", "additionalProperties": false, "properties": { "type": { "enum": ["standard", "fmj", "hollow-point", "incendiary", "toxic", "freeze", "custom"] }, "damageMultiplier": { "type": "number", "minimum": 0, "maximum": 10 }, "penetrationBonus": { "type": "integer", "minimum": 0, "maximum": 64 }, "weakpointMultiplier": { "type": "number", "minimum": 0, "maximum": 10 }, "damageOverTime": { "type": "number", "minimum": 0, "maximum": 10000 }, "effectDurationSeconds": { "type": "number", "minimum": 0.05, "maximum": 60 }, "tickIntervalSeconds": { "type": "number", "minimum": 0.05, "maximum": 10 }, "slowMultiplier": { "type": "number", "minimum": 0, "maximum": 1 }, "slowDurationSeconds": { "type": "number", "minimum": 0.05, "maximum": 60 } } },
+    "animations": { "type": "object", "additionalProperties": false, "properties": { "idleState": { "$ref": "#/$defs/state" }, "fireState": { "$ref": "#/$defs/state" }, "reloadState": { "$ref": "#/$defs/state" }, "fireSpeedMultiplier": { "type": "number", "minimum": 0.05, "maximum": 10 }, "reloadSpeedMultiplier": { "type": "number", "minimum": 0.05, "maximum": 10 }, "clips": { "type": "object", "maxProperties": 6, "propertyNames": { "enum": ["idle", "equip", "fire", "alternate", "charge", "reload"] }, "additionalProperties": { "$ref": "#/$defs/clip" } } } },
+    "state": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[^/\\\\]+$" },
+    "clip": { "type": "object", "additionalProperties": false, "required": ["frames"], "properties": { "loop": { "type": "boolean" }, "frames": { "type": "array", "minItems": 1, "maxItems": 120, "items": { "$ref": "#/$defs/frame" } } } },
+    "frame": { "type": "object", "additionalProperties": false, "required": ["durationSeconds", "sprites"], "properties": { "durationSeconds": { "type": "number", "minimum": 0.01, "maximum": 10 }, "sprites": { "type": "object", "minProperties": 1, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } } } }
+  }
+}

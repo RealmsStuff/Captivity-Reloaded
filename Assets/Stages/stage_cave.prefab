@@ -6990,6 +6990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 2
+  m_isRuntimeTemplate: 0
   m_nameStage: Cave
   m_description: You have set up camp inside a dark cave to escape the storm that
     is raging outside. It seems like there have been miners working inside the cave.
@@ -15618,6 +15619,7 @@ MonoBehaviour:
   m_isAmmoInfinite: 0
   m_isSemiFire: 1
   m_delayBetweenShots: 0
+  m_durationReload: 0
   m_objectsToDropOnReload: []
   m_forceObjectsDropOnReload: {x: 0, y: 0}
   m_objectsToDropOnShoot: []
@@ -15632,6 +15634,19 @@ MonoBehaviour:
   m_isShakesCamera: 0
   m_isKnockbacksShooterFire: 0
   m_isKnockbacksShooterAltFire: 0
+  m_modBurstCount: 1
+  m_modBurstInterval: 0.1
+  m_modSoundVolume: 1
+  m_modShootCasingLifetime: 3
+  m_modReloadCasingLifetime: 10
+  m_modThrowableImpactSounds: []
+  m_modThrowableTickSounds: []
+  m_modThrowableExplosionSounds: []
+  m_modProjectileSprite: {fileID: 0}
+  m_modImpactSprites: []
+  m_modStatsJson:
+  m_modBehaviorJson:
+  m_isOriginalRuntimeWeapon: 0
 --- !u!212 &4936987064227250517
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -15847,6 +15862,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &4936987064227250442
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -23208,6 +23225,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 1
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &4936987064227250752
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -30377,6 +30396,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &4936987064227251241
 SpriteRenderer:
   m_ObjectHideFlags: 0

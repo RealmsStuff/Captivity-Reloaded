@@ -1,0 +1,744 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/death-hound",
+  "enemy": "core:enemy/death-hound",
+  "prefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+  "controller": "Assets/AnimatorController/SkeletonDeathHound.controller",
+  "sampleRoot": "SkeletonDeathHound",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "skeleton-death-hound",
+      "parent": "root",
+      "unityPath": "SkeletonDeathHound",
+      "unityPaths": [
+        "SkeletonDeathHound"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "skeleton-death-hound",
+      "unityPath": "SkeletonDeathHound/hips",
+      "unityPaths": [
+        "SkeletonDeathHound/hips",
+        "SkeletonDeathHound/hips/bp_hips"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/bp_hips",
+          "name": "TorsoLower_2",
+          "asset": "Assets/Sprite/TorsoLower_2.asset",
+          "pivotX": 0.500935,
+          "pivotY": 0.6119933,
+          "width": 31.9402714,
+          "height": 17.9303417,
+          "sortingLayer": "Actor",
+          "sortingOrder": 7
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-upper",
+      "parent": "hips",
+      "unityPath": "SkeletonDeathHound/hips/lLegBackUpper",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/lLegBackUpper",
+        "SkeletonDeathHound/hips/lLegBackUpper/bp_lLegBackUpper"
+      ],
+      "defaultTransform": {
+        "x": -0.388,
+        "y": -0.119000018,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/bp_lLegBackUpper",
+          "name": "LegBackUpper",
+          "asset": "Assets/Sprite/LegBackUpper.asset",
+          "pivotX": 0.5773616,
+          "pivotY": 0.688888848,
+          "width": 14.8971291,
+          "height": 21.93577,
+          "sortingLayer": "Actor",
+          "sortingOrder": -12
+        }
+      ]
+    },
+    {
+      "name": "penis",
+      "parent": "hips",
+      "unityPath": "SkeletonDeathHound/hips/penis",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/penis",
+        "SkeletonDeathHound/hips/penis/bp_penis"
+      ],
+      "defaultTransform": {
+        "x": -0.356,
+        "y": -0.239,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/penis/bp_penis",
+          "name": "Penis_2",
+          "asset": "Assets/Sprite/Penis_2.asset",
+          "pivotX": 0.273372263,
+          "pivotY": 0.665444,
+          "width": 19.84776,
+          "height": 10.9057751,
+          "sortingLayer": "Actor",
+          "sortingOrder": 7
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-upper",
+      "parent": "hips",
+      "unityPath": "SkeletonDeathHound/hips/rLegBackUpper",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/rLegBackUpper",
+        "SkeletonDeathHound/hips/rLegBackUpper/bp_rLegBackUpper"
+      ],
+      "defaultTransform": {
+        "x": -0.388,
+        "y": -0.119000018,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/bp_rLegBackUpper",
+          "name": "LegBackUpper",
+          "asset": "Assets/Sprite/LegBackUpper.asset",
+          "pivotX": 0.5773616,
+          "pivotY": 0.688888848,
+          "width": 14.8971291,
+          "height": 21.93577,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "spine",
+      "parent": "hips",
+      "unityPath": "SkeletonDeathHound/hips/spine",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine",
+        "SkeletonDeathHound/hips/spine/bp_spine"
+      ],
+      "defaultTransform": {
+        "x": 0.131,
+        "y": 0.099,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/bp_spine",
+          "name": "TorsoUpper",
+          "asset": "Assets/Sprite/TorsoUpper.asset",
+          "pivotX": 0.07373814,
+          "pivotY": 0.766925633,
+          "width": 28.8809719,
+          "height": 24.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "tail",
+      "parent": "hips",
+      "unityPath": "SkeletonDeathHound/hips/tail",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/tail",
+        "SkeletonDeathHound/hips/tail/bp_tail"
+      ],
+      "defaultTransform": {
+        "x": -0.468999952,
+        "y": 0.025,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/tail/bp_tail",
+          "name": "Tail",
+          "asset": "Assets/Sprite/Tail.asset",
+          "pivotX": 0.758318841,
+          "pivotY": 0.715248466,
+          "width": 11.8477592,
+          "height": 10.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-middle",
+      "parent": "l-leg-back-upper",
+      "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle",
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/bp_lLegBackMiddle"
+      ],
+      "defaultTransform": {
+        "x": -0.0881,
+        "y": -0.3526,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/bp_lLegBackMiddle",
+          "name": "LegBackMiddle",
+          "asset": "Assets/Sprite/LegBackMiddle.asset",
+          "pivotX": 0.7572143,
+          "pivotY": 0.729019046,
+          "width": 16.84776,
+          "height": 14.9464989,
+          "sortingLayer": "Actor",
+          "sortingOrder": -13
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-middle",
+      "parent": "r-leg-back-upper",
+      "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle",
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/bp_rLegBackMiddle"
+      ],
+      "defaultTransform": {
+        "x": -0.0881,
+        "y": -0.3526,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/bp_rLegBackMiddle",
+          "name": "LegBackMiddle",
+          "asset": "Assets/Sprite/LegBackMiddle.asset",
+          "pivotX": 0.7572143,
+          "pivotY": 0.729019046,
+          "width": 16.84776,
+          "height": 14.9464989,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "l-leg-front-upper",
+      "parent": "spine",
+      "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper",
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper/bp_lLegFrontUpper"
+      ],
+      "defaultTransform": {
+        "x": 0.595,
+        "y": -0.169999987,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper/bp_lLegFrontUpper",
+          "name": "LegFrontUpper_0",
+          "asset": "Assets/Sprite/LegFrontUpper_0.asset",
+          "pivotX": 0.5158181,
+          "pivotY": 0.847870052,
+          "width": 13.8875942,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -14
+        }
+      ]
+    },
+    {
+      "name": "neck",
+      "parent": "spine",
+      "unityPath": "SkeletonDeathHound/hips/spine/neck",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/neck",
+        "SkeletonDeathHound/hips/spine/neck/bp_neck"
+      ],
+      "defaultTransform": {
+        "x": 0.435,
+        "y": -0.098,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/neck/bp_neck",
+          "name": "Neck_3",
+          "asset": "Assets/Sprite/Neck_3.asset",
+          "pivotX": 0.291516,
+          "pivotY": 0.251092076,
+          "width": 20.89713,
+          "height": 19.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 7
+        }
+      ]
+    },
+    {
+      "name": "r-leg-front-upper",
+      "parent": "spine",
+      "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper",
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper/bp_rLegFrontUpper"
+      ],
+      "defaultTransform": {
+        "x": 0.595,
+        "y": -0.169999987,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper/bp_rLegFrontUpper",
+          "name": "LegFrontUpper_0",
+          "asset": "Assets/Sprite/LegFrontUpper_0.asset",
+          "pivotX": 0.5158181,
+          "pivotY": 0.847870052,
+          "width": 13.8875942,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-lower",
+      "parent": "l-leg-back-middle",
+      "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower",
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/bp_lLegBackLower"
+      ],
+      "defaultTransform": {
+        "x": -0.282,
+        "y": -0.214,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/bp_lLegBackLower",
+          "name": "LegBackLower",
+          "asset": "Assets/Sprite/LegBackLower.asset",
+          "pivotX": 0.6431658,
+          "pivotY": 0.6491344,
+          "width": 8.847759,
+          "height": 16.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -12
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-lower",
+      "parent": "r-leg-back-middle",
+      "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower",
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/bp_rLegBackLower"
+      ],
+      "defaultTransform": {
+        "x": -0.282,
+        "y": -0.214,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/bp_rLegBackLower",
+          "name": "LegBackLower",
+          "asset": "Assets/Sprite/LegBackLower.asset",
+          "pivotX": 0.6431658,
+          "pivotY": 0.6491344,
+          "width": 8.847759,
+          "height": 16.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "l-leg-front-lower",
+      "parent": "l-leg-front-upper",
+      "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower",
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/bp_lLegFrontLower"
+      ],
+      "defaultTransform": {
+        "x": -0.0194,
+        "y": -0.4299,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/bp_lLegFrontLower",
+          "name": "LegFrontLower",
+          "asset": "Assets/Sprite/LegFrontLower.asset",
+          "pivotX": 0.5138953,
+          "pivotY": 0.8835811,
+          "width": 8.847759,
+          "height": 17.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -13
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "unityPath": "SkeletonDeathHound/hips/spine/neck/head",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/neck/head",
+        "SkeletonDeathHound/hips/spine/neck/head/bp_head"
+      ],
+      "defaultTransform": {
+        "x": 0.202799976,
+        "y": 0.3786,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/neck/head/bp_head",
+          "name": "Head_9",
+          "asset": "Assets/Sprite/Head_9.asset",
+          "pivotX": 0.101894341,
+          "pivotY": 0.297478139,
+          "width": 24.84776,
+          "height": 23.9034576,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "r-leg-front-lower",
+      "parent": "r-leg-front-upper",
+      "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower",
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/bp_rLegFrontLower"
+      ],
+      "defaultTransform": {
+        "x": -0.0194,
+        "y": -0.4299,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/bp_rLegFrontLower",
+          "name": "LegFrontLower",
+          "asset": "Assets/Sprite/LegFrontLower.asset",
+          "pivotX": 0.5138953,
+          "pivotY": 0.8835811,
+          "width": 8.847759,
+          "height": 17.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "l-foot-back",
+      "parent": "l-leg-back-lower",
+      "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack",
+        "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack/bp_lFootBack"
+      ],
+      "defaultTransform": {
+        "x": 0.009,
+        "y": -0.237,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack/bp_lFootBack",
+          "name": "FootBack",
+          "asset": "Assets/Sprite/FootBack.asset",
+          "pivotX": 0.269458145,
+          "pivotY": 0.724404335,
+          "width": 14.8477592,
+          "height": 8.847759,
+          "sortingLayer": "Actor",
+          "sortingOrder": -11
+        }
+      ]
+    },
+    {
+      "name": "r-foot-back",
+      "parent": "r-leg-back-lower",
+      "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack",
+        "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack/bp_rFootBack"
+      ],
+      "defaultTransform": {
+        "x": 0.009,
+        "y": -0.237,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack/bp_rFootBack",
+          "name": "FootBack",
+          "asset": "Assets/Sprite/FootBack.asset",
+          "pivotX": 0.269458145,
+          "pivotY": 0.724404335,
+          "width": 14.8477592,
+          "height": 8.847759,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "l-foot-front",
+      "parent": "l-leg-front-lower",
+      "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront",
+        "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront/bp_lFootFront"
+      ],
+      "defaultTransform": {
+        "x": -0.0036,
+        "y": -0.4003,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront/bp_lFootFront",
+          "name": "FootFront",
+          "asset": "Assets/Sprite/FootFront.asset",
+          "pivotX": 0.406266,
+          "pivotY": 0.7779557,
+          "width": 15.8477592,
+          "height": 8.897364,
+          "sortingLayer": "Actor",
+          "sortingOrder": -12
+        }
+      ]
+    },
+    {
+      "name": "jaw",
+      "parent": "head",
+      "unityPath": "SkeletonDeathHound/hips/spine/neck/head/jaw",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/neck/head/jaw",
+        "SkeletonDeathHound/hips/spine/neck/head/jaw/bp_jaw"
+      ],
+      "defaultTransform": {
+        "x": 0.049,
+        "y": -0.0109,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/neck/head/jaw/bp_jaw",
+          "name": "Jaw",
+          "asset": "Assets/Sprite/Jaw.asset",
+          "pivotX": 0.168020576,
+          "pivotY": 0.8460383,
+          "width": 18.89713,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "r-foot-front",
+      "parent": "r-leg-front-lower",
+      "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront",
+      "unityPaths": [
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront",
+        "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront/bp_rFootFront"
+      ],
+      "defaultTransform": {
+        "x": -0.0036,
+        "y": -0.4003,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront/bp_rFootFront",
+          "name": "FootFront",
+          "asset": "Assets/Sprite/FootFront.asset",
+          "pivotX": 0.406266,
+          "pivotY": 0.7779557,
+          "width": 15.8477592,
+          "height": 8.897364,
+          "sortingLayer": "Actor",
+          "sortingOrder": 14
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

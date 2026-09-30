@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/maggot/attack-leap",
+  "enemy": "core:enemy/maggot",
+  "displayName": "maggot attack-leap",
+  "durationSeconds": 2.16666675,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/back",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": 67.3120041,
+          "inTangent": 57.9279671,
+          "outTangent": 57.92801
+        },
+        {
+          "time": 1.0,
+          "value": 81.79401,
+          "inTangent": -6.626841E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": -31.0420017,
+          "inTangent": 8.082637E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.16666675,
+          "value": -31.0420017,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/front",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": -59.955,
+          "inTangent": -10.3680267,
+          "outTangent": -10.3680182
+        },
+        {
+          "time": 1.0,
+          "value": -62.5470047,
+          "inTangent": 1.31606919E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 32.2450027,
+          "inTangent": 0.000488085876,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.16666675,
+          "value": 32.2450027,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.16666663,
+          "value": 52.1540031,
+          "inTangent": -4.063953E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.16666675,
+          "value": 52.1540031,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": -0.055,
+          "inTangent": -0.0559999868,
+          "outTangent": -0.0559999868
+        },
+        {
+          "time": 1.0,
+          "value": -0.069,
+          "inTangent": -5.861125E-09,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": 0.059,
+          "inTangent": 0.00400001276,
+          "outTangent": 0.003999989
+        },
+        {
+          "time": 1.0,
+          "value": 0.06,
+          "inTangent": -2.48356648E-11,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 1.0,
+      "type": "cue",
+      "cue": "attack.leap"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Leap_1.anim",
+    "semanticName": "attack-leap"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "type": "playerAnimation",
+  "id": "draco66electro.prey-green-zombie:player-animation/stalker-sqoid-presentation",
+  "rig": "core:player-rig/alex",
+  "displayName": "Green Stalker Drain with Sqoid Presentation",
+  "durationSeconds": 0.6,
+  "frameRate": 60,
+  "loop": true,
+  "tracks": [
+    { "target": "bone/spine", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -16, "inTangent": null, "outTangent": null },
+      { "time": 0.3, "value": 16, "inTangent": null, "outTangent": null },
+      { "time": 0.6, "value": -16, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/chest", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -20, "inTangent": null, "outTangent": null },
+      { "time": 0.3, "value": 20, "inTangent": null, "outTangent": null },
+      { "time": 0.6, "value": -20, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/head", "property": "rotation.z", "keys": [
+      { "time": 0, "value": 12, "inTangent": null, "outTangent": null },
+      { "time": 0.3, "value": -12, "inTangent": null, "outTangent": null },
+      { "time": 0.6, "value": 12, "inTangent": null, "outTangent": null }
+    ] }
+  ],
+  "objectTracks": [],
+  "events": [
+    { "time": 0.3, "name": "libido", "floatValue": 2 },
+    { "time": 0.3, "name": "scaledPleasure", "floatValue": 0.4 },
+    { "time": 0.3, "name": "strengthDamage", "floatValue": 2 },
+    { "time": 0.3, "name": "struggleDamage", "floatValue": 14 }
+  ],
+  "effects": [
+    {
+      "id": "vfx/thrust-1",
+      "trigger": "thrust",
+      "index": 0,
+      "target": "bone/hips",
+      "durationSeconds": 0.5,
+      "loop": false,
+      "maxParticles": 4,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 1.5,
+      "startSpeedMin": 0.5,
+      "startSpeedMax": 2,
+      "startSizeMin": 0.02,
+      "startSizeMax": 0.03,
+      "gravityMin": 0,
+      "gravityMax": 0,
+      "scaleX": 1,
+      "scaleY": 1,
+      "scaleZ": 1,
+      "positionX": 0,
+      "positionY": 0,
+      "positionZ": 0,
+      "rotationX": 0,
+      "rotationY": 90,
+      "rotationZ": 0,
+      "simulationSpace": "World",
+      "startColorMin": { "r": 1, "g": 1, "b": 1, "a": 0.55 },
+      "startColorMax": { "r": 1, "g": 1, "b": 1, "a": 0.16 },
+      "emissionRateMin": 0,
+      "emissionRateMax": 0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 8,
+      "textureSheetTilesX": 1,
+      "textureSheetTilesY": 1,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 13,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_sqoid.prefab",
+        "hierarchyPath": "RaperAnims/8/rps_thrust"
+      }
+    }
+  ],
+  "effectTriggers": [
+    { "time": 0.15, "source": "enemy:Thrust", "effects": ["vfx/thrust-1"] },
+    { "time": 0.45, "source": "enemy:Thrust", "effects": ["vfx/thrust-1"] }
+  ]
+}

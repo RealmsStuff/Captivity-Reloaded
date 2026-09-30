@@ -65,6 +65,11 @@ public class ScreenTitle : Screen
 		GetComponentInChildren<ManagerOptions>(includeInactive: true).Close();
 	}
 
+	public void SetTitleMenuVisible(bool i_isVisible)
+	{
+		m_parentTitle.SetActive(i_isVisible);
+	}
+
 	public void ShowLoading()
 	{
 		m_parentTitle.SetActive(value: false);

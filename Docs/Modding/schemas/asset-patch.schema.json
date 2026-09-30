@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/asset-patch.schema.json",
+  "title": "Captivity Reloaded Asset Patch",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "target", "replacements"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "assetPatch", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:patch/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "target": { "$ref": "#/$defs/contentId", "x-stability": "stable" },
+    "replacements": {
+      "type": "object", "minProperties": 1, "maxProperties": 256,
+      "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" },
+      "additionalProperties": { "$ref": "#/$defs/pngPath" },
+      "x-stability": "stable"
+    }
+  },
+  "$defs": {
+    "contentId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" },
+    "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" }
+  }
+}

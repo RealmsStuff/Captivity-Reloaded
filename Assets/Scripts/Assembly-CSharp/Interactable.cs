@@ -5,6 +5,9 @@ using UnityEngine;
 public abstract class Interactable : MonoBehaviour
 {
 	public delegate void DelOnActivate(Interactable i_interactble);
+	public delegate void DelAnyActivated(Interactable i_interactable, Actor i_initiator, InteractableActivationType i_activationType);
+
+	public static event DelAnyActivated OnAnyActivated;
 
 	[SerializeField]
 	protected string m_name;
@@ -108,6 +111,7 @@ public abstract class Interactable : MonoBehaviour
 				}
 				text += "to use";
 				m_notificationInteract = CommonReferences.Instance.GetManagerHud().GetManagerNotification().CreateNotification(text, ColorTextNotification.UnlockDoor, i_isContinues: true);
+				m_notificationInteract.SetPromptInput(InputButton.Use);
 			}
 		}
 		else if (Vector2.Distance(CommonReferences.Instance.GetPlayer().GetPos(), base.transform.position) <= 2.25f)
@@ -170,14 +174,14 @@ public abstract class Interactable : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerStay2D(Collider2D i_collider)
+	protected virtual void OnTriggerStay2D(Collider2D i_collider)
 	{
 		if (m_isContinuesActivation)
 		{
 			if (m_isCanBeTouchedToActivate && (bool)i_collider.gameObject.GetComponent<BodyPartPlayer>())
 			{
-				Actor component = i_collider.gameObject.GetComponent<Player>();
-				Activate(component, InteractableActivationType.Touch);
+				Actor owner = i_collider.gameObject.GetComponent<BodyPartPlayer>().GetOwner();
+				Activate(owner, InteractableActivationType.Touch);
 			}
 			if (m_isCanBeActivatedByNPC && (bool)i_collider.gameObject.GetComponent<NPC>())
 			{
@@ -187,14 +191,14 @@ public abstract class Interactable : MonoBehaviour
 		}
 	}
 
-	private void OnCollisionStay2D(Collision2D i_collision)
+	protected virtual void OnCollisionStay2D(Collision2D i_collision)
 	{
 		if (m_isContinuesActivation)
 		{
 			if (m_isCanBeTouchedToActivate && (bool)i_collision.collider.gameObject.GetComponent<BodyPartPlayer>())
 			{
-				Actor component = i_collision.collider.gameObject.GetComponent<Player>();
-				Activate(component, InteractableActivationType.Touch);
+				Actor owner = i_collision.collider.gameObject.GetComponent<BodyPartPlayer>().GetOwner();
+				Activate(owner, InteractableActivationType.Touch);
 			}
 			if (m_isCanBeActivatedByNPC && (bool)i_collision.collider.gameObject.GetComponent<NPC>())
 			{
@@ -262,9 +266,36 @@ public abstract class Interactable : MonoBehaviour
 			}
 		}
 		m_isActivatedOnceAlready = true;
+		OnAnyActivated?.Invoke(this, i_initiator, i_activationType);
 	}
 
 	protected abstract void HandleActivation(Actor i_initiator, InteractableActivationType i_activationType);
+
+	protected void ResetModActivationLinks()
+	{
+		m_objectsToEnableAfterActivation.Clear();
+		m_objectsToDisableAfterActivation.Clear();
+		m_spawnersToEnableAfterActivation.Clear();
+		m_interactablesToActivateAfterActivation.Clear();
+		m_isActivatedOnceAlready = false;
+	}
+
+	public void RemapModSpawnerActivationLinks(Dictionary<Spawner, Spawner> i_replacements)
+	{
+		if (i_replacements == null) return;
+		for (int index = 0; index < m_spawnersToEnableAfterActivation.Count; index++)
+			if (m_spawnersToEnableAfterActivation[index] != null
+				&& i_replacements.TryGetValue(m_spawnersToEnableAfterActivation[index], out Spawner replacement))
+			{
+				m_spawnersToEnableAfterActivation[index] = replacement;
+				if (this is Door)
+				{
+					ModRetainedCoreStageObject retained = GetComponent<ModRetainedCoreStageObject>();
+					replacement.AddRequiredOpenDoor(retained != null && !string.IsNullOrEmpty(retained.ObjectId)
+						? retained.ObjectId : gameObject.name);
+				}
+			}
+	}
 
 	public bool GetIsCanBeUsedToActivate()
 	{

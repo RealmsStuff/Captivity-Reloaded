@@ -11,8 +11,14 @@ public class PathFinder
 	{
 		m_npc = i_npc;
 		NavNode navNodeNpcStart = m_npc.gameObject.GetComponent<XAI>().GetNavNodeNpcStart();
+		return CreatePathToPlayer(i_npc, navNodeNpcStart);
+	}
+
+	public Path CreatePathToPlayer(NPC i_npc, NavNode i_nodeOrigin)
+	{
+		m_npc = i_npc;
 		NavNode i_nodeDestination = ((!(m_npc is Flier)) ? GetNodeClosestToPlayerOnPlayerCurrentPlatform() : GetNodeClosestToPos(CommonReferences.Instance.GetPlayer().GetPos()));
-		return CreatePathToNode(navNodeNpcStart, i_nodeDestination);
+		return CreatePathToNode(i_nodeOrigin, i_nodeDestination);
 	}
 
 	public Path CreatePathToNode(NPC i_npc, NavNode i_nodeDestination)

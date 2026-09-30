@@ -1,0 +1,10 @@
+{
+  "template": "core:item/weapon/pistol",
+  "canvas": { "width": 32, "height": 32 },
+  "parts": [
+    { "slot": "body", "source": "Assets/Texture2D/pistol.png" },
+    { "slot": "slide", "source": "Assets/Texture2D/slide_2.png" },
+    { "slot": "magazine", "source": "Assets/Texture2D/magazine_2.png" },
+    { "slot": "base", "source": "Assets/Texture2D/base_20.png" }
+  ]
+}

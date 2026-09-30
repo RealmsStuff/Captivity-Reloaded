@@ -5,7 +5,7 @@ Shader "Universal Render Pipeline/2D/Sprite-Outlined-Default"
         _MainTex("Diffuse", 2D) = "white" {}
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
-        _OutlineWidth ("Outline Width", float) = 1.0
+        _OutlineThickness ("OutlineThickness", Range(0, 1)) = 0.5
         _OutlineColor ("Outline Color", Color) = (1,1,1,1)
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
@@ -77,7 +77,7 @@ Shader "Universal Render Pipeline/2D/Sprite-Outlined-Default"
             float4 _Color;
             float4 _OutlineColor;
             half4 _RendererColor;
-            float _OutlineWidth;
+            float _OutlineThickness;
 
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -119,7 +119,7 @@ Shader "Universal Render Pipeline/2D/Sprite-Outlined-Default"
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
 
-                float2 offset = _MainTex_TexelSize.xy * _OutlineWidth;
+                float2 offset = _MainTex_TexelSize.xy * _OutlineThickness;
 
                 float outline = 0;
 

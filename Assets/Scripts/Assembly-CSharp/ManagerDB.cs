@@ -1213,6 +1213,15 @@ public static class ManagerDB
             case SkinColor.Black:
                 num = 3;
                 break;
+			case SkinColor.Olive:
+				num = 4;
+				break;
+			case SkinColor.Brown:
+				num = 5;
+				break;
+			case SkinColor.Deep:
+				num = 6;
+				break;
         }
 #if UNITY_WEBGL || UNITY_ANDROID
 		state.skinColor = num;
@@ -1250,6 +1259,15 @@ public static class ManagerDB
             case 3:
                 result = SkinColor.Black;
                 break;
+			case 4:
+				result = SkinColor.Olive;
+				break;
+			case 5:
+				result = SkinColor.Brown;
+				break;
+			case 6:
+				result = SkinColor.Deep;
+				break;
         }
         return result;
     }
@@ -1432,6 +1450,7 @@ public static class ManagerDB
 
     private static void AddStageIfNotExists(Stage i_stage)
     {
+		if (i_stage == null || i_stage.GetIsRuntimeTemplate()) return;
 		if (TryGetExternalStageId(i_stage, out ContentId contentId))
 		{
 			if (!TryGetStageContentState(contentId, out _))
@@ -1643,7 +1662,7 @@ public static class ManagerDB
 
     public static void SetDifficulty(Difficulty i_difficulty)
     {
-        PlayerPrefs.SetString("Difficulty", i_difficulty.ToString());
+		DifficultyRegistry.SetCurrent("core:difficulty/" + i_difficulty.ToString().ToLowerInvariant());
     }
 
     public static void SetIsReduceGunFlash(bool i_isReduce)
@@ -1734,6 +1753,7 @@ public static class ManagerDB
 		{
 			list.Add(new InputButtonXGame(inp.nameKey, inp.keyCode));
 		}
+		AppendMissingDefaultInputs(list);
 		return list;
 #else
         DbDataReader dbDataReader = ExecuteReader("SELECT * FROM tbl_input");
@@ -1742,9 +1762,35 @@ public static class ManagerDB
         {
             list.Add(new InputButtonXGame((string)dbDataReader["nameKey"], (string)dbDataReader["keyCode"]));
         }
+		AppendMissingDefaultInputs(list);
         return list;
 #endif
     }
+
+	private static void AppendMissingDefaultInputs(List<InputButtonXGame> io_inputs)
+	{
+		if (CommonReferences.Instance == null || CommonReferences.Instance.GetManagerInput() == null) return;
+#if UNITY_WEBGL || UNITY_ANDROID
+		bool changed = false;
+#endif
+		foreach (InputButtonXGame defaultButton in CommonReferences.Instance.GetManagerInput().GetButtonsDefault())
+		{
+			bool found = false;
+			foreach (InputButtonXGame input in io_inputs)
+				if (input.GetInputButton() == defaultButton.GetInputButton()) { found = true; break; }
+			if (found) continue;
+			io_inputs.Add(defaultButton);
+#if UNITY_WEBGL || UNITY_ANDROID
+			changed = true;
+			state.inputs.Add(new InputData { nameKey = defaultButton.GetName(), keyCode = defaultButton.GetKeyCode().ToString() });
+#else
+			ExecuteNonQuery("INSERT INTO tbl_input VALUES ('" + defaultButton.GetName() + "', '" + defaultButton.GetKeyCode() + "')");
+#endif
+		}
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (changed) SaveWebState();
+#endif
+	}
 
     public static void SetInputButton(string i_nameButton, KeyCode i_keyCodeToSet)
     {

@@ -120,6 +120,11 @@ public class XAIWalker : XAI
 		{
 			m_walker.StopMoving();
 			Vector2 pos = m_pathCurrent.GetPathNodeCurrent().GetNavNode().GetPos();
+			if (pos.y < m_walker.GetPosFeet().y - 0.5f)
+			{
+				m_walker.WalkOffPlatformTowards(pos);
+				break;
+			}
 			pos.y -= m_walker.GetHeight() / 2f;
 			m_walker.JumpZeroGravity(pos, 0.5f);
 			m_walker.TryToClimb(CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetLedgeClosestToPos(pos));

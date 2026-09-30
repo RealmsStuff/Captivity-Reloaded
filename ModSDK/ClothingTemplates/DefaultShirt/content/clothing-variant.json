@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.default-shirt-template:clothing/default-shirt-template",
+  "displayName": "Default Shirt Template",
+  "description": "An editable variant of the default shirt.",
+  "extends": "core:clothing/shirt-default",
+  "unlockedByDefault": true,
+  "category": "Upper",
+  "incompatibleCategories": [],
+  "visual": {
+    "type": "coreClothingAtlas",
+    "atlas": "assets/clothing/default-shirt-template.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "piece/shirt-spine": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "piece/shirt-chest": { "x": 32, "y": 0, "width": 32, "height": 32 },
+      "icon": { "x": 64, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

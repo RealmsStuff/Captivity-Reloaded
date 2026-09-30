@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.hazmat-suit-template:clothing/hazmat-suit-template",
+  "displayName": "Hazmat Suit Template",
+  "description": "An editable variant of the full hazmat suit.",
+  "extends": "core:clothing/hazmat-suit",
+  "unlockedByDefault": true,
+  "category": "Upper",
+  "incompatibleCategories": ["Other", "Upper", "Lower", "Shoes", "Hat", "Sleeves", "Stockings"],
+  "visual": {
+    "type": "coreClothingAtlas",
+    "atlas": "assets/clothing/hazmat-suit-template.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "piece/r-leg-lower-shoes": { "x": 0, "y": 128, "width": 32, "height": 32 },
+      "piece/head": { "x": 32, "y": 128, "width": 32, "height": 32 },
+      "piece/l-foot": { "x": 64, "y": 128, "width": 32, "height": 32 },
+      "piece/r-hand": { "x": 96, "y": 128, "width": 32, "height": 32 },
+      "piece/r-arm-upper": { "x": 128, "y": 128, "width": 32, "height": 32 },
+      "piece/neck": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "piece/l-leg-lower": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "piece/r-leg-upper": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "piece/chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "piece/spine": { "x": 128, "y": 96, "width": 32, "height": 32 },
+      "piece/r-leg-lower": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "piece/l-leg-lower-shoes": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "piece/r-arm-lower": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "piece/hips": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "piece/mask": { "x": 128, "y": 64, "width": 32, "height": 32 },
+      "piece/butt": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "piece/r-foot": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "piece/l-hand": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "piece/l-arm-lower": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "piece/l-arm-upper": { "x": 128, "y": 32, "width": 32, "height": 32 },
+      "piece/l-leg-upper": { "x": 0, "y": 0, "width": 32, "height": 32 },
+      "icon": { "x": 32, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

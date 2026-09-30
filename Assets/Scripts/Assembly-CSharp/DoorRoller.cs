@@ -28,9 +28,54 @@ public class DoorRoller : Interactable
 
 	private Coroutine m_coroutineClose;
 
+	private bool m_hasModConfiguration;
+
+	private bool m_modUseProximity;
+
+	private bool m_modInitiallyOpen;
+
+	public void ConfigureModDoor(float i_proximityRadius, bool i_useProximity, bool i_initiallyOpen)
+	{
+		ResetModActivationLinks();
+		m_hasModConfiguration = true;
+		m_modUseProximity = i_useProximity;
+		m_modInitiallyOpen = i_initiallyOpen;
+		m_distanceSeeActor = i_proximityRadius;
+		m_priceToActivate = 0;
+		m_isSingleUse = false;
+		m_isContinuesActivation = false;
+		m_isCanBeUsedToActivate = false;
+		m_isCanBeTouchedToActivate = false;
+		m_isCanBeShotToActivate = false;
+		m_isCanBeActivatedByNPC = false;
+		m_isHideNotificationInteract = true;
+		m_isUnInteractable = false;
+	}
+
+	public bool IsUsableModTemplate()
+	{
+		return m_doorRollable != null && m_audioOpen != null && m_audioClose != null && m_audioEnd != null;
+	}
+
+	public bool ConfigureModVisual(Sprite i_sprite)
+	{
+		if (i_sprite == null) return true;
+		SpriteRenderer renderer = m_doorRollable == null ? null
+			: m_doorRollable.GetComponentInChildren<SpriteRenderer>(true);
+		if (renderer == null) return false;
+		renderer.sprite = i_sprite;
+		return true;
+	}
+
 	private new void Start()
 	{
-		if (m_priceToActivate == 0)
+		if (m_hasModConfiguration && m_modInitiallyOpen)
+		{
+			m_doorRollable.transform.localScale = new Vector3(m_doorRollable.transform.localScale.x, 0f,
+				m_doorRollable.transform.localScale.z);
+			m_isOpen = true;
+		}
+		if (m_hasModConfiguration ? m_modUseProximity : m_priceToActivate == 0)
 		{
 			StartCoroutine(CoroutineCheckIfCanOpenOrClose());
 		}
@@ -80,7 +125,7 @@ public class DoorRoller : Interactable
 		StartCoroutine(CoroutineCheckIfCanOpenOrClose());
 	}
 
-	private void Open()
+	public void Open()
 	{
 		if (!m_isOpening)
 		{
@@ -114,7 +159,7 @@ public class DoorRoller : Interactable
 		m_isOpening = false;
 	}
 
-	private void Close()
+	public void Close()
 	{
 		if (!m_isClosing)
 		{
@@ -145,5 +190,16 @@ public class DoorRoller : Interactable
 			yield return new WaitForFixedUpdate();
 		}
 		m_audioSourceSFX.PlayOneShot(m_audioEnd);
+	}
+
+	public void OpenOrClose()
+	{
+		if (m_isOpen) Close();
+		else Open();
+	}
+
+	public bool GetIsOpen()
+	{
+		return m_isOpen;
 	}
 }

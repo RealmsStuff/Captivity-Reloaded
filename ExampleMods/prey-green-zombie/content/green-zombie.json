@@ -8,6 +8,39 @@
   "spawn": {
     "inheritTemplateSpawners": true
   },
+  "stats": {
+    "healthMax": 125,
+    "speedMax": 3.5,
+    "bounty": 12
+  },
+  "behavior": {
+    "visionRange": 24,
+    "ignoreWave": false,
+    "modules": [
+      {
+        "type": "berserk",
+        "healthThreshold": 0.2,
+        "speedBonus": 0.75,
+        "damageMultiplierBonus": 0.2
+      }
+    ]
+  },
+  "animation": {
+    "speedMultiplier": 1.05
+  },
+  "attacks": [
+    {
+      "index": 0,
+      "damage": 9,
+      "cooldownSeconds": 1.1,
+      "initiateRange": 1.8,
+      "hitRange": 1.2
+    }
+  ],
+  "drops": {
+    "chance": 0.08,
+    "items": ["core:item/consumable/ammo-box"]
+  },
   "visual": {
     "type": "coreRigAtlas",
     "atlas": "assets/enemies/green-zombie.png",

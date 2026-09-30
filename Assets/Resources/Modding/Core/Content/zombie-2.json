@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/zombie-2",
+  "legacyId": 2,
+  "displayName": "Zombie II",
+  "stats": {
+    "healthMax": 25.0,
+    "speedAcceleration": 3.0,
+    "speedMax": 2.5,
+    "traction": 0.0,
+    "bounty": 35,
+    "healthIncreasePerWave": 1.0
+  },
+  "behavior": {
+    "visionRange": 20.0,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/zombie-2/attack-primary",
+    "await": "core:enemy-animation/zombie-2/await",
+    "chase": "core:enemy-animation/zombie-2/chase",
+    "climb": "core:enemy-animation/zombie-2/climb",
+    "finisher-phase-1": "core:enemy-animation/zombie-2/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/zombie-2/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/zombie-2/finisher-phase-3",
+    "get-up": "core:enemy-animation/zombie-2/get-up",
+    "idle": "core:enemy-animation/zombie-2/idle",
+    "jump": "core:enemy-animation/zombie-2/jump",
+    "move": "core:enemy-animation/zombie-2/move"
+  }
+}

@@ -18,6 +18,7 @@ public class ManagerActor : MonoBehaviour
 		DisableAllPlayers();
 		m_playerCurrent = Object.Instantiate(m_players[0].gameObject, m_players[0].transform.parent);
 		CommonReferences.Instance.GetPlayerController().SetPlayer(m_playerCurrent.GetComponent<Player>());
+		CoreAssetSlotBinder.BindAfterSceneObjectsStarted();
 	}
 
 	private void DisableAllPlayers()
@@ -33,6 +34,7 @@ public class ManagerActor : MonoBehaviour
 		Vector2 pos = m_playerCurrent.transform.position;
 		m_playerCurrent = Object.Instantiate(i_player.gameObject, i_player.transform.parent);
 		CommonReferences.Instance.GetPlayerController().SetPlayer(m_playerCurrent.GetComponent<Player>());
+		CoreAssetSlotBinder.BindAfterSceneObjectsStarted();
 		m_playerCurrent.GetComponent<Player>().SetPos(pos);
 	}
 

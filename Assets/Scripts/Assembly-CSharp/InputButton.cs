@@ -13,5 +13,7 @@ public enum InputButton
 	EquipPrevious = 10,
 	DropWeapon = 11,
 	DrugSelection = 12,
-	Expose = 13
+	Expose = 13,
+	AlternateFire = 14,
+	SelfPleasure = 15
 }

@@ -1,7 +1,7 @@
-# Femboy Refitted Shirt conversion
+# Femboy edition conversion
 
-This disabled example converts the default-shirt artwork from the user-supplied legacy **Captivity: Femboy edition** by Mousai. It extends `core:clothing/shirt-default`, so the original attachment bones, sorting, colliders, tearing behavior, category and compatibility remain unchanged while one PNG atlas replaces the spine, chest and wardrobe icon.
+This example converts artwork from the user-supplied legacy **Captivity: Femboy edition** by Mousai. It replaces the player torso, chest, neck, and anatomy-bearing butt for all four Core skin palettes, plus the additional torso and anatomy sprites used by placed characters in the shipped stages. Asset patches refit the existing default shirt and every other affected Core top or outfit without adding duplicate wardrobe items or changing their gameplay data.
 
-The source mod replaces most player and clothing artwork inside `sharedassets0.assets`; this small conversion is intentionally limited to one outfit while the clothing API is being validated.
+Version 1.4 was checked sprite-by-sprite against both supplied Femboy archives. It includes exact recovered artwork for all 26 affected Core clothing targets, all sixteen player body palette slots, and the two extra placed-character body sprites. The four full-canvas anatomy sprites and both default-shirt pieces are retained exactly as authored rather than being recropped.
 
-To enable it in an editor checkout, copy this entire `femboy-refitted-shirt` directory into the project-level `Mods` directory. For a built game, copy it into `Mods` beside the game executable.
+This body intentionally overrides Shaded Girl when both are enabled. It conflicts with Advanced Clothing Showcase because that test pack adds a second anatomy attachment; the Femboy body already includes its anatomy in the butt artwork.

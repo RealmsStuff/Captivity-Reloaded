@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "example.tenelli-so3-template:item/weapon/tenelli-so3-template",
+  "displayName": "Tenelli SO3 Template",
+  "description": "An editable variant of the Core Tenelli SO3 shotgun.",
+  "extends": "core:item/weapon/tenelli-so3",
+  "stats": { "value": 1, "marketable": true },
+  "visual": {
+    "type": "coreWeaponSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "body": "assets/weapon/body.png",
+      "base": "assets/weapon/base.png",
+      "magazine": "assets/weapon/magazine.png",
+      "shell": "assets/weapon/shell.png"
+    }
+  }
+}

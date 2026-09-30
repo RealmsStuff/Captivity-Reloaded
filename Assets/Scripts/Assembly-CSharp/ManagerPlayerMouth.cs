@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,6 +52,66 @@ public class ManagerPlayerMouth : MonoBehaviour
 	private bool m_isHeadHumping;
 
 	private Coroutine m_coroutineChangeMouthToIdle;
+
+	private Dictionary<string, List<Action<Sprite>>> m_coreMouthBindings;
+	private Dictionary<string, Sprite> m_coreMouthBaselines;
+
+	internal IReadOnlyDictionary<string, Sprite> GetCoreMouthSprites()
+	{
+		EnsureCoreMouthBindings();
+		return m_coreMouthBaselines;
+	}
+
+	internal void SetCoreMouthSprite(string i_originalName, Sprite i_replacement)
+	{
+		EnsureCoreMouthBindings();
+		if (i_replacement == null || !m_coreMouthBindings.TryGetValue(i_originalName, out List<Action<Sprite>> bindings)) return;
+		foreach (Action<Sprite> binding in bindings) binding(i_replacement);
+	}
+
+	private void EnsureCoreMouthBindings()
+	{
+		if (m_coreMouthBindings != null) return;
+		m_coreMouthBindings = new Dictionary<string, List<Action<Sprite>>>(StringComparer.Ordinal);
+		m_coreMouthBaselines = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+		AddCoreMouthBinding(m_mouthTakeHit, sprite => m_mouthTakeHit = sprite);
+		AddCoreMouthBinding(m_mouthKO, sprite => m_mouthKO = sprite);
+		AddCoreMouthBinding(m_mouthDead, sprite => m_mouthDead = sprite);
+		AddCoreMouthBinding(m_mouthVoiceRape, sprite => m_mouthVoiceRape = sprite);
+		AddCoreMouthList(m_mouthsIdle);
+		AddCoreMouthList(m_mouthsIdleRape);
+		AddCoreMouthList(m_mouthsThrust);
+		AddCoreMouthList(m_mouthsCumThrust);
+		AddCoreMouthList(m_mouthsVoiceOrgasm);
+		AddCoreMouthList(m_mouthsOral);
+		if (m_mouth != null && m_mouth.sprite != null)
+		{
+			SpriteRenderer renderer = m_mouth;
+			AddCoreMouthBinding(renderer.sprite, sprite => { if (renderer != null) renderer.sprite = sprite; });
+		}
+	}
+
+	private void AddCoreMouthList(List<Sprite> i_sprites)
+	{
+		if (i_sprites == null) return;
+		for (int index = 0; index < i_sprites.Count; index++)
+		{
+			int boundIndex = index;
+			AddCoreMouthBinding(i_sprites[index], sprite => i_sprites[boundIndex] = sprite);
+		}
+	}
+
+	private void AddCoreMouthBinding(Sprite i_sprite, Action<Sprite> i_setter)
+	{
+		if (i_sprite == null || i_setter == null || string.IsNullOrEmpty(i_sprite.name)) return;
+		if (!m_coreMouthBindings.TryGetValue(i_sprite.name, out List<Action<Sprite>> bindings))
+		{
+			bindings = new List<Action<Sprite>>();
+			m_coreMouthBindings.Add(i_sprite.name, bindings);
+			m_coreMouthBaselines.Add(i_sprite.name, i_sprite);
+		}
+		bindings.Add(i_setter);
+	}
 
 	private void Start()
 	{

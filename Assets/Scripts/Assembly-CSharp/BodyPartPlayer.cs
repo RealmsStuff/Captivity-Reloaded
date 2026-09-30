@@ -38,6 +38,8 @@ public class BodyPartPlayer : BodyPart
 
 	public void SetSkinColor(SkinColor i_skinColor)
 	{
+		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+		renderer.color = Color.white;
 		switch (i_skinColor)
 		{
 		case SkinColor.Pale:
@@ -50,7 +52,19 @@ public class BodyPartPlayer : BodyPart
 			GetComponent<SpriteRenderer>().sprite = m_sprTan;
 			break;
 		case SkinColor.Black:
-			GetComponent<SpriteRenderer>().sprite = m_sprBlack;
+			renderer.sprite = m_sprBlack;
+			break;
+		case SkinColor.Olive:
+			renderer.sprite = m_sprTan != null ? m_sprTan : m_sprWhite;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
+			break;
+		case SkinColor.Brown:
+			renderer.sprite = m_sprTan != null ? m_sprTan : m_sprWhite;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
+			break;
+		case SkinColor.Deep:
+			renderer.sprite = m_sprBlack != null ? m_sprBlack : m_sprTan;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
 			break;
 		}
 	}
@@ -67,6 +81,11 @@ public class BodyPartPlayer : BodyPart
 			return m_sprTan;
 		case SkinColor.Black:
 			return m_sprBlack;
+		case SkinColor.Olive:
+		case SkinColor.Brown:
+			return m_sprTan != null ? m_sprTan : m_sprWhite;
+		case SkinColor.Deep:
+			return m_sprBlack != null ? m_sprBlack : m_sprTan;
 		default:
 			return null;
 		}

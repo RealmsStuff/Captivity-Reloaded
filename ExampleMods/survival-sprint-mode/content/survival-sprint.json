@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "example.survival-sprint:rule/survival-sprint",
+  "displayName": "Survival Sprint",
+  "description": "Survive ten faster, denser waves with boosted rewards and weapon damage.",
+  "modules": [
+    {
+      "type": "spawnModifiers",
+      "waveSpawnMultiplier": 1.25,
+      "maxStageEnemiesMultiplier": 1.25,
+      "spawnDelayMultiplier": 0.7,
+      "initialSpawnDelayMultiplier": 0.5
+    },
+    {
+      "type": "waveRules",
+      "spawnGrowthPerWave": 4,
+      "intermissionSeconds": 8
+    },
+    {
+      "type": "economyRules",
+      "startingMoney": 200,
+      "bountyMultiplier": 1.5,
+      "ammoDropChance": 0.2
+    },
+    {
+      "type": "playerRules",
+      "playerDamageTakenMultiplier": 1.25,
+      "gunDamageMultiplier": 1.15
+    },
+    {
+      "type": "scoringRules",
+      "killScore": 100,
+      "waveScore": 500,
+      "damageTakenPenalty": 25
+    },
+    {
+      "type": "goalRules",
+      "targetWave": 10,
+      "goalMatch": "all",
+      "timeLimitSeconds": 1800,
+      "maxDamageEvents": 50
+    }
+  ]
+}

@@ -5,8 +5,6 @@ public class ManagerHudRapeGames : MonoBehaviour
 	[SerializeField]
 	private HudSmasher m_hudSmasher;
 
-	private RaperGame m_raperGameCurrent;
-
 	private void LateUpdate()
 	{
 		if (m_hudSmasher.isActiveAndEnabled)
@@ -35,10 +33,9 @@ public class ManagerHudRapeGames : MonoBehaviour
 		i_hudRapeGame.GetComponent<RectTransform>().anchoredPosition = anchoredPosition;
 	}
 
-	public void ShowHudSmasher(RaperSmasher i_raperSmasher)
+	public void ShowHudSmasher(ISmasherHudSource i_source)
 	{
-		m_raperGameCurrent = i_raperSmasher;
-		m_hudSmasher.Show(i_raperSmasher);
+		m_hudSmasher.Show(i_source);
 	}
 
 	public void HideHudSmasher()

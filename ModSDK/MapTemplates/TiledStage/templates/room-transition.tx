@@ -1,0 +1,11 @@
+{
+  "type": "template",
+  "object": {
+    "class": "room-transition", "name": "room-transition-id", "height": 96, "rotation": 0, "visible": true, "width": 64,
+    "properties": [
+      { "name": "destination", "type": "string", "value": "room-entry-id" },
+      { "name": "requireNoEnemies", "type": "bool", "value": false },
+      { "name": "oneShot", "type": "bool", "value": false }
+    ]
+  }
+}

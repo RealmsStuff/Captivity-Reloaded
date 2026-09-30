@@ -1,0 +1,175 @@
+﻿{
+    "schemaVersion":  1,
+    "type":  "enemyAnimation",
+    "id":  "example.animation-reference-gallery:enemy-animation/maggot/move",
+    "enemy":  "example.animation-reference-gallery:enemy/maggot",
+    "displayName":  "Maggot Move Reference",
+    "durationSeconds":  0.5,
+    "frameRate":  60.0,
+    "loop":  true,
+    "tracks":  [
+                   {
+                       "target":  "bone/back",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  0.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  57.3220024,
+                                        "inTangent":  -3.05175781E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  0.0,
+                                        "inTangent":  3.05175781E-05,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/front",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  0.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  -64.6180038,
+                                        "inTangent":  6.10351563E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  0.0,
+                                        "inTangent":  -6.10351563E-05,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hips",
+                       "property":  "position.x",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  0.0465,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  -0.207,
+                                        "inTangent":  -2.38418579E-07,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  0.0465,
+                                        "inTangent":  2.38418579E-07,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hips",
+                       "property":  "position.y",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -0.0014,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  0.0571,
+                                        "inTangent":  -2.98023224E-08,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  -0.0014,
+                                        "inTangent":  2.98023224E-08,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/back",
+                       "property":  "scale.x",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  2.45,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  1.0,
+                                        "inTangent":  -1.90734863E-06,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  2.45,
+                                        "inTangent":  1.90734863E-06,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/back",
+                       "property":  "scale.y",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  1.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.25,
+                                        "value":  1.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.5,
+                                        "value":  1.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   }
+               ],
+    "objectTracks":  [
+
+                     ],
+    "events":  [
+
+               ],
+    "effects":  [
+
+                ],
+    "effectTriggers":  [
+
+                       ],
+    "warnings":  [
+
+                 ],
+    "source":  {
+                   "unityClip":  "Assets/AnimationClip/Move_1.anim",
+                   "semanticName":  "move"
+               }
+}

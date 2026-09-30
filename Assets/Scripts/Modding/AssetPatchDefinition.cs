@@ -174,6 +174,13 @@ namespace CaptivityReloaded.Modding
 		{
 			try
 			{
+				long bytes = new FileInfo(i_file).Length;
+				if (bytes <= 0 || bytes > ModFileLimits.MaximumContentDefinitionBytes)
+				{
+					io_result.Report.Add(ValidationSeverity.Error, "asset-patch.definition-size",
+						"Content JSON must be between 1 byte and 1 MiB.", i_file);
+					return;
+				}
 				string json = File.ReadAllText(i_file);
 				JObject root = JObject.Parse(json);
 				if (!string.Equals((string)root["type"], "assetPatch", StringComparison.Ordinal)) return;

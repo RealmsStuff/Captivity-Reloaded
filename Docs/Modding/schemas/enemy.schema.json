@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/enemy.schema.json",
+  "title": "Captivity Reloaded Enemy",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "enemy", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/enemyId", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/coreEnemyId", "x-stability": "stable" },
+    "description": { "type": "string", "x-stability": "stable" },
+    "stats": { "$ref": "#/$defs/stats", "x-stability": "stable" },
+    "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" },
+    "spawn": { "$ref": "#/$defs/spawn", "x-stability": "experimental" },
+    "attacks": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/attack" }, "x-stability": "experimental" },
+    "behavior": { "$ref": "#/$defs/behavior", "x-stability": "experimental" },
+    "animation": { "$ref": "#/$defs/animation", "x-stability": "experimental" },
+    "animationRefs": { "type": "object", "maxProperties": 64, "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/enemyAnimationId" }, "x-stability": "experimental" },
+    "ai": { "$ref": "#/$defs/ai", "x-stability": "experimental" },
+    "drops": { "$ref": "#/$defs/drops", "x-stability": "experimental" }
+  },
+  "oneOf": [
+    {
+      "required": ["extends"],
+      "properties": {
+        "visual": { "properties": { "type": { "const": "coreRigAtlas" } } },
+        "attacks": { "items": { "required": ["index"] } }
+      }
+    },
+    {
+      "not": { "required": ["extends"] },
+      "required": ["stats", "visual", "ai", "attacks"],
+	  "anyOf": [{ "required": ["animation"] }, { "required": ["animationRefs"] }],
+      "properties": {
+        "visual": { "required": ["bones", "hitZones", "bodyWidth", "bodyHeight"], "properties": { "type": { "const": "originalSkeletonAtlas" } } },
+        "attacks": { "minItems": 1, "items": { "required": ["id", "type", "animation", "chance", "damage", "cooldownSeconds", "initiateRange", "hitRange", "durationSeconds"] } },
+        "animation": { "required": ["clips"] }
+      }
+    }
+  ],
+  "$defs": {
+    "enemyId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:enemy/[a-z0-9][a-z0-9._/-]*$" },
+    "enemyAnimationId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:enemy-animation/[a-z0-9][a-z0-9._/-]*$" },
+    "coreEnemyId": { "type": "string", "pattern": "^core:enemy/[a-z0-9][a-z0-9._/-]*$" },
+    "itemId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:item/[a-z0-9][a-z0-9._/-]*$" },
+    "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" },
+    "region": { "type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"], "properties": { "x": { "type": "integer", "minimum": 0 }, "y": { "type": "integer", "minimum": 0 }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } } },
+    "stats": { "type": "object", "additionalProperties": false, "properties": {
+      "healthMax": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000 }, "speedAcceleration": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "speedMax": { "type": "number", "minimum": 0, "maximum": 1000 }, "traction": { "type": "number", "minimum": 0, "maximum": 1 },
+      "bounty": { "type": "integer", "minimum": 0 }, "healthIncreasePerWave": { "type": "number", "minimum": 0, "maximum": 1000000 }
+    } },
+    "visual": { "type": "object", "additionalProperties": false, "required": ["type", "atlas", "regions"], "properties": {
+      "type": { "enum": ["coreRigAtlas", "originalSkeletonAtlas"] }, "atlas": { "$ref": "#/$defs/pngPath" }, "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024, "default": 32 },
+      "regions": { "type": "object", "minProperties": 1, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" }, "additionalProperties": { "$ref": "#/$defs/region" } },
+      "bones": { "type": "array", "minItems": 1, "maxItems": 64, "items": { "$ref": "#/$defs/bone" } },
+      "hitZones": { "type": "array", "minItems": 1, "maxItems": 64, "items": { "$ref": "#/$defs/hitZone" } },
+      "bodyWidth": { "type": "number", "minimum": 0.05, "maximum": 100 }, "bodyHeight": { "type": "number", "minimum": 0.05, "maximum": 100 },
+      "bodyOffsetX": { "type": "number" }, "bodyOffsetY": { "type": "number" }
+    } },
+    "bone": { "type": "object", "additionalProperties": false, "required": ["id", "region"], "properties": {
+      "id": { "$ref": "#/$defs/name" }, "parent": { "$ref": "#/$defs/name" }, "region": { "$ref": "#/$defs/name" },
+      "x": { "type": "number" }, "y": { "type": "number" }, "rotation": { "type": "number" },
+      "pivotX": { "type": "number", "minimum": 0, "maximum": 1 }, "pivotY": { "type": "number", "minimum": 0, "maximum": 1 },
+      "sortingOrder": { "type": "integer", "minimum": -10000, "maximum": 10000 }
+    } },
+    "hitZone": { "type": "object", "additionalProperties": false, "required": ["bone", "shape"], "properties": {
+      "bone": { "$ref": "#/$defs/name" }, "shape": { "enum": ["box", "circle"] }, "offsetX": { "type": "number" }, "offsetY": { "type": "number" },
+      "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }, "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+      "radius": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }, "damageMultiplier": { "enum": ["low", "normal", "critical", "block"] }
+    } },
+    "spawn": { "type": "object", "additionalProperties": false, "required": ["inheritTemplateSpawners"], "properties": {
+      "inheritTemplateSpawners": { "type": "boolean", "x-stability": "stable" },
+      "selectionWeight": { "type": "number", "minimum": 0.001, "maximum": 1000, "default": 1, "x-stability": "experimental" }
+    } },
+    "attack": { "type": "object", "additionalProperties": false, "properties": {
+      "index": { "type": "integer", "minimum": 0, "maximum": 31 }, "id": { "$ref": "#/$defs/name" }, "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab", "multiStage"] }, "animation": { "$ref": "#/$defs/name" },
+      "hitTimeSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "chance": { "type": "number", "minimum": 0, "maximum": 1 },
+      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "initiateRange": { "type": "number", "minimum": 0, "maximum": 1000 }, "hitRange": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "movesDuringAttack": { "type": "boolean" }, "durationSeconds": { "type": "number", "minimum": 0.01, "maximum": 600 },
+      "areaRadius": { "type": "number", "minimum": 0.05, "maximum": 100 }, "offsetX": { "type": "number", "minimum": -1000, "maximum": 1000 }, "offsetY": { "type": "number", "minimum": -1000, "maximum": 1000 },
+      "projectileRegion": { "$ref": "#/$defs/name" }, "projectileSpeed": { "type": "number", "minimum": 0.05, "maximum": 1000 },
+      "projectileLifetimeSeconds": { "type": "number", "minimum": 0.05, "maximum": 60 }, "projectileRadius": { "type": "number", "minimum": 0.01, "maximum": 10 },
+      "projectileGravityScale": { "type": "number", "minimum": -10, "maximum": 10 },
+      "stages": { "type": "array", "minItems": 2, "maxItems": 16, "items": { "$ref": "#/$defs/attackStage" } }
+    }, "allOf": [
+      { "if": { "properties": { "type": { "const": "projectile" } }, "required": ["type"] }, "then": { "required": ["projectileRegion", "projectileSpeed", "projectileLifetimeSeconds", "projectileRadius"] } },
+      { "if": { "properties": { "type": { "const": "area" } }, "required": ["type"] }, "then": { "required": ["areaRadius"] } },
+      { "if": { "properties": { "type": { "const": "multiStage" } }, "required": ["type"] }, "then": { "required": ["stages"] } }
+    ] },
+    "attackStage": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
+      "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab"] },
+      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "hitRange": { "type": "number", "minimum": 0, "maximum": 1000 }, "areaRadius": { "type": "number", "minimum": 0.05, "maximum": 100 },
+      "offsetX": { "type": "number", "minimum": -1000, "maximum": 1000 }, "offsetY": { "type": "number", "minimum": -1000, "maximum": 1000 },
+      "projectileRegion": { "$ref": "#/$defs/name" }, "projectileSpeed": { "type": "number", "minimum": 0.05, "maximum": 1000 },
+      "projectileLifetimeSeconds": { "type": "number", "minimum": 0.05, "maximum": 60 }, "projectileRadius": { "type": "number", "minimum": 0.01, "maximum": 10 },
+      "projectileGravityScale": { "type": "number", "minimum": -10, "maximum": 10 }
+    } },
+    "behavior": { "type": "object", "additionalProperties": false, "properties": {
+      "visionRange": { "type": "number", "minimum": 0.1, "maximum": 10000 }, "ignoreWave": { "type": "boolean" },
+      "modules": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/module" } }
+    } },
+    "module": { "oneOf": [
+      { "$ref": "#/$defs/regeneration" }, { "$ref": "#/$defs/berserk" }, { "$ref": "#/$defs/amountModule" },
+      { "$ref": "#/$defs/onHitRagdoll" }, { "$ref": "#/$defs/spawnOnDeath" }, { "$ref": "#/$defs/speedPulse" }, { "$ref": "#/$defs/downedFinisher" }
+    ] },
+    "regeneration": { "type": "object", "additionalProperties": false, "required": ["type", "amount", "intervalSeconds"], "properties": { "type": { "const": "regeneration" }, "amount": { "type": "number", "minimum": 0.01, "maximum": 100000 }, "intervalSeconds": { "type": "number", "minimum": 0.05, "maximum": 600 } } },
+    "berserk": { "type": "object", "additionalProperties": false, "required": ["type", "healthThreshold"], "properties": { "type": { "const": "berserk" }, "healthThreshold": { "type": "number", "minimum": 0.01, "maximum": 1 }, "speedBonus": { "type": "number", "minimum": -1000, "maximum": 1000 }, "damageMultiplierBonus": { "type": "number", "minimum": -100, "maximum": 100 } } },
+    "amountModule": { "type": "object", "additionalProperties": false, "required": ["type", "amount"], "properties": { "type": { "enum": ["lifesteal", "thorns"] }, "amount": { "type": "number", "minimum": 0.01, "maximum": 100000 } } },
+    "onHitRagdoll": { "type": "object", "additionalProperties": false, "required": ["type", "durationSeconds"], "properties": { "type": { "const": "onHitRagdoll" }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 30 } } },
+    "spawnOnDeath": { "type": "object", "additionalProperties": false, "required": ["type", "enemy", "count"], "properties": { "type": { "const": "spawnOnDeath" }, "enemy": { "$ref": "#/$defs/enemyId" }, "count": { "type": "integer", "minimum": 1, "maximum": 32 }, "radius": { "type": "number", "minimum": 0, "maximum": 20 } } },
+    "speedPulse": { "type": "object", "additionalProperties": false, "required": ["type", "speedBonus", "intervalSeconds", "durationSeconds"], "properties": { "type": { "const": "speedPulse" }, "speedBonus": { "type": "number", "minimum": -1000, "maximum": 1000 }, "intervalSeconds": { "type": "number", "minimum": 0.1, "maximum": 600 }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 600 } } },
+    "downedFinisher": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["type", "triggerRange", "meterMax", "inputPower"], "anyOf": [{ "required": ["durationSeconds"] }, { "required": ["phases"] }], "properties": {
+      "type": { "const": "downedFinisher" }, "triggerRange": { "type": "number", "minimum": 0.1, "maximum": 20 },
+      "startDelaySeconds": { "type": "number", "minimum": 0, "maximum": 10 }, "durationSeconds": { "type": "number", "minimum": 1, "maximum": 60 },
+      "meterMax": { "type": "number", "minimum": 1, "maximum": 10000 }, "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
+      "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 }, "failureDamage": { "type": "number", "minimum": 0, "maximum": 100000 },
+      "successRecoveryHealth": { "type": "number", "minimum": 0, "maximum": 100000 }, "successStunSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
+      "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "animation": { "$ref": "#/$defs/name" },
+      "playerAnimation": { "$ref": "#/$defs/playerClip" }, "playerAnimationRef": { "$ref": "#/$defs/playerAnimationId" },
+      "phases": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "$ref": "#/$defs/finisherPhase" } },
+      "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
+      "statuses": { "$ref": "#/$defs/finisherStatuses" }
+    } },
+	"finisherStatuses": { "type": "object", "additionalProperties": false, "properties": {
+	  "active": { "$ref": "#/$defs/finisherStatusText" }, "mating": { "$ref": "#/$defs/finisherStatusText" },
+	  "infusion": { "$ref": "#/$defs/finisherStatusText" }, "succumbed": { "$ref": "#/$defs/finisherStatusText" },
+	  "orgasm": { "$ref": "#/$defs/finisherStatusText" }, "fertilized": { "$ref": "#/$defs/finisherStatusText" },
+	  "pregnant": { "$ref": "#/$defs/finisherStatusText" }, "implanting": { "$ref": "#/$defs/finisherStatusText" },
+	  "labor": { "$ref": "#/$defs/finisherStatusText" }, "birth": { "$ref": "#/$defs/finisherStatusText" },
+	  "mindBroken": { "$ref": "#/$defs/finisherStatusText" }
+	} },
+	"finisherStatusText": { "type": "object", "additionalProperties": false, "minProperties": 1, "properties": {
+	  "title": { "type": "string", "minLength": 1, "maxLength": 64 },
+	  "description": { "type": "string", "maxLength": 256 }
+	} },
+    "finisherPhase": { "type": "object", "additionalProperties": false, "required": ["id", "durationSeconds", "animation"], "properties": {
+      "id": { "$ref": "#/$defs/name" }, "durationSeconds": { "type": "number", "minimum": 0.1, "maximum": 60 },
+      "animation": { "$ref": "#/$defs/name" }, "playerAnimation": { "$ref": "#/$defs/playerClip" }, "playerAnimationRef": { "$ref": "#/$defs/playerAnimationId" },
+      "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
+      "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 }
+    } },
+    "finisherOutcome": { "type": "object", "additionalProperties": false, "minProperties": 1, "properties": {
+      "healthDamage": { "type": "number", "minimum": 0, "maximum": 100000 },
+      "strengthDamage": { "type": "number", "minimum": 0, "maximum": 100000 },
+      "pleasure": { "type": "number", "minimum": 0, "maximum": 100 },
+      "libido": { "type": "number", "minimum": 0, "maximum": 10000 },
+      "healthRecovery": { "type": "number", "minimum": 0, "maximum": 100000 },
+      "enemyStunSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
+      "playerRagdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 }
+    } },
+    "playerClip": { "type": "object", "additionalProperties": false, "required": ["durationSeconds", "frames"], "properties": {
+      "durationSeconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 }, "loop": { "type": "boolean" },
+      "frames": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/playerFrame" } },
+      "events": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/playerAnimationEvent" } }
+    } },
+	"playerAnimationId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-animation/[a-z0-9][a-z0-9._/-]*$" },
+	"playerAnimationEvent": { "oneOf": [
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "amount"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 60 }, "type": { "enum": ["pleasure", "scaledPleasure"] }, "amount": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "amount"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 60 }, "type": { "enum": ["libido", "struggleDamage"] }, "amount": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "amount"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 60 }, "type": { "enum": ["strengthDamage", "healthDamage"] }, "amount": { "type": "number", "exclusiveMinimum": 0, "maximum": 100000 }
+	  } }
+	] },
+    "playerFrame": { "type": "object", "additionalProperties": false, "required": ["time", "bones"], "properties": {
+      "time": { "type": "number", "minimum": 0, "maximum": 60 },
+      "bones": { "type": "object", "propertyNames": { "enum": ["hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face"] }, "additionalProperties": { "$ref": "#/$defs/playerPose" } }
+    } },
+    "playerPose": { "type": "object", "additionalProperties": false, "properties": {
+      "x": { "type": "number" }, "y": { "type": "number" }, "rotation": { "type": "number" }, "scaleX": { "type": "number" }, "scaleY": { "type": "number" }
+    } },
+    "animation": { "type": "object", "additionalProperties": false, "properties": {
+      "speedMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 },
+      "clips": { "type": "object", "maxProperties": 32, "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/clip" } }
+    } },
+    "clip": { "type": "object", "additionalProperties": false, "required": ["durationSeconds", "frames"], "properties": {
+      "durationSeconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 600 }, "loop": { "type": "boolean" },
+      "frames": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/frame" } },
+      "events": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/enemyAnimationEvent" }, "x-stability": "stable" }
+    } },
+	"enemyAnimationEvent": { "oneOf": [
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "attackHit" }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type"], "anyOf": [{ "required": ["x"] }, { "required": ["y"] }], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "impulse" },
+	    "x": { "type": "number", "minimum": -1000, "maximum": 1000 }, "y": { "type": "number", "minimum": -1000, "maximum": 1000 },
+	    "relativeToFacing": { "type": "boolean", "default": true }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "file"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "sound" },
+	    "file": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.(?:[wW][aA][vV]|[oO][gG][gG])$" },
+	    "volume": { "type": "number", "minimum": 0, "maximum": 1, "default": 1 }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "amount"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "cameraShake" },
+	    "amount": { "type": "number", "minimum": 0, "maximum": 1 }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "region"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "spriteEffect" },
+	    "region": { "$ref": "#/$defs/name" }, "bone": { "$ref": "#/$defs/name" },
+	    "x": { "type": "number" }, "y": { "type": "number" }, "durationSeconds": { "type": "number", "minimum": 0.02, "maximum": 30, "default": 0.15 },
+	    "scale": { "type": "number", "minimum": 0.01, "maximum": 100, "default": 1 }, "sortingOrder": { "type": "integer", "minimum": -10000, "maximum": 10000, "default": 100 }
+	  } },
+	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "cue"], "properties": {
+	    "time": { "type": "number", "minimum": 0, "maximum": 600 }, "type": { "const": "cue" },
+	    "cue": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._/-]*$", "maxLength": 80 },
+	    "index": { "type": "integer", "minimum": 0, "maximum": 255 }, "amount": { "type": "number", "minimum": -100000, "maximum": 100000 }
+	  } }
+	] },
+    "frame": { "type": "object", "additionalProperties": false, "required": ["time", "bones"], "properties": {
+      "time": { "type": "number", "minimum": 0, "maximum": 600 },
+      "bones": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/pose" } }
+    } },
+    "pose": { "type": "object", "additionalProperties": false, "properties": {
+      "region": { "$ref": "#/$defs/name" }, "x": { "type": "number" }, "y": { "type": "number" }, "rotation": { "type": "number" }, "scaleX": { "type": "number" }, "scaleY": { "type": "number" }
+    } },
+    "ai": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
+      "type": { "enum": ["groundChase", "flyingChase", "holdPosition"] }, "preferredRange": { "type": "number", "minimum": 0, "maximum": 100 }, "retreatRange": { "type": "number", "minimum": 0, "maximum": 100 },
+      "reactionSeconds": { "type": "number", "minimum": 0.02, "maximum": 10 }
+    } },
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" },
+    "drops": { "type": "object", "additionalProperties": false, "properties": { "chance": { "type": "number", "minimum": 0, "maximum": 1 }, "items": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/itemId" } } } }
+  }
+}

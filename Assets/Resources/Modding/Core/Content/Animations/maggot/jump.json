@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/maggot/jump",
+  "enemy": "core:enemy/maggot",
+  "displayName": "maggot jump",
+  "durationSeconds": 0.0001,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/hips",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 52.1540031,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/back",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -31.0420017,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/front",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 32.2450027,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Jump_3.anim",
+    "semanticName": "jump"
+  }
+}

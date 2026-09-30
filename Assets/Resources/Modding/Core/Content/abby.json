@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/abby",
+  "legacyId": 19,
+  "displayName": "Abby",
+  "stats": {
+    "healthMax": 10,
+    "speedAcceleration": 18.5,
+    "speedMax": 18.5,
+    "traction": 0,
+    "bounty": 50,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/abby/attack-primary",
+    "climb": "core:enemy-animation/abby/climb",
+    "finisher-phase-1": "core:enemy-animation/abby/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/abby/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/abby/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/abby/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/abby/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/abby/finisher-phase-6",
+    "idle": "core:enemy-animation/abby/idle",
+    "jump": "core:enemy-animation/abby/jump",
+    "move": "core:enemy-animation/abby/move"
+  }
+}

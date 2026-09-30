@@ -29,6 +29,13 @@ public class LibraryGuns : MonoBehaviour
 	{
 		foreach (Gun gun in m_guns)
 		{
+			if (gun.gameObject.name == i_nameGun && gun.GetName() == i_nameGun)
+			{
+				return gun;
+			}
+		}
+		foreach (Gun gun in m_guns)
+		{
 			if (gun.GetName() == i_nameGun)
 			{
 				return gun;

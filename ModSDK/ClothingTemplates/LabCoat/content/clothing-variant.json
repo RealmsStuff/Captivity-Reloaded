@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.lab-coat-template:clothing/lab-coat-template",
+  "displayName": "Lab Coat Template",
+  "description": "An editable variant of the scientist set.",
+  "extends": "core:clothing/scientist-set",
+  "unlockedByDefault": true,
+  "category": "Upper",
+  "incompatibleCategories": ["Sleeves", "Upper", "Lower", "Stockings"],
+  "visual": {
+    "type": "coreClothingAtlas",
+    "atlas": "assets/clothing/lab-coat-template.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "piece/shirt-spine": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "piece/shirt-chest": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "piece/shirt-r-arm-upper": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "piece/shirt-r-arm-lower": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "piece/shirt-l-arm-upper": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "piece/shirt-l-arm-lower": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "piece/r-leg-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "piece/l-leg-upper": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "piece/r-leg-lower": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "piece/l-leg-lower": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "piece/hips": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "piece/butt": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "icon": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

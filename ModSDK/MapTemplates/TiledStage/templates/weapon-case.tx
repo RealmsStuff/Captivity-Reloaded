@@ -1,0 +1,17 @@
+{
+  "type": "template",
+  "object": {
+    "class": "weapon-case",
+    "id": 1,
+    "name": "weapon-case",
+    "point": true,
+    "properties": [
+      { "name": "weapon", "type": "string", "value": "core:item/weapon/revolver-44" },
+      { "name": "caseSize", "type": "int", "value": 1 },
+      { "name": "visualFile", "type": "file", "value": "" },
+      { "name": "brokenVisualFile", "type": "file", "value": "" }
+    ],
+    "rotation": 0,
+    "visible": true
+  }
+}

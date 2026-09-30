@@ -9,8 +9,7 @@ public static class ExternalUsableFactory
 	public static void Schedule(LibraryUsables i_library)
 	{
 		if (i_library == null || ModLoaderRuntime.UsableDefinitions.Count == 0) return;
-		ExternalUsableFactoryHost host = i_library.GetComponent<ExternalUsableFactoryHost>();
-		if (host == null) host = i_library.gameObject.AddComponent<ExternalUsableFactoryHost>();
+		ExternalUsableFactoryHost host = ExternalFactoryRunner.GetOrAdd<ExternalUsableFactoryHost>();
 		host.Begin(i_library);
 	}
 
@@ -23,21 +22,30 @@ public static class ExternalUsableFactory
 		foreach (UsableDefinition definition in ModLoaderRuntime.UsableDefinitions)
 		{
 			if (ModLoaderRuntime.Registry.TryGet(definition.Id, out ContentRegistration existing) && existing.RuntimeAsset != null) continue;
-			if (!ModLoaderRuntime.Registry.TryGet(definition.Extends, out ContentRegistration baseEntry) || !(baseEntry.RuntimeAsset is Usable template))
-			{
-				Report("usable.factory-template", "Core usable template is not bound: " + definition.Extends, definition.Source);
-				continue;
-			}
 			if (!packs.TryGetValue(definition.PackId, out ModPack pack))
 			{
 				Report("usable.factory-pack", "Usable pack is not loaded: " + definition.PackId, definition.Source);
 				continue;
 			}
 
-			Usable clone = UnityEngine.Object.Instantiate(template, i_library.transform);
+			Usable clone;
+			if (definition.HasBaseTemplate)
+			{
+				if (!ModLoaderRuntime.Registry.TryGet(definition.Extends, out ContentRegistration baseEntry) || !(baseEntry.RuntimeAsset is Usable template))
+				{
+					Report("usable.factory-template", "Core usable template is not bound: " + definition.Extends, definition.Source);
+					continue;
+				}
+				clone = UnityEngine.Object.Instantiate(template, i_library.transform);
+			}
+			else
+			{
+				clone = CreateOriginal(definition, i_library.transform);
+			}
 			clone.gameObject.name = definition.Id.ToString();
 			clone.gameObject.SetActive(false);
 			clone.ConfigureModItem(definition.DisplayName, definition.Description);
+			clone.ConfigureModUsable(definition.Stats, definition.EffectMode, definition.Effects, !definition.HasBaseTemplate);
 			RuntimeContentIdentity identity = clone.GetComponent<RuntimeContentIdentity>();
 			if (identity == null) identity = clone.gameObject.AddComponent<RuntimeContentIdentity>();
 			identity.Configure(definition.Id, ContentCategory.Item);
@@ -48,15 +56,32 @@ public static class ExternalUsableFactory
 			}
 			i_library.AddRuntimeUsable(clone);
 			ModLoaderRuntime.Registry.BindRuntimeAsset(definition.Id, clone, ModLoaderRuntime.LastReport);
-			Debug.Log("[ModLoader] Built external usable " + definition.Id + " from " + definition.Extends + ".");
+			Debug.Log("[ModLoader] Built external usable " + definition.Id +
+				(definition.HasBaseTemplate ? " from " + definition.Extends + "." : " without a Core prefab."));
 		}
+	}
+
+	private static Usable CreateOriginal(UsableDefinition i_definition, Transform i_parent)
+	{
+		GameObject gameObject = new GameObject(i_definition.Id.ToString());
+		gameObject.SetActive(false);
+		gameObject.transform.SetParent(i_parent, false);
+		SpriteRenderer renderer = gameObject.AddComponent<SpriteRenderer>();
+		renderer.sortingLayerName = "Item";
+		renderer.sortingOrder = i_definition.Visual.SortingOrder;
+		Rigidbody2D body = gameObject.AddComponent<Rigidbody2D>();
+		body.gravityScale = 1f;
+		BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
+		collider.size = new Vector2(i_definition.Visual.ColliderWidth, i_definition.Visual.ColliderHeight);
+		return gameObject.AddComponent<RuntimeModUsable>();
 	}
 
 	private static bool ApplySprites(Usable i_clone, UsableDefinition i_definition, string i_packRoot)
 	{
 		Sprite iconBaseline = i_clone.GetSpriteIcon();
 		SpriteRenderer worldRenderer = i_clone.GetComponent<SpriteRenderer>();
-		if (iconBaseline == null || worldRenderer == null || worldRenderer.sprite == null)
+		bool original = !i_definition.HasBaseTemplate;
+		if ((!original && iconBaseline == null) || worldRenderer == null || (!original && worldRenderer.sprite == null))
 		{
 			Report("usable.factory-sprite", "Core usable template does not expose icon and world sprites.", i_definition.Source);
 			return false;
@@ -71,8 +96,12 @@ public static class ExternalUsableFactory
 			return false;
 		}
 
-		Sprite icon = CreateSprite(iconTexture, iconBaseline, i_definition.Visual.PixelsPerUnit, i_definition.Id + "/icon");
-		Sprite world = CreateSprite(worldTexture, worldRenderer.sprite, i_definition.Visual.PixelsPerUnit, i_definition.Id + "/world");
+		Sprite icon = original
+			? CreateOriginalSprite(iconTexture, i_definition, i_definition.Id + "/icon")
+			: CreateSprite(iconTexture, iconBaseline, i_definition.Visual.PixelsPerUnit, i_definition.Id + "/icon");
+		Sprite world = original
+			? CreateOriginalSprite(worldTexture, i_definition, i_definition.Id + "/world")
+			: CreateSprite(worldTexture, worldRenderer.sprite, i_definition.Visual.PixelsPerUnit, i_definition.Id + "/world");
 		i_clone.SetModItemIcon(icon);
 		worldRenderer.sprite = world;
 		return true;
@@ -91,9 +120,18 @@ public static class ExternalUsableFactory
 
 	private static Sprite CreateSprite(Texture2D i_texture, Sprite i_baseline, float i_pixelsPerUnit, string i_name)
 	{
-		Vector2 pivot = new Vector2(i_baseline.pivot.x / i_baseline.rect.width, i_baseline.pivot.y / i_baseline.rect.height);
+		Vector2 pivot = RuntimePngAssetLoader.GetReplacementPivot(i_baseline, i_texture.width, i_texture.height);
 		Sprite sprite = Sprite.Create(i_texture, new Rect(0, 0, i_texture.width, i_texture.height), pivot,
 			i_pixelsPerUnit, 0, SpriteMeshType.FullRect, i_baseline.border);
+		sprite.name = i_name;
+		return sprite;
+	}
+
+	private static Sprite CreateOriginalSprite(Texture2D i_texture, UsableDefinition i_definition, string i_name)
+	{
+		Sprite sprite = Sprite.Create(i_texture, new Rect(0, 0, i_texture.width, i_texture.height),
+			new Vector2(i_definition.Visual.PivotX, i_definition.Visual.PivotY),
+			i_definition.Visual.PixelsPerUnit, 0, SpriteMeshType.FullRect);
 		sprite.name = i_name;
 		return sprite;
 	}
@@ -101,7 +139,14 @@ public static class ExternalUsableFactory
 	private static void Report(string i_code, string i_message, string i_source)
 	{
 		ModLoaderRuntime.LastReport.Add(ValidationSeverity.Error, i_code, i_message, i_source);
-		Debug.LogError("[ModLoader] " + i_code + ": " + i_message + " [" + i_source + "]");
+	}
+}
+
+public sealed class RuntimeModUsable : Usable
+{
+	protected override bool HandleUse(bool i_isAltFire)
+	{
+		return false;
 	}
 }
 

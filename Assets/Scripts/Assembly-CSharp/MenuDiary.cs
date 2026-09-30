@@ -260,28 +260,28 @@ public class MenuDiary : Menu
 		m_txtTimesRapedTotal.text = GetTimesRapedTotal().ToString();
 		m_txtTimesOrgasmedTotal.text = GetTimesOrgasmedTotal().ToString();
 		m_txtLitreCumTakenTotal.text = GetLitreCumTakenTotal() + "L";
-		if (GetIdNpcDeflower() != -1)
-		{
-			m_txtLostVirginityTo.text = Library.Instance.Actors.GetNpc(GetIdNpcDeflower()).GetName();
-		}
+		SetNpcName(m_txtLostVirginityTo, GetIdNpcDeflower());
 		int idNpcTimesRapedTheMost = GetIdNpcTimesRapedTheMost();
-		if (idNpcTimesRapedTheMost != -1)
-		{
-			m_txtRapedTheMostBy.text = Library.Instance.Actors.GetNpc(idNpcTimesRapedTheMost).GetName();
-		}
+		SetNpcName(m_txtRapedTheMostBy, idNpcTimesRapedTheMost);
 		m_txtTimesMindBrokenTotal.text = GetTimesMindBrokenTotal().ToString();
 		m_txtTimesImpregnatedTotal.text = GetTimesImpregnatedTotal().ToString();
 		m_txtNumOfOffspringTotal.text = GetNumOfOffspringTotal().ToString();
 		m_txtNumOfLayedEggsTotal.text = GetNumOfEggsLayedTotal().ToString();
-		if (GetIdNpcImpregnatedMostBy() != -1)
-		{
-			m_txtImpregnatedTheMostBy.text = Library.Instance.Actors.GetNpc(GetIdNpcImpregnatedMostBy()).GetName();
-		}
+		SetNpcName(m_txtImpregnatedTheMostBy, GetIdNpcImpregnatedMostBy());
 		int idNpcGivenBirthMostTo = GetIdNpcGivenBirthMostTo();
-		if (idNpcGivenBirthMostTo != -1)
+		SetNpcName(m_txtGivenBirthTheMostTo, idNpcGivenBirthMostTo);
+	}
+
+	private static void SetNpcName(Text i_text, int i_npcId)
+	{
+		if (i_text == null)
 		{
-			m_txtGivenBirthTheMostTo.text = Library.Instance.Actors.GetNpc(idNpcGivenBirthMostTo).GetName();
+			return;
 		}
+		NPC npc = i_npcId < 0 || Library.Instance == null || Library.Instance.Actors == null
+			? null
+			: Library.Instance.Actors.GetNpc(i_npcId);
+		i_text.text = npc == null ? "-" : npc.GetName();
 	}
 
 	private int GetCountCompletedChallenges()

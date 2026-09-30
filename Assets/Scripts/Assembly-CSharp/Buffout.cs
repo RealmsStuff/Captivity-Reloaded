@@ -8,7 +8,8 @@ public class Buffout : Usable
 	protected override bool HandleUse(bool i_isAltFire)
 	{
 		base.HandleUse(i_isAltFire);
-		CommonReferences.Instance.GetPlayer().RestoreStrength(m_amountStrengthToRestore);
+		float multiplier = ExternalRuleProfileFactory.TryGetConsumableRule("buffout", out CaptivityReloaded.Modding.ConsumableRule rule) ? rule.StrengthRestoreMultiplier : 1f;
+		CommonReferences.Instance.GetPlayer().RestoreStrength(m_amountStrengthToRestore * multiplier);
 		CommonReferences.Instance.GetManagerPostProcessing().PlayEffectBuffout();
 		return true;
 	}

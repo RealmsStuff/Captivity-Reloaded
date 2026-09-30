@@ -50,15 +50,17 @@ namespace CaptivityReloaded.Modding
 		public string PackId { get; }
 		public string Source { get; }
 		public UnityEngine.Object ReplacementAsset { get; }
+		public bool IsOverrideAuthorized { get; }
 
 		public AssetPatchRequest(ContentId i_patchId, ContentId i_targetSlotId, string i_packId,
-			string i_source, UnityEngine.Object i_replacementAsset)
+			string i_source, UnityEngine.Object i_replacementAsset, bool i_isOverrideAuthorized = false)
 		{
 			PatchId = i_patchId;
 			TargetSlotId = i_targetSlotId;
 			PackId = i_packId ?? string.Empty;
 			Source = i_source ?? string.Empty;
 			ReplacementAsset = i_replacementAsset;
+			IsOverrideAuthorized = i_isOverrideAuthorized;
 		}
 	}
 
@@ -100,9 +102,14 @@ namespace CaptivityReloaded.Modding
 			return m_slots.TryGetValue(i_id, out o_slot);
 		}
 
-		public void Resolve(IEnumerable<AssetPatchRequest> i_patches, ValidationReport io_report)
+		public void RestoreBaselines()
 		{
 			foreach (AssetSlotRegistration slot in m_slots.Values) slot.Apply(slot.BaselineAsset);
+		}
+
+		public void Resolve(IEnumerable<AssetPatchRequest> i_patches, ValidationReport io_report)
+		{
+			RestoreBaselines();
 
 			Dictionary<ContentId, List<AssetPatchRequest>> patchesBySlot = new Dictionary<ContentId, List<AssetPatchRequest>>();
 			if (i_patches == null) return;
@@ -134,12 +141,25 @@ namespace CaptivityReloaded.Modding
 
 			foreach (KeyValuePair<ContentId, List<AssetPatchRequest>> pair in patchesBySlot)
 			{
-				if (pair.Value.Count != 1)
+				AssetPatchRequest winner = pair.Value[0];
+				bool unresolved = false;
+				for (int index = 1; index < pair.Value.Count; index++)
 				{
-					io_report?.Add(ValidationSeverity.Error, "asset-patch.conflict", pair.Value.Count + " enabled patches target the same slot; Core asset retained: " + pair.Key);
+					AssetPatchRequest candidate = pair.Value[index];
+					if (candidate.IsOverrideAuthorized)
+					{
+						io_report?.Add(ValidationSeverity.Warning, "asset-patch.override", "Pack '" + candidate.PackId + "' intentionally overrides '" + winner.PackId + "' for slot " + pair.Key + ".", candidate.Source);
+						winner = candidate;
+						unresolved = false;
+					}
+					else unresolved = true;
+				}
+				if (unresolved)
+				{
+					io_report?.Add(ValidationSeverity.Error, "asset-patch.conflict", pair.Value.Count + " enabled patches target the same slot without a later explicit override; Core asset retained: " + pair.Key);
 					continue;
 				}
-				m_slots[pair.Key].Apply(pair.Value[0].ReplacementAsset);
+				m_slots[pair.Key].Apply(winner.ReplacementAsset);
 			}
 		}
 	}

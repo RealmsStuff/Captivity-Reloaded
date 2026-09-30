@@ -20,8 +20,26 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("type", Required = Required.Always)]
 		public string Type { get; set; }
 
-		[JsonProperty("playerSpawn", Required = Required.Always)]
+		[JsonProperty("playerSpawn")]
 		public StagePointDefinition PlayerSpawn { get; set; }
+
+		[JsonProperty("path")]
+		public string Path { get; set; }
+
+		[JsonProperty("pixelsPerUnit")]
+		public int PixelsPerUnit { get; set; }
+
+		[JsonProperty("hideInheritedVisuals")]
+		public bool HideInheritedVisuals { get; set; }
+
+		[JsonProperty("preserveInheritedStageObjects")]
+		public bool PreserveInheritedStageObjects { get; set; }
+
+		[JsonProperty("reuseInheritedSpawners")]
+		public bool ReuseInheritedSpawners { get; set; }
+
+		[JsonIgnore]
+		public TiledLevelDefinition TiledLevel { get; internal set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -29,6 +47,42 @@ namespace CaptivityReloaded.Modding
 	{
 		[JsonProperty("firstWaveEnemyCount", Required = Required.Always)]
 		public int FirstWaveEnemyCount { get; set; }
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageAudioDefinition
+	{
+		[JsonProperty("ambience")] public string Ambience { get; set; }
+		[JsonProperty("entryMusic")] public string EntryMusic { get; set; }
+		[JsonProperty("waveMusic")] public string WaveMusic { get; set; }
+		[JsonProperty("waveComplete")] public string WaveComplete { get; set; }
+
+		public bool HasAny => !string.IsNullOrWhiteSpace(Ambience) || !string.IsNullOrWhiteSpace(EntryMusic)
+			|| !string.IsNullOrWhiteSpace(WaveMusic) || !string.IsNullOrWhiteSpace(WaveComplete);
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageCameraBoundsDefinition
+	{
+		[JsonProperty("minX", Required = Required.Always)] public float MinX { get; set; }
+		[JsonProperty("minY", Required = Required.Always)] public float MinY { get; set; }
+		[JsonProperty("maxX", Required = Required.Always)] public float MaxX { get; set; }
+		[JsonProperty("maxY", Required = Required.Always)] public float MaxY { get; set; }
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageCameraDefinition
+	{
+		[JsonProperty("bounds")] public StageCameraBoundsDefinition Bounds { get; set; }
+		[JsonProperty("unbounded")] public bool Unbounded { get; set; }
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageTestToolsDefinition
+	{
+		[JsonProperty("enabled", Required = Required.Always)] public bool Enabled { get; set; }
+		[JsonProperty("enemy", Required = Required.Always)] public string Enemy { get; set; }
+		[JsonProperty("spawnPosition")] public StagePointDefinition SpawnPosition { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -63,6 +117,15 @@ namespace CaptivityReloaded.Modding
 
 		[JsonProperty("spawnOutOfSight")]
 		public bool SpawnOutOfSight { get; set; }
+
+		[JsonProperty("enabled")]
+		public bool? Enabled { get; set; }
+
+		[JsonProperty("requiredOpenDoors")]
+		public List<string> RequiredOpenDoors { get; set; } = new List<string>();
+
+		[JsonProperty("requiredClosedDoors")]
+		public List<string> RequiredClosedDoors { get; set; } = new List<string>();
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -92,6 +155,15 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("waves", Required = Required.Always)]
 		public StageWaveDefinition Waves { get; set; }
 
+		[JsonProperty("audio")]
+		public StageAudioDefinition Audio { get; set; }
+
+		[JsonProperty("camera")]
+		public StageCameraDefinition Camera { get; set; }
+
+		[JsonProperty("testTools")]
+		public StageTestToolsDefinition TestTools { get; set; }
+
 		[JsonProperty("spawners", Required = Required.Always)]
 		public List<StageSpawnerDocument> Spawners { get; set; }
 	}
@@ -108,6 +180,9 @@ namespace CaptivityReloaded.Modding
 		public float InitialDelaySeconds { get; }
 		public float InitialDelayJitterSeconds { get; }
 		public bool SpawnOutOfSight { get; }
+		public bool Enabled { get; }
+		public IReadOnlyList<string> RequiredOpenDoors { get; }
+		public IReadOnlyList<string> RequiredClosedDoors { get; }
 
 		internal StageSpawnerDefinition(StageSpawnerDocument i_document, IReadOnlyList<ContentId> i_enemies)
 		{
@@ -121,19 +196,29 @@ namespace CaptivityReloaded.Modding
 			InitialDelaySeconds = i_document.InitialDelaySeconds;
 			InitialDelayJitterSeconds = i_document.InitialDelayJitterSeconds;
 			SpawnOutOfSight = i_document.SpawnOutOfSight;
+			Enabled = i_document.Enabled ?? true;
+			RequiredOpenDoors = i_document.RequiredOpenDoors ?? new List<string>();
+			RequiredClosedDoors = i_document.RequiredClosedDoors ?? new List<string>();
 		}
 	}
 
 	public sealed class StageDefinition
 	{
+		public const string RuntimeTemplatePath = "stage/mod-template";
+
 		public ContentId Id { get; }
 		public ContentId Extends { get; }
+		public bool UsesRuntimeTemplate => Extends.Namespace == "core" && Extends.Path == RuntimeTemplatePath;
 		public string PackId { get; }
 		public string Source { get; }
 		public string DisplayName { get; }
 		public string Description { get; }
 		public StageLayoutDefinition Layout { get; }
 		public StageWaveDefinition Waves { get; }
+		public StageAudioDefinition Audio { get; }
+		public StageCameraDefinition Camera { get; }
+		public StageTestToolsDefinition TestTools { get; }
+		public string AssetRoot { get; internal set; }
 		public IReadOnlyList<StageSpawnerDefinition> Spawners { get; }
 
 		internal StageDefinition(ContentId i_id, ContentId i_extends, string i_packId, string i_source,
@@ -147,6 +232,9 @@ namespace CaptivityReloaded.Modding
 			Description = i_document.Description ?? string.Empty;
 			Layout = i_document.Layout;
 			Waves = i_document.Waves;
+			Audio = i_document.Audio;
+			Camera = i_document.Camera;
+			TestTools = i_document.TestTools;
 			Spawners = i_spawners;
 		}
 	}
@@ -192,10 +280,62 @@ namespace CaptivityReloaded.Modding
 			if (string.IsNullOrWhiteSpace(document.DisplayName)) Error(result, "display-name", "displayName is required.", i_source);
 
 			ValidateLayout(document.Layout, result.Report, i_source);
+			bool usesRuntimeTemplate = extends.Namespace == "core" && extends.Path == StageDefinition.RuntimeTemplatePath;
+			if (usesRuntimeTemplate && (document.Layout == null || document.Layout.Type != "tiledJson"))
+				Error(result, "runtime-template-layout", "core:stage/mod-template requires a tiledJson layout.", i_source);
+			if (usesRuntimeTemplate && document.Layout != null
+				&& (document.Layout.PreserveInheritedStageObjects || document.Layout.ReuseInheritedSpawners))
+				Error(result, "runtime-template-inheritance",
+					"The stage-independent runtime template cannot preserve inherited objects or spawners.", i_source);
 			ValidateWaves(document.Waves, result.Report, i_source);
+			ValidateAudio(document.Audio, result.Report, i_source);
+			ValidateCamera(document.Camera, result.Report, i_source);
+			ValidateTestTools(document.TestTools, result.Report, i_source);
 			List<StageSpawnerDefinition> spawners = ValidateSpawners(document.Spawners, result.Report, i_source);
 			if (result.Report.IsValid) result.Definition = new StageDefinition(id, extends, i_packId, i_source, document, spawners);
 			return result;
+		}
+
+		private static void ValidateTestTools(StageTestToolsDefinition i_tools, ValidationReport io_report, string i_source)
+		{
+			if (i_tools == null) return;
+			if (!i_tools.Enabled) io_report.Add(ValidationSeverity.Error, "stage.test-tools.enabled", "testTools must be omitted unless enabled is true.", i_source);
+			if (!ContentId.TryParse(i_tools.Enemy, out ContentId enemy) || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal))
+				io_report.Add(ValidationSeverity.Error, "stage.test-tools.enemy", "testTools.enemy must be an enemy content ID.", i_source);
+			if (i_tools.SpawnPosition != null) ValidatePoint(i_tools.SpawnPosition, "stage.test-tools.spawn-position", io_report, i_source);
+		}
+
+		private static void ValidateCamera(StageCameraDefinition i_camera, ValidationReport io_report, string i_source)
+		{
+			if (i_camera == null) return;
+			StageCameraBoundsDefinition bounds = i_camera.Bounds;
+			if (i_camera.Unbounded && bounds == null) return;
+			if (bounds == null || !IsFiniteBounded(bounds.MinX) || !IsFiniteBounded(bounds.MinY)
+				|| !IsFiniteBounded(bounds.MaxX) || !IsFiniteBounded(bounds.MaxY)
+				|| bounds.MaxX <= bounds.MinX || bounds.MaxY <= bounds.MinY || i_camera.Unbounded)
+				io_report.Add(ValidationSeverity.Error, "stage.camera.bounds", "Camera bounds require finite min/max coordinates with max greater than min.", i_source);
+		}
+
+		private static void ValidateAudio(StageAudioDefinition i_audio, ValidationReport io_report, string i_source)
+		{
+			if (i_audio == null) return;
+			if (!i_audio.HasAny)
+			{
+				io_report.Add(ValidationSeverity.Error, "stage.audio.empty", "audio must replace at least one stage audio slot.", i_source);
+				return;
+			}
+			ValidateAudioPath(i_audio.Ambience, "ambience", io_report, i_source);
+			ValidateAudioPath(i_audio.EntryMusic, "entry-music", io_report, i_source);
+			ValidateAudioPath(i_audio.WaveMusic, "wave-music", io_report, i_source);
+			ValidateAudioPath(i_audio.WaveComplete, "wave-complete", io_report, i_source);
+		}
+
+		private static void ValidateAudioPath(string i_path, string i_slot, ValidationReport io_report, string i_source)
+		{
+			if (string.IsNullOrWhiteSpace(i_path)) return;
+			string extension = System.IO.Path.GetExtension(i_path).ToLowerInvariant();
+			if (!ModPath.IsSafeRelativePath(i_path) || (extension != ".wav" && extension != ".ogg"))
+				io_report.Add(ValidationSeverity.Error, "stage.audio." + i_slot, i_slot + " must be a safe pack-relative WAV or OGG path.", i_source);
 		}
 
 		private static void ValidateLayout(StageLayoutDefinition i_layout, ValidationReport io_report, string i_source)
@@ -205,9 +345,28 @@ namespace CaptivityReloaded.Modding
 				io_report.Add(ValidationSeverity.Error, "stage.layout", "layout is required.", i_source);
 				return;
 			}
-			if (!string.Equals(i_layout.Type, "coreStageLayout", StringComparison.Ordinal))
-				io_report.Add(ValidationSeverity.Error, "stage.layout.type", "The first V1 layout type must be 'coreStageLayout'.", i_source);
-			ValidatePoint(i_layout.PlayerSpawn, "stage.layout.player-spawn", io_report, i_source);
+			if (string.Equals(i_layout.Type, "coreStageLayout", StringComparison.Ordinal))
+			{
+				ValidatePoint(i_layout.PlayerSpawn, "stage.layout.player-spawn", io_report, i_source);
+				if (i_layout.HideInheritedVisuals)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.hide-inherited-visuals", "hideInheritedVisuals is only available for tiledJson layouts.", i_source);
+				if (i_layout.PreserveInheritedStageObjects)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.preserve-inherited-stage-objects", "preserveInheritedStageObjects is only available for tiledJson layouts.", i_source);
+				if (i_layout.ReuseInheritedSpawners)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.reuse-inherited-spawners", "reuseInheritedSpawners is only available for tiledJson compatibility ports.", i_source);
+			}
+			else if (string.Equals(i_layout.Type, "tiledJson", StringComparison.Ordinal))
+			{
+				if (!ModPath.IsSafeRelativePath(i_layout.Path) || !i_layout.Path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+					io_report.Add(ValidationSeverity.Error, "stage.layout.path", "Tiled layout path must be a safe pack-relative .json file.", i_source);
+				if (i_layout.PixelsPerUnit < 1 || i_layout.PixelsPerUnit > 512)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.pixels-per-unit", "pixelsPerUnit must be between 1 and 512.", i_source);
+				if (i_layout.PlayerSpawn != null)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.player-spawn", "tiledJson layouts define player-spawn in the Tiled map.", i_source);
+				if (i_layout.ReuseInheritedSpawners && !i_layout.PreserveInheritedStageObjects)
+					io_report.Add(ValidationSeverity.Error, "stage.layout.reuse-inherited-spawners", "reuseInheritedSpawners requires preserveInheritedStageObjects.", i_source);
+			}
+			else io_report.Add(ValidationSeverity.Error, "stage.layout.type", "layout.type must be 'coreStageLayout' or 'tiledJson'.", i_source);
 		}
 
 		private static void ValidateWaves(StageWaveDefinition i_waves, ValidationReport io_report, string i_source)
@@ -263,9 +422,32 @@ namespace CaptivityReloaded.Modding
 					io_report.Add(ValidationSeverity.Error, "stage.spawner.delay-jitter", "delayJitterSeconds cannot exceed delaySeconds.", i_source);
 				if (spawner.InitialDelayJitterSeconds > spawner.InitialDelaySeconds)
 					io_report.Add(ValidationSeverity.Error, "stage.spawner.initial-delay-jitter", "initialDelayJitterSeconds cannot exceed initialDelaySeconds.", i_source);
+				ValidateDoorRequirements(spawner.RequiredOpenDoors, "requiredOpenDoors", io_report, i_source);
+				ValidateDoorRequirements(spawner.RequiredClosedDoors, "requiredClosedDoors", io_report, i_source);
+				if (spawner.RequiredOpenDoors != null && spawner.RequiredClosedDoors != null)
+				{
+					HashSet<string> open = new HashSet<string>(spawner.RequiredOpenDoors, StringComparer.Ordinal);
+					foreach (string door in spawner.RequiredClosedDoors)
+						if (open.Contains(door)) io_report.Add(ValidationSeverity.Error, "stage.spawner.door-conflict",
+							"Spawner cannot require the same door to be both open and closed: " + door, i_source);
+				}
 				definitions.Add(new StageSpawnerDefinition(spawner, enemies));
 			}
 			return definitions;
+		}
+
+		private static void ValidateDoorRequirements(List<string> i_doors, string i_property,
+			ValidationReport io_report, string i_source)
+		{
+			if (i_doors == null || i_doors.Count > 32)
+			{
+				io_report.Add(ValidationSeverity.Error, "stage.spawner.door-count", i_property + " must contain at most 32 door names.", i_source);
+				return;
+			}
+			HashSet<string> unique = new HashSet<string>(StringComparer.Ordinal);
+			foreach (string door in i_doors)
+				if (!ContentId.TryParse("local:" + door, out _) || door.Contains("/") || !unique.Add(door))
+					io_report.Add(ValidationSeverity.Error, "stage.spawner.door-id", i_property + " entries must be unique lowercase path segments: " + door, i_source);
 		}
 
 		private static void ValidatePoint(StagePointDefinition i_point, string i_code, ValidationReport io_report, string i_source)

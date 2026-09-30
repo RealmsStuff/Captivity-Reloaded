@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/sl-defender",
+  "legacyName": "S&L Defender",
+  "displayName": "S&L Defender",
+  "description": "",
+  "stats": {
+    "damage": 5,
+    "ammoMax": 440,
+    "magazineSize": 55,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.075,
+    "recoil": 0.1,
+    "movementRecoil": 0.0,
+    "knockbackX": 1.0,
+    "knockbackY": 0.0,
+    "equipSeconds": 0.0,
+    "weight": 3,
+    "value": 2700,
+    "infiniteAmmo": false,
+    "semiAutomatic": false,
+    "marketable": true,
+    "holdType": "TwoHanded2",
+    "reloadType": "Magazine"
+  }
+}

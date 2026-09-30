@@ -1,0 +1,100 @@
+{
+  "compressionlevel": -1,
+  "height": 40,
+  "infinite": false,
+  "layers": [
+    {
+      "draworder": "topdown",
+      "id": 1,
+      "name": "Recovered Background",
+      "objects": [
+        { "gid": 1, "height": 472, "id": 1, "name": "building-background", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Background" }, { "name": "sortingOrder", "type": "int", "value": 0 }], "rotation": 0, "type": "decoration", "visible": true, "width": 2368, "x": 3752, "y": 452 },
+        { "gid": 2, "height": 704, "id": 2, "name": "cellar-outer-background", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Background" }, { "name": "sortingOrder", "type": "int", "value": -1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 3200, "x": 3760, "y": 1040 },
+        { "gid": 2, "height": 296, "id": 3, "name": "cellar-inner-background", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Background" }, { "name": "sortingOrder", "type": "int", "value": 0 }], "rotation": 0, "type": "decoration", "visible": true, "width": 2384, "x": 3752, "y": 1092 },
+        { "gid": 2, "height": 256, "id": 4, "name": "east-lower-background", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Background" }, { "name": "sortingOrder", "type": "int", "value": 0 }], "rotation": 0, "type": "decoration", "visible": true, "width": 416, "x": 4735.84, "y": 816 }
+      ],
+      "opacity": 1,
+      "type": "objectgroup",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "draworder": "topdown",
+      "id": 2,
+      "name": "Recovered Architecture",
+      "objects": [
+        { "gid": 3, "height": 32, "id": 10, "name": "bedroom-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 576, "x": 2848, "y": 464 },
+        { "gid": 3, "height": 32, "id": 11, "name": "main-floor-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 2240, "x": 3680, "y": 688 },
+        { "gid": 2147483651, "height": 32, "id": 12, "name": "upper-east-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 1600, "x": 4152, "y": 464 },
+        { "gid": 2147483651, "height": 32, "id": 13, "name": "lower-east-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 264, "x": 4804, "y": 896 },
+        { "gid": 3, "height": 32, "id": 14, "name": "cellar-ledge-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 264, "x": 4668, "y": 1080 },
+        { "gid": 4, "height": 16, "id": 15, "name": "cellar-floor-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 2400, "x": 3752, "y": 1240 },
+        { "gid": 7, "height": 16, "id": 16, "name": "cellar-ceiling-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 1976, "x": 3548, "y": 944 },
+        { "gid": 8, "height": 16, "id": 17, "name": "building-ceiling-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 2392, "x": 3756, "y": 216 },
+        { "gid": 5, "height": 112, "id": 18, "name": "bedroom-wall-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }], "rotation": 0, "type": "decoration", "visible": true, "width": 16, "x": 3016, "y": 264 },
+        { "gid": 5, "height": 480, "id": 19, "name": "west-building-wall-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 16, "x": 2560, "y": 448 },
+        { "gid": 5, "height": 1024, "id": 20, "name": "east-outer-wall-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 16, "x": 4944, "y": 720 },
+        { "gid": 5, "height": 392, "id": 21, "name": "east-cellar-wall-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 16, "x": 4528, "y": 884 },
+        { "gid": 5, "height": 296, "id": 22, "name": "west-cellar-wall-art", "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 1 }], "rotation": 0, "type": "decoration", "visible": true, "width": 16, "x": 2560, "y": 1100 },
+        { "gid": 6, "height": 32, "id": 23, "name": "cellar-corner-west-top", "properties": [{ "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 2 }], "rotation": 0, "type": "decoration", "visible": true, "width": 32, "x": 2568, "y": 952 },
+        { "gid": 6, "height": 32, "id": 24, "name": "cellar-corner-west-bottom", "properties": [{ "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 2 }], "rotation": 0, "type": "decoration", "visible": true, "width": 32, "x": 2568, "y": 1232 },
+        { "gid": 6, "height": 32, "id": 25, "name": "cellar-corner-east-bottom", "properties": [{ "name": "sortingLayer", "type": "string", "value": "Platform" }, { "name": "sortingOrder", "type": "int", "value": 2 }], "rotation": 0, "type": "decoration", "visible": true, "width": 32, "x": 4936, "y": 1232 }
+      ],
+      "opacity": 1,
+      "type": "objectgroup",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "draworder": "topdown",
+      "id": 3,
+      "name": "Gameplay",
+      "objects": [
+        { "height": 32, "id": 30, "name": "bedroom", "type": "platform", "visible": true, "width": 576, "x": 2560, "y": 448 },
+        { "height": 32, "id": 31, "name": "main-floor", "properties": [{ "name": "climbableLeft", "type": "bool", "value": true }], "type": "platform", "visible": true, "width": 2240, "x": 2560, "y": 672 },
+        { "height": 32, "id": 32, "name": "upper-east", "properties": [{ "name": "climbableLeft", "type": "bool", "value": true }], "type": "platform", "visible": true, "width": 1600, "x": 3352, "y": 448 },
+        { "height": 32, "id": 33, "name": "lower-east", "properties": [{ "name": "climbableLeft", "type": "bool", "value": true }], "type": "platform", "visible": true, "width": 264, "x": 4672, "y": 880 },
+        { "height": 32, "id": 34, "name": "cellar-ledge", "type": "platform", "visible": true, "width": 264, "x": 4536, "y": 1064 },
+        { "height": 16, "id": 35, "name": "cellar-floor", "type": "platform", "visible": true, "width": 2400, "x": 2552, "y": 1232 },
+        { "height": 16, "id": 36, "name": "cellar-ceiling", "type": "platform", "visible": true, "width": 1976, "x": 2560, "y": 936 },
+        { "height": 16, "id": 37, "name": "building-ceiling", "type": "platform", "visible": true, "width": 2392, "x": 2560, "y": 208 },
+        { "height": 480, "id": 38, "name": "west-building-wall", "type": "platform", "visible": true, "width": 16, "x": 2552, "y": 208 },
+        { "height": 112, "id": 39, "name": "bedroom-wall", "type": "platform", "visible": true, "width": 16, "x": 3008, "y": 208 },
+        { "height": 1024, "id": 40, "name": "east-outer-wall", "type": "platform", "visible": true, "width": 16, "x": 4936, "y": 208 },
+        { "height": 392, "id": 41, "name": "east-cellar-wall", "type": "platform", "visible": true, "width": 16, "x": 4520, "y": 688 },
+        { "height": 296, "id": 42, "name": "west-cellar-wall", "type": "platform", "visible": true, "width": 16, "x": 2552, "y": 952 },
+        { "id": 43, "name": "player", "point": true, "type": "player-spawn", "visible": true, "x": 2688, "y": 384 },
+        { "id": 44, "name": "west-main", "point": true, "type": "enemy-spawner", "visible": true, "x": 2688, "y": 656 },
+        { "id": 45, "name": "east-main", "point": true, "type": "enemy-spawner", "visible": true, "x": 4608, "y": 656 },
+        { "id": 46, "name": "recovered-rock", "point": true, "properties": [{ "name": "item", "type": "string", "value": "perveloper.original-dev-extras:item/weapon/rock" }, { "name": "amount", "type": "int", "value": 1 }], "type": "pickup", "visible": true, "x": 2688, "y": 384 }
+      ],
+      "opacity": 1,
+      "type": "objectgroup",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextlayerid": 4,
+  "nextobjectid": 47,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "tiledversion": "1.12.2",
+  "tileheight": 32,
+  "tilesets": [
+    { "columns": 1, "firstgid": 1, "image": "../assets/stage/brothel-bg.png", "imageheight": 64, "imagewidth": 64, "name": "Brothel Background", "objectalignment": "center", "tilecount": 1, "tileheight": 64, "tilewidth": 64 },
+    { "columns": 1, "firstgid": 2, "image": "../assets/stage/brothel-cellar-bg.png", "imageheight": 64, "imagewidth": 64, "name": "Brothel Cellar Background", "objectalignment": "center", "tilecount": 1, "tileheight": 64, "tilewidth": 64 },
+    { "columns": 1, "firstgid": 3, "image": "../assets/stage/brothel-platform.png", "imageheight": 32, "imagewidth": 48, "name": "Brothel Platform", "objectalignment": "center", "properties": [{ "name": "spriteBorderLeft", "type": "float", "value": 2 }, { "name": "spriteBorderRight", "type": "float", "value": 16 }], "tilecount": 1, "tileheight": 32, "tilewidth": 48 },
+    { "columns": 1, "firstgid": 4, "image": "../assets/stage/brothel-floor.png", "imageheight": 16, "imagewidth": 64, "name": "Brothel Floor", "objectalignment": "center", "properties": [{ "name": "spriteBorderLeft", "type": "float", "value": 16 }, { "name": "spriteBorderRight", "type": "float", "value": 16 }], "tilecount": 1, "tileheight": 16, "tilewidth": 64 },
+    { "columns": 1, "firstgid": 5, "image": "../assets/stage/brothel-wall.png", "imageheight": 64, "imagewidth": 16, "name": "Brothel Wall", "objectalignment": "center", "properties": [{ "name": "spriteBorderBottom", "type": "float", "value": 16 }, { "name": "spriteBorderTop", "type": "float", "value": 16 }], "tilecount": 1, "tileheight": 64, "tilewidth": 16 },
+    { "columns": 1, "firstgid": 6, "image": "../assets/stage/brothel-corner.png", "imageheight": 32, "imagewidth": 32, "name": "Brothel Corner", "objectalignment": "center", "tilecount": 1, "tileheight": 32, "tilewidth": 32 },
+    { "columns": 1, "firstgid": 7, "image": "../assets/stage/brothel-cellar-ceiling.png", "imageheight": 16, "imagewidth": 64, "name": "Brothel Cellar Ceiling", "objectalignment": "center", "properties": [{ "name": "spriteBorderLeft", "type": "float", "value": 16 }, { "name": "spriteBorderRight", "type": "float", "value": 16 }], "tilecount": 1, "tileheight": 16, "tilewidth": 64 },
+    { "columns": 1, "firstgid": 8, "image": "../assets/stage/brothel-building-ceiling.png", "imageheight": 16, "imagewidth": 64, "name": "Brothel Building Ceiling", "objectalignment": "center", "properties": [{ "name": "spriteBorderLeft", "type": "float", "value": 16 }, { "name": "spriteBorderRight", "type": "float", "value": 16 }], "tilecount": 1, "tileheight": 16, "tilewidth": 64 }
+  ],
+  "tilewidth": 32,
+  "type": "map",
+  "version": "1.10",
+  "width": 168
+}

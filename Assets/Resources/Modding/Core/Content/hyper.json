@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1, "type": "coreItem", "id": "core:item/usable/hyper",
+  "legacyName": "Hyper", "displayName": "Hyper", "description": "",
+  "stats": { "weight": 0, "value": 900, "equipSeconds": 0.5, "marketable": false,
+    "goodEffectDescriptions": ["x3 Running speed for 30 secs"], "badEffectDescriptions": [] },
+  "effectMode": "replace",
+  "effects": [
+    { "type": "statModifier", "stat": "SpeedAccel", "value": 8, "durationSeconds": 30, "stackable": false },
+    { "type": "statModifier", "stat": "SpeedSprint", "value": 8, "durationSeconds": 30, "stackable": false },
+    { "type": "statModifier", "stat": "PowerDash", "value": 20, "durationSeconds": 30, "stackable": false }
+  ]
+}

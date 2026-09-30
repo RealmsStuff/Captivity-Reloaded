@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/sqoid",
+  "legacyId": 16,
+  "displayName": "Sqoid",
+  "stats": {
+    "healthMax": 5,
+    "speedAcceleration": 5,
+    "speedMax": 5,
+    "traction": 1,
+    "bounty": 50,
+    "healthIncreasePerWave": 1
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-energy-blast": "core:enemy-animation/sqoid/attack-energy-blast",
+    "finisher-phase-1": "core:enemy-animation/sqoid/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/sqoid/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/sqoid/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/sqoid/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/sqoid/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/sqoid/finisher-phase-6",
+    "finisher-phase-7": "core:enemy-animation/sqoid/finisher-phase-7",
+    "finisher-phase-8": "core:enemy-animation/sqoid/finisher-phase-8",
+    "hover": "core:enemy-animation/sqoid/hover",
+    "move": "core:enemy-animation/sqoid/move"
+  }
+}

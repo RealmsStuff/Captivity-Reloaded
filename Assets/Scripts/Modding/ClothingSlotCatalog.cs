@@ -11,6 +11,7 @@ namespace CaptivityReloaded.Modding
 		{
 			"icon",
 			"piece/arm-upper",
+			"piece/back",
 			"piece/belt",
 			"piece/butt",
 			"piece/chest",
@@ -58,6 +59,24 @@ namespace CaptivityReloaded.Modding
 		public static bool IsPublished(string i_slot)
 		{
 			return i_slot != null && s_slots.Contains(i_slot);
+		}
+
+		public static bool IsValidSlot(string i_slot)
+		{
+			return i_slot == "icon" || IsValidPieceSlot(i_slot);
+		}
+
+		public static bool IsValidPieceSlot(string i_slot)
+		{
+			if (string.IsNullOrEmpty(i_slot) || !i_slot.StartsWith("piece/", StringComparison.Ordinal)
+				|| i_slot.Length <= 6 || i_slot.Length > 86) return false;
+			for (int index = 6; index < i_slot.Length; index++)
+			{
+				char value = i_slot[index];
+				if (!(char.IsLower(value) || char.IsDigit(value) || value == '-' || value == '/')) return false;
+				if (value == '/' && (index == 6 || index == i_slot.Length - 1 || i_slot[index - 1] == '/')) return false;
+			}
+			return true;
 		}
 
 		public static string FromCorePieceName(string i_name)

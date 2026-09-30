@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/sqoid/finisher-phase-5",
+  "enemy": "core:enemy/sqoid",
+  "displayName": "sqoid finisher-phase-5",
+  "durationSeconds": 0.75,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "sprite/hips",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.0,
+          "inTangent": 9.141612E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 3.976167E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.893384933,
+          "inTangent": 2.84534662E-09,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": -2.93788815E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.0,
+          "inTangent": 9.141612E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 3.976167E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.893384933,
+          "inTangent": 2.84534662E-09,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": -2.93788815E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.0,
+          "inTangent": 9.141612E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 3.976167E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.7716725,
+          "inTangent": 1.10453211E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 9.23714154E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 0.017,
+          "inTangent": -1.47714436E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 0.0,
+          "inTangent": 2.19016076E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 1.28,
+          "inTangent": 4.056401E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": 1.46763384E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.366666675,
+          "value": 1.13,
+          "inTangent": -6.359142E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 1.0,
+          "inTangent": -6.960335E-08,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 0.116666667,
+      "type": "cue",
+      "amount": 0.0,
+      "cue": "finisher.thrust"
+    },
+    {
+      "time": 0.35,
+      "type": "cue",
+      "amount": 0.0,
+      "cue": "finisher.thrust"
+    },
+    {
+      "time": 0.5833333,
+      "type": "cue",
+      "amount": 0.0,
+      "cue": "finisher.thrust"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Rape5_9.anim",
+    "semanticName": "finisher-phase-5"
+  }
+}

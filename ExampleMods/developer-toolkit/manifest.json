@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.captivity-multi-tool",
+  "displayName": "Captivity Multi-Tool",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Original author unknown", "Captivity Reloaded port"],
+  "description": "A faithful, safer conversion of Captivity Multi-Tool: C4C gameplay plus an in-game developer panel for player, weapon, actor, wave, and stage controls.",
+  "dependencies": [{ "id": "core", "version": ">=0.1.0" }],
+  "contentRoots": ["content"],
+  "previewImages": ["preview.png"]
+}

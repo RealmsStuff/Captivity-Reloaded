@@ -1,7 +1,9 @@
 using System.Collections;
+using CaptivityReloaded.Modding;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class RaperSmasher : RaperGame
+public class RaperSmasher : RaperGame, ISmasherHudSource
 {
 	[Header("---Smasher---")]
 	[SerializeField]
@@ -19,6 +21,8 @@ public class RaperSmasher : RaperGame
 
 	private Coroutine m_coroutineDecreaseMeter;
 
+	private readonly StickCircleGesture m_circleGesture = new StickCircleGesture();
+
     protected virtual void Update()
     {
         if (m_isDone || !m_isStarted || CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused())
@@ -26,18 +30,18 @@ public class RaperSmasher : RaperGame
             return;
         }
 
-        // --- MOBILE STRUGGLE BUTTON FIX ---
-        // Check if the mobile struggle button was tapped this frame
-        if (CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled())
-        {
-            if (CommonReferences.Instance.GetPlayerController().GetIsStrugglePressed())
-            {
-                // On mobile, alternating A/D keys isn't required. Single button tap grants 
-                // boosted power (1.75x) to match PC alternating key speeds.
-                HandleHit(1.75f);
-                return;
-            }
-        }
+		PlayerController controller = CommonReferences.Instance.GetPlayerController();
+		if (controller.GetIsMobileControlsEnabled())
+		{
+			if (controller.GetIsMobileJumpPressed()) HandleHit();
+			if (m_circleGesture.Update(controller.GetMobileAimInput())) HandleHit(4f);
+			return;
+		}
+		if (CommonReferences.Instance.GetManagerInput().IsControllerLastUsed() && Gamepad.current != null)
+		{
+			if (m_circleGesture.Update(Gamepad.current.rightStick.ReadValue())) HandleHit(4f);
+			return;
+		}
 
         // --- ORIGINAL PC INPUTS ---
         if (CommonReferences.Instance.GetManagerInput().IsButton(InputButton.Jump))
@@ -69,6 +73,7 @@ public class RaperSmasher : RaperGame
 			m_isDone = false;
 			m_isStarted = true;
 			m_meterCurrent = 0f;
+			m_circleGesture.Reset();
 			m_audioHit = Resources.Load<AudioClip>("Audio/SmasherHit");
 			ShowGameOverlay();
 			if (m_coroutineWaitUntilFailure != null)
@@ -143,15 +148,8 @@ public class RaperSmasher : RaperGame
 		{
 			num *= 0.5f;
 		}
-		switch (ManagerDB.GetDifficulty())
-		{
-		case "Casual":
-			num *= 1.25f;
-			break;
-		case "Hard":
-			num *= 0.75f;
-			break;
-		}
+		DifficultyDefinition difficulty = DifficultyRegistry.Current;
+		num *= difficulty == null ? 1f : difficulty.EscapeStrengthMultiplier;
 
 		if (float.IsNaN(num) || float.IsInfinity(num) || num <= 0f)
 		{
@@ -273,5 +271,61 @@ public class RaperSmasher : RaperGame
 	public float GetTimeLeft()
 	{
 		return m_timeToEscape - m_secsPast;
+	}
+
+	public bool UsesCircularInput()
+	{
+		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
+			|| CommonReferences.Instance.GetManagerInput().IsControllerLastUsed();
+	}
+
+	public string GetInputPrompt()
+	{
+		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
+			? "Rotate aim stick or tap Jump"
+			: "Rotate right stick";
+	}
+}
+
+public sealed class StickCircleGesture
+{
+	private const float ActivationMagnitude = 0.45f;
+	private const float CompletionDegrees = 300f;
+	private Vector2 m_previous;
+	private float m_accumulatedDegrees;
+	private bool m_hasPrevious;
+
+	public bool Update(Vector2 i_stick)
+	{
+		if (i_stick.magnitude < ActivationMagnitude)
+		{
+			Reset();
+			return false;
+		}
+		Vector2 current = i_stick.normalized;
+		if (!m_hasPrevious)
+		{
+			m_previous = current;
+			m_hasPrevious = true;
+			return false;
+		}
+		float delta = Vector2.SignedAngle(m_previous, current);
+		m_previous = current;
+		if (Mathf.Abs(delta) > 120f)
+		{
+			m_accumulatedDegrees = 0f;
+			return false;
+		}
+		m_accumulatedDegrees += delta;
+		if (Mathf.Abs(m_accumulatedDegrees) < CompletionDegrees) return false;
+		m_accumulatedDegrees = 0f;
+		return true;
+	}
+
+	public void Reset()
+	{
+		m_previous = Vector2.zero;
+		m_accumulatedDegrees = 0f;
+		m_hasPrevious = false;
 	}
 }

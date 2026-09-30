@@ -39,6 +39,7 @@ public class ExhaustedHud : MonoBehaviour
 	private float m_meterCurrent;
 
 	private KeyCode m_keyCurrent;
+	private Image m_mobileInputGlyph;
 
 	public void StartExhaustionGame()
 	{
@@ -54,7 +55,13 @@ public class ExhaustedHud : MonoBehaviour
 		{
 			return;
 		}
-		if (m_keyCurrent == KeyCode.D)
+		PlayerController controller = CommonReferences.Instance.GetPlayerController();
+		bool mobile = controller != null && controller.GetIsMobileControlsEnabled();
+		if (mobile)
+		{
+			if (controller.GetIsMobileJumpPressed()) HandleHit();
+		}
+		else if (m_keyCurrent == KeyCode.D)
 		{
 			if (CommonReferences.Instance.GetManagerInput().IsButtonDown(InputButton.MoveLeft))
 			{
@@ -67,12 +74,13 @@ public class ExhaustedHud : MonoBehaviour
 			m_keyCurrent = KeyCode.D;
 			HandleHit();
 		}
-		if (m_keyCurrent == KeyCode.A)
+		RefreshMobilePrompt(mobile);
+		if (!mobile && m_keyCurrent == KeyCode.A)
 		{
 			m_txtLeft.color = m_colorArrowToPress;
 			m_txtRight.color = m_colorArrowToNotPress;
 		}
-		else
+		else if (!mobile)
 		{
 			m_txtLeft.color = m_colorArrowToNotPress;
 			m_txtRight.color = m_colorArrowToPress;
@@ -82,6 +90,23 @@ public class ExhaustedHud : MonoBehaviour
 			Win();
 		}
 		UpdateMeter();
+	}
+
+	private void RefreshMobilePrompt(bool i_mobile)
+	{
+		m_txtLeft.gameObject.SetActive(!i_mobile);
+		m_txtRight.gameObject.SetActive(!i_mobile);
+		if (m_mobileInputGlyph == null)
+		{
+			m_mobileInputGlyph = InputGlyphLibrary.GetOrCreateImage(transform, "MobileKnockoutJumpGlyph");
+			RectTransform rect = m_mobileInputGlyph.rectTransform;
+			rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+			rect.pivot = new Vector2(0.5f, 0.5f);
+			rect.anchoredPosition = new Vector2(0f, 62f);
+			rect.sizeDelta = new Vector2(64f, 64f);
+		}
+		m_mobileInputGlyph.sprite = i_mobile ? InputGlyphLibrary.GetPromptSprite(InputButton.Jump) : null;
+		m_mobileInputGlyph.gameObject.SetActive(i_mobile && m_mobileInputGlyph.sprite != null);
 	}
 
 	private void UpdateMeter()

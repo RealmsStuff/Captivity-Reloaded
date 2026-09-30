@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "packs": [
+    {
+      "id": "legacy.c4c",
+      "displayName": "C4C",
+      "authors": ["Corta", "Captivity Reloaded port"],
+      "summary": "Faithful cross-platform conversion of the C4C gameplay overhaul.",
+      "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["game-mode", "balance", "legacy-port"],
+      "contentWarnings": ["Adult sexual content"],
+      "versions": [{
+        "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
+        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-c4c.capmod",
+        "sha256": "54f98808a5f469635b21e18d6db3561b2062177400c39a1d2a7126243f021b4f", "sizeBytes": 1794,
+        "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
+      }]
+    },
+    {
+      "id": "legacy.clothing-overhaul",
+      "displayName": "Clothing + Shack Overhaul",
+      "authors": ["huminafterall", "Captivity Reloaded port"],
+      "summary": "Clothing pressure plus timed Tank, Boomer, and Pink Hound enemy variants.",
+      "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["balance", "enemy-variants", "legacy-port"],
+      "contentWarnings": ["Adult sexual content", "Clothing destruction"],
+      "versions": [{
+        "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
+        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-clothing-overhaul.capmod",
+        "sha256": "5cd9830b4258d9b0eeeb290b8cc0b2f31e807883d46d89f001b218c70b083ade", "sizeBytes": 1530,
+        "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
+      }]
+    },
+    {
+      "id": "legacy.luins-balance",
+      "displayName": "Luin's Balance Mod",
+      "authors": ["Luin", "Captivity Reloaded port"],
+      "summary": "Long-run balance, enemy-family tuning, revised items, and weapon timing.",
+      "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["balance", "difficulty", "legacy-port"],
+      "contentWarnings": ["Adult sexual content"],
+      "versions": [{
+        "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
+        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-luins-balance.capmod",
+        "sha256": "a7b958565ab5473e0f0a8b37e5e65758e5accf692f5d97a28dd3e0e1c3a54696", "sizeBytes": 2290,
+        "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
+      }]
+    },
+    {
+      "id": "legacy.overpower",
+      "displayName": "Overpower",
+      "authors": ["Original Overpower author", "Captivity Reloaded port"],
+      "summary": "C4C expansion with automatic weapons, life drain, rewards, range, and camera changes.",
+      "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["game-mode", "power-fantasy", "legacy-port"],
+      "contentWarnings": ["Adult sexual content"],
+      "versions": [{
+        "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
+        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-overpower.capmod",
+        "sha256": "cc6b076a4baf5aa8738baf8bd108a9db346f7739a1af9eae4d0ff34f780958d3", "sizeBytes": 2044,
+        "dependencies": [{"id": "core", "version": ">=0.1.0"}, {"id": "legacy.c4c", "version": ">=1.0.0"}], "conflicts": []
+      }]
+    }
+  ]
+}

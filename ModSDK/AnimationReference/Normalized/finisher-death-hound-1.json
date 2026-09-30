@@ -1,0 +1,1859 @@
+{
+  "schemaVersion": 1,
+  "type": "playerAnimation",
+  "id": "core:player-animation/finisher-death-hound-1",
+  "rig": "core:player-rig/alex",
+  "displayName": "DeathHound1",
+  "durationSeconds": 0.5,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/hips",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -113.565,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -107.346008,
+          "inTangent": 1.36727967E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -113.565,
+          "inTangent": 8.504461E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-upper",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-upper",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 128.606,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 137.090012,
+          "inTangent": -9.102353E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 128.446,
+          "inTangent": -3.709608E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 128.606,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-lower",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-lower",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -110.064,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -125.277008,
+          "inTangent": 1.63217828E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -115.715004,
+          "inTangent": 45.6390266,
+          "outTangent": 45.63902
+        },
+        {
+          "time": 0.5,
+          "value": -110.064,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-upper",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-upper",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 128.606,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 137.090012,
+          "inTangent": -9.102353E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 128.446,
+          "inTangent": -3.709608E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 128.606,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-lower",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-lower",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -110.064,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -125.277008,
+          "inTangent": 1.63217828E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -115.715004,
+          "inTangent": 45.6390266,
+          "outTangent": 45.63902
+        },
+        {
+          "time": 0.5,
+          "value": -110.064,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/spine",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/spine",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/spine",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 22.0010014,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 22.474,
+          "inTangent": 7.64092363E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 14.1240005,
+          "inTangent": 4.855785E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 22.0010014,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 28.2960014,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 27.87,
+          "inTangent": -8.145168E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 43.699,
+          "inTangent": -1.34495E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 28.2960014,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 28.920002,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 34.564003,
+          "inTangent": -6.0553557E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 31.8620014,
+          "inTangent": -16.9320049,
+          "outTangent": -16.9320049
+        },
+        {
+          "time": 0.5,
+          "value": 28.920002,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 36.506,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 34.476,
+          "inTangent": -32.47998,
+          "outTangent": -32.47998
+        },
+        {
+          "time": 0.25,
+          "value": 23.354002,
+          "inTangent": 3.752167E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 36.506,
+          "inTangent": -1.52587891E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-left",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-left",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-left",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -7.6590004,
+          "inTangent": 2.85622682E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 2.054304E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 25.235,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 16.245,
+          "inTangent": 9.645222E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 28.985,
+          "inTangent": 5.467415E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 25.235,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 23.822,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 19.5560017,
+          "inTangent": 4.57691976E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 25.9070015,
+          "inTangent": 2.72555371E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 23.822,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 88.788,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 97.94701,
+          "inTangent": -4.91327228E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 88.788,
+          "inTangent": 6.91958064E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 51.171,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 38.486,
+          "inTangent": 6.80476433E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 51.171,
+          "inTangent": 2.72190628E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 74.137,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 74.137,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-left",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-left",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-left",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -25.062,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -25.062,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-right",
+      "property": "rotation.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-right",
+      "property": "rotation.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-right",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -25.062,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -25.062,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -0.114,
+          "inTangent": -1.95582729E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -0.03,
+          "inTangent": 0.3420006,
+          "outTangent": 0.342
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": -3.7252903E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -0.856,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -0.904,
+          "inTangent": -1.07447342E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -0.874,
+          "inTangent": 0.144,
+          "outTangent": 0.143999949
+        },
+        {
+          "time": 0.5,
+          "value": -0.856,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -0.035,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -0.035,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -0.151,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -0.151,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/butt",
+      "property": "position.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [
+    {
+      "id": "vfx/thrust-1",
+      "trigger": "thrust",
+      "index": 0,
+      "target": "bone/hips",
+      "durationSeconds": 0.5,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 1.5,
+      "startSpeedMin": 1.0,
+      "startSpeedMax": 13.0,
+      "startSizeMin": 0.02,
+      "startSizeMax": 0.05,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.545098066
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.160784319
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 0.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 53.26,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_thrust"
+      }
+    },
+    {
+      "id": "vfx/cumthrust-1",
+      "trigger": "cumThrust",
+      "index": 0,
+      "target": "bone/hips",
+      "durationSeconds": 0.35,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 4.0,
+      "startSpeedMin": 8.0,
+      "startSpeedMax": 20.0,
+      "startSizeMin": 0.025,
+      "startSizeMax": 0.035,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.831372559
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.08627451
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 0.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 62.5,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_cumThrust"
+      }
+    },
+    {
+      "id": "vfx/cumthrust-2",
+      "trigger": "cumThrust",
+      "index": 1,
+      "target": "bone/hips",
+      "durationSeconds": 0.5,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 1.5,
+      "startSpeedMin": 8.0,
+      "startSpeedMax": 15.0,
+      "startSizeMin": 0.02,
+      "startSizeMax": 0.05,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.545098066
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.20784314
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 100.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 1.73,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_cumThrustKnotSpray"
+      }
+    },
+    {
+      "id": "vfx/cumthrust-3",
+      "trigger": "cumThrust",
+      "index": 2,
+      "target": "bone/hips",
+      "durationSeconds": 6.5,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 5.0,
+      "startSpeedMin": 0.5,
+      "startSpeedMax": 1.0,
+      "startSizeMin": 0.025,
+      "startSizeMax": 0.05,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.321568638
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.105882354
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 50.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 11.12,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_cumThrustLeaking"
+      }
+    },
+    {
+      "id": "vfx/unique-1",
+      "trigger": "unique",
+      "index": 0,
+      "target": "bone/hips",
+      "durationSeconds": 2.0,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 1.5,
+      "startSpeedMin": 8.0,
+      "startSpeedMax": 10.0,
+      "startSizeMin": 0.02,
+      "startSizeMax": 0.02,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.545098066
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.20784314
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 0.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 56.59,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_cumThrustUnKnot"
+      }
+    },
+    {
+      "id": "vfx/unique-2",
+      "trigger": "unique",
+      "index": 1,
+      "target": "bone/hips",
+      "durationSeconds": 2.0,
+      "loop": false,
+      "maxParticles": 1000,
+      "startLifetimeMin": 0.1,
+      "startLifetimeMax": 1.5,
+      "startSpeedMin": 15.0,
+      "startSpeedMax": 20.0,
+      "startSizeMin": 0.02,
+      "startSizeMax": 0.05,
+      "gravityMin": 0.0,
+      "gravityMax": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "scaleZ": 1.0,
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "positionZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "simulationSpace": "World",
+      "startColorMin": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.545098066
+      },
+      "startColorMax": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.20784314
+      },
+      "emissionRateMin": 0.0,
+      "emissionRateMax": 100.0,
+      "shapeEnabled": true,
+      "shape": "Cone",
+      "shapeRadius": 0.0001,
+      "shapeAngle": 1.73,
+      "textureSheetTilesX": 0,
+      "textureSheetTilesY": 0,
+      "textureSheetSprites": [],
+      "sortingLayer": "Player",
+      "sortingOrder": 9,
+      "renderMode": "Billboard",
+      "material": "Assets/Material/Sprite-Lit-Default.mat",
+      "source": {
+        "unityPrefab": "Assets/Actors/Npcs/npc_deathHound.prefab",
+        "hierarchyPath": "RapeParticles/rps_cumThrustUnKnotSpray"
+      }
+    }
+  ],
+  "effectTriggers": [
+    {
+      "time": 0.166666672,
+      "source": "enemy:Thrust",
+      "effects": [
+        "vfx/thrust-1"
+      ]
+    }
+  ],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/Resources/Raper/deathhound/DeathHound1.anim"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "template",
+  "object": {
+    "class": "scripted-actor", "id": 1, "name": "scripted-actor", "point": true,
+    "properties": [
+      { "name": "enemy", "type": "string", "value": "core:enemy/zombie-1" },
+      { "name": "initiallyActive", "type": "bool", "value": false }
+    ],
+    "rotation": 0, "visible": true
+  }
+}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public class ManagerChallenge : MonoBehaviour
@@ -81,7 +82,40 @@ public class ManagerChallenge : MonoBehaviour
 		{
 			ManagerDB.UnlockClothing(item);
 		}
+		GrantModRewards(i_challenge);
 		this.OnChallengeComplete?.Invoke(i_challenge);
+	}
+
+	private static void GrantModRewards(Challenge i_challenge)
+	{
+		if (i_challenge.GetModRewardCurrency() > 0)
+			CommonReferences.Instance.GetPlayerController().GainMoney(i_challenge.GetModRewardCurrency());
+		foreach (ContentId id in i_challenge.GetModRewardContent())
+			ModContentUnlockState.Unlock(id);
+		foreach (ChallengeGrantDefinition reward in i_challenge.GetModRewardItems()) GrantPickup(reward, false);
+		foreach (ChallengeGrantDefinition reward in i_challenge.GetModRewardWeapons()) GrantPickup(reward, true);
+	}
+
+	private static void GrantPickup(ChallengeGrantDefinition i_reward, bool i_requireWeapon)
+	{
+		if (!ModLoaderRuntime.Registry.TryGet(i_reward.Id, out ContentRegistration entry) || !(entry.RuntimeAsset is PickUpable template)
+			|| (i_requireWeapon && !(template is Weapon)))
+		{
+			ModLoaderRuntime.LastReport.Add(ValidationSeverity.Error, "challenge.reward-not-bound",
+				"Challenge reward is not a bound " + (i_requireWeapon ? "weapon" : "item") + ": " + i_reward.Id);
+			return;
+		}
+		Player player = CommonReferences.Instance.GetPlayer();
+		if (player == null) return;
+		if (template.GetIsStackable())
+		{
+			PickUpable granted = Object.Instantiate(template, player.transform.parent);
+			granted.ConfigureModRewardAmount(i_reward.Amount);
+			player.PickUp(granted, i_isDuplicate: false);
+			return;
+		}
+		for (int index = 0; index < i_reward.Amount; index++)
+			player.PickUp(Object.Instantiate(template, player.transform.parent), i_isDuplicate: false);
 	}
 
 	public List<Challenge> GetAllChallenges()
@@ -95,6 +129,12 @@ public class ManagerChallenge : MonoBehaviour
 			}
 		}
 		return m_challenges;
+	}
+
+	public void AddRuntimeChallenge(Challenge i_challenge)
+	{
+		GetAllChallenges();
+		if (i_challenge != null && !m_challenges.Contains(i_challenge)) m_challenges.Add(i_challenge);
 	}
 
 	public Challenge GetChallenge(string i_nameChallenge)

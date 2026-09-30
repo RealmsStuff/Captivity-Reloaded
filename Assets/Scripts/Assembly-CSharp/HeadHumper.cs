@@ -66,10 +66,13 @@ public class HeadHumper : Walker
 		CommonReferences.Instance.GetManagerHud().GetManagerHealthDisplay().HideNpcHealthDisplay(this);
 		CommonReferences.Instance.GetPlayer().OnBeingRaped += OnPlayerBeingRaped;
 		m_interactions[0].Trigger(this);
-		CHLamarr cHLamarr = (CHLamarr)CommonReferences.Instance.GetManagerChallenge().GetChallenge("Lamarr");
-		if (cHLamarr.IsActive())
+		foreach (Challenge challenge in CommonReferences.Instance.GetManagerChallenge().GetAllChallenges())
 		{
-			cHLamarr.SetHeadHumperHumping(this);
+			CHLamarr cHLamarr = challenge as CHLamarr;
+			if (cHLamarr != null && cHLamarr.IsActive())
+			{
+				cHLamarr.SetHeadHumperHumping(this);
+			}
 		}
 	}
 

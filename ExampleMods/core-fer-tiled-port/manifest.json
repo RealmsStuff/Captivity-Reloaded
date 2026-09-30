@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "example.core-fer-tiled-port",
+  "displayName": "FER Tiled Port",
+  "version": "0.3.1",
+  "modApiVersion": 1,
+  "authors": [
+    "Captivity Reloaded contributors"
+  ],
+  "description": "Editable JSON/Tiled migration of Furry Entertainment Robotics.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "conflicts": [],
+  "contentRoots": [
+    "content"
+  ]
+}

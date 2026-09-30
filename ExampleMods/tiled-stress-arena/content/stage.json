@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "example.tiled-stress-arena:stage/stress-arena",
+  "displayName": "Tiled Stress-Test Arena",
+  "extends": "core:stage/mod-template",
+  "description": "A 256-tile-wide Tiled stress-test arena with 15 distributed spawners, a 60-enemy opening wave, rendered layers, navigation, machines, doors, audio, particles, and moving geometry.",
+  "layout": {
+    "type": "tiledJson",
+    "path": "levels/starter-map.json",
+    "pixelsPerUnit": 32,
+    "hideInheritedVisuals": true
+  },
+  "camera": {
+    "bounds": { "minX": -128, "minY": 0, "maxX": 128, "maxY": 96 }
+  },
+  "waves": { "firstWaveEnemyCount": 60 },
+  "spawners": [
+    {
+      "id": "west-ground", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-2", "core:enemy/gremlin"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-ground", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-grabber", "core:enemy/death-hound"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-far", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-2", "core:enemy/fly"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-mid", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-3", "core:enemy/maggot"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-upper", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/fly", "core:enemy/maggot"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-inner", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/death-hound"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "west-far", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-2"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "west-mid", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-3", "core:enemy/gremlin"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "west-upper", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/fly", "core:enemy/maggot"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "west-inner", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-grabber", "core:enemy/death-hound"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "west-center", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/gremlin"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "platform-west", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-2", "core:enemy/fly"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "platform-center", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-3", "core:enemy/maggot"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "platform-east", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/fly", "core:enemy/death-hound"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    },
+    {
+      "id": "center-ground", "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-grabber", "core:enemy/gremlin"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 0.15,
+      "delayJitterSeconds": 0.05, "initialDelaySeconds": 0.15,
+      "initialDelayJitterSeconds": 0.05, "spawnOutOfSight": false
+    }
+  ]
+}

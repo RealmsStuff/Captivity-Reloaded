@@ -1,0 +1,43 @@
+{
+  "type": "template",
+  "object": {
+    "class": "interaction",
+    "name": "interaction",
+    "point": true,
+    "rotation": 0,
+    "visible": true,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "use" },
+      { "name": "price", "type": "int", "value": 0 },
+      { "name": "singleUse", "type": "bool", "value": false },
+      { "name": "message", "type": "string", "value": "A hidden map interaction was activated." },
+      { "name": "minWave", "type": "int", "value": 0 },
+      { "name": "maxWave", "type": "int", "value": 0 },
+      { "name": "activationsRequired", "type": "int", "value": 1 },
+      { "name": "delaySeconds", "type": "float", "value": 0 },
+      { "name": "giveMoney", "type": "int", "value": 0 },
+      { "name": "requiredItem", "type": "string", "value": "" },
+      { "name": "consumeRequiredItem", "type": "bool", "value": false },
+      { "name": "giveItem", "type": "string", "value": "" },
+      { "name": "giveItemAmount", "type": "int", "value": 0 },
+      { "name": "minEnemies", "type": "int", "value": 0 },
+      { "name": "maxEnemies", "type": "int", "value": 0 },
+      { "name": "requiredChallenges", "type": "string", "value": "" },
+      { "name": "requiredInteractions", "type": "string", "value": "" },
+      { "name": "requiredMoney", "type": "int", "value": 0 },
+      { "name": "restoreHealth", "type": "float", "value": 0 },
+      { "name": "knockbackX", "type": "float", "value": 0 },
+      { "name": "knockbackY", "type": "float", "value": 0 },
+      { "name": "ragdollSeconds", "type": "float", "value": 0 },
+      { "name": "visualArt", "type": "string", "value": "" },
+      { "name": "visualScale", "type": "float", "value": 1 },
+      { "name": "lightAction", "type": "string", "value": "toggle" },
+      { "name": "targetLights", "type": "string", "value": "" },
+      { "name": "targetSpawners", "type": "string", "value": "" },
+      { "name": "spawnCount", "type": "int", "value": 0 },
+      { "name": "targetInteractions", "type": "string", "value": "" },
+      { "name": "doorAction", "type": "string", "value": "toggle" },
+      { "name": "targetDoors", "type": "string", "value": "" }
+    ]
+  }
+}

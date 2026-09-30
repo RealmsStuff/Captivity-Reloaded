@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "apothem.start-with-no-gun:rule/start-with-no-gun",
+  "displayName": "Start With No Gun",
+  "description": "Begin combat without a starter gun and with $500 for an early purchase.",
+  "modules": [
+    {
+      "type": "economyRules",
+      "startingMoney": 500
+    },
+    {
+      "type": "playerRules",
+      "startWithoutWeapon": true
+    }
+  ]
+}

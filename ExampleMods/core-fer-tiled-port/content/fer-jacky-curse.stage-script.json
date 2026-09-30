@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.core-fer-tiled-port:stage-script/fer-jacky-curse",
+  "stage": "example.core-fer-tiled-port:stage/fer-tiled-port",
+  "sequences": [
+    {
+      "id": "jacky-curse-1",
+      "trigger": "door-state",
+      "objectId": "int-doorjackyroom",
+      "state": "open",
+      "once": true,
+      "actions": [
+        {
+          "type": "wait",
+          "seconds": 15
+        },
+        {
+          "type": "apply-player-status",
+          "status": "jacky-curse",
+          "durationSeconds": 99999,
+          "ticksPerSecond": 0.25,
+          "chance": 0.175,
+          "chanceIncrease": 0.05,
+          "maxActive": 4
+        }
+      ]
+    }
+  ]
+}

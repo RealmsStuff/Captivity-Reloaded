@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "legacy.smaller-breast:patch/player-body",
+  "target": "core:player",
+  "replacements": {
+    "body/chest/pale": "assets/body/chest-pale.png",
+    "body/chest/white": "assets/body/chest-white.png",
+    "body/chest/tan": "assets/body/chest-tan.png",
+    "body/chest/black": "assets/body/chest-black.png"
+  }
+}

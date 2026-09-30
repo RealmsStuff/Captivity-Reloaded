@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/schockgewehr",
+  "legacyName": "Schockgewehr",
+  "displayName": "Schockgewehr",
+  "description": "",
+  "stats": {
+    "damage": 0,
+    "ammoMax": 40,
+    "magazineSize": 5,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.02,
+    "recoil": 0.1,
+    "movementRecoil": 0.0,
+    "knockbackX": 0.0,
+    "knockbackY": 0.0,
+    "equipSeconds": 0.0,
+    "weight": 4,
+    "value": 4000,
+    "infiniteAmmo": false,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "TwoHanded1",
+    "reloadType": "PumpAction"
+  }
+}

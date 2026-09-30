@@ -12,6 +12,36 @@ public class WeaponCase : Interactable
 	private Sprite m_sprCase;
 
 	private Sprite m_sprCaseBroken;
+	[SerializeField] private Sprite m_modCaseSprite;
+	[SerializeField] private Sprite m_modCaseBrokenSprite;
+
+	public void ConfigureModWeaponCase(Weapon i_weapon, int i_weaponSize)
+	{
+		ResetModActivationLinks();
+		m_weapon = i_weapon;
+		m_weaponSize = Mathf.Clamp(i_weaponSize, 1, 3);
+		m_priceToActivate = 0;
+		m_isSingleUse = true;
+		m_isContinuesActivation = false;
+		m_isCanBeUsedToActivate = true;
+		m_isCanBeTouchedToActivate = false;
+		m_isCanBeShotToActivate = false;
+		m_isCanBeActivatedByNPC = false;
+		m_isHideNotificationInteract = false;
+		m_isUnInteractable = false;
+	}
+
+	public bool IsUsableModTemplate()
+	{
+		return GetComponentsInChildren<SpriteRenderer>(true).Length >= 2
+			&& GetComponentInChildren<ParticleSystem>(true) != null;
+	}
+
+	public void ConfigureModCaseVisuals(Sprite i_intact, Sprite i_broken)
+	{
+		m_modCaseSprite = i_intact;
+		m_modCaseBrokenSprite = i_broken;
+	}
 
 	private new void Start()
 	{
@@ -30,7 +60,7 @@ public class WeaponCase : Interactable
 			m_sprCaseBroken = Resources.Load<Sprite>("Graphics/WeaponCase/Case3Broken");
 			break;
 		}
-		GetComponent<SpriteRenderer>().sprite = m_sprCase;
+		GetComponent<SpriteRenderer>().sprite = m_modCaseSprite != null ? m_modCaseSprite : m_sprCase;
 		m_priceToActivate = m_weapon.GetValue();
 		GetComponentsInChildren<SpriteRenderer>()[1].sprite = m_weapon.GetSpriteIcon();
 	}
@@ -63,7 +93,7 @@ public class WeaponCase : Interactable
 	protected override void HandleActivation(Actor i_initiator, InteractableActivationType i_activationType)
 	{
 		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(Resources.Load<AudioClip>("Audio/WeaponCaseBreak"));
-		GetComponent<SpriteRenderer>().sprite = m_sprCaseBroken;
+		GetComponent<SpriteRenderer>().sprite = m_modCaseBrokenSprite != null ? m_modCaseBrokenSprite : m_sprCaseBroken;
 		GetComponentsInChildren<SpriteRenderer>()[1].enabled = false;
 		GetComponentInChildren<ParticleSystem>().Play();
 		if (CommonReferences.Instance.GetPlayerController().GetInventory().GetPickUpableByName(m_weapon.GetName()) != null)

@@ -14,6 +14,30 @@ public class Vendor : Interactable
 
 	private bool m_isEnabled = true;
 
+	/// <summary>Removes stage-authored state from a vendor copied into a JSON/Tiled stage.</summary>
+	public void ConfigureModVendor(VendorType i_vendorType, bool i_isWorking = true)
+	{
+		ResetModActivationLinks();
+		m_vendorType = i_vendorType;
+		m_isWorking = i_isWorking;
+		m_isEnabled = false;
+		m_pickUpables.Clear();
+		m_priceToActivate = 0;
+		m_isSingleUse = false;
+		m_isContinuesActivation = false;
+		m_isCanBeUsedToActivate = true;
+		m_isCanBeTouchedToActivate = false;
+		m_isCanBeShotToActivate = false;
+		m_isCanBeActivatedByNPC = false;
+		m_isHideNotificationInteract = false;
+		m_isUnInteractable = false;
+	}
+
+	public bool IsUsableModTemplate()
+	{
+		return GetComponentInChildren<SpriteRenderer>(true) != null;
+	}
+
 	private void Awake()
 	{
 		Disable();

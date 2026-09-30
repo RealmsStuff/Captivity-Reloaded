@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "example.animation-reference-gallery",
+  "displayName": "Original Enemy Animation Reference Gallery",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Captivity Reloaded contributors"],
+  "description": "Non-spawning reference ports of the Core zombie, hound, fly, maggot, musca, and gremlin animation sets.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

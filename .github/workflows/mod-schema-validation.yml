@@ -1,0 +1,25 @@
+name: Mod schema validation
+
+on:
+  pull_request:
+    paths:
+      - "Docs/Modding/schemas/**"
+      - "ExampleMods/**"
+      - "Tools/ModSchemaValidator/**"
+      - ".github/workflows/mod-schema-validation.yml"
+  push:
+    paths:
+      - "Docs/Modding/schemas/**"
+      - "ExampleMods/**"
+      - "Tools/ModSchemaValidator/**"
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Validate public mod examples
+        run: dotnet run --project Tools/ModSchemaValidator -- .

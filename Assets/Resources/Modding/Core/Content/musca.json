@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/musca",
+  "legacyId": 8,
+  "displayName": "Musca",
+  "stats": {
+    "healthMax": 65,
+    "speedAcceleration": 6,
+    "speedMax": 20,
+    "traction": 0,
+    "bounty": 75,
+    "healthIncreasePerWave": 2.5
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/musca/attack-primary",
+    "carry": "core:enemy-animation/musca/carry",
+    "finisher-phase-1": "core:enemy-animation/musca/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/musca/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/musca/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/musca/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/musca/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/musca/finisher-phase-6",
+    "move": "core:enemy-animation/musca/move",
+    "wings-active": "core:enemy-animation/musca/wings-active"
+  }
+}

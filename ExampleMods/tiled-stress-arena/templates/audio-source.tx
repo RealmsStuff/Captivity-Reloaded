@@ -1,0 +1,16 @@
+{
+  "type": "template",
+  "object": {
+    "class": "audio-source",
+    "name": "audio-source",
+    "point": true,
+    "visible": true,
+    "properties": [
+      { "name": "file", "type": "file", "value": "assets/audio/machine-hum.ogg" },
+      { "name": "loop", "type": "bool", "value": true },
+      { "name": "volume", "type": "float", "value": 0.15 },
+      { "name": "minDistance", "type": "float", "value": 3 },
+      { "name": "maxDistance", "type": "float", "value": 24 }
+    ]
+  }
+}

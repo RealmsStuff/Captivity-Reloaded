@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "example.zombie-variant",
+  "displayName": "Zombie Variant",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Your Name"],
+  "description": "An inherited Zombie I art variant.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

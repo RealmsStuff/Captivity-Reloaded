@@ -1,0 +1,21 @@
+{
+  "template": "core:enemy/zombie-1",
+  "canvas": { "width": 128, "height": 128 },
+  "cell": { "width": 32, "height": 32 },
+  "coordinates": "aseprite-top-left",
+  "parts": [
+    { "slot": "body/torso-lower", "source": "Assets/Texture2D/TorsoLower_5.png", "column": 0, "row": 0 },
+    { "slot": "body/butt", "source": "Assets/Texture2D/Butt.png", "column": 1, "row": 0 },
+    { "slot": "body/hips", "source": "Assets/Texture2D/Hip.png", "column": 2, "row": 0 },
+    { "slot": "body/chest", "source": "Assets/Texture2D/Chest.png", "column": 3, "row": 0 },
+    { "slot": "body/neck", "source": "Assets/Texture2D/Neck_18.png", "column": 0, "row": 1 },
+    { "slot": "body/head", "source": "Assets/Texture2D/Head.png", "column": 1, "row": 1 },
+    { "slot": "body/arm-upper", "source": "Assets/Texture2D/ArmUpper_1.png", "column": 2, "row": 1 },
+    { "slot": "body/arm-lower", "source": "Assets/Texture2D/ArmLower_21.png", "column": 3, "row": 1 },
+    { "slot": "body/hand", "source": "Assets/Texture2D/Hand_6.png", "column": 0, "row": 2 },
+    { "slot": "body/leg-upper", "source": "Assets/Texture2D/LegUpper_19.png", "column": 1, "row": 2 },
+    { "slot": "body/leg-lower", "source": "Assets/Texture2D/LegLower_2.png", "column": 2, "row": 2 },
+    { "slot": "body/foot-left", "source": "Assets/Texture2D/Foot_11.png", "column": 3, "row": 2 },
+    { "slot": "body/foot-right", "source": "Assets/Texture2D/Foot2.png", "column": 0, "row": 3 }
+  ]
+}

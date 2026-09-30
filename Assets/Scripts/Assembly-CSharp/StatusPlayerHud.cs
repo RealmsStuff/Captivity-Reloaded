@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -48,6 +49,12 @@ public class StatusPlayerHud : MonoBehaviour
 	private bool m_isCanPlayAudioAddState = true;
 
 	private bool m_isHidden;
+	private Dictionary<string, EnemyFinisherStatusTextDefinition> m_modFinisherStatuses;
+	private string m_modFinisherEnemyName;
+	private Dictionary<string, EnemyFinisherStatusTextDefinition> m_modPregnancyStatuses;
+	private string m_modPregnancyEnemyName;
+	private StatusPlayerHudItem m_statusPregnant;
+	private StatusPlayerHudItem m_statusLabor;
 
 	public event DelOnAddStatus OnAddStatus;
 
@@ -132,6 +139,74 @@ public class StatusPlayerHud : MonoBehaviour
 		StatusPlayerHudItem statusPlayerHudItem = CreateAndAddStatus(i_nameStatus, i_descriptionStatus, i_color);
 		StartCoroutine(CoroutineWaitToDestroyStatusItem(statusPlayerHudItem, i_duration));
 		return statusPlayerHudItem;
+	}
+
+	public void BeginModularFinisherStatusContext(Dictionary<string, EnemyFinisherStatusTextDefinition> i_statuses, string i_enemyName)
+	{
+		m_modFinisherStatuses = i_statuses ?? new Dictionary<string, EnemyFinisherStatusTextDefinition>();
+		m_modFinisherEnemyName = i_enemyName ?? string.Empty;
+	}
+
+	public void EndModularFinisherStatusContext()
+	{
+		m_modFinisherStatuses = null;
+		m_modFinisherEnemyName = null;
+	}
+
+	public StatusPlayerHudItem CreateModularFinisherStatus(string i_key, float i_duration = -1f,
+		string i_fetusName = null, string i_childName = null)
+	{
+		if (!TryResolveModularFinisherStatus(i_key, i_fetusName, i_childName,
+			out string title, out string description, out StatusPlayerHudItemColor color)) return null;
+		return i_duration > 0f ? CreateAndAddStatus(title, description, color, i_duration)
+			: CreateAndAddStatus(title, description, color);
+	}
+
+	private bool TryResolveModularFinisherStatus(string i_key, string i_fetusName, string i_childName,
+		out string o_title, out string o_description, out StatusPlayerHudItemColor o_color)
+	{
+		Dictionary<string, EnemyFinisherStatusTextDefinition> statuses = m_modFinisherStatuses;
+		string enemyName = m_modFinisherEnemyName;
+		bool pregnancyStatus = i_key == "fertilized" || i_key == "pregnant" || i_key == "implanting" || i_key == "labor" || i_key == "birth";
+		if (pregnancyStatus && statuses == null)
+		{
+			statuses = m_modPregnancyStatuses;
+			enemyName = m_modPregnancyEnemyName;
+		}
+		o_title = null;
+		o_description = null;
+		o_color = StatusPlayerHudItemColor.Rape;
+		if (statuses == null) return false;
+		switch (i_key)
+		{
+		case "active": o_title = "Rape"; o_description = "{enemy} is raping you!"; break;
+		case "mating": o_title = "Mating"; o_description = "{enemy} is breeding with you..."; o_color = StatusPlayerHudItemColor.Lewd; break;
+		case "infusion": o_title = "Infusion"; o_description = "{enemy} is cumming inside you!"; break;
+		case "succumbed": o_title = "Succumbed"; o_description = "{enemy} has raped you into submission..."; break;
+		case "orgasm": o_title = "Orgasm"; o_description = "{enemy} has made you cum!"; o_color = StatusPlayerHudItemColor.Lewd; break;
+		case "fertilized": o_title = "Fertilized"; o_description = "{enemy} has impregnated you with a {fetus}!"; o_color = StatusPlayerHudItemColor.Pregnancy; break;
+		case "pregnant": o_title = "Pregnant"; o_description = "You are pregnant..."; o_color = StatusPlayerHudItemColor.Pregnancy; break;
+		case "implanting": o_title = "Implanting {fetus}"; o_description = null; o_color = StatusPlayerHudItemColor.Pregnancy; break;
+		case "labor": o_title = "Labor"; o_description = "Giving birth..."; o_color = StatusPlayerHudItemColor.Pregnancy; break;
+		case "birth": o_title = "Birth"; o_description = "You just gave birth to {child}!"; o_color = StatusPlayerHudItemColor.Pregnancy; break;
+		case "mindBroken": o_title = "Mind Broken"; o_description = "{enemy} has broken your mind. It's over."; o_color = StatusPlayerHudItemColor.Lewd; break;
+		default: return false;
+		}
+		if (statuses.TryGetValue(i_key, out EnemyFinisherStatusTextDefinition custom) && custom != null)
+		{
+			if (custom.Title != null) o_title = custom.Title;
+			if (custom.Description != null) o_description = custom.Description;
+		}
+		o_title = FormatModularStatusText(o_title, enemyName, i_fetusName, i_childName);
+		o_description = FormatModularStatusText(o_description, enemyName, i_fetusName, i_childName);
+		return true;
+	}
+
+	private static string FormatModularStatusText(string i_text, string i_enemyName, string i_fetusName, string i_childName)
+	{
+		if (i_text == null) return null;
+		return i_text.Replace("{enemy}", i_enemyName ?? string.Empty)
+			.Replace("{fetus}", i_fetusName ?? string.Empty).Replace("{child}", i_childName ?? string.Empty);
 	}
 
 	private void SortItems()
@@ -342,6 +417,7 @@ public class StatusPlayerHud : MonoBehaviour
 	{
 		m_player.GetRaperCurrent().OnCumThrust -= AddStatusCum;
 		CreateAndAddStatus("Infusion", m_player.GetRaperCurrent().GetComponentInParent<Actor>().GetName() + " is cumming inside you!", StatusPlayerHudItemColor.Rape);
+		ExternalRuleProfileFactory.NotifyEventReward("playerInfusion");
 		m_player.OnRapeEnd += DestroyStatusCum;
 	}
 
@@ -379,19 +455,28 @@ public class StatusPlayerHud : MonoBehaviour
 
 	private void AddStatusFetusInsert(Fetus i_fetus)
 	{
+		if (m_modFinisherStatuses != null)
+		{
+			m_modPregnancyStatuses = m_modFinisherStatuses;
+			m_modPregnancyEnemyName = m_modFinisherEnemyName;
+		}
 		if (!m_isShowingPregnantStatus)
 		{
 			m_isShowingPregnantStatus = true;
-			CreateAndAddStatus("Pregnant", "You are pregnant...", StatusPlayerHudItemColor.Pregnancy);
+			m_statusPregnant = CreateModularFinisherStatus("pregnant")
+				?? CreateAndAddStatus("Pregnant", "You are pregnant...", StatusPlayerHudItemColor.Pregnancy);
 			m_player.OnBirthEnd += DestroyStatusPregnant;
 		}
 		if ((bool)i_fetus.GetNpcParent())
 		{
-			CreateAndAddStatus("Fertilized", i_fetus.GetNpcParent().GetName() + " has impregnated you with a " + i_fetus.GetNameFetus() + "!", StatusPlayerHudItemColor.Pregnancy, 5f);
+			if (CreateModularFinisherStatus("fertilized", 5f, i_fetus.GetNameFetus()) == null)
+				CreateAndAddStatus("Fertilized", i_fetus.GetNpcParent().GetName() + " has impregnated you with a " + i_fetus.GetNameFetus() + "!", StatusPlayerHudItemColor.Pregnancy, 5f);
 		}
 		else
 		{
-			CreateAndAddStatus("Implanting " + i_fetus.GetNameFetus(), null, StatusPlayerHudItemColor.Pregnancy, 3f);
+			ExternalRuleProfileFactory.NotifyEventReward("playerImplantation");
+			if (CreateModularFinisherStatus("implanting", 3f, i_fetus.GetNameFetus()) == null)
+				CreateAndAddStatus("Implanting " + i_fetus.GetNameFetus(), null, StatusPlayerHudItemColor.Pregnancy, 3f);
 		}
 	}
 
@@ -415,19 +500,19 @@ public class StatusPlayerHud : MonoBehaviour
 			return;
 		}
 		m_player.OnBirthEnd -= DestroyStatusPregnant;
-		foreach (StatusPlayerHudItem statusPlayerItem in m_statusPlayerItems)
+		if (m_statusPregnant != null)
 		{
-			if (statusPlayerItem.GetName() == "Pregnant")
-			{
-				m_isShowingPregnantStatus = false;
-				DestroyStatusItem(statusPlayerItem);
-				break;
-			}
+			DestroyStatusItem(m_statusPregnant);
+			m_statusPregnant = null;
 		}
+		m_isShowingPregnantStatus = false;
+		m_modPregnancyStatuses = null;
+		m_modPregnancyEnemyName = null;
 	}
 
 	private void AddStatusOrgasm()
 	{
+		if (CreateModularFinisherStatus("orgasm", 5f) != null) return;
 		if ((bool)m_player.GetRaperCurrent())
 		{
 			CreateAndAddStatus("Orgasm", m_player.GetRaperCurrent().GetComponentInParent<Actor>().GetName() + " has made you cum!", StatusPlayerHudItemColor.Lewd, 5f);
@@ -452,26 +537,25 @@ public class StatusPlayerHud : MonoBehaviour
 
 	private void AddStatusLabor()
 	{
-		CreateAndAddStatus("Labor", "Giving birth...", StatusPlayerHudItemColor.Pregnancy);
+		m_statusLabor = CreateModularFinisherStatus("labor")
+			?? CreateAndAddStatus("Labor", "Giving birth...", StatusPlayerHudItemColor.Pregnancy);
 		m_player.OnLaborEnd += DestroyStatusLabor;
 	}
 
 	private void DestroyStatusLabor()
 	{
 		m_player.OnLaborEnd -= DestroyStatusLabor;
-		foreach (StatusPlayerHudItem statusPlayerItem in m_statusPlayerItems)
+		if (m_statusLabor != null)
 		{
-			if (statusPlayerItem.GetName() == "Labor")
-			{
-				DestroyStatusItem(statusPlayerItem);
-				break;
-			}
+			DestroyStatusItem(m_statusLabor);
+			m_statusLabor = null;
 		}
 	}
 
 	private void AddStatusBirth(Actor i_actorChild)
 	{
-		CreateAndAddStatus("Birth", "You just gave birth to " + i_actorChild.GetName() + "!", StatusPlayerHudItemColor.Pregnancy, 5f);
+		if (CreateModularFinisherStatus("birth", 5f, null, i_actorChild.GetName()) == null)
+			CreateAndAddStatus("Birth", "You just gave birth to " + i_actorChild.GetName() + "!", StatusPlayerHudItemColor.Pregnancy, 5f);
 	}
 
 	private void DestroyStatusBirth()
@@ -501,7 +585,8 @@ public class StatusPlayerHud : MonoBehaviour
 				}
 			}
 		}
-		CreateAndAddStatus("Mind Broken", "All the raping has broken your mind. It's over.", StatusPlayerHudItemColor.Lewd);
+		if (CreateModularFinisherStatus("mindBroken") == null)
+			CreateAndAddStatus("Mind Broken", "All the raping has broken your mind. It's over.", StatusPlayerHudItemColor.Lewd);
 	}
 
 	public void Show()

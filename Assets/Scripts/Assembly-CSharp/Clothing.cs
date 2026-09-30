@@ -22,6 +22,9 @@ public class Clothing : MonoBehaviour
 
 	[SerializeField]
 	private List<Clothing> m_clothesCompatibleOverride = new List<Clothing>();
+	private float m_modDamageTakenMultiplier = 1f;
+	private Dictionary<string, float> m_modStatModifiers = new Dictionary<string, float>();
+	private List<StatModifier> m_appliedModStatModifiers = new List<StatModifier>();
 
 	public void Initialize()
 	{
@@ -67,6 +70,41 @@ public class Clothing : MonoBehaviour
 		m_sprIcon = i_icon;
 	}
 
+	public void ConfigureModClothing(string i_category, IEnumerable<string> i_incompatibleCategories,
+		CaptivityReloaded.Modding.ClothingEffectsDefinition i_effects)
+	{
+		if (!string.IsNullOrWhiteSpace(i_category) && System.Enum.TryParse(i_category, true, out ClothingCategory category))
+			m_categoryClothing = category;
+		if (i_incompatibleCategories != null)
+		{
+			m_clothingCategoriesIncompatible.Clear();
+			foreach (string value in i_incompatibleCategories)
+				if (System.Enum.TryParse(value, true, out ClothingCategory incompatible) && !m_clothingCategoriesIncompatible.Contains(incompatible))
+					m_clothingCategoriesIncompatible.Add(incompatible);
+		}
+		if (i_effects != null)
+		{
+			m_modDamageTakenMultiplier = i_effects.DamageTakenMultiplier ?? 1f;
+			m_modStatModifiers = i_effects.StatModifiers == null
+				? new Dictionary<string, float>() : new Dictionary<string, float>(i_effects.StatModifiers);
+		}
+	}
+
+	public void ApplyModEffects(Player i_player)
+	{
+		if (i_player == null || m_appliedModStatModifiers.Count > 0) return;
+		foreach (KeyValuePair<string, float> entry in m_modStatModifiers)
+			m_appliedModStatModifiers.Add(i_player.AddStatModifier(entry.Key, entry.Value));
+	}
+
+	public void RemoveModEffects(Player i_player)
+	{
+		if (i_player != null) i_player.RemoveStatModifier(m_appliedModStatModifiers);
+		m_appliedModStatModifiers.Clear();
+	}
+
+	public float GetModDamageTakenMultiplier() { return m_modDamageTakenMultiplier; }
+
 	public bool IsCompatibleWithClothing(Clothing i_clothingToCheck)
 	{
 		if (m_clothesCompatibleOverride.Contains(i_clothingToCheck) || i_clothingToCheck.GetClothesCompatibleOverride().Contains(this))
@@ -105,5 +143,15 @@ public class Clothing : MonoBehaviour
 	public List<Clothing> GetClothesCompatibleOverride()
 	{
 		return m_clothesCompatibleOverride;
+	}
+
+	public void ConfigureCoreCompatibility(IEnumerable<Clothing> i_incompatible, IEnumerable<Clothing> i_compatibleOverrides)
+	{
+		m_clothesIncompatible.Clear();
+		if (i_incompatible != null) foreach (Clothing clothing in i_incompatible)
+			if (clothing != null && clothing != this && !m_clothesIncompatible.Contains(clothing)) m_clothesIncompatible.Add(clothing);
+		m_clothesCompatibleOverride.Clear();
+		if (i_compatibleOverrides != null) foreach (Clothing clothing in i_compatibleOverrides)
+			if (clothing != null && clothing != this && !m_clothesCompatibleOverride.Contains(clothing)) m_clothesCompatibleOverride.Add(clothing);
 	}
 }

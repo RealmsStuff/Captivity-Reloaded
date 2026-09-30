@@ -57,7 +57,7 @@ public class AttackNPC : MonoBehaviour
 	protected AudioClip m_audioAttackHit;
 
 	[SerializeField]
-	protected List<TrailRenderer> m_trailsAttack;
+	protected List<TrailRenderer> m_trailsAttack = new List<TrailRenderer>();
 
 	[SerializeField]
 	protected Interaction m_interactionToTriggerOnAttackHit;
@@ -194,5 +194,24 @@ public class AttackNPC : MonoBehaviour
 	public float GetDamage()
 	{
 		return m_damage;
+	}
+
+	public void ConfigureModAttack(CaptivityReloaded.Modding.EnemyAttackDefinition i_attack)
+	{
+		if (i_attack == null) return;
+		if (i_attack.Chance.HasValue) m_chance01 = i_attack.Chance.Value;
+		if (i_attack.Damage.HasValue) m_damage = i_attack.Damage.Value;
+		if (i_attack.KnockbackX.HasValue) m_knockbackX = i_attack.KnockbackX.Value;
+		if (i_attack.KnockbackY.HasValue) m_knockbackY = i_attack.KnockbackY.Value;
+		if (i_attack.CooldownSeconds.HasValue) m_durationCooldown = i_attack.CooldownSeconds.Value;
+		if (i_attack.InitiateRange.HasValue) m_rangeInitiate = i_attack.InitiateRange.Value;
+		if (i_attack.HitRange.HasValue) m_rangeHit = i_attack.HitRange.Value;
+		if (i_attack.MovesDuringAttack.HasValue) m_isMovesDuringAttack = i_attack.MovesDuringAttack.Value;
+		if (i_attack.DurationSeconds.HasValue)
+		{
+			m_isUseDurationAttackCustom = true;
+			m_durationAttackCustom = i_attack.DurationSeconds.Value;
+			m_durationAttack = m_durationAttackCustom;
+		}
 	}
 }

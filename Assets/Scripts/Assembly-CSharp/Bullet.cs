@@ -28,8 +28,9 @@ public class Bullet
 	private Vector2 m_direction;
 
 	private RaycastHit2D[] m_hits;
+	private bool m_showLine;
 
-	public Bullet(Gun i_gun, Actor i_owner, Vector2 i_direction, RaycastHit2D[] i_hits, float i_damage, float i_knockbackX, float i_knockbackY, int i_penetration)
+	public Bullet(Gun i_gun, Actor i_owner, Vector2 i_direction, RaycastHit2D[] i_hits, float i_damage, float i_knockbackX, float i_knockbackY, int i_penetration, bool i_showLine = true)
 	{
 		m_gun = i_gun;
 		m_owner = i_owner;
@@ -39,6 +40,7 @@ public class Bullet
 		m_knockbackX = i_knockbackX;
 		m_knockbackY = i_knockbackY;
 		m_penetration = i_penetration;
+		m_showLine = i_showLine;
 		m_aliveActorsHit = 0;
 	}
 
@@ -99,7 +101,12 @@ public class Bullet
 				break;
 			}
 		}
-		m_gun.LineShoot(m_direction, i_posEnd);
+		if (m_showLine) m_gun.LineShoot(m_direction, i_posEnd);
+	}
+
+	public bool HitBodyPartDirect(BodyPartActor i_bodyPart, Vector2 i_pointHit)
+	{
+		return HitBodyPart(i_bodyPart, i_pointHit);
 	}
 
 	private bool HitBodyPart(BodyPartActor i_bodyPart, Vector2 i_pointHit)
@@ -126,7 +133,11 @@ public class Bullet
 			}
 			return num;
 		}
-		if (!i_bodyPart.TakeHitProjectile(this))
+		float originalDamage = m_damage;
+		if (m_gun != null) m_damage *= m_gun.GetAmmunitionWeakpointMultiplier(i_bodyPart);
+		bool accepted = i_bodyPart.TakeHitProjectile(this);
+		m_damage = originalDamage;
+		if (!accepted)
 		{
 			return false;
 		}

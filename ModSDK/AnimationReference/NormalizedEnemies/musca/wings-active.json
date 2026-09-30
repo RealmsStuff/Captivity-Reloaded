@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/musca/wings-active",
+  "enemy": "core:enemy/musca",
+  "displayName": "musca wings-active",
+  "durationSeconds": 0.1,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/wings",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 44.4870033,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.05,
+          "value": -63.3670044,
+          "inTangent": -0.000432142027,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 44.4870033,
+          "inTangent": 0.000432142027,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/WingsActive.anim",
+    "semanticName": "wings-active"
+  }
+}

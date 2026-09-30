@@ -1,0 +1,21 @@
+{
+  "template": "core:clothing/scientist-set",
+  "canvas": { "width": 128, "height": 128 },
+  "cell": { "width": 32, "height": 32 },
+  "coordinates": "libresprite-top-left",
+  "parts": [
+    { "slot": "piece/shirt-spine", "source": "Assets/Texture2D/ScientistSpine.png", "column": 0, "row": 0 },
+    { "slot": "piece/shirt-chest", "source": "Assets/Texture2D/ScientistChest.png", "column": 1, "row": 0 },
+    { "slot": "piece/shirt-r-arm-upper", "source": "Assets/Texture2D/ScientistArmUpper.png", "column": 2, "row": 0 },
+    { "slot": "piece/shirt-r-arm-lower", "source": "Assets/Texture2D/ScientistArmLower.png", "column": 3, "row": 0 },
+    { "slot": "piece/shirt-l-arm-upper", "source": "Assets/Texture2D/ScientistArmUpper.png", "column": 0, "row": 1 },
+    { "slot": "piece/shirt-l-arm-lower", "source": "Assets/Texture2D/ScientistArmLower.png", "column": 1, "row": 1 },
+    { "slot": "piece/r-leg-upper", "source": "Assets/Texture2D/ScientistLegUpper.png", "column": 2, "row": 1 },
+    { "slot": "piece/l-leg-upper", "source": "Assets/Texture2D/ScientistLegUpper.png", "column": 3, "row": 1 },
+    { "slot": "piece/r-leg-lower", "source": "Assets/Texture2D/ScientistLegLower.png", "column": 0, "row": 2 },
+    { "slot": "piece/l-leg-lower", "source": "Assets/Texture2D/ScientistLegLower.png", "column": 1, "row": 2 },
+    { "slot": "piece/hips", "source": "Assets/Texture2D/ScientistHips.png", "column": 2, "row": 2 },
+    { "slot": "piece/butt", "source": "Assets/Texture2D/ScientistButt.png", "column": 3, "row": 2 },
+    { "slot": "icon", "source": "Assets/Texture2D/ScientistChest.png", "column": 0, "row": 3 }
+  ]
+}

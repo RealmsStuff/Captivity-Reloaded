@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/np-40",
+  "legacyName": "NP-40",
+  "displayName": "NP-40",
+  "description": "",
+  "stats": {
+    "damage": 5,
+    "ammoMax": 320,
+    "magazineSize": 32,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.15,
+    "recoil": 0.15,
+    "movementRecoil": 0.0,
+    "knockbackX": 1.0,
+    "knockbackY": 0.0,
+    "equipSeconds": 0.0,
+    "weight": 3,
+    "value": 1500,
+    "infiniteAmmo": false,
+    "semiAutomatic": false,
+    "marketable": true,
+    "holdType": "TwoHanded1",
+    "reloadType": "Magazine"
+  }
+}

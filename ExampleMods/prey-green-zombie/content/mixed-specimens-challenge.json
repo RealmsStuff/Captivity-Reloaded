@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "type": "challenge",
+  "id": "draco66electro.prey-green-zombie:challenge/mixed-specimens",
+  "displayName": "Mixed Specimens",
+  "description": "Kill five Green Stalkers or basic zombies, then get caught twice by either enemy in the same run.",
+  "steps": [
+    {
+      "objective": "killCount",
+      "count": 5,
+      "enemies": [
+        "draco66electro.prey-green-zombie:enemy/original-green-stalker",
+        "core:enemy/zombie-1"
+      ]
+    },
+    {
+      "objective": "rapeCount",
+      "count": 2,
+      "enemies": [
+        "draco66electro.prey-green-zombie:enemy/original-green-stalker",
+        "core:enemy/zombie-1"
+      ]
+    }
+  ],
+  "rewardBundle": {
+    "currency": 500
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "yourname.yourmod:clothing/original-back-attachment",
+  "displayName": "Original Back Attachment",
+  "description": "An original two-piece garment with an optional body variant and sway physics.",
+  "unlockedByDefault": true,
+  "category": "Other",
+  "incompatibleCategories": ["Other"],
+  "visual": {
+    "type": "originalClothingSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "icon": "assets/icon.png",
+      "piece/back": "assets/back.png",
+      "piece/custom-accessory": "assets/accessory.png"
+    },
+    "attachments": {
+      "piece/back": {
+        "bone": "Spine",
+        "attachToBone": true,
+        "offsetX": 0,
+        "offsetY": 0,
+        "pivotX": 0.5,
+        "pivotY": 0.85,
+        "sortingOffset": -3,
+        "droppable": true,
+        "physics": {
+          "mode": "sway",
+          "spring": 45,
+          "damping": 9,
+          "gravity": 0.25,
+          "motionInfluence": 1,
+          "maxAngle": 30
+        }
+      },
+      "piece/custom-accessory": {
+        "bone": "Hips",
+        "attachToBone": true,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "sortingOffset": 1
+      }
+    },
+    "bodyVariants": {
+      "example.body-pack": {
+        "piece/back": "assets/back-example-body.png"
+      }
+    }
+  }
+}

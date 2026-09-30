@@ -15124,6 +15124,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 1
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6087624567456522207
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -36136,6 +36138,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6087624567456520289
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -41489,6 +41493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 4
+  m_isRuntimeTemplate: 0
   m_nameStage: Space Station
   m_description: You have been sent out to investigate a cargoship wandering in space.
     Upon arrival, you hear sounds echoing through the hallways of the deserted ship...
@@ -50107,6 +50112,7 @@ MonoBehaviour:
   m_isAmmoInfinite: 0
   m_isSemiFire: 0
   m_delayBetweenShots: 0.01
+  m_durationReload: 0
   m_objectsToDropOnReload:
   - {fileID: 6087624567456526816}
   m_forceObjectsDropOnReload: {x: 0, y: 0}
@@ -50122,6 +50128,19 @@ MonoBehaviour:
   m_isShakesCamera: 0
   m_isKnockbacksShooterFire: 0
   m_isKnockbacksShooterAltFire: 0
+  m_modBurstCount: 1
+  m_modBurstInterval: 0.1
+  m_modSoundVolume: 1
+  m_modShootCasingLifetime: 3
+  m_modReloadCasingLifetime: 10
+  m_modThrowableImpactSounds: []
+  m_modThrowableTickSounds: []
+  m_modThrowableExplosionSounds: []
+  m_modProjectileSprite: {fileID: 0}
+  m_modImpactSprites: []
+  m_modStatsJson:
+  m_modBehaviorJson:
+  m_isOriginalRuntimeWeapon: 0
   m_audioFiring: {fileID: 8300000, guid: beb4ccc8873efa64faa416c2f3cd8475, type: 3}
   m_psFire: {fileID: 6087624567456521893}
   m_lightFire: {fileID: 6087624567456508926}
@@ -50709,6 +50728,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 2
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6087624567456507798
 SpriteRenderer:
   m_ObjectHideFlags: 0

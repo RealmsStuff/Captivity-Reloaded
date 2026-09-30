@@ -11,11 +11,22 @@ public class BodyPartActor : BodyPart
 	private float m_health;
 
 	private bool m_isBodyPartDestroyed;
+	private bool m_hasModHitZoneConfiguration;
+
+	public void ConfigureModHitZone(string i_damageMultiplier, bool i_destroyedOnDeath)
+	{
+		if (string.Equals(i_damageMultiplier, "low", System.StringComparison.OrdinalIgnoreCase)) m_damageMultiplierBodyPart = DamageMultplier.Low;
+		else if (string.Equals(i_damageMultiplier, "critical", System.StringComparison.OrdinalIgnoreCase)) m_damageMultiplierBodyPart = DamageMultplier.Crit;
+		else if (string.Equals(i_damageMultiplier, "block", System.StringComparison.OrdinalIgnoreCase)) m_damageMultiplierBodyPart = DamageMultplier.Block;
+		else m_damageMultiplierBodyPart = DamageMultplier.Normal;
+		m_isBodyPartDestroyedOnDeath = i_destroyedOnDeath;
+		m_hasModHitZoneConfiguration = true;
+	}
 
 	private void Start()
 	{
 		m_health = 15f;
-		m_isBodyPartDestroyedOnDeath = true;
+		if (!m_hasModHitZoneConfiguration) m_isBodyPartDestroyedOnDeath = true;
 		m_isBodyPartDestroyed = false;
 	}
 

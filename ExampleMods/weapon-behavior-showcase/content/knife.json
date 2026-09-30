@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1, "type": "weapon",
+  "id": "example.weapon-behavior-showcase:item/weapon/knife",
+  "displayName": "Combat Knife", "description": "Primary fire performs a close-range melee slash.",
+  "extends": "core:item/weapon/pistol",
+  "stats": { "damage": 12, "ammoMax": 6, "magazineSize": 6, "fireIntervalSeconds": 0.45, "value": 20, "marketable": true, "semiAutomatic": true },
+  "behavior": {
+	"playShootSound": false, "showMuzzleFlash": false,
+    "melee": { "input": "primary", "range": 1.1, "radius": 0.75, "damageMultiplier": 1.0, "knockbackX": 4, "knockbackY": 1, "maxTargets": 2 }
+  },
+  "visual": { "type": "coreWeaponSprites", "pixelsPerUnit": 32,
+    "hiddenSlots": ["slide", "magazine"],
+    "sprites": { "body": "assets/weapon/knife.png", "base": "assets/weapon/knife.png" }
+  }
+}

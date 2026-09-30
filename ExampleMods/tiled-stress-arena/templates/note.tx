@@ -1,0 +1,11 @@
+{
+  "type": "template",
+  "object": {
+    "class": "note", "id": 1, "name": "note", "point": true,
+    "properties": [
+      { "name": "text", "type": "string", "value": "Replace this with the note text." },
+      { "name": "fontSize", "type": "int", "value": 32 }
+    ],
+    "rotation": 0, "visible": true
+  }
+}

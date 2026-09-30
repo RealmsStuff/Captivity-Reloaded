@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "example.tiled-stress-arena",
+  "displayName": "Tiled Stress-Test Arena",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Captivity Reloaded contributors"],
+  "description": "Release fixture for high-load Tiled rendering, navigation, objects, scripting and spawning.",
+  "dependencies": [{ "id": "core", "version": ">=0.1.0" }],
+  "contentRoots": ["content"]
+}

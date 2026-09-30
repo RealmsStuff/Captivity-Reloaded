@@ -49,11 +49,42 @@ public class PickUpable : Item
 
 	public event DelOnDrop OnDrop;
 
+	public void ConfigureModWorldPickup(int i_amount)
+	{
+		StopAllCoroutines();
+		m_owner = null;
+		m_isPickedUp = false;
+		m_isPickedUpOnceAlready = false;
+		m_isPickUpable = true;
+		m_amountAdditional = Mathf.Max(0, i_amount - 1);
+		if ((bool)GetComponent<Rigidbody2D>())
+		{
+			GetComponent<Rigidbody2D>().isKinematic = false;
+			GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+		}
+		foreach (Collider2D itemCollider in GetComponentsInChildren<Collider2D>(includeInactive: true))
+			itemCollider.enabled = true;
+		foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>(includeInactive: true))
+			renderer.sortingLayerName = "Item";
+		Show();
+		ShowOutline();
+	}
+
+	public void ConfigureModRewardAmount(int i_amount)
+	{
+		m_amountAdditional = Mathf.Max(0, i_amount - 1);
+	}
+
 	protected virtual void Awake()
 	{
 		ShowOutline();
 		_ = m_particleEffectPickUp == null;
 		m_audioSourceSFX = CommonReferences.Instance.GetManagerAudio().CreateAndAddAudioSourceSFX(base.gameObject);
+	}
+
+	private void OnEnable()
+	{
+		if (m_owner == null && m_isPickUpable) ShowOutline();
 	}
 
 	private void AddParticleEffect()
@@ -308,7 +339,11 @@ public class PickUpable : Item
 				obj.material = Resources.Load<Material>("Materials/SpriteOutline");
 				obj.material.SetColor("_OutlineColor", value);
 			}
-			m_coroutineAnimateOutline = StartCoroutine(CoroutineAnimateOutline());
+			if (isActiveAndEnabled)
+			{
+				if (m_coroutineAnimateOutline != null) StopCoroutine(m_coroutineAnimateOutline);
+				m_coroutineAnimateOutline = StartCoroutine(CoroutineAnimateOutline());
+			}
 		}
 	}
 
@@ -437,12 +472,24 @@ public class PickUpable : Item
 
 	public int GetValue()
 	{
-		return m_value;
+		return ExternalRuleProfileFactory.ApplyPickupValue(this, m_value);
 	}
 
 	public int GetWeight()
 	{
 		return m_weight;
+	}
+
+	public void ConfigureModEconomy(int? i_weight, int? i_value)
+	{
+		if (i_weight.HasValue) m_weight = i_weight.Value;
+		if (i_value.HasValue) m_value = i_value.Value;
+	}
+
+	public void ConfigureModPickup(bool i_canDrop, bool i_stackable = false)
+	{
+		m_isCanDrop = i_canDrop;
+		m_isStackAble = i_stackable;
 	}
 
 	public bool GetIsPickUpable()

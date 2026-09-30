@@ -249,6 +249,11 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 
 	public void ShootGun(Gun i_gun)
 	{
+		ShootGun(i_gun, 1f);
+	}
+
+	public void ShootGun(Gun i_gun, float i_recoilMultiplier)
+	{
 		if (i_gun.GetHoldTypeGun() == GunHoldType.OneHanded)
 		{
 			if (m_coroutineShootGun != null)
@@ -256,17 +261,17 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 				StopCoroutine(m_coroutineShootGun);
 			}
 			m_angleToAddToArmLower = 0f;
-			m_coroutineShootGun = StartCoroutine(CoroutineShootGun(i_gun));
+			m_coroutineShootGun = StartCoroutine(CoroutineShootGun(i_gun, Mathf.Max(0f, i_recoilMultiplier)));
 		}
 	}
 
-	private IEnumerator CoroutineShootGun(Gun i_gun)
+	private IEnumerator CoroutineShootGun(Gun i_gun, float i_recoilMultiplier)
 	{
 		m_isShooting = true;
 		_ = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position) - Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
 		Vector3 vector = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmLower().transform.position) - Camera.main.WorldToScreenPoint(GetRArmLower().transform.position);
 		_ = Mathf.Atan2(vector.y, vector.x) * 57.29578f;
-		float l_angleFrom = i_gun.GetDamage() * 3;
+		float l_angleFrom = i_gun.GetDamage() * 3 * i_recoilMultiplier;
 		float l_angleTo = 0f;
 		float l_timeToMove = 0.15f;
 		float l_timeCurrent = 0f;

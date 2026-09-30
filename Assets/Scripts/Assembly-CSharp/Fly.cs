@@ -78,8 +78,8 @@ public class Fly : Flier
 	private IEnumerator CoroutineCharge()
 	{
 		m_isCharging = true;
-		m_modifiersCharge.Add(AddStatModifier("SpeedAccel", 30f));
-		m_modifiersCharge.Add(AddStatModifier("SpeedMax", 30f));
+		m_modifiersCharge.Add(AddStatModifier("SpeedAccel", ExternalRuleProfileFactory.FlyChargeAccel(30f)));
+		m_modifiersCharge.Add(AddStatModifier("SpeedMax", ExternalRuleProfileFactory.FlyChargeSpeed(30f)));
 		Vector2 pos = GetPos();
 		Vector2 vector = CommonReferences.Instance.GetPlayer().GetSkeletonPlayer().GetBone(BoneTypePlayer.Head)
 			.transform.position;
@@ -118,7 +118,7 @@ public class Fly : Flier
 
 	private IEnumerator CoroutineWaitBeforeCanChargeAgain()
 	{
-		yield return new WaitForSeconds(m_secsDelayBetweenCharges);
+		yield return new WaitForSeconds(ExternalRuleProfileFactory.FlyRechargeDelay(m_secsDelayBetweenCharges));
 		m_isHitPlayerDuringCharge = false;
 		m_isCanCharge = true;
 	}

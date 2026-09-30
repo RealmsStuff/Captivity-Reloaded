@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/player-attachment.schema.json",
+  "title": "Captivity Reloaded Persistent Player Attachment",
+  "x-stability": "experimental",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "bone"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "playerAttachment", "x-stability": "experimental" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-attachment/[a-z0-9][a-z0-9._/-]*$", "x-stability": "experimental" },
+    "sprite": { "$ref": "#/$defs/pngPath", "x-stability": "experimental" },
+    "skinSprites": {
+      "type": "object", "minProperties": 1, "maxProperties": 7,
+      "propertyNames": { "enum": ["pale", "white", "tan", "black", "olive", "brown", "deep"] },
+      "additionalProperties": { "$ref": "#/$defs/pngPath" },
+      "x-stability": "experimental"
+    },
+    "pixelsPerUnit": { "type": "number", "minimum": 1, "maximum": 1024, "default": 32, "x-stability": "experimental" },
+    "bone": { "enum": ["Hips", "Butt", "Spine", "Chest", "Neck", "Head", "rArmUpper", "rArmLower", "rHand", "lArmUpper", "lArmLower", "lHand", "rLegUpper", "rLegLower", "rFoot", "lLegUpper", "lLegLower", "lFoot", "Ear", "Face"], "x-stability": "experimental" },
+    "attachToBone": { "type": "boolean", "default": true, "x-stability": "experimental" },
+    "offsetX": { "type": "number", "minimum": -10, "maximum": 10, "default": 0, "x-stability": "experimental" },
+    "offsetY": { "type": "number", "minimum": -10, "maximum": 10, "default": 0, "x-stability": "experimental" },
+    "rotation": { "type": "number", "minimum": -360, "maximum": 360, "default": 0, "x-stability": "experimental" },
+    "pivotX": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5, "x-stability": "experimental" },
+    "pivotY": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5, "x-stability": "experimental" },
+    "sortingOffset": { "type": "integer", "minimum": -100, "maximum": 100, "default": 1, "x-stability": "experimental" },
+    "tintWithSkin": { "type": "boolean", "default": false, "x-stability": "experimental" },
+    "pregnancyGrowth": {
+      "type": "object", "additionalProperties": false, "required": ["stages"],
+      "properties": {
+        "transitionSeconds": { "type": "number", "minimum": 0.05, "maximum": 10, "default": 1.5 },
+        "breakSpineClothing": { "type": "boolean", "default": false },
+        "clothingBreakDelaySeconds": { "type": "number", "minimum": 0, "maximum": 10, "default": 0.5 },
+        "stages": {
+          "type": "array", "minItems": 2, "maxItems": 16,
+          "contains": { "type": "object", "properties": { "minimumFetuses": { "const": 0 } }, "required": ["minimumFetuses"] },
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["minimumFetuses", "offsetX", "offsetY", "scaleX", "scaleY"],
+            "properties": {
+              "minimumFetuses": { "type": "integer", "minimum": 0, "maximum": 64 },
+              "offsetX": { "type": "number", "minimum": -10, "maximum": 10 },
+              "offsetY": { "type": "number", "minimum": -10, "maximum": 10 },
+              "scaleX": { "type": "number", "minimum": 0, "maximum": 10 },
+              "scaleY": { "type": "number", "minimum": 0, "maximum": 10 }
+            }
+          }
+        }
+      },
+      "x-stability": "experimental"
+    },
+    "physics": {
+      "type": "object", "additionalProperties": false, "required": ["mode"],
+      "properties": {
+        "mode": { "const": "sway" },
+        "spring": { "type": "number", "minimum": 0.1, "maximum": 200 },
+        "damping": { "type": "number", "minimum": 0, "maximum": 50 },
+        "gravity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "motionInfluence": { "type": "number", "minimum": 0, "maximum": 10 },
+        "maxAngle": { "type": "number", "minimum": 0, "maximum": 90 }
+      },
+      "x-stability": "experimental"
+    }
+  },
+  "anyOf": [
+    { "required": ["sprite"] },
+    { "required": ["skinSprites"] }
+  ],
+  "$defs": {
+    "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" }
+  }
+}

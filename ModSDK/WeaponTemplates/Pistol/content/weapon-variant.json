@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "example.pistol-template:item/weapon/pistol-template",
+  "displayName": "Pistol Template",
+  "description": "An editable variant of the Core pistol.",
+  "extends": "core:item/weapon/pistol",
+  "stats": { "value": 1, "marketable": true },
+  "visual": {
+    "type": "coreWeaponSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "body": "assets/weapon/body.png",
+      "slide": "assets/weapon/slide.png",
+      "magazine": "assets/weapon/magazine.png",
+      "base": "assets/weapon/base.png"
+    }
+  }
+}

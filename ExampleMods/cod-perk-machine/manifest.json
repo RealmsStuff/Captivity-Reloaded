@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.cod-perk-machine",
+  "displayName": "CoD Perk Machine",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Legacy mod conversion"],
+  "description": "Replaces the Core usable vendor artwork while retaining its complete vending behavior.",
+  "dependencies": [{ "id": "core", "version": ">=0.1.0" }],
+  "conflicts": [],
+  "contentRoots": ["content"]
+}

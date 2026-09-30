@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/jenny",
+  "legacyId": 18,
+  "displayName": "Jenny",
+  "stats": {
+    "healthMax": 20,
+    "speedAcceleration": 4.25,
+    "speedMax": 4.25,
+    "traction": 0,
+    "bounty": 35,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-heel": "core:enemy-animation/jenny/attack-heel",
+    "attack-slap-attack-primary": "core:enemy-animation/jenny/attack-slap-attack-primary",
+    "climb": "core:enemy-animation/jenny/climb",
+    "finisher-phase-1": "core:enemy-animation/jenny/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/jenny/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/jenny/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/jenny/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/jenny/finisher-phase-5",
+    "idle": "core:enemy-animation/jenny/idle",
+    "jump": "core:enemy-animation/jenny/jump",
+    "move": "core:enemy-animation/jenny/move"
+  }
+}

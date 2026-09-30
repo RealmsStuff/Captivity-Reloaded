@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.smaller-breast-and-butt",
+  "displayName": "Smaller Breast and Butt",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Legacy mod author"],
+  "description": "Faithful conversion of the combined Smaller Breast and Butt mod, layered over its identical Smaller Breast artwork.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    },
+    {
+      "id": "legacy.smaller-breast",
+      "version": ">=1.0.0"
+    }
+  ],
+  "conflicts": ["mousai.femboy-refitted-shirt"],
+  "overrides": [
+    "core:player/body/butt/pale",
+    "core:player/body/butt/white",
+    "core:player/body/butt/tan",
+    "core:player/body/butt/black",
+    "core:sprite/butt/image",
+    "core:sprite/butt-2/image",
+    "core:sprite/butt-5/image"
+  ],
+  "priority": 21,
+  "contentRoots": ["content"]
+}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -17,14 +18,19 @@ public class PlayerController : MonoBehaviour
 
     // Direct inputs from the UI Canvas
     private Vector2 m_leftJoystickInput;
+	private Vector2 m_mobileAimInput = Vector2.right;
+	private Vector2 m_lastMobileAim = Vector2.right;
     private bool m_mobileJumpPressed;
     private bool m_mobileInteractPressed;
     private bool m_mobileReloadPressed; // Declared
     private bool m_mobileDashPressed;   // Declared
     private bool m_mobileFirePressed;   // For semi-automatic (one shot per tap)
     private bool m_mobileFireHeld;      // For automatic (shoots while held)
-    private bool m_mobileStrugglePressed; // Set to true on tap
+	private bool m_mobileFireReleased;
+	private bool m_mobileAltFirePressed;
+    private bool m_mobileExposeHeld;
     private bool m_mobileWavePressed;
+	private bool m_mobileSelfPleasurePressed;
 
     public void Awake()
     {
@@ -36,6 +42,11 @@ public class PlayerController : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         m_useMobileControls = true;
 #endif
+		if (PlayerPrefs.HasKey("ForceMobileControls"))
+		{
+			PlayerPrefs.DeleteKey("ForceMobileControls");
+			PlayerPrefs.Save();
+		}
     }
 
     public bool GetIsMobileControlsEnabled()
@@ -45,12 +56,14 @@ public class PlayerController : MonoBehaviour
 
     private bool IsUsingMobileInput()
     {
-        return m_useMobileControls && (m_managerInput == null || !m_managerInput.IsControllerAiming());
+		return m_useMobileControls && Gamepad.current == null;
     }
 
     private void Update()
     {
 		HandlePickUpPrompt();
+		HandleSelfPleasureInput();
+		if (m_player.IsSelfPleasuring()) return;
         if (!m_isForceIgnoreInput && m_player.GetStatePlayerCurrent() != StatePlayer.BeingRaped && !m_player.IsDead() && !CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused() && !CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen() && !CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing() && !CommonReferences.Instance.GetManagerHud().GetHubMainMenu().IsOpen())
         {
             HandleInput();
@@ -61,10 +74,8 @@ public class PlayerController : MonoBehaviour
         {
             if (IsUsingMobileInput())
             {
-                // 1. Face the direction the left joystick is pushed
-                ApplyMobileFacing();
-
-                // 2. Let the player aim towards the new virtual mouse position
+				// Mobile movement and aim are independent. Facing follows the aim
+				// stick, never the movement stick or a touched UI button.
                 m_player.FaceSideAim();
             }
             else
@@ -82,17 +93,61 @@ public class PlayerController : MonoBehaviour
         m_mobileReloadPressed = false;
         m_mobileDashPressed = false;
         m_mobileFirePressed = false;
-        m_mobileStrugglePressed = false;
+		m_mobileFireReleased = false;
+		m_mobileAltFirePressed = false;
         m_mobileWavePressed = false;
+		m_mobileSelfPleasurePressed = false;
     }
 
     // Direct inputs from the mobile UI Joystick
     public void SetLeftJoystick(Vector2 i_value) => m_leftJoystickInput = i_value;
+	public void SetRightJoystick(Vector2 i_value)
+	{
+		m_mobileAimInput = Vector2.ClampMagnitude(i_value, 1f);
+		if (m_mobileAimInput.sqrMagnitude > 0.04f)
+		{
+			m_lastMobileAim = m_mobileAimInput.normalized;
+		}
+	}
 
-    public void TriggerMobileStruggle()
-    {
-        m_mobileStrugglePressed = true;
-    }
+	public Vector2 GetMobileAimDirection()
+	{
+		if (m_mobileAimInput.sqrMagnitude > 0.04f) return m_mobileAimInput.normalized;
+		if (m_lastMobileAim.sqrMagnitude > 0.04f) return m_lastMobileAim.normalized;
+		return m_player != null && m_player.GetIsFacingLeft() ? Vector2.left : Vector2.right;
+	}
+
+	public Vector2 GetMobileAimInput()
+	{
+		return m_mobileAimInput;
+	}
+
+	public bool GetUseMobileDPad()
+	{
+		return PlayerPrefs.GetInt("MobileUseDPad", 0) == 1;
+	}
+
+	public Vector3 GetMobileAimScreenPosition(Vector3 i_worldOrigin)
+	{
+		Camera camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity();
+		if (camera == null) return Input.mousePosition;
+		return camera.WorldToScreenPoint(i_worldOrigin) + (Vector3)(GetMobileAimDirection() * 500f);
+	}
+
+	public Vector3 GetMobileAimWorldPosition(Vector3 i_worldOrigin)
+	{
+		if (m_managerInput != null && IsUsingMobileInput())
+		{
+			return m_managerInput.GetAimWorldPosition(i_worldOrigin);
+		}
+		Camera camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity();
+		if (camera == null) return i_worldOrigin + (Vector3)(GetMobileAimDirection() * 10f);
+		Vector3 screen = GetMobileAimScreenPosition(i_worldOrigin);
+		return camera.ScreenToWorldPoint(new Vector3(screen.x, screen.y, 10f));
+	}
+
+    public void TriggerMobileExpose() => m_mobileExposeHeld = true;
+    public void ReleaseMobileExpose() => m_mobileExposeHeld = false;
 
     public void TriggerMobileWave()
     {
@@ -101,7 +156,30 @@ public class PlayerController : MonoBehaviour
 
     public bool GetIsStrugglePressed()
     {
-        return m_mobileStrugglePressed;
+        return m_mobileJumpPressed;
+    }
+
+    public bool GetIsMobileJumpPressed() => m_mobileJumpPressed;
+
+    public bool ShouldShowMobileControls()
+    {
+        if (!IsUsingMobileInput() || CommonReferences.Instance == null) return false;
+        ManagerHud hud = CommonReferences.Instance.GetManagerHud();
+        ScreenGame game = CommonReferences.Instance.GetManagerScreens().GetScreenGame();
+        if (hud == null || game == null || game.IsPaused()) return false;
+        return !hud.GetVendorHud().GetIsOpen()
+            && !hud.GetWardrobeHud().IsShowing()
+            && !hud.GetHubMainMenu().IsOpen()
+            && !hud.GetManagerEquippablesHud().GetIsShowing()
+            && !hud.GetKeypadHud().IsShowing();
+    }
+
+    public void CancelMobileHeldInputs()
+    {
+        m_leftJoystickInput = Vector2.zero;
+        m_mobileAimInput = Vector2.zero;
+        m_mobileFireHeld = false;
+        m_mobileExposeHeld = false;
     }
 
     public bool GetIsWavePressed()
@@ -117,7 +195,10 @@ public class PlayerController : MonoBehaviour
     public void TriggerMobileFireUp()
     {
         m_mobileFireHeld = false;
+		m_mobileFireReleased = true;
     }
+	public void TriggerMobileAlternateFire() => m_mobileAltFirePressed = true;
+	public void TriggerMobileSelfPleasure() => m_mobileSelfPleasurePressed = true;
 
     // Direct inputs from the mobile UI Buttons
     public void TriggerMobileJump() => m_mobileJumpPressed = true;
@@ -141,6 +222,23 @@ public class PlayerController : MonoBehaviour
 		{
 			m_player.EquipNextWeapon(i_onlyUsables: true);
 		}
+	}
+
+	private void HandleSelfPleasureInput()
+	{
+		bool menuOpen = CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused()
+			|| CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen()
+			|| CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing()
+			|| CommonReferences.Instance.GetManagerHud().GetHubMainMenu().IsOpen();
+		if (m_player.IsSelfPleasuring() && menuOpen)
+		{
+			m_player.StopSelfPleasure();
+			return;
+		}
+		bool pressed = IsUsingMobileInput() ? m_mobileSelfPleasurePressed : m_managerInput.IsButtonDown(InputButton.SelfPleasure);
+		if (!pressed || menuOpen || m_isForceIgnoreInput) return;
+		if (m_player.IsSelfPleasuring()) m_player.StopSelfPleasure();
+		else m_player.TryStartSelfPleasure();
 	}
 
     private void ApplyMobileFacing()
@@ -202,6 +300,22 @@ public class PlayerController : MonoBehaviour
             if (m_player.GetEquippableEquipped() is Gun)
             {
                 Gun gun = (Gun)m_player.GetEquippableEquipped();
+				if (gun.HasThrowableAttack())
+				{
+					bool throwDown = IsUsingMobileInput() ? m_mobileFirePressed : m_managerInput.IsButtonDown(InputButton.Fire);
+					bool throwUp = IsUsingMobileInput() ? m_mobileFireReleased : m_managerInput.IsButtonUp(InputButton.Fire);
+					if (throwDown) gun.BeginThrowableAim();
+					if (throwUp && gun.IsAimingThrowable()) m_player.ReleaseThrowableGun(gun);
+				}
+				else if (gun.HasChargeAttack())
+				{
+					bool chargeDown = IsUsingMobileInput() ? m_mobileFirePressed : m_managerInput.IsButtonDown(InputButton.Fire);
+					bool chargeUp = IsUsingMobileInput() ? m_mobileFireReleased : m_managerInput.IsButtonUp(InputButton.Fire);
+					if (chargeDown) gun.BeginCharge();
+					if (chargeUp && gun.IsCharging()) m_player.ReleaseChargedGun(gun);
+				}
+				else
+				{
 
                 bool wantsFire = false;
 
@@ -221,11 +335,17 @@ public class PlayerController : MonoBehaviour
                     {
                         m_player.InterruptReload();
                     }
-                    if (!m_player.GetIsReloading())
-                    {
-                        m_player.UseEquippedEquippable(i_isAltFire: false);
-                    }
+					if (!m_player.GetIsReloading())
+					{
+						m_player.UseEquippedEquippable(i_isAltFire: false);
+						if (ExternalRuleProfileFactory.ShouldAutoReloadOnEmpty() && gun != null && gun.GetAmmoMagazineLeft() < 1
+							&& (gun.GetAmmoLeft() > 0 || gun.GetIsAmmoInfinite()) && !m_player.GetIsReloading()) m_player.Reload();
+					}
                 }
+				}
+				bool wantsAlternate = IsUsingMobileInput() ? m_mobileAltFirePressed : m_managerInput.IsButtonDown(InputButton.AlternateFire);
+				if (gun.HasAlternateAttack() && wantsAlternate && !m_player.GetIsReloading())
+					m_player.UseEquippedEquippable(i_isAltFire: true);
             }
             else
             {
@@ -359,6 +479,7 @@ public class PlayerController : MonoBehaviour
 		if (m_pickUpPrompt == null)
 		{
 			m_pickUpPrompt = managerHud.GetManagerNotification().CreateNotification(text, ColorTextNotification.Equippable, i_isContinues: true);
+			m_pickUpPrompt.SetPromptInput(InputButton.PickUp);
 		}
 		else
 		{
@@ -497,7 +618,8 @@ public class PlayerController : MonoBehaviour
         {
             m_player.SetIsExposing(i_isExposing: false);
         }
-        else if (!IsUsingMobileInput() && m_managerInput.IsButton(InputButton.Expose))
+		else if (((IsUsingMobileInput() && m_mobileExposeHeld) || (!IsUsingMobileInput() && m_managerInput.IsButton(InputButton.Expose)))
+			&& (!(m_player.GetEquippableEquipped() is Gun equippedGun) || !equippedGun.HasAlternateAttack()))
         {
             m_player.SetIsExposing(i_isExposing: true);
         }

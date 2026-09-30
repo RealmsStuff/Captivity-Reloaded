@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "perveloper.original-dev-extras:item/weapon/rock",
+  "displayName": "Rock",
+  "description": "An unfinished throwable recovered from Captivity v1.0.5bDebug. Hold fire to aim and release to throw.",
+  "stats": {
+    "damage": 8,
+    "ammoMax": 12,
+    "magazineSize": 4,
+    "rangeMultiplier": 1,
+    "fireIntervalSeconds": 0.5,
+    "reloadSeconds": 0.5,
+    "equipSeconds": 0.25,
+    "weight": 1,
+    "value": 2,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "OneHanded",
+    "reloadType": "Magazine",
+    "weaponType": "Special"
+  },
+  "behavior": {
+    "playShootSound": true,
+    "showMuzzleFlash": false,
+    "shootSounds": ["assets/audio/throw.wav"],
+    "throwable": {
+      "throwSpeed": 12,
+      "gravity": 1,
+      "angularVelocity": 220,
+      "lifetimeSeconds": 15,
+      "impactDamageMultiplier": 1,
+      "destroyOnImpact": false,
+      "impactSounds": ["assets/audio/hit-1a.wav", "assets/audio/hit-1b.wav", "assets/audio/hit-2.wav"]
+    }
+  },
+  "visual": {
+    "type": "originalWeaponSprites",
+    "pixelsPerUnit": 32,
+    "pivotX": 0.5,
+    "pivotY": 0.5,
+    "colliderWidth": 0.42,
+    "colliderHeight": 0.42,
+    "sprites": { "body": "assets/weapon/rock.png", "icon": "assets/weapon/rock.png" }
+  }
+}

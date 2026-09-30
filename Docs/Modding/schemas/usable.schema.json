@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/usable.schema.json",
+  "title": "Captivity Reloaded Usable Item",
+  "x-stability": "experimental",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "visual"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" }, "type": { "const": "usable", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/usableId", "x-stability": "stable" }, "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/coreUsableId", "x-stability": "stable" }, "description": { "type": "string", "x-stability": "stable" },
+    "visual": { "$ref": "#/$defs/visual", "x-stability": "experimental" }, "stats": { "$ref": "#/$defs/stats", "x-stability": "experimental" },
+    "effectMode": { "enum": ["inherit", "add", "replace"], "default": "inherit", "x-stability": "experimental" },
+    "effects": { "type": "array", "maxItems": 16, "items": { "$ref": "#/$defs/effect" }, "x-stability": "experimental" }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["extends"] },
+      "then": { "properties": { "visual": { "properties": { "type": { "const": "coreUsableSprites" } } } } },
+      "else": {
+        "properties": {
+          "effectMode": { "const": "replace" },
+          "visual": { "properties": { "type": { "const": "originalUsableSprites" } } }
+        },
+        "required": ["effectMode"]
+      }
+    }
+  ],
+  "$defs": {
+    "usableId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:item/usable/[a-z0-9][a-z0-9._/-]*$" },
+    "coreUsableId": { "type": "string", "pattern": "^core:item/usable/[a-z0-9][a-z0-9._/-]*$" },
+    "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" },
+    "visual": { "type": "object", "additionalProperties": false, "required": ["type", "icon"], "properties": {
+      "type": { "enum": ["coreUsableSprites", "originalUsableSprites"] }, "icon": { "$ref": "#/$defs/pngPath" }, "world": { "$ref": "#/$defs/pngPath" },
+      "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024, "default": 32 },
+      "pivotX": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5 }, "pivotY": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5 },
+      "colliderWidth": { "type": "number", "exclusiveMinimum": 0, "maximum": 16, "default": 0.75 }, "colliderHeight": { "type": "number", "exclusiveMinimum": 0, "maximum": 16, "default": 0.75 },
+      "sortingOrder": { "type": "integer", "minimum": -1000, "maximum": 1000, "default": 0 }
+    } },
+    "descriptionList": { "type": "array", "maxItems": 32, "items": { "type": "string", "minLength": 1, "maxLength": 256 } },
+    "stats": { "type": "object", "additionalProperties": false, "properties": {
+      "weight": { "type": "integer", "minimum": 0, "maximum": 100000 }, "value": { "type": "integer", "minimum": 0, "maximum": 100000000 }, "equipSeconds": { "type": "number", "minimum": 0, "maximum": 60 }, "marketable": { "type": "boolean" },
+      "goodEffectDescriptions": { "$ref": "#/$defs/descriptionList" }, "badEffectDescriptions": { "$ref": "#/$defs/descriptionList" }
+    } },
+    "effect": { "oneOf": [
+      { "$ref": "#/$defs/amountEffect" }, { "$ref": "#/$defs/noArgumentEffect" }, { "$ref": "#/$defs/durationEffect" }, { "$ref": "#/$defs/statModifier" }
+    ] },
+    "amountEffect": { "type": "object", "additionalProperties": false, "required": ["type", "amount"], "properties": { "type": { "enum": ["restoreHealth", "restoreStrength", "restoreStamina", "reducePleasure", "refillAmmo", "gainMoney"] }, "amount": { "type": "number", "minimum": 0.01, "maximum": 100000 } } },
+    "noArgumentEffect": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": { "type": { "enum": ["fillAllAmmo", "repairClothing"] } } },
+    "durationEffect": { "type": "object", "additionalProperties": false, "required": ["type", "durationSeconds"], "properties": { "type": { "enum": ["ragdoll", "invulnerability"] }, "durationSeconds": { "type": "number", "minimum": 0.01, "maximum": 600 } } },
+    "statModifier": { "type": "object", "additionalProperties": false, "required": ["type", "stat", "value", "durationSeconds"], "properties": { "type": { "const": "statModifier" }, "stat": { "enum": ["HealthMax", "SpeedAccel", "SpeedMax", "Traction", "DamageMultiplierGun", "SpeedSprint", "PowerJump", "PowerDash"] }, "value": { "type": "number", "minimum": -100000, "maximum": 100000 }, "durationSeconds": { "type": "number", "minimum": 0.01, "maximum": 3600 }, "stackable": { "type": "boolean" } } }
+  }
+}

@@ -34,12 +34,18 @@ public class ManagerWave : MonoBehaviour
 	private Stage m_stage;
 
 	private bool m_isHighscoreAchieved;
+	private bool m_isRuleGoalComplete;
 
 	private Coroutine m_coroutineWaitForNextWave;
 
 	public event DelWaveStart OnWaveStart;
 
 	public event DelWaveEnd OnWaveEnd;
+
+	public void ConfigureCoreWave(int i_firstWaveEnemyCount)
+	{
+		m_numOfSpawnsFirstWave = i_firstWaveEnemyCount;
+	}
 
 	public void Initialize(Stage i_stage)
 	{
@@ -61,6 +67,7 @@ public class ManagerWave : MonoBehaviour
 			m_numOfSpawns = m_numOfSpawnsFirstWave;
 			m_stage = i_stage;
 			m_isHighscoreAchieved = false;
+			m_isRuleGoalComplete = false;
 			StartNewWave();
 		}
 	}
@@ -96,6 +103,11 @@ public class ManagerWave : MonoBehaviour
 		Player l_player = CommonReferences.Instance.GetPlayer();
 		while (!l_player.IsDead())
 		{
+			if (m_isWave && m_numOfSpawnsToSpawn > 0)
+			{
+				FillSpawners();
+				StartSpawners();
+			}
 			if (m_isWave && IsCurrentWaveOver())
 			{
 				EndCurrentWave();
@@ -111,11 +123,12 @@ public class ManagerWave : MonoBehaviour
 		m_numWaveCurrent++;
 		if (m_numWaveCurrent != 1)
 		{
-			m_numOfSpawns += 2;
+			m_numOfSpawns += ExternalRuleProfileFactory.GetSpawnGrowthPerWave(2);
 		}
+		int numOfSpawnsThisWave = ExternalRuleProfileFactory.ApplyWaveSpawnCount(m_numOfSpawns);
 		_ = m_numOfSpawns;
 		_ = m_numMaxEnemies;
-		m_numOfSpawnsToSpawn = m_numOfSpawns;
+		m_numOfSpawnsToSpawn = numOfSpawnsThisWave;
 		this.OnWaveStart?.Invoke();
 		if (m_numWaveCurrent > ManagerDB.GetHighscore(m_stage))
 		{
@@ -150,6 +163,7 @@ public class ManagerWave : MonoBehaviour
 
 	private void DisableAllVendors()
 	{
+		if (ExternalRuleProfileFactory.ShouldKeepVendorsAvailable()) return;
 		foreach (Vendor allVendor in CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetAllVendors())
 		{
 			allVendor.Disable();
@@ -182,7 +196,7 @@ public class ManagerWave : MonoBehaviour
 		List<SpawnerPickModel> list = new List<SpawnerPickModel>();
 		for (int i = 0; i < m_spawners.Count; i++)
 		{
-			if (m_spawners[i].IsEnabled())
+			if (m_spawners[i].IsAvailableForWaveAllocation())
 			{
 				float i_startIndex = num;
 				num += m_spawners[i].GetSpawnChance01();
@@ -190,6 +204,7 @@ public class ManagerWave : MonoBehaviour
 				list.Add(new SpawnerPickModel(m_spawners[i], i_startIndex, i_endIndex));
 			}
 		}
+		if (list.Count == 0) return;
 		while (m_numOfSpawnsToSpawn > 0)
 		{
 			float num2 = Random.Range(0f, num);
@@ -211,6 +226,13 @@ public class ManagerWave : MonoBehaviour
 		FillSpawners();
 	}
 
+	public void RequeueSpawns(int i_amount)
+	{
+		if (i_amount <= 0) return;
+		m_numOfSpawnsToSpawn += i_amount;
+		if (m_isWave) { FillSpawners(); StartSpawners(); }
+	}
+
 	private void StartSpawners()
 	{
 		foreach (Spawner spawner in m_spawners)
@@ -229,8 +251,20 @@ public class ManagerWave : MonoBehaviour
 		FillVendors();
 		EnableAllVendors();
 		this.OnWaveEnd?.Invoke();
+		if (m_isRuleGoalComplete) return;
+		int maximumWaves = ExternalRuleProfileFactory.GetMaximumWaves();
+		if (maximumWaves > 0 && m_numWaveCurrent >= maximumWaves)
+		{
+			m_isWaitingForNextWave = false;
+			CommonReferences.Instance.GetManagerHud().GetWaveHud().ShowWaveEnd(0);
+			CommonReferences.Instance.GetManagerHud().GetManagerNotification().CreateNotification(
+				ExternalRuleProfileFactory.ActiveModeName + " complete!", ColorTextNotification.Other, i_isContinues: false);
+			CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_stage.GetAudioWinWave());
+			return;
+		}
 		WaitForNextWave();
-		CommonReferences.Instance.GetManagerHud().GetWaveHud().ShowWaveEnd(m_secsWaveEndWait);
+		int intermissionSeconds = ExternalRuleProfileFactory.GetIntermissionSeconds(m_secsWaveEndWait);
+		CommonReferences.Instance.GetManagerHud().GetWaveHud().ShowWaveEnd(intermissionSeconds);
 		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_stage.GetAudioWinWave());
 	}
 
@@ -242,13 +276,14 @@ public class ManagerWave : MonoBehaviour
 
 	private IEnumerator CoroutineWaitForNextWave()
 	{
-		yield return new WaitForSeconds(m_secsWaveEndWait);
+		yield return new WaitForSeconds(ExternalRuleProfileFactory.GetIntermissionSeconds(m_secsWaveEndWait));
 		m_isWaitingForNextWave = false;
 		StartNewWave();
 	}
 
 	private bool IsCurrentWaveOver()
 	{
+		if (m_numOfSpawnsToSpawn > 0) return false;
 		foreach (NPC allNPC in CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetAllNPCs())
 		{
 			if (allNPC.gameObject.activeSelf && !allNPC.IsDead() && !allNPC.IsIgnoreWave())
@@ -258,7 +293,7 @@ public class ManagerWave : MonoBehaviour
 		}
 		foreach (Spawner spawner in m_spawners)
 		{
-			if (spawner.IsCanSpawn())
+			if (spawner.HasPendingSpawns())
 			{
 				return false;
 			}
@@ -278,7 +313,9 @@ public class ManagerWave : MonoBehaviour
 
 	public bool IsHasStageRoomForNpc()
 	{
-		if (m_stage.GetAllNPCs().Count >= m_numMaxEnemiesRoom)
+		int maxEnemies = ExternalRuleProfileFactory.ApplyMaxStageEnemies(m_numMaxEnemies);
+		int maxEnemiesRoom = ExternalRuleProfileFactory.ApplyMaxRoomEnemies(m_numMaxEnemiesRoom);
+		if (m_stage.GetAllNPCs().Count >= maxEnemies || m_stage.GetAllNPCs().Count >= maxEnemiesRoom)
 		{
 			return false;
 		}
@@ -293,6 +330,19 @@ public class ManagerWave : MonoBehaviour
 	public bool IsHighscoreAchieved()
 	{
 		return m_isHighscoreAchieved;
+	}
+
+	public void CompleteRuleGoal()
+	{
+		if (m_isRuleGoalComplete) return;
+		m_isRuleGoalComplete = true;
+		m_isWave = false;
+		m_isWaitingForNextWave = false;
+		if (m_coroutineWaitForNextWave != null) StopCoroutine(m_coroutineWaitForNextWave);
+		m_coroutineWaitForNextWave = null;
+		StopAllCoroutines();
+		foreach (Spawner spawner in m_spawners) if (spawner != null) spawner.StopForRuleGoal();
+		CommonReferences.Instance.GetManagerHud().GetWaveHud().ShowWaveEnd(0);
 	}
 
 	public void ConfigureModWave(int i_firstWaveEnemyCount)

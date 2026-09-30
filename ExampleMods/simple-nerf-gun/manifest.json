@@ -5,12 +5,19 @@
   "version": "1.0.0",
   "modApiVersion": 1,
   "authors": ["@SomeScrub"],
-  "description": "Data-only conversion of the legacy starter pistol texture replacement.",
+  "description": "Faithful conversion of the legacy Nerf Gun reskin for the original starter pistol.",
   "dependencies": [
     {
       "id": "core",
       "version": ">=0.1.0"
     }
   ],
-  "contentRoots": ["content"]
+  "overrides": [
+    "core:weapon/pistol/body",
+    "core:weapon/pistol/slide",
+    "core:weapon/pistol/base"
+  ],
+  "priority": 20,
+  "contentRoots": ["content"],
+  "previewImages": ["preview.png"]
 }

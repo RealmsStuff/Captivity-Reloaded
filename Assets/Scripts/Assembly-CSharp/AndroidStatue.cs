@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class AndroidStatue : MonoBehaviour
 {
+	private bool m_useBuiltInSequence = true;
+
+	public void SetUseBuiltInSequence(bool i_useBuiltInSequence)
+	{
+		m_useBuiltInSequence = i_useBuiltInSequence;
+	}
+
 	[SerializeField]
 	private List<AndroidStatuePose> m_poses = new List<AndroidStatuePose>();
 
@@ -19,6 +26,7 @@ public class AndroidStatue : MonoBehaviour
 
 	private void OnWaveEnd()
 	{
+		if (!m_useBuiltInSequence) return;
 		CheckForQueuedPose();
 	}
 

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/head-humper",
+  "legacyId": 15,
+  "displayName": "Head Humper",
+  "stats": {
+    "healthMax": 7.5,
+    "speedAcceleration": 4,
+    "speedMax": 6.5,
+    "traction": 1,
+    "bounty": 50,
+    "healthIncreasePerWave": 0.5
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-leap": "core:enemy-animation/head-humper/attack-leap",
+    "finisher-phase-1": "core:enemy-animation/head-humper/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/head-humper/finisher-phase-2",
+    "head-hugging": "core:enemy-animation/head-humper/head-hugging",
+    "idle": "core:enemy-animation/head-humper/idle",
+    "move": "core:enemy-animation/head-humper/move"
+  }
+}

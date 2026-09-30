@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "type": "challenge",
+  "id": "example.challenge-showcase:challenge/pistol-specialist",
+  "displayName": "Pistol Specialist",
+  "description": "Kill 10 basic zombies with the Pistol.",
+  "objective": "weaponKillCount",
+  "count": 10,
+  "enemies": ["core:enemy/zombie-1"],
+  "items": ["core:item/weapon/pistol"],
+  "rewards": ["core:clothing/white-top"]
+}

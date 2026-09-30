@@ -36,7 +36,8 @@ public class RaperSqoid : RaperSmasher
 		m_statusItemHypnotize = CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().CreateAndAddStatus("?&$aam101101_", "Wh@t 1s h4pp1n1ng,..,.?/", StatusPlayerHudItemColor.Special);
 		CommonReferences.Instance.GetManagerPostProcessing().GetEffectHypnotize().weight = 1f;
 		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().SetIsRotateWithFocusedObject(i_isRotate: true);
-		m_npc.GetAllInteractions()[1].Trigger(m_npc);
+		for (int index = 0; index < ExternalRuleProfileFactory.HypnosisProgressCount(); index++)
+			m_npc.GetAllInteractions()[1].Trigger(m_npc);
 		base.OnEndRape += DisableHypnotize;
 	}
 

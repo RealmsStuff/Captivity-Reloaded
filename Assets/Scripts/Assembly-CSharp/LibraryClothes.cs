@@ -78,6 +78,20 @@ public class LibraryClothes : MonoBehaviour
 		m_clothes.Add(i_clothing);
 	}
 
+	public void ReplaceCoreClothing(int i_legacyId, Clothing i_replacement)
+	{
+		if (i_replacement == null) return;
+		List<Clothing> clothes = GetAllClothes();
+		int insertAt = clothes.FindIndex(item => item != null && item.GetId() == i_legacyId);
+		clothes.RemoveAll(item => item != null && item != i_replacement && item.GetId() == i_legacyId);
+		if (!clothes.Contains(i_replacement))
+		{
+			if (insertAt < 0 || insertAt > clothes.Count) clothes.Add(i_replacement);
+			else clothes.Insert(insertAt, i_replacement);
+		}
+		i_replacement.gameObject.SetActive(false);
+	}
+
 	public void ClearAndReassignIds()
 	{
 		for (int i = 0; i < GetAllClothes().Count; i++)

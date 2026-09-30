@@ -1,0 +1,14 @@
+{
+  "type": "template",
+  "tileset": { "firstgid": 1, "source": "../tilesets/preview-switch.tsj" },
+  "object": {
+    "class": "logic-switch", "gid": 1, "height": 16, "id": 1, "name": "logic-switch", "rotation": 0, "visible": true, "width": 16,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "use" },
+      { "name": "singleUse", "type": "bool", "value": false },
+      { "name": "message", "type": "string", "value": "Switch activated." },
+      { "name": "visualArt", "type": "string", "value": "light-switch-off" },
+      { "name": "visualScale", "type": "float", "value": 1 }
+    ]
+  }
+}

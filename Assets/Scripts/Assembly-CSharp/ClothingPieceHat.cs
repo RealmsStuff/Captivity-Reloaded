@@ -9,4 +9,6 @@ public class ClothingPieceHat : ClothingPiece
 	{
 		return m_isHidesHair;
 	}
+
+	public void ConfigureModHat(bool i_hidesHair) { m_isHidesHair = i_hidesHair; }
 }

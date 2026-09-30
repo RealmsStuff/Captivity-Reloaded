@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/fly/attack-charge",
+  "enemy": "core:enemy/fly",
+  "displayName": "fly attack-charge",
+  "durationSeconds": 3.0,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/hips",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 87.88901,
+          "inTangent": 338.737946,
+          "outTangent": 338.738
+        },
+        {
+          "time": 0.5,
+          "value": 169.369,
+          "inTangent": 12.2313538,
+          "outTangent": 12.23129
+        },
+        {
+          "time": 3.0,
+          "value": 177.778015,
+          "inTangent": 2.682209E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -39.8080025,
+          "inTangent": -122.476044,
+          "outTangent": -122.476006
+        },
+        {
+          "time": 0.5,
+          "value": -61.2380028,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": -31.3850021,
+          "inTangent": 2.38418579E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -58.8200035,
+          "inTangent": -146.919922,
+          "outTangent": -146.920029
+        },
+        {
+          "time": 0.5,
+          "value": -77.1850052,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": -77.1850052,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/wing",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -113.917007,
+          "inTangent": -32.70941,
+          "outTangent": -32.70933
+        },
+        {
+          "time": 3.0,
+          "value": -138.449,
+          "inTangent": 2.682209E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -0.069,
+          "inTangent": 2.98023224E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.081,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/AttackCharge.anim",
+    "semanticName": "attack-charge"
+  }
+}

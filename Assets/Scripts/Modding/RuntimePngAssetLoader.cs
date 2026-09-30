@@ -7,6 +7,19 @@ namespace CaptivityReloaded.Modding
 	public static class RuntimePngAssetLoader
 	{
 		public const int MaximumPngBytes = 32 * 1024 * 1024;
+		public const int MaximumPngDimension = 8192;
+		public const long MaximumPngPixels = 32L * 1024L * 1024L;
+
+		public static Vector2 GetReplacementPivot(Sprite i_baseline, int i_width, int i_height)
+		{
+			if (i_baseline.texture != null && i_width == i_baseline.texture.width && i_height == i_baseline.texture.height)
+			{
+				return new Vector2(
+					(i_baseline.rect.x + i_baseline.pivot.x) / i_width,
+					(i_baseline.rect.y + i_baseline.pivot.y) / i_height);
+			}
+			return new Vector2(i_baseline.pivot.x / i_baseline.rect.width, i_baseline.pivot.y / i_baseline.rect.height);
+		}
 
 		public static bool TryLoad(string i_packRoot, string i_relativePath, string i_textureName,
 			FilterMode i_filterMode, ValidationReport io_report, string i_fileIssueCode,
@@ -32,6 +45,13 @@ namespace CaptivityReloaded.Modding
 					UnityEngine.Object.Destroy(texture);
 					texture = null;
 					throw new InvalidDataException("Unity could not decode the PNG.");
+				}
+				if (texture.width > MaximumPngDimension || texture.height > MaximumPngDimension
+					|| (long)texture.width * texture.height > MaximumPngPixels)
+				{
+					UnityEngine.Object.Destroy(texture);
+					texture = null;
+					throw new InvalidDataException("PNG dimensions exceed 8192 pixels on one side or 32 megapixels total.");
 				}
 				texture.name = i_textureName ?? string.Empty;
 				texture.filterMode = i_filterMode;

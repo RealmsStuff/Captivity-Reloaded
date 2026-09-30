@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/gremlin",
+  "displayName": "Animation Reference - Gremlin",
+  "description": "Reference copy of the small humanoid Gremlin animation family. It does not join normal spawners.",
+  "extends": "core:enemy/gremlin",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-primary": "example.animation-reference-gallery:enemy-animation/gremlin/attack-primary",
+    "attack-syringe": "example.animation-reference-gallery:enemy-animation/gremlin/attack-syringe",
+    "await": "example.animation-reference-gallery:enemy-animation/gremlin/await",
+    "climb": "example.animation-reference-gallery:enemy-animation/gremlin/climb",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-3",
+    "finisher-phase-4": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-4",
+    "finisher-phase-5": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-5",
+    "finisher-phase-6": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-6",
+    "finisher-phase-7": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-7",
+    "finisher-phase-8": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-8",
+    "finisher-phase-9": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-9",
+    "finisher-phase-10": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-10",
+    "finisher-phase-11": "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-11",
+    "get-up": "example.animation-reference-gallery:enemy-animation/gremlin/get-up",
+    "idle": "example.animation-reference-gallery:enemy-animation/gremlin/idle",
+    "jump": "example.animation-reference-gallery:enemy-animation/gremlin/jump",
+    "move": "example.animation-reference-gallery:enemy-animation/gremlin/move"
+  }
+}

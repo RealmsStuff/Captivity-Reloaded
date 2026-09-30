@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1, "type": "enemy",
+  "id": "draco66electro.prey-green-zombie:enemy/original-green-stalker",
+  "displayName": "Original Green Stalker",
+  "description": "A fully data-built test enemy with no inherited Core rig or AI.",
+  "stats": { "healthMax": 55, "speedAcceleration": 5, "speedMax": 2.7, "traction": 0.15, "bounty": 30, "healthIncreasePerWave": 1 },
+  "spawn": { "inheritTemplateSpawners": false, "selectionWeight": 1 },
+  "ai": { "type": "groundChase", "preferredRange": 0.9, "retreatRange": 0.55, "reactionSeconds": 0.1 },
+  "attacks": [
+    { "id": "swipe", "type": "melee", "animation": "swipe", "chance": 1, "damage": 8, "knockbackX": 3, "knockbackY": 1, "cooldownSeconds": 1.1, "initiateRange": 1.5, "hitRange": 1.25, "movesDuringAttack": false, "durationSeconds": 0.55 },
+    { "id": "acid-shot", "type": "hitscan", "animation": "shoot", "chance": 1, "damage": 5, "knockbackX": 1.5, "knockbackY": 0.25, "cooldownSeconds": 1.8, "initiateRange": 8, "hitRange": 8, "movesDuringAttack": false, "durationSeconds": 0.65 },
+    { "id": "acid-orb", "type": "projectile", "animation": "shoot", "chance": 1, "damage": 5, "knockbackX": 1.5, "knockbackY": 0.5, "cooldownSeconds": 1.8, "initiateRange": 10, "hitRange": 10, "movesDuringAttack": false, "durationSeconds": 0.65, "projectileRegion": "hand", "projectileSpeed": 8, "projectileLifetimeSeconds": 3, "projectileRadius": 0.18, "projectileGravityScale": 0.65 },
+    { "id": "spore-burst", "type": "area", "animation": "swipe", "chance": 1, "damage": 4, "knockbackX": 2, "knockbackY": 0.5, "cooldownSeconds": 2.2, "initiateRange": 2.25, "hitRange": 2.25, "areaRadius": 2, "offsetY": 0.5, "movesDuringAttack": false, "durationSeconds": 0.55 },
+    { "id": "grab", "type": "grab", "animation": "swipe", "chance": 1, "damage": 0, "knockbackX": 0, "knockbackY": 0, "cooldownSeconds": 4, "initiateRange": 1.35, "hitRange": 1.2, "movesDuringAttack": false, "durationSeconds": 0.55 },
+    { "id": "combo", "type": "multiStage", "animation": "combo", "chance": 1, "damage": 3, "knockbackX": 1, "knockbackY": 0.25, "cooldownSeconds": 3, "initiateRange": 5, "hitRange": 1.4, "movesDuringAttack": false, "durationSeconds": 0.9, "areaRadius": 1.75, "projectileRegion": "hand", "projectileSpeed": 9, "projectileLifetimeSeconds": 2.5, "projectileRadius": 0.16, "projectileGravityScale": 0, "stages": [
+      { "type": "melee", "damage": 3 }, { "type": "area", "damage": 2 }, { "type": "projectile", "damage": 4 }
+    ] }
+  ],
+  "behavior": { "visionRange": 22, "ignoreWave": false, "modules": [
+    { "type": "downedFinisher", "triggerRange": 1.6, "startDelaySeconds": 0.25,
+      "meterMax": 100, "inputPower": 14, "decayPerSecond": 2, "cooldownSeconds": 4,
+      "successOutcome": { "healthRecovery": 8, "enemyStunSeconds": 2.5 },
+      "failureOutcome": { "healthDamage": 20, "strengthDamage": 4, "pleasure": 5, "libido": 2, "playerRagdollSeconds": 1 },
+	  "statuses": {
+	    "active": { "title": "Rape", "description": "{enemy} is raping you!" },
+	    "mating": { "title": "Mating", "description": "{enemy} is breeding with you..." },
+	    "infusion": { "title": "Infusion", "description": "{enemy} is cumming inside you!" },
+	    "succumbed": { "title": "Succumbed", "description": "{enemy} has raped you into submission..." },
+	    "orgasm": { "title": "Orgasm", "description": "{enemy} has made you cum!" },
+	    "fertilized": { "title": "Fertilized", "description": "{enemy} has impregnated you with a {fetus}!" },
+	    "pregnant": { "title": "Pregnant", "description": "You are pregnant..." },
+	    "implanting": { "title": "Implanting {fetus}" },
+	    "labor": { "title": "Labor", "description": "Giving birth..." },
+	    "birth": { "title": "Birth", "description": "You just gave birth to {child}!" },
+	    "mindBroken": { "title": "Mind Broken", "description": "{enemy} has broken your mind. It's over." }
+	  },
+      "phases": [
+      { "id": "restraint", "durationSeconds": 4, "animation": "finisher", "inputPower": 14, "decayPerSecond": 2,
+      "playerAnimationRef": "draco66electro.prey-green-zombie:player-animation/stalker-restraint" },
+      { "id": "drain", "durationSeconds": 4, "animation": "finisher-intense", "inputPower": 12, "decayPerSecond": 4,
+      "playerAnimationRef": "draco66electro.prey-green-zombie:player-animation/stalker-sqoid-presentation" }
+      ] }
+  ] },
+  "animationRefs": { "move": "draco66electro.prey-green-zombie:enemy-animation/stalker-move" },
+  "animation": { "speedMultiplier": 1, "clips": {
+    "idle": { "durationSeconds": 0.8, "loop": true, "frames": [
+      { "time": 0, "bones": { "hips": { "y": 0 }, "head": { "rotation": -2 }, "arm-left-upper": { "rotation": -2 }, "arm-right-upper": { "rotation": 2 } } },
+      { "time": 0.4, "bones": { "hips": { "y": 0.04 }, "head": { "rotation": 2 }, "arm-left-upper": { "rotation": 2 }, "arm-right-upper": { "rotation": -2 } } },
+      { "time": 0.8, "bones": { "hips": { "y": 0 }, "head": { "rotation": -2 }, "arm-left-upper": { "rotation": -2 }, "arm-right-upper": { "rotation": 2 } } }
+    ] },
+    "swipe": { "durationSeconds": 0.55, "loop": false, "frames": [
+      { "time": 0, "bones": { "chest": { "rotation": -12 }, "head": { "rotation": 8 }, "arm-right-upper": { "rotation": -35 }, "arm-right-lower": { "rotation": -35 } } },
+      { "time": 0.22, "bones": { "chest": { "rotation": 20 }, "head": { "rotation": -10 }, "arm-right-upper": { "rotation": 85 }, "arm-right-lower": { "rotation": 15 } } },
+      { "time": 0.55, "bones": { "chest": { "rotation": 0 }, "head": { "rotation": 0 }, "arm-right-upper": { "rotation": 0 }, "arm-right-lower": { "rotation": 0 } } }
+    ], "events": [
+      { "time": 0.16, "type": "impulse", "x": 0.35, "relativeToFacing": true },
+      { "time": 0.2, "type": "sound", "file": "assets/audio/swipe-impact.wav", "volume": 0.65 },
+      { "time": 0.22, "type": "attackHit" },
+      { "time": 0.22, "type": "cameraShake", "amount": 0.15 },
+      { "time": 0.22, "type": "spriteEffect", "region": "hand", "bone": "hand-right", "durationSeconds": 0.08, "scale": 0.4, "sortingOrder": 100 }
+    ] },
+    "shoot": { "durationSeconds": 0.65, "loop": false, "frames": [
+      { "time": 0, "bones": { "chest": { "rotation": -8 }, "head": { "rotation": 4 }, "arm-right-upper": { "rotation": 70 }, "arm-right-lower": { "rotation": 15 } } },
+      { "time": 0.28, "bones": { "chest": { "rotation": 8 }, "head": { "rotation": -3 }, "arm-right-upper": { "rotation": 90 }, "arm-right-lower": { "rotation": 0 } } },
+      { "time": 0.65, "bones": { "chest": { "rotation": 0 }, "head": { "rotation": 0 }, "arm-right-upper": { "rotation": 0 }, "arm-right-lower": { "rotation": 0 } } }
+    ], "events": [
+      { "time": 0.28, "type": "attackHit" }
+    ] },
+    "combo": { "durationSeconds": 0.9, "loop": false, "frames": [
+      { "time": 0, "bones": { "chest": { "rotation": -14 }, "arm-right-upper": { "rotation": -30 } } },
+      { "time": 0.3, "bones": { "chest": { "rotation": 18 }, "arm-right-upper": { "rotation": 80 } } },
+      { "time": 0.6, "bones": { "chest": { "rotation": -10 }, "arm-right-upper": { "rotation": 95 } } },
+      { "time": 0.9, "bones": { "chest": { "rotation": 0 }, "arm-right-upper": { "rotation": 0 } } }
+    ], "events": [
+      { "time": 0.15, "type": "attackHit" }, { "time": 0.4, "type": "attackHit" }, { "time": 0.65, "type": "attackHit" }
+    ] },
+    "finisher": { "durationSeconds": 0.8, "loop": true, "frames": [
+      { "time": 0, "bones": { "hips": { "y": 0 }, "chest": { "rotation": -12 }, "head": { "rotation": 8 }, "arm-left-upper": { "rotation": 55 }, "arm-right-upper": { "rotation": 70 } } },
+      { "time": 0.4, "bones": { "hips": { "y": -0.08 }, "chest": { "rotation": 14 }, "head": { "rotation": -8 }, "arm-left-upper": { "rotation": 80 }, "arm-right-upper": { "rotation": 45 } } },
+      { "time": 0.8, "bones": { "hips": { "y": 0 }, "chest": { "rotation": -12 }, "head": { "rotation": 8 }, "arm-left-upper": { "rotation": 55 }, "arm-right-upper": { "rotation": 70 } } }
+    ] },
+    "finisher-intense": { "durationSeconds": 0.6, "loop": false, "frames": [
+      { "time": 0, "bones": { "hips": { "y": -0.04 }, "chest": { "rotation": -20 }, "head": { "rotation": 12 }, "arm-left-upper": { "rotation": 70 }, "arm-right-upper": { "rotation": 85 } } },
+      { "time": 0.3, "bones": { "hips": { "y": -0.14 }, "chest": { "rotation": 22 }, "head": { "rotation": -12 }, "arm-left-upper": { "rotation": 95 }, "arm-right-upper": { "rotation": 40 } } },
+      { "time": 0.6, "bones": { "hips": { "y": -0.04 }, "chest": { "rotation": -20 }, "head": { "rotation": 12 }, "arm-left-upper": { "rotation": 70 }, "arm-right-upper": { "rotation": 85 } } }
+    ], "events": [ { "time": 0.3, "type": "cameraShake", "amount": 0.08 } ] }
+  } },
+  "drops": { "chance": 0.08, "items": ["core:item/consumable/ammo-box"] },
+  "visual": {
+    "type": "originalSkeletonAtlas", "atlas": "assets/enemies/green-zombie.png", "pixelsPerUnit": 32,
+    "bodyWidth": 0.7, "bodyHeight": 3.53, "bodyOffsetX": -0.05, "bodyOffsetY": 0.086,
+    "regions": {
+      "torso-lower": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "butt": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "hips": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "neck": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "head": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "arm-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "arm-lower": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "hand": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "leg-upper": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "leg-lower": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "foot-left": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "foot-right": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    },
+    "bones": [
+      { "id": "hips", "region": "hips", "x": 0, "y": 0, "pivotX": 0.5, "pivotY": 0.5, "sortingOrder": 10 },
+      { "id": "butt", "parent": "hips", "region": "butt", "x": -0.041, "y": 0.069, "pivotX": 0.5, "pivotY": 0.5, "sortingOrder": 9 },
+      { "id": "spine", "parent": "hips", "region": "torso-lower", "x": 0, "y": 0.071, "pivotX": 0.49850311, "pivotY": 0.32330094, "sortingOrder": 11 },
+      { "id": "chest", "parent": "spine", "region": "chest", "x": 0.032, "y": 0.264, "pivotX": 0.53144676, "pivotY": 0.21548375, "sortingOrder": 12 },
+      { "id": "neck", "parent": "chest", "region": "neck", "x": -0.172, "y": 0.596, "pivotX": 0.51796948, "pivotY": 0.44010185, "sortingOrder": 11 },
+      { "id": "head", "parent": "neck", "region": "head", "x": 0, "y": 0.068, "pivotX": 0.44159933, "pivotY": 0.03578921, "sortingOrder": 12 },
+      { "id": "arm-left-upper", "parent": "chest", "region": "arm-upper", "x": -0.284, "y": 0.528, "pivotX": 0.52695424, "pivotY": 0.64974548, "sortingOrder": -15 },
+      { "id": "arm-left-lower", "parent": "arm-left-upper", "region": "arm-lower", "x": -0.006, "y": -0.48, "pivotX": 0.51946691, "pivotY": 0.68418693, "sortingOrder": -14 },
+      { "id": "hand-left", "parent": "arm-left-lower", "region": "hand", "x": 0.006, "y": -0.375, "pivotX": 0.52448012, "pivotY": 0.62176988, "sortingOrder": -13 },
+      { "id": "arm-right-upper", "parent": "chest", "region": "arm-upper", "x": -0.284, "y": 0.528, "pivotX": 0.52695424, "pivotY": 0.64974548, "sortingOrder": 13 },
+      { "id": "arm-right-lower", "parent": "arm-right-upper", "region": "arm-lower", "x": -0.006, "y": -0.48, "pivotX": 0.51946691, "pivotY": 0.68418693, "sortingOrder": 14 },
+      { "id": "hand-right", "parent": "arm-right-lower", "region": "hand", "x": 0.006, "y": -0.375, "pivotX": 0.52448012, "pivotY": 0.62176988, "sortingOrder": 15 },
+      { "id": "leg-left-upper", "parent": "hips", "region": "leg-upper", "x": 0.005, "y": -0.12, "pivotX": 0.56888318, "pivotY": 0.78152185, "sortingOrder": -11 },
+      { "id": "leg-left-lower", "parent": "leg-left-upper", "region": "leg-lower", "x": 0.018, "y": -0.653, "pivotX": 0.49401019, "pivotY": 0.71862845, "sortingOrder": -12 },
+      { "id": "foot-left-bone", "parent": "leg-left-lower", "region": "foot-left", "x": -0.074, "y": -0.5607, "pivotX": 0.46855363, "pivotY": 0.62578636, "sortingOrder": -13 },
+      { "id": "leg-right-upper", "parent": "hips", "region": "leg-upper", "x": 0.005, "y": -0.12, "pivotX": 0.56888318, "pivotY": 0.78152185, "sortingOrder": 13 },
+      { "id": "leg-right-lower", "parent": "leg-right-upper", "region": "leg-lower", "x": 0.018, "y": -0.653, "pivotX": 0.49401019, "pivotY": 0.71862845, "sortingOrder": 12 },
+      { "id": "foot-right-bone", "parent": "leg-right-lower", "region": "foot-right", "x": -0.074, "y": -0.5607, "pivotX": 0.46855364, "pivotY": 0.62578636, "sortingOrder": 11 }
+    ],
+    "hitZones": [
+      { "bone": "hips", "shape": "box", "width": 0.65, "height": 0.55, "damageMultiplier": "normal" },
+      { "bone": "chest", "shape": "box", "width": 0.72, "height": 0.68, "offsetY": 0.2, "damageMultiplier": "normal" },
+      { "bone": "head", "shape": "circle", "radius": 0.36, "offsetY": 0.32, "damageMultiplier": "critical" },
+      { "bone": "arm-left-upper", "shape": "box", "width": 0.3, "height": 0.58, "offsetY": -0.22, "damageMultiplier": "low" },
+      { "bone": "arm-right-upper", "shape": "box", "width": 0.3, "height": 0.58, "offsetY": -0.22, "damageMultiplier": "low" },
+      { "bone": "leg-left-upper", "shape": "box", "width": 0.34, "height": 0.7, "offsetY": -0.3, "damageMultiplier": "normal" },
+      { "bone": "leg-right-upper", "shape": "box", "width": 0.34, "height": 0.7, "offsetY": -0.3, "damageMultiplier": "normal" }
+    ]
+  }
+}

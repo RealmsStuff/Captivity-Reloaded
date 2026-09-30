@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "example.revolver-44-template:item/weapon/revolver-44-template",
+  "displayName": "Revolver .44 Template",
+  "description": "An editable variant of the Core Revolver .44.",
+  "extends": "core:item/weapon/revolver-44",
+  "stats": { "value": 1, "marketable": true },
+  "visual": {
+    "type": "coreWeaponSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "body": "assets/weapon/body.png",
+      "hammer": "assets/weapon/hammer.png",
+      "chamber": "assets/weapon/chamber.png",
+      "base": "assets/weapon/base.png",
+      "bullet": "assets/weapon/bullet.png",
+      "bullet-1": "assets/weapon/bullet-1.png",
+      "bullet-2": "assets/weapon/bullet-2.png",
+      "bullet-3": "assets/weapon/bullet-3.png",
+      "bullet-4": "assets/weapon/bullet-4.png",
+      "bullet-5": "assets/weapon/bullet-5.png"
+    }
+  }
+}

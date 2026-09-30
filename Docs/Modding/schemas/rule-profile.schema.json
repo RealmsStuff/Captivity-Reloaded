@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/rule-profile.schema.json",
+  "title": "Captivity Reloaded Rule Profile / Game Mode",
+  "x-stability": "experimental",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "modules"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "ruleProfile", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:rule/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 80, "x-stability": "stable" },
+    "description": { "type": "string", "x-stability": "stable" },
+    "modules": {
+      "type": "array", "minItems": 1, "maxItems": 16,
+      "x-stability": "experimental",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/weaponProgression" },
+          { "$ref": "#/$defs/spawnModifiers" },
+          { "$ref": "#/$defs/waveRules" },
+          { "$ref": "#/$defs/economyRules" },
+          { "$ref": "#/$defs/playerRules" },
+          { "$ref": "#/$defs/consumableOverride" },
+          { "$ref": "#/$defs/eventReward" },
+          { "$ref": "#/$defs/experimentScaling" },
+          { "$ref": "#/$defs/weaponTuning" },
+          { "$ref": "#/$defs/scoringRules" },
+          { "$ref": "#/$defs/goalRules" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "weaponId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:item/weapon/[a-z0-9][a-z0-9._/-]*$" },
+    "weaponProgression": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "trigger", "selection", "starterWeapon", "weaponPool", "replaceExistingWeapons"],
+      "properties": {
+        "type": { "const": "weaponProgression" },
+        "trigger": { "const": "enemyKilled" },
+        "selection": { "enum": ["random", "ordered"] },
+        "starterWeapon": { "$ref": "#/$defs/weaponId" },
+        "weaponPool": { "type": "array", "minItems": 1, "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/weaponId" } },
+        "replaceExistingWeapons": { "type": "boolean" }
+      }
+    },
+    "spawnModifiers": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "spawnModifiers" },
+        "waveSpawnMultiplier": { "$ref": "#/$defs/multiplier" },
+        "waveSpawnAdd": { "$ref": "#/$defs/add" },
+        "maxStageEnemiesMultiplier": { "$ref": "#/$defs/multiplier" },
+        "maxStageEnemiesAdd": { "$ref": "#/$defs/add" },
+        "maxRoomEnemiesMultiplier": { "$ref": "#/$defs/multiplier" },
+        "maxRoomEnemiesAdd": { "$ref": "#/$defs/add" },
+        "spawnerChanceMultiplier": { "$ref": "#/$defs/multiplier" },
+        "spawnDelayMultiplier": { "$ref": "#/$defs/multiplier" },
+        "initialSpawnDelayMultiplier": { "$ref": "#/$defs/multiplier" },
+        "enemySpeedVarianceMin": { "type": "number", "minimum": -10, "maximum": 10 },
+        "enemySpeedVarianceMax": { "type": "number", "minimum": -10, "maximum": 10 },
+        "enemyHealthVarianceMin": { "type": "number", "minimum": -0.99, "maximum": 10 },
+        "enemyHealthVarianceMax": { "type": "number", "minimum": -0.99, "maximum": 10 },
+        "enemyWaveHealthGrowthRandomBase": { "type": "number", "minimum": 0.01, "maximum": 10 },
+        "enemySpeedGrowthAfterWave": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "enemySpeedGrowthPerWave": { "type": "number", "minimum": 0, "maximum": 10 },
+        "zombieChaseChancePercent": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "zombieFallChancePercent": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "zombieChaseCheckSeconds": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "zombieChaseDurationMin": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "zombieChaseDurationMax": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "zombieChaseSpeedMaxBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deathHoundRetrySeconds": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "deathHoundPrepareSeconds": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "deathHoundRoamSpeedBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deathHoundChargeSpeedBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deathHoundChargeSeconds": { "type": "number", "minimum": 0.01, "maximum": 300 },
+        "deathHoundLeapXMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 },
+        "deathHoundLandCheckDelay": { "type": "number", "minimum": 0, "maximum": 10 },
+        "deathHoundPrepareInnerDivisor": { "type": "number", "minimum": 0.01, "maximum": 100 },
+        "deathHoundLeapDistanceDivisor": { "type": "number", "minimum": 0.01, "maximum": 100 },
+        "deathHoundHitDistance": { "type": "number", "minimum": 0.01, "maximum": 100 },
+        "flyChargeAccelBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "flyChargeSpeedBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "flyRechargeDelayMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10 },
+        "mindBreakTargetMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 },
+        "hypnosisProgressMultiplier": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "legacyShackAberrants": { "type": "boolean" },
+        "legacyShackTankLimit": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "legacyShackTankDelaySeconds": { "type": "number", "minimum": 0, "maximum": 300 },
+        "legacyShackBoomerLimit": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "legacyShackBoomerDelaySeconds": { "type": "number", "minimum": 0, "maximum": 300 },
+        "legacyShackPinkHoundLimit": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "legacyShackPinkHoundDelaySeconds": { "type": "number", "minimum": 0, "maximum": 300 },
+        "legacyShackBoomerExplodes": { "type": "boolean" }
+      }
+    },
+    "waveRules": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "waveRules" },
+        "spawnGrowthPerWave": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "intermissionSeconds": { "type": "integer", "minimum": 0, "maximum": 300 },
+        "maximumWaves": { "type": "integer", "minimum": 1, "maximum": 10000 }
+      }
+    },
+    "economyRules": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "economyRules" },
+        "startingMoney": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+		"infiniteMoney": { "type": "boolean", "x-stability": "experimental" },
+        "bountyMultiplier": { "type": "number", "minimum": 0, "maximum": 10 },
+        "ammoDropChance": { "type": "number", "minimum": 0, "maximum": 1 },
+        "ammoDropChancePerWave": { "type": "number", "minimum": -1, "maximum": 1 },
+        "ammoDropChanceMinimum": { "type": "number", "minimum": 0, "maximum": 1 },
+        "repeatConsumablePurchases": { "type": "boolean", "x-stability": "experimental" },
+        "clothingRepairEnabled": { "type": "boolean", "x-stability": "experimental" },
+        "clothingRepairCostMultiplier": { "type": "number", "minimum": 0, "maximum": 10, "x-stability": "experimental" }
+		,"ammoDropLifetimeSeconds": { "type": "number", "minimum": 1, "maximum": 600, "x-stability": "experimental" }
+		,"vendorsAlwaysAvailable": { "type": "boolean", "x-stability": "experimental" }
+		,"itemValueOffsets": { "$ref": "#/$defs/itemOffsets" }
+		,"weaponAmmoCapacityOffsets": { "$ref": "#/$defs/weaponOffsets" }
+      }
+    },
+    "weaponTuning": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "weaponTuning" },
+        "pistolEquipSeconds": { "$ref": "#/$defs/timing" },
+        "pistolReloadSeconds": { "$ref": "#/$defs/timing" },
+        "smgOneHandedEquipSeconds": { "$ref": "#/$defs/timing" },
+        "smgOneHandedReloadSeconds": { "$ref": "#/$defs/timing" },
+        "smgTwoHandedEquipSeconds": { "$ref": "#/$defs/timing" },
+        "smgTwoHandedReloadSeconds": { "$ref": "#/$defs/timing" },
+        "shotgunOneHandedEquipSeconds": { "$ref": "#/$defs/timing" },
+        "shotgunOneHandedReloadSeconds": { "$ref": "#/$defs/timing" },
+        "shotgunTwoHandedEquipSeconds": { "$ref": "#/$defs/timing" },
+        "shotgunTwoHandedReloadSeconds": { "$ref": "#/$defs/timing" },
+        "rifleEquipSeconds": { "$ref": "#/$defs/timing" },
+        "rifleReloadSeconds": { "$ref": "#/$defs/timing" },
+        "singleBarrelReloadSeconds": { "$ref": "#/$defs/timing" },
+        "minimumShotDelaySeconds": { "$ref": "#/$defs/timing" }
+      }
+    },
+    "playerRules": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "playerRules" },
+		"playerDamageTakenMultiplier": { "type": "number", "minimum": 0, "maximum": 10 },
+		"grantAllWeapons": { "type": "boolean", "x-stability": "experimental" },
+		"ignoreWeightLimit": { "type": "boolean", "x-stability": "experimental" },
+		"debugHotkeys": { "type": "boolean", "x-stability": "experimental" },
+		"startWithoutWeapon": { "type": "boolean", "x-stability": "experimental" },
+        "gunDamageMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10 },
+        "selfPleasureEnabled": { "type": "boolean", "x-stability": "experimental" },
+        "selfPleasurePerSecond": { "type": "number", "minimum": 0.1, "maximum": 1000, "x-stability": "experimental" },
+		"selfPleasureHeartCost": { "type": "integer", "minimum": 0, "maximum": 1, "x-stability": "experimental" }
+		,"enemyFinishersEnabled": { "type": "boolean", "x-stability": "experimental" }
+		,"clothingDamageEnabled": { "type": "boolean", "x-stability": "experimental" }
+		,"safeKnockouts": { "type": "boolean", "x-stability": "experimental" }
+		,"playerHealthMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10, "x-stability": "experimental" }
+		,"maximumHearts": { "type": "integer", "minimum": 1, "maximum": 12, "x-stability": "experimental" }
+		,"pleasureMaximumMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10, "x-stability": "experimental" }
+		,"libidoMaximumMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10, "x-stability": "experimental" }
+		,"pleasureGainMultiplier": { "type": "number", "minimum": 0, "maximum": 10, "x-stability": "experimental" }
+		,"rapeLibidoGainMultiplier": { "type": "number", "minimum": 0, "maximum": 10, "x-stability": "experimental" }
+		,"voluntaryExposeSkipsEscape": { "type": "boolean", "x-stability": "experimental" }
+		,"retainBuffsOnClimax": { "type": "boolean", "x-stability": "experimental" }
+		,"strengthDamageWhileRestrainedMultiplier": { "type": "number", "minimum": 0, "maximum": 10, "x-stability": "experimental" }
+		,"strengthDamageFreeMultiplier": { "type": "number", "minimum": 0, "maximum": 10, "x-stability": "experimental" }
+		,"clothingDamageChance": { "type": "number", "minimum": 0, "maximum": 1, "x-stability": "experimental" }
+		,"forceAutomaticWeapons": { "type": "boolean", "x-stability": "experimental" }
+		,"autoReloadOnEmpty": { "type": "boolean", "x-stability": "experimental" }
+		,"weaponRangeMultiplier": { "type": "number", "minimum": 0.1, "maximum": 10, "x-stability": "experimental" }
+		,"cameraZoomMultiplier": { "type": "number", "minimum": 0.25, "maximum": 4, "x-stability": "experimental" }
+      }
+    },
+    "consumableOverride": {
+      "type": "object", "additionalProperties": false, "required": ["type", "item"], "minProperties": 3,
+      "properties": {
+        "type": { "const": "consumableOverride" },
+        "item": { "enum": ["aspirin", "morphine", "anaphrodisiac", "buffout", "psycho", "second-wind", "siid-21"] },
+        "healthRestore": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "strengthRestoreMultiplier": { "type": "number", "minimum": 0, "maximum": 10 },
+        "libidoReduction": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "pleasureReduction": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "effectDurationSeconds": { "type": "number", "minimum": 0, "maximum": 100000 },
+        "restoreHeart": { "type": "boolean" },
+        "invulnerabilitySeconds": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "gunDamageBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "accelerationBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "sprintBonus": { "type": "number", "minimum": 0, "maximum": 100 },
+        "dashBonus": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "eventReward": {
+      "type": "object", "additionalProperties": false, "required": ["type", "trigger"], "minProperties": 3,
+      "properties": {
+        "type": { "const": "eventReward" },
+        "trigger": { "enum": ["enemyKilled", "playerClimax", "playerBirth", "playerInfusion", "playerImplantation"] },
+        "healthReward": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "strengthReward": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "pleasureReductionReward": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "libidoReductionReward": { "type": "number", "minimum": 0, "maximum": 10000 },
+        "moneyReward": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+		,"perCompletedExperimentMultiplier": { "type": "number", "minimum": 0, "maximum": 10 }
+      }
+    },
+    "experimentScaling": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "experimentScaling" },
+        "speedPerExperimentPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "dashPerExperimentPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "gunDamagePerExperimentPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "healthPerExperimentPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "knockbackPerExperimentPercent": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "scoringRules": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "scoringRules" },
+        "killScore": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "waveScore": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "damageTakenPenalty": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+      }
+    },
+    "goalRules": {
+      "type": "object", "additionalProperties": false, "required": ["type"], "minProperties": 2,
+      "properties": {
+        "type": { "const": "goalRules" },
+        "targetScore": { "type": "integer", "minimum": 1, "maximum": 100000000 },
+        "targetKills": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+        "targetWave": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "goalMatch": { "enum": ["all", "any"] },
+        "timeLimitSeconds": { "type": "number", "minimum": 1, "maximum": 86400 },
+        "maxDamageEvents": { "type": "integer", "minimum": 1, "maximum": 1000000 }
+      }
+    },
+    "itemOffsets": { "type": "object", "maxProperties": 64, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9._-]*:item/[a-z0-9][a-z0-9._/-]*$" }, "additionalProperties": { "type": "integer", "minimum": -100000, "maximum": 100000 } },
+    "weaponOffsets": { "type": "object", "maxProperties": 64, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9._-]*:item/weapon/[a-z0-9][a-z0-9._/-]*$" }, "additionalProperties": { "type": "integer", "minimum": -100000, "maximum": 100000 } },
+    "timing": { "type": "number", "minimum": 0.02, "maximum": 30 },
+    "multiplier": { "type": "number", "minimum": 0.1, "maximum": 10 },
+    "add": { "type": "integer", "minimum": -1000, "maximum": 1000 }
+  }
+}

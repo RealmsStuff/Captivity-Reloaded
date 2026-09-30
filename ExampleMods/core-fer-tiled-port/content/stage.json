@@ -1,0 +1,494 @@
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "example.core-fer-tiled-port:stage/fer-tiled-port",
+  "displayName": "FER (Tiled Port)",
+  "extends": "core:stage/furry-entertainment-robotics",
+  "description": "FER geometry, artwork, spawners, vendors, encounters, doors, weapon cases, fuses, display actors, and stage-specific sequences represented explicitly in Tiled and stage-script JSON.",
+  "layout": {
+    "type": "tiledJson",
+    "path": "levels/fer-port.json",
+    "pixelsPerUnit": 32,
+    "hideInheritedVisuals": true,
+    "preserveInheritedStageObjects": false,
+    "reuseInheritedSpawners": false
+  },
+  "camera": { "unbounded": true },
+  "waves": {
+    "firstWaveEnemyCount": 12
+  },
+  "spawners": [
+    {
+      "id": "fer-spawner-0",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorhalls-2"
+      ]
+    },
+    {
+      "id": "fer-spawner-1",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorhalls"
+      ]
+    },
+    {
+      "id": "fer-spawner-2",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorhalls-2"
+      ]
+    },
+    {
+      "id": "fer-spawner-3",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorhalls"
+      ]
+    },
+    {
+      "id": "fer-spawner-4",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-5",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-6",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-7",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-8",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-9",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": true,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-10",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorlab"
+      ]
+    },
+    {
+      "id": "fer-spawner-11",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorbasement"
+      ]
+    },
+    {
+      "id": "fer-spawner-12",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jenny",
+        "core:enemy/sunny"
+      ],
+      "selectionWeight": 0.225,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 3.0,
+      "initialDelayJitterSeconds": 3.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorlab"
+      ]
+    },
+    {
+      "id": "fer-spawner-13",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/abby"
+      ],
+      "selectionWeight": 0.1,
+      "minimumWave": 0,
+      "delaySeconds": 15.0,
+      "delayJitterSeconds": 7.5,
+      "initialDelaySeconds": 20.0,
+      "initialDelayJitterSeconds": 10.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorbasement"
+      ]
+    },
+    {
+      "id": "fer-spawner-14",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/abby"
+      ],
+      "selectionWeight": 0.1,
+      "minimumWave": 0,
+      "delaySeconds": 15.0,
+      "delayJitterSeconds": 7.5,
+      "initialDelaySeconds": 20.0,
+      "initialDelayJitterSeconds": 10.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorbasement"
+      ]
+    },
+    {
+      "id": "fer-spawner-15",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/abby"
+      ],
+      "selectionWeight": 0.1,
+      "minimumWave": 0,
+      "delaySeconds": 15.0,
+      "delayJitterSeconds": 7.5,
+      "initialDelaySeconds": 20.0,
+      "initialDelayJitterSeconds": 10.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorbasement"
+      ]
+    },
+    {
+      "id": "fer-spawner-16",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/abby"
+      ],
+      "selectionWeight": 0.1,
+      "minimumWave": 0,
+      "delaySeconds": 15.0,
+      "delayJitterSeconds": 7.5,
+      "initialDelaySeconds": 20.0,
+      "initialDelayJitterSeconds": 10.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": [
+        "int-doorbasement"
+      ]
+    },
+    {
+      "id": "fer-spawner-17",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 0.075,
+      "minimumWave": 0,
+      "delaySeconds": 5.0,
+      "delayJitterSeconds": 5.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-18",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 0.035,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-19",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 0.035,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-20",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 0.035,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-21",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 0.035,
+      "minimumWave": 0,
+      "delaySeconds": 3.0,
+      "delayJitterSeconds": 3.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": true,
+      "enabled": false,
+      "requiredOpenDoors": []
+    },
+    {
+      "id": "fer-spawner-22",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "enemies": [
+        "core:enemy/jacky"
+      ],
+      "selectionWeight": 1.0,
+      "minimumWave": 0,
+      "delaySeconds": 5.0,
+      "delayJitterSeconds": 0.0,
+      "initialDelaySeconds": 0.0,
+      "initialDelayJitterSeconds": 0.0,
+      "spawnOutOfSight": false,
+      "enabled": false,
+      "requiredOpenDoors": []
+    }
+  ]
+}

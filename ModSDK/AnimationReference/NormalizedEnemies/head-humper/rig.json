@@ -1,0 +1,743 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/head-humper",
+  "enemy": "core:enemy/head-humper",
+  "prefab": "Assets/Actors/Npcs/npc_headHumper.prefab",
+  "controller": "Assets/AnimatorController/SkeletonHeadHumper.controller",
+  "sampleRoot": "SkeletonHeadHumper",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "skeleton-head-humper",
+      "parent": "root",
+      "unityPath": "SkeletonHeadHumper",
+      "unityPaths": [
+        "SkeletonHeadHumper"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "skeleton-head-humper",
+      "unityPath": "SkeletonHeadHumper/hips",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips",
+        "SkeletonHeadHumper/hips/bp_hips"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/bp_hips",
+          "name": "Hips_5",
+          "asset": "Assets/Sprite/Hips_5.asset",
+          "pivotX": 0.454228729,
+          "pivotY": 0.383248121,
+          "width": 21.84776,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 10
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-base",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/lLegBackBase",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/lLegBackBase",
+        "SkeletonHeadHumper/hips/lLegBackBase/bp_lLegBackBase"
+      ],
+      "defaultTransform": {
+        "x": -0.094,
+        "y": 0.032,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/lLegBackBase/bp_lLegBackBase",
+          "name": "LegBackBase",
+          "asset": "Assets/Sprite/LegBackBase.asset",
+          "pivotX": 0.694519341,
+          "pivotY": 0.30548057,
+          "width": 12.8477592,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    {
+      "name": "penis-base",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/penisBase",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/penisBase",
+        "SkeletonHeadHumper/hips/penisBase/bp_penisBase"
+      ],
+      "defaultTransform": {
+        "x": -0.172,
+        "y": -0.0624,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 270.0,
+        "scaleX": 0.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/penisBase/bp_penisBase",
+          "name": "Penis_6",
+          "asset": "Assets/Sprite/Penis_6.asset",
+          "pivotX": 0.2473433,
+          "pivotY": 0.5025728,
+          "width": 7.9741745,
+          "height": 4.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-base",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/rLegBackBase",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/rLegBackBase",
+        "SkeletonHeadHumper/hips/rLegBackBase/bp_rLegBackBase"
+      ],
+      "defaultTransform": {
+        "x": -0.094,
+        "y": 0.032,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/rLegBackBase/bp_rLegBackBase",
+          "name": "LegBackBase",
+          "asset": "Assets/Sprite/LegBackBase.asset",
+          "pivotX": 0.694519341,
+          "pivotY": 0.30548057,
+          "width": 12.8477592,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 15
+        }
+      ]
+    },
+    {
+      "name": "sack",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/sack",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/sack",
+        "SkeletonHeadHumper/hips/sack/bp_sack"
+      ],
+      "defaultTransform": {
+        "x": -0.1563,
+        "y": 0.002,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/sack/bp_sack",
+          "name": "Sack",
+          "asset": "Assets/Sprite/Sack.asset",
+          "pivotX": 0.8499322,
+          "pivotY": 0.609392166,
+          "width": 19.84776,
+          "height": 14.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "torso-front",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront",
+        "SkeletonHeadHumper/hips/torsoFront/bp_torsoFront"
+      ],
+      "defaultTransform": {
+        "x": 0.2191,
+        "y": 0.0312,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/bp_torsoFront",
+          "name": "TorsoFront",
+          "asset": "Assets/Sprite/TorsoFront.asset",
+          "pivotX": 0.150857732,
+          "pivotY": 0.4988858,
+          "width": 12.8477592,
+          "height": 9.869753,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "torso-back",
+      "parent": "hips",
+      "unityPath": "SkeletonHeadHumper/hips/bp_hips/bp_torsoBack",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/bp_hips/bp_torsoBack"
+      ],
+      "defaultTransform": {
+        "x": -0.03,
+        "y": 0.019,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/bp_hips/bp_torsoBack",
+          "name": "TorsoBack",
+          "asset": "Assets/Sprite/TorsoBack.asset",
+          "pivotX": 0.7897015,
+          "pivotY": 0.600326359,
+          "width": 13.8477592,
+          "height": 10.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 7
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-mid",
+      "parent": "l-leg-back-base",
+      "unityPath": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid",
+        "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/bp_lLegBackMid"
+      ],
+      "defaultTransform": {
+        "x": -0.2027,
+        "y": 0.2182,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/bp_lLegBackMid",
+          "name": "LegBackMid",
+          "asset": "Assets/Sprite/LegBackMid.asset",
+          "pivotX": 0.685609639,
+          "pivotY": 0.787822366,
+          "width": 10.8919077,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -16
+        }
+      ]
+    },
+    {
+      "name": "penis1",
+      "parent": "penis-base",
+      "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/penisBase/penis1",
+        "SkeletonHeadHumper/hips/penisBase/penis1/bp_penis1"
+      ],
+      "defaultTransform": {
+        "x": 0.0935,
+        "y": 0.0001,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/bp_penis1",
+          "name": "Penis_6",
+          "asset": "Assets/Sprite/Penis_6.asset",
+          "pivotX": 0.2473433,
+          "pivotY": 0.5025728,
+          "width": 7.9741745,
+          "height": 4.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-mid",
+      "parent": "r-leg-back-base",
+      "unityPath": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid",
+        "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/bp_rLegBackMid"
+      ],
+      "defaultTransform": {
+        "x": -0.2027,
+        "y": 0.2182,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/bp_rLegBackMid",
+          "name": "LegBackMid",
+          "asset": "Assets/Sprite/LegBackMid.asset",
+          "pivotX": 0.685609639,
+          "pivotY": 0.787822366,
+          "width": 10.8919077,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 16
+        }
+      ]
+    },
+    {
+      "name": "l-leg-front-base",
+      "parent": "torso-front",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase",
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/bp_lLegFrontBase"
+      ],
+      "defaultTransform": {
+        "x": 0.06,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/bp_lLegFrontBase",
+          "name": "LegFrontBase",
+          "asset": "Assets/Sprite/LegFrontBase.asset",
+          "pivotX": 0.303455442,
+          "pivotY": 0.305190235,
+          "width": 12.8477592,
+          "height": 12.8599815,
+          "sortingLayer": "Actor",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    {
+      "name": "r-leg-front-base",
+      "parent": "torso-front",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase",
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/bp_rLegFrontBase"
+      ],
+      "defaultTransform": {
+        "x": 0.06,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/bp_rLegFrontBase",
+          "name": "LegFrontBase",
+          "asset": "Assets/Sprite/LegFrontBase.asset",
+          "pivotX": 0.303455442,
+          "pivotY": 0.305190235,
+          "width": 12.8477592,
+          "height": 12.8599815,
+          "sortingLayer": "Actor",
+          "sortingOrder": 15
+        }
+      ]
+    },
+    {
+      "name": "l-leg-back-lower",
+      "parent": "l-leg-back-mid",
+      "unityPath": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower",
+        "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower/bp_lLegBackLower"
+      ],
+      "defaultTransform": {
+        "x": -0.1254,
+        "y": -0.2804,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower/bp_lLegBackLower",
+          "name": "LegBackLower_0",
+          "asset": "Assets/Sprite/LegBackLower_0.asset",
+          "pivotX": 0.436792344,
+          "pivotY": 0.75557816,
+          "width": 7.921932,
+          "height": 11.9109669,
+          "sortingLayer": "Actor",
+          "sortingOrder": -15
+        }
+      ]
+    },
+    {
+      "name": "penis2",
+      "parent": "penis1",
+      "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2",
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2/bp_penis2"
+      ],
+      "defaultTransform": {
+        "x": 0.125,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/bp_penis2",
+          "name": "Penis_6",
+          "asset": "Assets/Sprite/Penis_6.asset",
+          "pivotX": 0.2473433,
+          "pivotY": 0.5025728,
+          "width": 7.9741745,
+          "height": 4.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "r-leg-back-lower",
+      "parent": "r-leg-back-mid",
+      "unityPath": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower",
+        "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower/bp_rLegBackLower"
+      ],
+      "defaultTransform": {
+        "x": -0.1254,
+        "y": -0.2804,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower/bp_rLegBackLower",
+          "name": "LegBackLower_0",
+          "asset": "Assets/Sprite/LegBackLower_0.asset",
+          "pivotX": 0.436792344,
+          "pivotY": 0.75557816,
+          "width": 7.921932,
+          "height": 11.9109669,
+          "sortingLayer": "Actor",
+          "sortingOrder": 17
+        }
+      ]
+    },
+    {
+      "name": "l-leg-front-mid",
+      "parent": "l-leg-front-base",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid",
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/bp_lLegFrontMid"
+      ],
+      "defaultTransform": {
+        "x": 0.2043,
+        "y": 0.2182,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/bp_lLegFrontMid",
+          "name": "LegFrontMid",
+          "asset": "Assets/Sprite/LegFrontMid.asset",
+          "pivotX": 0.315624535,
+          "pivotY": 0.790672,
+          "width": 10.8919086,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -16
+        }
+      ]
+    },
+    {
+      "name": "r-leg-front-mid",
+      "parent": "r-leg-front-base",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid",
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/bp_rLegFrontMid"
+      ],
+      "defaultTransform": {
+        "x": 0.2043,
+        "y": 0.2182,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/bp_rLegFrontMid",
+          "name": "LegFrontMid",
+          "asset": "Assets/Sprite/LegFrontMid.asset",
+          "pivotX": 0.315624535,
+          "pivotY": 0.790672,
+          "width": 10.8919086,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 16
+        }
+      ]
+    },
+    {
+      "name": "penis3",
+      "parent": "penis2",
+      "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3",
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/bp_penis3"
+      ],
+      "defaultTransform": {
+        "x": 0.125,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/bp_penis3",
+          "name": "Penis_6",
+          "asset": "Assets/Sprite/Penis_6.asset",
+          "pivotX": 0.2473433,
+          "pivotY": 0.5025728,
+          "width": 7.9741745,
+          "height": 4.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    },
+    {
+      "name": "l-leg-front-lower",
+      "parent": "l-leg-front-mid",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower",
+        "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower/bp_lLegFrontLower"
+      ],
+      "defaultTransform": {
+        "x": 0.1263,
+        "y": -0.2804,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower/bp_lLegFrontLower",
+          "name": "LegFrontLower_0",
+          "asset": "Assets/Sprite/LegFrontLower_0.asset",
+          "pivotX": 0.5695241,
+          "pivotY": 0.7509433,
+          "width": 7.946499,
+          "height": 11.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -15
+        }
+      ]
+    },
+    {
+      "name": "r-leg-front-lower",
+      "parent": "r-leg-front-mid",
+      "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower",
+        "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower/bp_rLegFrontLower"
+      ],
+      "defaultTransform": {
+        "x": 0.1263,
+        "y": -0.2804,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower/bp_rLegFrontLower",
+          "name": "LegFrontLower_0",
+          "asset": "Assets/Sprite/LegFrontLower_0.asset",
+          "pivotX": 0.5695241,
+          "pivotY": 0.7509433,
+          "width": 7.946499,
+          "height": 11.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 17
+        }
+      ]
+    },
+    {
+      "name": "penis-tip",
+      "parent": "penis3",
+      "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip",
+      "unityPaths": [
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip",
+        "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip/bp_penisTip"
+      ],
+      "defaultTransform": {
+        "x": 0.125,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip/bp_penisTip",
+          "name": "Penis_6",
+          "asset": "Assets/Sprite/Penis_6.asset",
+          "pivotX": 0.2473433,
+          "pivotY": 0.5025728,
+          "width": 7.9741745,
+          "height": 4.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 8
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/challenge.schema.json",
+  "title": "Captivity Reloaded Challenge",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "description"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "challenge", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/challengeId", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "description": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/challengeId", "x-stability": "stable" },
+    "objective": { "$ref": "#/$defs/objectiveName", "x-stability": "stable" },
+    "count": { "$ref": "#/$defs/count", "x-stability": "stable" },
+    "stage": { "$ref": "#/$defs/stageId", "x-stability": "stable" },
+    "enemies": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/enemyId" }, "description": "Allowlist for killCount, weaponKillCount, rapeCount, orgasmCount, and impregnationCount. Core and external enemy IDs may be mixed.", "x-stability": "stable" },
+    "items": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/itemId" }, "x-stability": "stable" },
+    "steps": { "type": "array", "minItems": 1, "maxItems": 32, "items": { "$ref": "#/$defs/objective" }, "x-stability": "experimental" },
+    "rewards": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/clothingId" }, "x-stability": "stable" },
+    "rewardBundle": {
+      "type": "object", "additionalProperties": false, "minProperties": 1,
+      "properties": {
+        "currency": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "items": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/itemGrant" } },
+        "weapons": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/weaponGrant" } },
+        "content": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/contentId" } }
+      },
+      "x-stability": "experimental"
+    }
+  },
+  "anyOf": [{ "required": ["rewards"] }, { "required": ["rewardBundle"] }],
+  "oneOf": [
+    { "required": ["extends"], "not": { "anyOf": [{ "required": ["objective"] }, { "required": ["count"] }, { "required": ["enemies"] }, { "required": ["items"] }, { "required": ["steps"] }] } },
+    { "required": ["objective", "count"], "not": { "anyOf": [{ "required": ["extends"] }, { "required": ["steps"] }] } },
+    { "required": ["steps"], "not": { "anyOf": [{ "required": ["extends"] }, { "required": ["objective"] }, { "required": ["count"] }, { "required": ["enemies"] }, { "required": ["items"] }] } }
+  ],
+  "$defs": {
+    "contentId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:[a-z0-9][a-z0-9._/-]*$" },
+    "challengeId": { "allOf": [{ "$ref": "#/$defs/contentId" }, { "pattern": ":challenge/" }] },
+    "stageId": { "allOf": [{ "$ref": "#/$defs/contentId" }, { "pattern": ":stage/" }] },
+    "enemyId": { "allOf": [{ "$ref": "#/$defs/contentId" }, { "pattern": ":enemy/" }] },
+    "itemId": { "allOf": [{ "$ref": "#/$defs/contentId" }, { "pattern": ":item/" }] },
+    "clothingId": { "allOf": [{ "$ref": "#/$defs/contentId" }, { "pattern": ":clothing/" }] },
+    "count": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+    "objectiveName": { "enum": ["killCount", "reachWave", "surviveWaves", "pickupCount", "interactionCount", "shotsFired", "damageTaken", "birthCount", "impregnationCount", "rapeCount", "orgasmCount", "mindBreakCount", "useItemCount", "weaponKillCount", "flawlessWaves"] },
+    "objective": {
+      "type": "object", "additionalProperties": false, "required": ["objective", "count"],
+      "properties": {
+        "objective": { "$ref": "#/$defs/objectiveName" }, "count": { "$ref": "#/$defs/count" },
+        "enemies": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/enemyId" } },
+        "items": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/itemId" } }
+      }
+    },
+    "itemGrant": { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "$ref": "#/$defs/itemId" }, "amount": { "type": "integer", "minimum": 1, "maximum": 99 } } },
+    "weaponGrant": { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "$ref": "#/$defs/itemId" }, "amount": { "const": 1 } } }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/musca",
+  "displayName": "Animation Reference - Musca",
+  "description": "Reference copy of the large flying Musca animation family. It does not join normal spawners.",
+  "extends": "core:enemy/musca",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-primary": "example.animation-reference-gallery:enemy-animation/musca/attack-primary",
+    "carry": "example.animation-reference-gallery:enemy-animation/musca/carry",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-3",
+    "finisher-phase-4": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-4",
+    "finisher-phase-5": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-5",
+    "finisher-phase-6": "example.animation-reference-gallery:enemy-animation/musca/finisher-phase-6",
+    "move": "example.animation-reference-gallery:enemy-animation/musca/move",
+    "wings-active": "example.animation-reference-gallery:enemy-animation/musca/wings-active"
+  }
+}

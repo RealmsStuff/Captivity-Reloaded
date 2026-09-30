@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/spider-mother/upper-body-move",
+  "enemy": "core:enemy/spider-mother",
+  "displayName": "spider-mother upper-body-move",
+  "durationSeconds": 1.0,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/chest",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 9.594001
+        },
+        {
+          "time": 0.5,
+          "value": 4.79700041,
+          "inTangent": -3.81469727E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": -9.593997,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 4.89500046,
+          "inTangent": 0.0,
+          "outTangent": -6.07000065
+        },
+        {
+          "time": 0.5,
+          "value": 1.86000013,
+          "inTangent": -1.90734863E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 4.89500046,
+          "inTangent": 6.07000256,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": -10.036
+        },
+        {
+          "time": 0.5,
+          "value": -5.018,
+          "inTangent": -3.81469727E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 10.0360041,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-left",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 24.3300018
+        },
+        {
+          "time": 0.5,
+          "value": 12.1650009,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": -24.3300018,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": -6.71200037
+        },
+        {
+          "time": 0.5,
+          "value": -3.35600019,
+          "inTangent": -1.90734863E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 6.71200228,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -5.65800047,
+          "inTangent": 0.0,
+          "outTangent": -5.606
+        },
+        {
+          "time": 0.5,
+          "value": -8.461,
+          "inTangent": -1.90734863E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": -5.65800047,
+          "inTangent": 5.606002,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 3.66,
+          "inTangent": 0.0,
+          "outTangent": -10.6640005
+        },
+        {
+          "time": 0.5,
+          "value": -1.672,
+          "inTangent": 3.81469727E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 3.66,
+          "inTangent": 10.6639967,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-right",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": -13.2300005
+        },
+        {
+          "time": 0.5,
+          "value": -6.61500025,
+          "inTangent": -3.81469727E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 13.2300043,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/WalkUpperBody.anim",
+    "semanticName": "upper-body-move"
+  }
+}

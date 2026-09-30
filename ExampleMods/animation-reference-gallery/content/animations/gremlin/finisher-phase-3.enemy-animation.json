@@ -1,0 +1,426 @@
+﻿{
+    "schemaVersion":  1,
+    "type":  "enemyAnimation",
+    "id":  "example.animation-reference-gallery:enemy-animation/gremlin/finisher-phase-3",
+    "enemy":  "example.animation-reference-gallery:enemy/gremlin",
+    "displayName":  "Gremlin Finisher Phase 3 Reference",
+    "durationSeconds":  0.166666672,
+    "frameRate":  60.0,
+    "loop":  true,
+    "tracks":  [
+                   {
+                       "target":  "sprite/r-weapon",
+                       "property":  "sortingOrder",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  0.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  0.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hips",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -12.3770008,
+                                        "inTangent":  0.0,
+                                        "outTangent":  21.288002
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -10.6030006,
+                                        "inTangent":  5.40416067E-09,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -12.3770008,
+                                        "inTangent":  -21.2879982,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/spine",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -14.468,
+                                        "inTangent":  0.0,
+                                        "outTangent":  281.604
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  8.999001,
+                                        "inTangent":  -7.4259915E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -14.468,
+                                        "inTangent":  -281.6039,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/chest",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -53.2300034,
+                                        "inTangent":  0.0,
+                                        "outTangent":  -160.476013
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -66.6030045,
+                                        "inTangent":  -1.21482253E-06,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -53.2300034,
+                                        "inTangent":  160.475983,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/neck",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -4.242,
+                                        "inTangent":  0.0,
+                                        "outTangent":  -220.188
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -22.5910015,
+                                        "inTangent":  -7.03905462E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -4.242,
+                                        "inTangent":  220.188049,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/arm-right-upper",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  16.5910015,
+                                        "inTangent":  0.0,
+                                        "outTangent":  207.348
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  33.8700027,
+                                        "inTangent":  8.209372E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  16.5910015,
+                                        "inTangent":  -207.3481,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hand-right",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  0.0,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -22.1710014,
+                                        "inTangent":  4.75738E-05,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  0.0,
+                                        "inTangent":  -4.75738E-05,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/leg-left-upper",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  44.5590019,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  44.5590019,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/leg-left-lower",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -46.8290024,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -46.8290024,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/foot-left",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -28.3760014,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -28.3760014,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/leg-right-upper",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  44.5590019,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  44.5590019,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/leg-right-lower",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -46.8290024,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -46.8290024,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/foot-right",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -28.3760014,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -28.3760014,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/arm-left-upper",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  61.5910034,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  61.5910034,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/arm-left-lower",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  38.656002,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  38.656002,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/head",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  38.2870026,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  38.2870026,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/arm-right-lower",
+                       "property":  "rotation.z",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  14.500001,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  14.500001,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hips",
+                       "property":  "position.x",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -0.152,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.947999954
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -0.073,
+                                        "inTangent":  4.593533E-08,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -0.152,
+                                        "inTangent":  -0.9479999,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   },
+                   {
+                       "target":  "bone/hips",
+                       "property":  "position.y",
+                       "keys":  [
+                                    {
+                                        "time":  0.0,
+                                        "value":  -0.484,
+                                        "inTangent":  0.0,
+                                        "outTangent":  0.600000143
+                                    },
+                                    {
+                                        "time":  0.0833333358,
+                                        "value":  -0.434,
+                                        "inTangent":  7.947277E-09,
+                                        "outTangent":  0.0
+                                    },
+                                    {
+                                        "time":  0.166666672,
+                                        "value":  -0.484,
+                                        "inTangent":  -0.6,
+                                        "outTangent":  0.0
+                                    }
+                                ]
+                   }
+               ],
+    "objectTracks":  [
+
+                     ],
+    "events":  [
+                   {
+                       "time":  0.0833333358,
+                       "type":  "cue",
+                       "amount":  0.0,
+                       "cue":  "finisher.thrust"
+                   }
+               ],
+    "effects":  [
+
+                ],
+    "effectTriggers":  [
+
+                       ],
+    "warnings":  [
+
+                 ],
+    "source":  {
+                   "unityClip":  "Assets/AnimationClip/Rape3_3.anim",
+                   "semanticName":  "finisher-phase-3"
+               }
+}

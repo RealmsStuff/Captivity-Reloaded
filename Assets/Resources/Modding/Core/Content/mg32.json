@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/mg32",
+  "legacyName": "MG32",
+  "displayName": "MG32",
+  "description": "",
+  "stats": {
+    "damage": 3,
+    "ammoMax": 750,
+    "magazineSize": 250,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.025,
+    "recoil": 0.5,
+    "movementRecoil": 0.0,
+    "knockbackX": 0.5,
+    "knockbackY": 0.5,
+    "equipSeconds": 0.0,
+    "weight": 5,
+    "value": 3000,
+    "infiniteAmmo": false,
+    "semiAutomatic": false,
+    "marketable": true,
+    "holdType": "TwoHanded1",
+    "reloadType": "Magazine"
+  }
+}

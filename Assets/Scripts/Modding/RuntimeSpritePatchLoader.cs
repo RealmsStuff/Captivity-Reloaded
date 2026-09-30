@@ -7,7 +7,8 @@ namespace CaptivityReloaded.Modding
 	public static class RuntimeSpritePatchLoader
 	{
 		public static List<AssetPatchRequest> Load(IEnumerable<AssetPatchDefinition> i_definitions,
-			IEnumerable<ModPack> i_packs, AssetSlotRegistry i_slots, ValidationReport io_report)
+			IEnumerable<ModPack> i_packs, AssetSlotRegistry i_slots, ValidationReport io_report,
+			ISet<ContentId> i_excludedSlots = null, bool i_deferUnknownSlots = false)
 		{
 			List<AssetPatchRequest> requests = new List<AssetPatchRequest>();
 			Dictionary<string, ModPack> packs = new Dictionary<string, ModPack>(StringComparer.Ordinal);
@@ -23,8 +24,10 @@ namespace CaptivityReloaded.Modding
 				}
 				foreach (AssetReplacementDefinition replacement in definition.Replacements)
 				{
+					if (i_excludedSlots != null && i_excludedSlots.Contains(replacement.SlotId)) continue;
 					if (!i_slots.TryGet(replacement.SlotId, out AssetSlotRegistration slot))
 					{
+						if (i_deferUnknownSlots) continue;
 						io_report?.Add(ValidationSeverity.Error, "asset-patch.target", "Patch targets an unknown public asset slot: " + replacement.SlotId, definition.Source);
 						continue;
 					}
@@ -34,15 +37,14 @@ namespace CaptivityReloaded.Modding
 						continue;
 					}
 					if (!RuntimePngAssetLoader.TryLoad(pack.RootPath, replacement.AssetPath,
-						definition.Id + "/" + replacement.SlotId.Path, baseline.texture.filterMode, io_report,
+						definition.Id + "/" + replacement.SlotId.Path, FilterMode.Point, io_report,
 						"asset-patch.file", "asset-patch.decode", definition.Source, out Texture2D texture)) continue;
-					Vector2 pivot = new Vector2(baseline.pivot.x / baseline.rect.width, baseline.pivot.y / baseline.rect.height);
-					Rect rect = baseline.rect;
-					if (rect.xMin < 0 || rect.yMin < 0 || rect.xMax > texture.width || rect.yMax > texture.height)
-						rect = new Rect(0, 0, texture.width, texture.height);
+					Vector2 pivot = RuntimePngAssetLoader.GetReplacementPivot(baseline, texture.width, texture.height);
+					Rect rect = new Rect(0, 0, texture.width, texture.height);
 					Sprite sprite = Sprite.Create(texture, rect, pivot, baseline.pixelsPerUnit, 0, SpriteMeshType.FullRect, baseline.border);
 					sprite.name = texture.name;
-					requests.Add(new AssetPatchRequest(definition.Id, replacement.SlotId, definition.PackId, definition.Source, sprite));
+					bool authorized = pack.Manifest.Overrides != null && pack.Manifest.Overrides.Contains(replacement.SlotId.ToString());
+					requests.Add(new AssetPatchRequest(definition.Id, replacement.SlotId, definition.PackId, definition.Source, sprite, authorized));
 				}
 			}
 			return requests;

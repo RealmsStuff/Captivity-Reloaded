@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/tiled-map.schema.json",
+  "title": "Captivity Reloaded Tiled Map Subset",
+  "description": "Experimental schema for finite orthogonal Tiled JSON consumed by Mod API v1. Tiled may emit additional editor metadata, so document objects remain open while gameplay classes and runtime fields are constrained by the loader.",
+  "x-stability": "experimental",
+  "type": "object",
+  "required": ["orientation", "width", "height", "tilewidth", "tileheight", "layers", "tilesets"],
+  "properties": {
+    "orientation": { "const": "orthogonal", "x-stability": "experimental" },
+    "infinite": { "const": false, "default": false, "x-stability": "experimental" },
+    "width": { "type": "integer", "minimum": 1, "maximum": 4096, "x-stability": "experimental" },
+    "height": { "type": "integer", "minimum": 1, "maximum": 4096, "x-stability": "experimental" },
+    "tilewidth": { "type": "integer", "minimum": 1, "maximum": 4096, "x-stability": "experimental" },
+    "tileheight": { "type": "integer", "minimum": 1, "maximum": 4096, "x-stability": "experimental" },
+    "layers": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/layer" }, "x-stability": "experimental" },
+    "tilesets": { "type": "array", "items": { "$ref": "#/$defs/tileset" }, "x-stability": "experimental" }
+  },
+  "$defs": {
+    "safePath": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\).+$" },
+    "layer": { "type": "object", "required": ["type"], "properties": {
+      "type": { "enum": ["tilelayer", "objectgroup", "imagelayer", "group"] }, "name": { "type": "string" },
+      "offsetx": { "type": "number" }, "offsety": { "type": "number" }, "x": { "type": "integer" }, "y": { "type": "integer" },
+      "width": { "type": "integer", "minimum": 0 }, "height": { "type": "integer", "minimum": 0 }, "opacity": { "type": "number", "minimum": 0, "maximum": 1 }, "visible": { "type": "boolean" },
+      "data": { "type": "array", "items": { "type": "integer", "minimum": 0, "maximum": 4294967295 } },
+      "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" } }, "objects": { "type": "array", "items": { "$ref": "#/$defs/object" } },
+      "image": { "$ref": "#/$defs/safePath" }, "repeatx": { "type": "boolean" }, "repeaty": { "type": "boolean" }
+    } },
+    "tileset": { "type": "object", "properties": {
+      "firstgid": { "type": "integer", "minimum": 1 }, "source": { "$ref": "#/$defs/safePath" }, "name": { "type": "string" },
+      "tilewidth": { "type": "integer", "minimum": 1 }, "tileheight": { "type": "integer", "minimum": 1 }, "tilecount": { "type": "integer", "minimum": 1 }, "columns": { "type": "integer", "minimum": 1 },
+      "spacing": { "type": "integer", "minimum": 0 }, "margin": { "type": "integer", "minimum": 0 }, "image": { "$ref": "#/$defs/safePath" }, "imagewidth": { "type": "integer", "minimum": 1 }, "imageheight": { "type": "integer", "minimum": 1 }
+    } },
+    "object": { "type": "object", "properties": {
+      "template": { "$ref": "#/$defs/safePath" }, "id": { "type": "integer", "minimum": 0 }, "name": { "type": "string" },
+      "type": { "$ref": "#/$defs/gameplayClass" }, "class": { "$ref": "#/$defs/gameplayClass" },
+      "x": { "type": "number", "minimum": -100000, "maximum": 100000 }, "y": { "type": "number", "minimum": -100000, "maximum": 100000 },
+      "width": { "type": "number", "minimum": 0, "maximum": 100000 }, "height": { "type": "number", "minimum": 0, "maximum": 100000 },
+      "point": { "type": "boolean" }, "gid": { "type": "integer", "minimum": 0, "maximum": 4294967295 }, "rotation": { "type": "number" }, "visible": { "type": "boolean" },
+      "properties": { "type": "array", "items": { "$ref": "#/$defs/property" } }
+    } },
+    "gameplayClass": { "type": "string", "enum": ["", "platform", "player-spawn", "enemy-spawner", "scripted-actor", "decoration", "weapon-vendor", "usable-vendor", "weapon-case", "door", "door-switch", "core-art", "core-prop", "core-stage-object", "stage-marker", "stage-item", "note", "keypad", "altar", "interaction", "machine", "logic-switch", "easter-egg-step", "light-bulb", "proximity-light", "freeform-light", "global-light", "point-light", "pickup", "moving-platform", "particle-emitter", "nav-node", "ambient-audio", "audio-source", "room", "room-entry", "room-transition", "script-trigger"] },
+    "property": { "type": "object", "additionalProperties": false, "required": ["name", "type", "value"], "properties": { "name": { "type": "string", "minLength": 1 }, "type": { "enum": ["string", "file", "bool", "int", "float", "color"] }, "value": {} } }
+  }
+}

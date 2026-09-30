@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/clothing.schema.json",
+  "title": "Captivity Reloaded Clothing",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "visual"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" }, "type": { "const": "clothing", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/clothingId", "x-stability": "stable" }, "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/coreClothingId", "x-stability": "stable" }, "description": { "type": "string", "x-stability": "stable" },
+    "unlockedByDefault": { "type": "boolean", "default": false, "x-stability": "stable" },
+    "category": { "$ref": "#/$defs/category", "x-stability": "experimental" },
+    "incompatibleCategories": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/category" }, "x-stability": "experimental" },
+    "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" }, "effects": { "$ref": "#/$defs/effects", "x-stability": "experimental" }
+  },
+  "allOf": [
+    { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalClothingSprites" } }, "required": ["type"] } } }, "then": {
+      "not": { "required": ["extends"] }, "required": ["category"],
+      "properties": { "visual": { "properties": {
+        "sprites": { "required": ["icon"], "minProperties": 2, "maxProperties": 33 },
+        "attachments": { "minProperties": 1, "additionalProperties": { "allOf": [
+          { "$ref": "#/$defs/attachment" }, { "required": ["bone"] }
+        ] } }
+      } } }
+    }, "else": { "required": ["extends"] } }
+  ],
+  "$defs": {
+    "clothingId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:clothing/[a-z0-9][a-z0-9._/-]*$" },
+    "coreClothingId": { "type": "string", "pattern": "^core:clothing/[a-z0-9][a-z0-9._/-]*$" },
+    "category": { "type": "string", "enum": ["Hair", "Upper", "Lower", "Shoes", "Hat", "Sleeves", "Stockings", "Other"] },
+    "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" },
+    "slot": { "type": "string", "pattern": "^(?:icon|piece/[a-z0-9][a-z0-9/-]*)$" },
+    "region": { "type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"], "properties": { "x": { "type": "integer", "minimum": 0 }, "y": { "type": "integer", "minimum": 0 }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } } },
+    "attachment": { "type": "object", "additionalProperties": false, "properties": {
+      "bone": { "enum": ["Hips", "Butt", "Spine", "Chest", "Neck", "Head", "rArmUpper", "rArmLower", "rHand", "lArmUpper", "lArmLower", "lHand", "rLegUpper", "rLegLower", "rFoot", "lLegUpper", "lLegLower", "lFoot", "Ear", "Face"] },
+      "offsetX": { "type": "number", "minimum": -10, "maximum": 10 }, "offsetY": { "type": "number", "minimum": -10, "maximum": 10 },
+      "rotation": { "type": "number", "minimum": -360, "maximum": 360 }, "pivotX": { "type": "number", "minimum": 0, "maximum": 1 }, "pivotY": { "type": "number", "minimum": 0, "maximum": 1 },
+      "sortingOffset": { "type": "integer", "minimum": -100, "maximum": 100 }, "attachToBone": { "type": "boolean" }, "hideBodyPart": { "type": "boolean" },
+      "droppable": { "type": "boolean" }, "destroyable": { "type": "boolean" }, "dropOnOralThrust": { "type": "boolean" }, "destroyOnOralThrust": { "type": "boolean" },
+      "physics": { "$ref": "#/$defs/physics" }
+    } },
+    "physics": { "type": "object", "additionalProperties": false, "required": ["mode"], "properties": {
+      "mode": { "const": "sway" }, "spring": { "type": "number", "minimum": 0.1, "maximum": 200 },
+      "damping": { "type": "number", "minimum": 0, "maximum": 50 }, "gravity": { "type": "number", "minimum": 0, "maximum": 1 },
+      "motionInfluence": { "type": "number", "minimum": 0, "maximum": 10 }, "maxAngle": { "type": "number", "minimum": 0, "maximum": 90 }
+    }, "x-stability": "experimental" },
+    "bodyVariant": { "type": "object", "minProperties": 1, "maxProperties": 32, "propertyNames": { "pattern": "^piece/[a-z0-9][a-z0-9/-]*$" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
+    "visual": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
+      "type": { "enum": ["coreClothingAtlas", "coreClothingSprites", "originalClothingSprites"] }, "atlas": { "$ref": "#/$defs/pngPath" }, "sprites": { "type": "object", "propertyNames": { "$ref": "#/$defs/slot" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
+      "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024, "default": 32 }, "regions": { "type": "object", "propertyNames": { "$ref": "#/$defs/slot" }, "additionalProperties": { "$ref": "#/$defs/region" } },
+      "attachments": { "type": "object", "propertyNames": { "pattern": "^piece/[a-z0-9][a-z0-9/-]*$" }, "additionalProperties": { "$ref": "#/$defs/attachment" }, "x-stability": "experimental" },
+      "bodyVariants": { "type": "object", "maxProperties": 32, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" }, "additionalProperties": { "$ref": "#/$defs/bodyVariant" }, "x-stability": "experimental" }
+    }, "allOf": [
+      { "if": { "properties": { "type": { "const": "coreClothingAtlas" } } }, "then": { "required": ["atlas", "regions"], "properties": { "regions": { "minProperties": 1 } } } },
+      { "if": { "properties": { "type": { "const": "coreClothingSprites" } } }, "then": { "required": ["sprites"], "properties": { "sprites": { "minProperties": 1 } } } }
+      ,{ "if": { "properties": { "type": { "const": "originalClothingSprites" } } }, "then": { "required": ["sprites", "attachments"] } }
+    ] },
+    "effects": { "type": "object", "additionalProperties": false, "properties": {
+      "damageTakenMultiplier": { "type": "number", "minimum": 0.05, "maximum": 2 },
+      "statModifiers": { "type": "object", "maxProperties": 8, "propertyNames": { "enum": ["HealthMax", "SpeedAccel", "SpeedMax", "Traction", "DamageMultiplierGun", "SpeedSprint", "PowerJump", "PowerDash"] }, "additionalProperties": { "type": "number", "minimum": -10000, "maximum": 10000 } }
+    } }
+  }
+}

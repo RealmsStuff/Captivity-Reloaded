@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/death-hound",
+  "legacyId": 4,
+  "displayName": "Death Hound",
+  "stats": {
+    "healthMax": 15,
+    "speedAcceleration": 2,
+    "speedMax": 8,
+    "traction": 0,
+    "bounty": 50,
+    "healthIncreasePerWave": 1
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-charge-prepare": "core:enemy-animation/death-hound/attack-charge-prepare",
+    "attack-leap": "core:enemy-animation/death-hound/attack-leap",
+    "attack-primary": "core:enemy-animation/death-hound/attack-primary",
+    "finisher-phase-1": "core:enemy-animation/death-hound/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/death-hound/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/death-hound/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/death-hound/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/death-hound/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/death-hound/finisher-phase-6",
+    "finisher-phase-7": "core:enemy-animation/death-hound/finisher-phase-7",
+    "finisher-phase-8": "core:enemy-animation/death-hound/finisher-phase-8",
+    "idle": "core:enemy-animation/death-hound/idle",
+    "move": "core:enemy-animation/death-hound/move"
+  }
+}

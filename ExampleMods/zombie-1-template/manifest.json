@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "example.zombie-1-template",
+  "displayName": "Zombie I Template Test",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Captivity Reloaded contributors"],
+  "description": "Runtime test pack for the public LibreSprite Zombie I inherited-rig template.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

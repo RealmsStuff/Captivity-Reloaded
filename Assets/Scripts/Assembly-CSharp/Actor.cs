@@ -473,7 +473,8 @@ public abstract class Actor : MonoBehaviour
 
 	private IEnumerator CoroutineGetUp()
 	{
-		m_animator.Play("GetUp");
+		if (m_animator != null && m_animator.runtimeAnimatorController != null) m_animator.Play("GetUp");
+		else GetComponent<ModularEnemyAnimationController>()?.Play("idle", true);
 		yield return new WaitForSeconds(1f);
 		SetStateActor(StateActor.Idle);
 		SetIsThinking(i_isThinking: true);
@@ -704,6 +705,14 @@ public abstract class Actor : MonoBehaviour
 	public string GetName()
 	{
 		return m_name;
+	}
+
+	public void ConfigureModDrops(float? i_chance, IEnumerable<PickUpable> i_items)
+	{
+		if (i_chance.HasValue) m_chanceDropPickUpables01 = i_chance.Value;
+		if (i_items == null) return;
+		m_pickUpablesToDrop.Clear();
+		foreach (PickUpable item in i_items) if (item != null) m_pickUpablesToDrop.Add(item);
 	}
 
 	public void ConfigureModIdentity(string i_name)

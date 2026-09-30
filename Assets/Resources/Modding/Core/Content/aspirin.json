@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1, "type": "coreItem", "id": "core:item/usable/aspirin",
+  "legacyName": "Aspirin", "displayName": "Aspirin", "description": "",
+  "stats": { "weight": 0, "value": 250, "equipSeconds": 0.5, "marketable": true,
+    "goodEffectDescriptions": ["+35% lost Health"], "badEffectDescriptions": [] },
+  "effectMode": "replace",
+  "effects": [{ "type": "restoreHealth", "amount": 35 }]
+}

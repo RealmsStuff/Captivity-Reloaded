@@ -64,12 +64,7 @@ public class UtilityTools : MonoBehaviour
         {
             if (player != null)
             {
-                Vector3 playerPos = player.transform.position;
-                // Place the virtual target 10 units in front of the player horizontally
-                float directionOffset = player.GetIsFacingLeft() ? -10f : 10f;
-
-                // Keep the Y position aligned with the middle of the player's face/chest
-                return new Vector3(playerPos.x + directionOffset, playerPos.y + 0.5f, playerPos.z);
+				return CommonReferences.Instance.GetPlayerController().GetMobileAimWorldPosition(player.transform.position);
             }
         }
 
