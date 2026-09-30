@@ -37,6 +37,16 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_AcceptsRepositoryHostedCapmodArchives()
+		{
+			const string raw = "https://raw.githubusercontent.com/example/test-pack/main/release-assets/test-pack.capmod";
+			ModCatalogParseResult result = ModCatalogParser.Parse(ValidCatalog.Replace(
+				"https://github.com/example/test-pack/releases/download/v1.0.0/test-pack.zip", raw), "test");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Catalog.Packs.Single().Versions.Single().Download, Is.EqualTo(raw));
+		}
+
+		[Test]
 		public void PlatformPolicy_UsesDiskOnWindowsAndAndroid_AndBoundsWebGlMemoryDownloads()
 		{
 			Assert.That(ModCatalogPlatformPolicy.UsesMemoryDownload(RuntimePlatform.WindowsPlayer), Is.False);
@@ -83,13 +93,12 @@ namespace CaptivityReloaded.Modding.Tests
 			ModCatalogParseResult result = ModCatalogParser.Parse(File.ReadAllText(path), path);
 			Assert.That(result.Report.IsValid, Is.True,
 				string.Join("\n", result.Report.Issues.Select(issue => issue.Code + ": " + issue.Message)));
-			Assert.That(result.Catalog.Packs.Select(pack => pack.Id), Is.EquivalentTo(new[]
-			{
-				"legacy.c4c", "legacy.clothing-overhaul", "legacy.luins-balance", "legacy.overpower"
-			}));
+			Assert.That(result.Catalog.Packs.Count, Is.EqualTo(25));
+			Assert.That(result.Catalog.Packs.Select(pack => pack.Id), Does.Contain("legacy.c4c"));
+			Assert.That(result.Catalog.Packs.Select(pack => pack.Id), Does.Contain("legacy.captivity-multi-tool"));
 			Assert.That(result.Catalog.Packs.SelectMany(pack => pack.Versions),
 				Has.All.Matches<ModCatalogVersion>(version =>
-					version.Download.StartsWith("https://github.com/RealmsStuff/CR-Mods/releases/download/",
+					version.Download.StartsWith("https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/",
 						StringComparison.Ordinal) && version.SizeBytes > 0 && version.Sha256.Length == 64));
 		}
 
@@ -115,6 +124,7 @@ namespace CaptivityReloaded.Modding.Tests
 		[TestCase("\"gameVersion\":\">=1.0.0\"", "\"gameVersion\":\"soon\"", "catalog.compatibility")]
 		[TestCase("https://github.com/example/test-pack/releases/download/v1.0.0/test-pack.zip", "https://evil.example/test-pack.zip", "catalog.download")]
 		[TestCase("https://github.com/example/test-pack/releases/download/v1.0.0/test-pack.zip", "https://github.com/other/test-pack/releases/download/v1.0.0/test-pack.zip", "catalog.download-repository")]
+		[TestCase("https://github.com/example/test-pack/releases/download/v1.0.0/test-pack.zip", "https://raw.githubusercontent.com/other/test-pack/main/release-assets/test-pack.zip", "catalog.download-repository")]
 		public void Parse_RejectsInvalidListings(string i_old, string i_new, string i_code)
 		{
 			ModCatalogParseResult result = ModCatalogParser.Parse(ValidCatalog.Replace(i_old, i_new), "test");
@@ -153,6 +163,16 @@ namespace CaptivityReloaded.Modding.Tests
 				.Report.Issues.Any(issue => issue.Code == "catalog.previews"), Is.True);
 			Assert.That(ModCatalogParser.Parse(withPreview.Replace("preview.png", "preview.jpg"), "test")
 				.Report.Issues.Any(issue => issue.Code == "catalog.previews"), Is.True);
+		}
+
+		[Test]
+		public void Parse_AcceptsRepositoryHostedPreviews()
+		{
+			const string preview = "https://raw.githubusercontent.com/example/test-pack/main/previews/preview.png";
+			string catalog = ValidCatalog.Replace("\"versions\":", "\"previewImages\":[\"" + preview + "\"],\"versions\":");
+			ModCatalogParseResult result = ModCatalogParser.Parse(catalog, "test");
+			AssertValid(result.Report);
+			Assert.That(result.Catalog.Packs.Single().PreviewImages.Single(), Is.EqualTo(preview));
 		}
 
 		[Test]

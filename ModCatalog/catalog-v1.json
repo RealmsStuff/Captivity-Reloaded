@@ -11,7 +11,7 @@
       "contentWarnings": ["Adult sexual content"],
       "versions": [{
         "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
-        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-c4c.capmod",
+        "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-c4c.capmod",
         "sha256": "54f98808a5f469635b21e18d6db3561b2062177400c39a1d2a7126243f021b4f", "sizeBytes": 1794,
         "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
       }]
@@ -26,7 +26,7 @@
       "contentWarnings": ["Adult sexual content", "Clothing destruction"],
       "versions": [{
         "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
-        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-clothing-overhaul.capmod",
+        "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-clothing-overhaul.capmod",
         "sha256": "5cd9830b4258d9b0eeeb290b8cc0b2f31e807883d46d89f001b218c70b083ade", "sizeBytes": 1530,
         "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
       }]
@@ -41,7 +41,7 @@
       "contentWarnings": ["Adult sexual content"],
       "versions": [{
         "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
-        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-luins-balance.capmod",
+        "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-luins-balance.capmod",
         "sha256": "a7b958565ab5473e0f0a8b37e5e65758e5accf692f5d97a28dd3e0e1c3a54696", "sizeBytes": 2290,
         "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
       }]
@@ -56,10 +56,146 @@
       "contentWarnings": ["Adult sexual content"],
       "versions": [{
         "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
-        "download": "https://github.com/RealmsStuff/CR-Mods/releases/download/v1.0.0/legacy-overpower.capmod",
+        "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-overpower.capmod",
         "sha256": "cc6b076a4baf5aa8738baf8bd108a9db346f7739a1af9eae4d0ff34f780958d3", "sizeBytes": 2044,
         "dependencies": [{"id": "core", "version": ">=0.1.0"}, {"id": "legacy.c4c", "version": ">=1.0.0"}], "conflicts": []
       }]
+    },
+    {
+      "id": "legacy.captivity-multi-tool",
+      "displayName": "Captivity Multi-Tool",
+      "authors": ["Original author unknown", "Captivity Reloaded port"],
+      "summary": "Faithful C4C-derived Multi-Tool conversion with guarded player, weapon, enemy, wave, and stage controls.",
+      "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.captivity-multi-tool/preview.png"],
+      "tags": ["game-mode", "developer-tools", "legacy-port"],
+      "contentWarnings": ["Adult sexual content", "Cheat and save-unlock controls"],
+      "versions": [{
+        "version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2",
+        "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-captivity-multi-tool.capmod",
+        "sha256": "85a0dc3ab6045b99993778b42d484387d52791e8a57fbbf320d4c61463010284", "sizeBytes": 27115,
+        "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []
+      }]
+    },
+    {
+      "id": "apothem.gun-game", "displayName": "Apothem Gun Game", "authors": ["the.apothem (Zachary)"],
+      "summary": "Recreates Gun Game v2 as a data-driven weapon-progression rule.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["game-mode", "weapon-progression", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.1", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/apothem-gun-game.capmod", "sha256": "adab22ff45752012a23e8349e86e4bcd3a6d3eba4567560286440885a6e064f4", "sizeBytes": 1383, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "apothem.start-with-no-gun", "displayName": "Start With No Gun", "authors": ["the.apothem"],
+      "summary": "Start combat stages without the free pistol but receive $500 to buy equipment.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["game-mode", "challenge", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/apothem-start-with-no-gun.capmod", "sha256": "0adc999afb225b365c22ddc28d57d9e58b302c0e2241c11f8d1a4fddb7a05526", "sizeBytes": 1099, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "dakozan.extended-difficulties", "displayName": "Extended Difficulties", "authors": ["@DakoZan"],
+      "summary": "Adds Very Hard and Nightmare using data-driven difficulty profiles.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["difficulty", "balance", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/dakozan-extended-difficulties.capmod", "sha256": "ac6737b0903934c8720ee54fbaa83a1b46dda7ad521680e9cd836d0b9a6a0d92", "sizeBytes": 1237, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "datz.goblin-slayer-armor", "displayName": "Goblin Slayer Armor", "authors": ["@Datz"],
+      "summary": "Faithful replacement of the Jungle-earned Core Knight armor with the legacy Goblin Slayer artwork.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "clothing", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.1.1", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/datz-goblin-slayer-armor.capmod", "sha256": "d9000bf293822f9c72c5694d0c87c71dcb98f97f0d653c597f7c0c0efb9ecb1c", "sizeBytes": 10263, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "draco66electro.prey-bunny-girls", "displayName": "Prey / Bunny Girls Overhaul", "authors": ["Draco66Electro"],
+      "summary": "Faithful data-only conversion of the legacy Prey/Bunny Girls visual overhaul.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "enemy-overhaul", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "0.1.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/draco66electro-prey-bunny-girls.capmod", "sha256": "ad6544f8ffd9359fe5fd34b1a149e0cd295acc735f083673cce270eae3e0bec1", "sizeBytes": 113042, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": ["dudleytheschemer.shaded-girl", "legacy.smaller-breast", "legacy.smaller-breast-and-butt", "mousai.femboy-refitted-shirt"]}]
+    },
+    {
+      "id": "dudleytheschemer.shaded-girl", "displayName": "Shaded Girl", "authors": ["@dudleytheschemer"],
+      "summary": "Data-only conversion that adds shading to the player's naked body.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/dudleytheschemer-shaded-girl.capmod", "sha256": "d88d5954274eebb00aa3990bd547d783d82233b20c29d8762fead866bd8c0c1f", "sizeBytes": 18745, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.captivity-sfw", "displayName": "Captivity SFW", "authors": ["Legacy mod author"],
+      "summary": "Faithful data-only conversion of the legacy SFW mod. It hides explicit anatomy on every affected Core enemy without changing gameplay.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "enemy-overhaul", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-captivity-sfw.capmod", "sha256": "130f0f8e07bf7c8728b42518ee77cc9a79ea9a043d0fc4a8bf4c3a909f6b424c", "sizeBytes": 9086, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.cod-perk-machine", "displayName": "CoD Perk Machine", "authors": ["Legacy mod conversion"],
+      "summary": "Replaces the Core usable vendor artwork while retaining its complete vending behavior.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "vendor", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-cod-perk-machine.capmod", "sha256": "93d6c6d4082faef6bc1877229713ea2cac2b9df8450b22ff33588bfa6880e5c6", "sizeBytes": 18074, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.cod-wonderweapon", "displayName": "CoD Wonderweapon", "authors": ["Original author unknown"],
+      "summary": "Faithful artwork replacement for the Core Schockgewehr wonder weapon.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "weapon", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-cod-wonderweapon.capmod", "sha256": "315ff2f04bbc9e053e28d77694a19b4b31d5e7b559009e531ea9856ccfff009a", "sizeBytes": 3453, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.cry-when-raped", "displayName": "CAR (Cry When Raped)", "authors": ["Original author unknown"],
+      "summary": "Faithful conversion of CAR's crying player-face artwork replacement.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.cry-when-raped/preview.png"],
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-cry-when-raped.capmod", "sha256": "d7e160671e6b219acc28dc38d51c5221127c042e84596af3455e4ec3f7061d12", "sizeBytes": 86224, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.futanari-small-tweaks", "displayName": "Futanari + Small Tweaks", "authors": ["Legacy mod author"],
+      "summary": "Faithful conversion layered over the identical Small Tweaks artwork.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.futanari-small-tweaks/preview.png"],
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-futanari-small-tweaks.capmod", "sha256": "eb2b357b71edacc236b5a7aed48b6a7cfd90ababf9722937471b221cc6518715", "sizeBytes": 64475, "dependencies": [{"id": "core", "version": ">=0.1.0"}, {"id": "legacy.small-tweaks", "version": ">=1.0.0"}], "conflicts": ["mousai.femboy-refitted-shirt", "legacy.smaller-breast-and-butt"]}]
+    },
+    {
+      "id": "legacy.futazombies", "displayName": "FutaZombies", "authors": ["Legacy mod author"],
+      "summary": "Faithful sprite conversion of the legacy FutaZombies replacement for all three Core zombie rigs.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.futazombies/preview.png"],
+      "tags": ["visual", "enemy-overhaul", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-futazombies.capmod", "sha256": "9a90661733b75654de8a0f7fe8ad233c35c5259bd83dfcf017eea18f948a27aa", "sizeBytes": 275771, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": ["legacy.captivity-sfw", "legacy.smaller-breast-and-butt"]}]
+    },
+    {
+      "id": "legacy.raygun-revolver", "displayName": "Raygun Revolver", "authors": ["Original author unknown"],
+      "summary": "Faithful replacement of the Core .44 Revolver base artwork with the legacy raygun design.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "weapon", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-raygun-revolver.capmod", "sha256": "f2c475bc8ad4ff76c671e76a85e6a7b37a43e57606a889a11ad87661780259ba", "sizeBytes": 2035, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.smaller-breast", "displayName": "Smaller Breast", "authors": ["Legacy mod author"],
+      "summary": "Faithful data-only conversion including body, clothing, icon, and paired-character edits.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-smaller-breast.capmod", "sha256": "884f9cd2af9cd093528bf4e3621646d43f79d3a52c4e1f4b3b143e1819530967", "sizeBytes": 27687, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": ["mousai.femboy-refitted-shirt"]}]
+    },
+    {
+      "id": "legacy.smaller-breast-and-butt", "displayName": "Smaller Breast and Butt", "authors": ["Legacy mod author"],
+      "summary": "Faithful combined conversion layered over its identical Smaller Breast artwork.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-smaller-breast-and-butt.capmod", "sha256": "59cc4a36730092e6286a8a19778035bc1e0ef30f22b8a197e5ef4486341e7d20", "sizeBytes": 10606, "dependencies": [{"id": "core", "version": ">=0.1.0"}, {"id": "legacy.smaller-breast", "version": ">=1.0.0"}], "conflicts": ["mousai.femboy-refitted-shirt"]}]
+    },
+    {
+      "id": "legacy.small-tweaks", "displayName": "Small Tweaks", "authors": ["Original author unknown"],
+      "summary": "Faithful data-only conversion of player, hair, placed-character, and muzzle-flash sprite tweaks.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.small-tweaks/preview.png"],
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-small-tweaks.capmod", "sha256": "941918755a117dcbc930e321baa95280dfbe9ac5082639e9779472975edfbc69", "sizeBytes": 33218, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.smiling-blush-small-tweaks", "displayName": "Smiling Blush + Small Tweaks", "authors": ["Original author unknown"],
+      "summary": "The legacy Small Tweaks artwork plus its twelve smiling player-mouth replacements.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.smiling-blush-small-tweaks/preview.png"],
+      "tags": ["visual", "player", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-smiling-blush-small-tweaks.capmod", "sha256": "24455c3e5e0977c3a0468eb02b3ea2b1325f4e0ab9ab45f31879cfbcd3ec4ad2", "sizeBytes": 55960, "dependencies": [{"id": "core", "version": ">=0.1.0"}, {"id": "legacy.small-tweaks", "version": ">=1.0.0"}], "conflicts": []}]
+    },
+    {
+      "id": "legacy.tweaked-fer", "displayName": "Tweaked FER", "authors": ["Legacy mod author"],
+      "summary": "Faithful conversion of the legacy FER character retouch and expanded blood artwork.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.tweaked-fer/preview2.png", "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.tweaked-fer/preview3.png", "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.tweaked-fer/preview4.png", "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/legacy.tweaked-fer/preview5.png"],
+      "tags": ["visual", "enemy-overhaul", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/legacy-tweaked-fer.capmod", "sha256": "45910a9d0165f3712a9c014ecdc106385b0593ca13799ae81390b5e1bbf07a2d", "sizeBytes": 195236, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": ["legacy.captivity-sfw", "legacy.smaller-breast", "legacy.smaller-breast-and-butt"]}]
+    },
+    {
+      "id": "mousai.femboy-refitted-shirt", "displayName": "Femboy Clothing Refit", "authors": ["Mousai"],
+      "summary": "Faithful data-only conversion of the legacy Femboy edition's custom body and refitted Core clothing.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods",
+      "tags": ["visual", "clothing", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.4.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/mousai-femboy-refitted-shirt.capmod", "sha256": "d1a10621a7aae30f498fdfe775bc59fcb9db2e14642c3569d0516365c7d4c9bd", "sizeBytes": 35270, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": ["example.advanced-clothing-showcase"]}]
+    },
+    {
+      "id": "somescrub.simple-nerf-gun", "displayName": "Simple Nerf Gun", "authors": ["@SomeScrub"],
+      "summary": "Faithful conversion of the legacy Nerf Gun reskin for the original starter pistol.", "sourceRepository": "https://github.com/RealmsStuff/CR-Mods", "previewImages": ["https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/packs/somescrub.simple-nerf-gun/preview.png"],
+      "tags": ["visual", "weapon", "legacy-port"], "contentWarnings": ["Adult sexual content"],
+      "versions": [{"version": "1.0.0", "modApiVersion": 1, "gameVersion": ">=2.1.2", "download": "https://raw.githubusercontent.com/RealmsStuff/CR-Mods/main/release-assets/somescrub-simple-nerf-gun.capmod", "sha256": "412b0808e2a68a5de1e7832a54575c364b99a6aee211903e75281956b0b09ddb", "sizeBytes": 4292, "dependencies": [{"id": "core", "version": ">=0.1.0"}], "conflicts": []}]
     }
   ]
 }

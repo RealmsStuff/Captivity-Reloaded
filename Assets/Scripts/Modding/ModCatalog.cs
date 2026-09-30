@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -189,7 +190,7 @@ namespace CaptivityReloaded.Modding
 				if (!StringList(pack.Authors, 1, 10, 120) || !StringList(pack.Tags, 0, 16, 40) ||
 					!StringList(pack.ContentWarnings, 0, 16, 120))
 					Error(result, "catalog.metadata", "Pack authors, tags, or content warnings are invalid.", i_source);
-				if (!GithubUrl(pack.SourceRepository, false))
+				if (!GithubRepositoryUrl(pack.SourceRepository))
 					Error(result, "catalog.repository", "sourceRepository must be an HTTPS GitHub repository URL.", i_source);
 				if (pack.PreviewImages != null)
 				{
@@ -199,9 +200,8 @@ namespace CaptivityReloaded.Modding
 					{
 						HashSet<string> previews = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 						foreach (string preview in pack.PreviewImages)
-							if (!GithubPreviewUrl(preview) || !previews.Add(preview)
-								|| !preview.StartsWith(pack.SourceRepository + "/releases/download/", StringComparison.OrdinalIgnoreCase))
-								Error(result, "catalog.previews", "Preview images must be unique HTTPS PNG assets from the pack's GitHub Release.", i_source);
+							if (!GithubAssetUrl(preview, pack.SourceRepository, ".png") || !previews.Add(preview))
+								Error(result, "catalog.previews", "Preview images must be unique HTTPS PNG assets from the pack's GitHub repository.", i_source);
 					}
 				}
 				if (pack.Versions == null || pack.Versions.Count == 0 || pack.Versions.Count > 16)
@@ -217,10 +217,9 @@ namespace CaptivityReloaded.Modding
 						Error(result, "catalog.version", "Version must be unique semantic versioning.", i_source);
 					if (version.ModApiVersion < 1 || version.ModApiVersion > 1000 || !GameVersion(version.GameVersion))
 						Error(result, "catalog.compatibility", "modApiVersion or gameVersion is invalid.", i_source);
-					if (!GithubUrl(version.Download, true))
-						Error(result, "catalog.download", "download must be an HTTPS GitHub Release ZIP URL.", i_source);
-					else if (GithubUrl(pack.SourceRepository, false) && !version.Download.StartsWith(
-						pack.SourceRepository + "/releases/download/", StringComparison.OrdinalIgnoreCase))
+					if (!GithubArchiveUrl(version.Download))
+						Error(result, "catalog.download", "download must be an HTTPS GitHub-hosted ZIP or .capmod URL.", i_source);
+					else if (!GithubAssetUrl(version.Download, pack.SourceRepository, ".zip", CapmodPackageBuilder.Extension))
 						Error(result, "catalog.download-repository", "download must belong to sourceRepository.", i_source);
 					if (!Sha256(version.Sha256) || version.SizeBytes < 1 || version.SizeBytes > MaxArchiveBytes)
 						Error(result, "catalog.archive", "sha256 or sizeBytes is invalid.", i_source);
@@ -259,27 +258,50 @@ namespace CaptivityReloaded.Modding
 			if (i_value != null && i_value.StartsWith(">=", StringComparison.Ordinal)) i_value = i_value.Substring(2);
 			return SemanticVersion.TryParse(i_value, out _);
 		}
-		private static bool GithubUrl(string i_value, bool i_release)
+		private static bool GithubRepositoryUrl(string i_value)
 		{
 			if (!Uri.TryCreate(i_value, UriKind.Absolute, out Uri uri) || uri.Scheme != Uri.UriSchemeHttps ||
 				!string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase) || !uri.IsDefaultPort ||
 				!string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment) || !string.IsNullOrEmpty(uri.UserInfo)) return false;
 			string[] parts = uri.AbsolutePath.Trim('/').Split('/');
-			if (parts.Length < 2 || parts[0].Length == 0 || parts[1].Length == 0) return false;
-			if (!i_release) return parts.Length == 2;
-			return parts.Length == 6 && parts[2] == "releases" && parts[3] == "download" && parts[4].Length > 0
-				&& (parts[5].EndsWith(".zip", StringComparison.OrdinalIgnoreCase)
-					|| parts[5].EndsWith(CapmodPackageBuilder.Extension, StringComparison.OrdinalIgnoreCase));
+			return parts.Length == 2 && parts[0].Length > 0 && parts[1].Length > 0;
 		}
-		private static bool GithubPreviewUrl(string i_value)
+		private static bool GithubArchiveUrl(string i_value)
+		{
+			return GithubAssetUrl(i_value, null, ".zip", CapmodPackageBuilder.Extension);
+		}
+		private static bool GithubAssetUrl(string i_value, string i_repository, params string[] i_extensions)
 		{
 			if (!Uri.TryCreate(i_value, UriKind.Absolute, out Uri uri) || uri.Scheme != Uri.UriSchemeHttps
-				|| !string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase) || !uri.IsDefaultPort
-				|| !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment) || !string.IsNullOrEmpty(uri.UserInfo)) return false;
+				|| !uri.IsDefaultPort || !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment)
+				|| !string.IsNullOrEmpty(uri.UserInfo)) return false;
 			string[] parts = uri.AbsolutePath.Trim('/').Split('/');
-			return parts.Length == 6 && parts[0].Length > 0 && parts[1].Length > 0
-				&& parts[2] == "releases" && parts[3] == "download" && parts[4].Length > 0
-				&& parts[5].EndsWith(".png", StringComparison.OrdinalIgnoreCase);
+			string owner;
+			string repository;
+			if (string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase))
+			{
+				if (parts.Length != 6 || parts[2] != "releases" || parts[3] != "download" || parts[4].Length == 0)
+					return false;
+				owner = parts[0];
+				repository = parts[1];
+			}
+			else if (string.Equals(uri.Host, "raw.githubusercontent.com", StringComparison.OrdinalIgnoreCase))
+			{
+				if (parts.Length < 5 || parts[2].Length == 0 || parts[3].Length == 0)
+					return false;
+				owner = parts[0];
+				repository = parts[1];
+			}
+			else return false;
+			if (owner.Length == 0 || repository.Length == 0 ||
+				!i_extensions.Any(extension => parts[parts.Length - 1].EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+				return false;
+			if (string.IsNullOrEmpty(i_repository)) return true;
+			if (!Uri.TryCreate(i_repository, UriKind.Absolute, out Uri repositoryUri)) return false;
+			string[] repositoryParts = repositoryUri.AbsolutePath.Trim('/').Split('/');
+			return repositoryParts.Length == 2
+				&& string.Equals(owner, repositoryParts[0], StringComparison.OrdinalIgnoreCase)
+				&& string.Equals(repository, repositoryParts[1], StringComparison.OrdinalIgnoreCase);
 		}
 		private static bool Sha256(string i_value)
 		{
