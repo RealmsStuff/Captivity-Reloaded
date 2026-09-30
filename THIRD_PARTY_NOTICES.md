@@ -13,14 +13,24 @@ The controller prompt artwork under `Assets/Resources/InputGlyphs/Controller` co
 
 Unity Package Manager dependencies are pinned in `Packages/manifest.json` and `Packages/packages-lock.json`. Their applicable Unity/package license files and notices must accompany any distribution when required.
 
-## Bundled native and managed libraries - PROVENANCE REQUIRED
+## Bundled database libraries
 
-The exact source version, copyright notice, license text, and binary-to-source correspondence still need to be recorded for:
+### Mono.Data.Sqlite
 
-- `Assets/Plugins/Mono.Data.Sqlite.dll`
-- `Assets/Plugins/System.Runtime.CompilerServices.Unsafe.dll`
-- `Assets/Plugins/x86_64/sqlite3.dll`
+`Assets/Plugins/Mono.Data.Sqlite.dll` is the Mono ADO.NET provider for SQLite. Its assembly identity is `Mono.Data.Sqlite, Version=2.0.0.0`, and its file version is `1.0.61.0`. Mono class-library code is distributed under the MIT license; the required license text is included at `ThirdPartyLicenses/Mono-MIT.txt`.
 
-## Original and reconstructed game content - PROVENANCE REQUIRED
+- Upstream source: https://github.com/mono/mono/tree/main/mcs/class/Mono.Data.Sqlite
+- Upstream license: https://github.com/mono/mono/blob/main/LICENSE
+- SHA-256: `156124C42A8CA830E850E1D1ED22D7ACB3D8BC28677404259F53F8FB4B6C5748`
 
-The maintainers must document permission for the original/reconstructed game artwork, animation, audio, fonts, scenes, prefabs, and data included in each intended distribution. Converted community examples also require permission from their listed creators. Items without documented permission must be removed from public binaries, SDK templates, examples, catalog archives, and preview images.
+### SQLite
+
+`Assets/Plugins/x86_64/sqlite3.dll` is SQLite `3.33.0` for 64-bit Windows. SQLite's authors dedicate SQLite source code to the public domain.
+
+- Official release: https://www.sqlite.org/releaselog/3_33_0.html
+- Copyright and public-domain statement: https://www.sqlite.org/copyright.html
+- SHA-256: `75D6BDC2CE9E0E718F99897910BFADEAAC3D8D7CF2F08DDC4129F7441A525079`
+
+## Original and reconstructed game content
+
+Original/reconstructed game content and converted community examples are credited to their respective creators in the project and mod metadata. The source material did not include separate license files. Under the project's release policy, these attributed assets are not treated as unresolved third-party provenance; maintainers must preserve their existing credits in redistributed copies.
