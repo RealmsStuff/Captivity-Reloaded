@@ -1,0 +1,30 @@
+{
+  "template": "core:clothing/hazmat-suit",
+  "canvas": { "width": 160, "height": 160 },
+  "cell": { "width": 32, "height": 32 },
+  "coordinates": "libresprite-top-left",
+  "parts": [
+    { "slot": "piece/r-leg-lower-shoes", "source": "Assets/Texture2D/HazmatShoesLegLower.png", "column": 0, "row": 0 },
+    { "slot": "piece/head", "source": "Assets/Texture2D/HazmatHat.png", "column": 1, "row": 0 },
+    { "slot": "piece/l-foot", "source": "Assets/Texture2D/HazmatShoes.png", "column": 2, "row": 0 },
+    { "slot": "piece/r-hand", "source": "Assets/Texture2D/HazmatHand.png", "column": 3, "row": 0 },
+    { "slot": "piece/r-arm-upper", "source": "Assets/Texture2D/HazmatArmUpper.png", "column": 4, "row": 0 },
+    { "slot": "piece/neck", "source": "Assets/Texture2D/HazmatNeck.png", "column": 0, "row": 1 },
+    { "slot": "piece/l-leg-lower", "source": "Assets/Texture2D/HazmatLegLower.png", "column": 1, "row": 1 },
+    { "slot": "piece/r-leg-upper", "source": "Assets/Texture2D/HazmatRLegUpper.png", "column": 2, "row": 1 },
+    { "slot": "piece/chest", "source": "Assets/Texture2D/HazmatChest.png", "column": 3, "row": 1 },
+    { "slot": "piece/spine", "source": "Assets/Texture2D/HazmatSpine.png", "column": 4, "row": 1 },
+    { "slot": "piece/r-leg-lower", "source": "Assets/Texture2D/HazmatLegLower.png", "column": 0, "row": 2 },
+    { "slot": "piece/l-leg-lower-shoes", "source": "Assets/Texture2D/HazmatShoesLegLower.png", "column": 1, "row": 2 },
+    { "slot": "piece/r-arm-lower", "source": "Assets/Texture2D/HazmatArmLower.png", "column": 2, "row": 2 },
+    { "slot": "piece/hips", "source": "Assets/Texture2D/HazmatHips.png", "column": 3, "row": 2 },
+    { "slot": "piece/mask", "source": "Assets/Texture2D/HazmatMask.png", "column": 4, "row": 2 },
+    { "slot": "piece/butt", "source": "Assets/Texture2D/HazmatButt.png", "column": 0, "row": 3 },
+    { "slot": "piece/r-foot", "source": "Assets/Texture2D/HazmatShoes.png", "column": 1, "row": 3 },
+    { "slot": "piece/l-hand", "source": "Assets/Texture2D/HazmatHand.png", "column": 2, "row": 3 },
+    { "slot": "piece/l-arm-lower", "source": "Assets/Texture2D/HazmatArmLower.png", "column": 3, "row": 3 },
+    { "slot": "piece/l-arm-upper", "source": "Assets/Texture2D/HazmatArmUpper.png", "column": 4, "row": 3 },
+    { "slot": "piece/l-leg-upper", "source": "Assets/Texture2D/HazmatLLegUpper.png", "column": 0, "row": 4 },
+    { "slot": "icon", "source": "Assets/Texture2D/HazmatChest.png", "column": 1, "row": 4 }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "template",
+  "tileset": { "firstgid": 1, "source": "../tilesets/preview-switch.tsj" },
+  "object": {
+    "class": "easter-egg-step", "gid": 1, "height": 16, "id": 1, "name": "easter-egg-step", "rotation": 0, "visible": true, "width": 16,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "use" },
+      { "name": "singleUse", "type": "bool", "value": true },
+      { "name": "requiredInteractions", "type": "string", "value": "" },
+      { "name": "activationsRequired", "type": "int", "value": 1 },
+      { "name": "message", "type": "string", "value": "A secret step was completed." },
+      { "name": "visualArt", "type": "string", "value": "light-switch-off" },
+      { "name": "visualScale", "type": "float", "value": 1 }
+    ]
+  }
+}

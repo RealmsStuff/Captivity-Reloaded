@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/difficulty.schema.json",
+  "title": "Captivity Reloaded Difficulty",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "enemyHealthMultiplier", "playerDamageTakenMultiplier", "escapeStrengthMultiplier"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "difficulty", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:difficulty/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 40, "x-stability": "stable" },
+    "sortOrder": { "type": "integer", "minimum": -100000, "maximum": 100000, "default": 0, "x-stability": "stable" },
+    "enemyHealthMultiplier": { "$ref": "#/$defs/multiplier", "x-stability": "stable" },
+    "playerDamageTakenMultiplier": { "$ref": "#/$defs/multiplier", "x-stability": "stable" },
+    "escapeStrengthMultiplier": { "$ref": "#/$defs/multiplier", "x-stability": "stable" }
+  },
+  "$defs": { "multiplier": { "type": "number", "minimum": 0.1, "maximum": 10 } }
+}

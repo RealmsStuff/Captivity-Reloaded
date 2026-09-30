@@ -1,0 +1,14 @@
+{
+  "type": "template",
+  "object": {
+    "class": "particle-emitter", "name": "particles", "point": true, "rotation": 0, "visible": true,
+    "properties": [
+      { "name": "color", "type": "string", "value": "#66CCFFFF" },
+      { "name": "rate", "type": "float", "value": 12 },
+      { "name": "lifetime", "type": "float", "value": 2 },
+      { "name": "speed", "type": "float", "value": 1 },
+      { "name": "size", "type": "float", "value": 0.2 },
+      { "name": "radius", "type": "float", "value": 0.5 }
+    ]
+  }
+}

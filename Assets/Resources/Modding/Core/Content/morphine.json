@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1, "type": "coreItem", "id": "core:item/usable/morphine",
+  "legacyName": "Morphine", "displayName": "Morphine", "description": "",
+  "stats": { "weight": 0, "value": 500, "equipSeconds": 0.5, "marketable": true,
+    "goodEffectDescriptions": ["+100% lost Health"], "badEffectDescriptions": [] },
+  "effectMode": "replace",
+  "effects": [{ "type": "restoreHealth", "amount": 100 }]
+}

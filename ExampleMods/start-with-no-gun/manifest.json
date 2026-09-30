@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "apothem.start-with-no-gun",
+  "displayName": "Start With No Gun",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["the.apothem"],
+  "description": "Start combat stages without the free pistol but receive $500 to buy equipment.",
+  "dependencies": [
+    { "id": "core", "version": ">=0.1.0" }
+  ],
+  "contentRoots": ["content"]
+}

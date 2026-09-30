@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class StageFER : Stage
 {
+	private bool m_useBuiltInLabSequence = true;
+
+	public void SetUseBuiltInLabSequence(bool i_useBuiltInLabSequence)
+	{
+		m_useBuiltInLabSequence = i_useBuiltInLabSequence;
+	}
+
 	[SerializeField]
 	private List<GameObject> m_objectsToActivateInLab = new List<GameObject>();
 
@@ -36,6 +43,7 @@ public class StageFER : Stage
 
 	private void TurnOnLab()
 	{
+		if (!m_useBuiltInLabSequence) return;
 		foreach (GameObject item in m_objectsToActivateInLab)
 		{
 			item.SetActive(value: true);

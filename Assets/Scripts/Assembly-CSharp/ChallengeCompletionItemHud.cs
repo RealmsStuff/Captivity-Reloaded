@@ -29,6 +29,11 @@ public class ChallengeCompletionItemHud : MonoBehaviour
 		{
 			m_imgReward.sprite = m_challenge.GetRewardsClothing()[0].GetIcon();
 		}
+		else
+		{
+			m_imgReward.enabled = false;
+			m_imgRewardBorder.enabled = false;
+		}
 		StartCoroutine(CoroutineAnimate());
 		if (m_challenge.GetRewardsClothing().Count > 1)
 		{

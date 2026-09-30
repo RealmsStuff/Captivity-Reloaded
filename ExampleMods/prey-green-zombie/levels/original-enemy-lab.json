@@ -1,0 +1,30 @@
+{
+  "compressionlevel": -1, "height": 24, "infinite": false,
+  "layers": [
+    { "id": 1, "name": "Backdrop", "type": "imagelayer", "image": "../assets/map/lab-background.png", "imagewidth": 256, "imageheight": 288, "repeatx": true, "opacity": 1, "visible": true, "x": 0, "y": 0 },
+    { "draworder": "topdown", "id": 2, "name": "Visible Platforms", "type": "objectgroup", "opacity": 1, "visible": true, "x": 0, "y": 0, "objects": [
+      { "gid": 1, "height": 64, "id": 1, "name": "ground-fill", "type": "decoration", "x": 0, "y": 736, "width": 2048, "rotation": 0, "visible": true, "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }] },
+      { "gid": 2, "height": 32, "id": 2, "name": "ground-top", "type": "decoration", "x": 0, "y": 704, "width": 2048, "rotation": 0, "visible": true, "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }] },
+      { "gid": 2, "height": 32, "id": 3, "name": "lower-platform-art", "type": "decoration", "x": 640, "y": 608, "width": 768, "rotation": 0, "visible": true, "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }] },
+      { "gid": 2, "height": 32, "id": 4, "name": "upper-platform-art", "type": "decoration", "x": 832, "y": 480, "width": 384, "rotation": 0, "visible": true, "properties": [{ "name": "repeat", "type": "bool", "value": true }, { "name": "sortingLayer", "type": "string", "value": "Platform" }] }
+    ] },
+    { "draworder": "topdown", "id": 3, "name": "Navigation", "type": "objectgroup", "opacity": 1, "visible": true, "x": 0, "y": 0, "objects": [
+      { "id": 10, "name": "ground-west-up", "type": "nav-node", "point": true, "x": 624, "y": 672, "width": 0, "height": 0, "rotation": 0, "visible": true, "properties": [{ "name": "connectionType", "type": "string", "value": "climb" }, { "name": "links", "type": "string", "value": "lower-west" }] },
+      { "id": 11, "name": "lower-west", "type": "nav-node", "point": true, "x": 672, "y": 576, "width": 0, "height": 0, "rotation": 0, "visible": true, "properties": [{ "name": "connectionType", "type": "string", "value": "climb" }, { "name": "links", "type": "string", "value": "upper-west" }] },
+      { "id": 12, "name": "upper-west", "type": "nav-node", "point": true, "x": 864, "y": 448, "width": 0, "height": 0, "rotation": 0, "visible": true },
+      { "id": 13, "name": "ground-east-up", "type": "nav-node", "point": true, "x": 1424, "y": 672, "width": 0, "height": 0, "rotation": 0, "visible": true, "properties": [{ "name": "connectionType", "type": "string", "value": "climb" }, { "name": "links", "type": "string", "value": "lower-east" }] },
+      { "id": 14, "name": "lower-east", "type": "nav-node", "point": true, "x": 1376, "y": 576, "width": 0, "height": 0, "rotation": 0, "visible": true, "properties": [{ "name": "connectionType", "type": "string", "value": "climb" }, { "name": "links", "type": "string", "value": "upper-east" }] },
+      { "id": 15, "name": "upper-east", "type": "nav-node", "point": true, "x": 1184, "y": 448, "width": 0, "height": 0, "rotation": 0, "visible": true }
+    ] },
+    { "draworder": "topdown", "id": 4, "name": "Gameplay", "type": "objectgroup", "opacity": 1, "visible": true, "x": 0, "y": 0, "objects": [
+      { "id": 20, "name": "ground", "type": "platform", "x": 0, "y": 672, "width": 2048, "height": 64, "rotation": 0, "visible": true },
+      { "id": 21, "name": "lower-platform", "type": "platform", "x": 640, "y": 576, "width": 768, "height": 32, "rotation": 0, "visible": true, "properties": [{ "name": "climbableLeft", "type": "bool", "value": true }, { "name": "climbableRight", "type": "bool", "value": true }] },
+      { "id": 22, "name": "upper-platform", "type": "platform", "x": 832, "y": 448, "width": 384, "height": 32, "rotation": 0, "visible": true, "properties": [{ "name": "climbableLeft", "type": "bool", "value": true }, { "name": "climbableRight", "type": "bool", "value": true }] },
+      { "id": 23, "name": "player", "type": "player-spawn", "point": true, "x": 1024, "y": 448, "width": 0, "height": 0, "rotation": 0, "visible": true },
+      { "id": 24, "name": "west-stalker", "type": "enemy-spawner", "point": true, "x": 160, "y": 672, "width": 0, "height": 0, "rotation": 0, "visible": true },
+      { "id": 25, "name": "east-stalker", "type": "enemy-spawner", "point": true, "x": 1888, "y": 672, "width": 0, "height": 0, "rotation": 0, "visible": true }
+    ] }
+  ],
+  "nextlayerid": 5, "nextobjectid": 26, "orientation": "orthogonal", "renderorder": "right-down", "tiledversion": "1.12.2", "tileheight": 32, "tilewidth": 32,
+  "tilesets": [{ "firstgid": 1, "source": "../tilesets/lab-dirt.tsj" }, { "firstgid": 2, "source": "../tilesets/lab-platform.tsj" }], "type": "map", "version": "1.10", "width": 64
+}

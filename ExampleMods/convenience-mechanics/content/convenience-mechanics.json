@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "example.convenience-mechanics:rule/convenience-mechanics",
+  "displayName": "Convenience Mechanics",
+  "description": "Standard gameplay with optional player and vendor conveniences enabled.",
+  "modules": [
+    {
+      "type": "economyRules",
+      "repeatConsumablePurchases": true,
+      "clothingRepairEnabled": true,
+      "clothingRepairCostMultiplier": 1.0
+    },
+    {
+      "type": "playerRules",
+      "selfPleasureEnabled": true,
+      "selfPleasurePerSecond": 12.0,
+      "selfPleasureHeartCost": 0
+    }
+  ]
+}

@@ -113,6 +113,18 @@ public class ManagerNotification : MonoBehaviour
 		return notification;
 	}
 
+	public Notification CreateTopNotification(string i_text, ColorTextNotification i_colorText)
+	{
+		Notification notification = CreateNotification(i_text, i_colorText, i_isContinues: true);
+		RectTransform rect = notification.GetComponent<RectTransform>();
+		rect.anchorMin = new Vector2(0.5f, 1f);
+		rect.anchorMax = new Vector2(0.5f, 1f);
+		rect.pivot = new Vector2(0.5f, 1f);
+		rect.anchoredPosition = new Vector2(0f, -18f);
+		rect.sizeDelta = new Vector2(Mathf.Max(rect.sizeDelta.x, 720f), rect.sizeDelta.y);
+		return notification;
+	}
+
 	private Notification CreateNotification(string i_text, Color i_colorText, bool i_isContinues)
 	{
 		Notification notification = Object.Instantiate(m_notificationDefault, m_notificationDefault.transform.parent);

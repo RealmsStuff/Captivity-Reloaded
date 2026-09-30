@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public abstract class NPC : Actor
@@ -55,6 +56,8 @@ public abstract class NPC : Actor
 
 	protected bool m_isHasLineOfSightToPlayer;
 
+	protected float m_rangeVision = 20f;
+
 	public event Hit OnHit;
 
 	public event GetHit OnGetHit;
@@ -107,22 +110,20 @@ public abstract class NPC : Actor
 			GetSkeletonActor().FadeBodyIn();
 		}
 		m_timeSpawn = Time.time;
-		AddStatModifier("SpeedAccel", Random.Range(-0.2f, 0.2f));
-		AddStatModifier("SpeedMax", Random.Range(-0.2f, 0.2f));
+		AddStatModifier("SpeedAccel", Random.Range(ExternalRuleProfileFactory.EnemySpeedVarianceMin(-0.2f), ExternalRuleProfileFactory.EnemySpeedVarianceMax(0.2f)));
+		AddStatModifier("SpeedMax", Random.Range(ExternalRuleProfileFactory.EnemySpeedVarianceMin(-0.2f), ExternalRuleProfileFactory.EnemySpeedVarianceMax(0.2f)));
+		float healthVarianceMin = ExternalRuleProfileFactory.EnemyHealthVarianceMin(0f);
+		float healthVarianceMax = ExternalRuleProfileFactory.EnemyHealthVarianceMax(0f);
+		if (healthVarianceMin != 0f || healthVarianceMax != 0f)
+			AddStatModifier("HealthMax", GetStat("HealthMax").GetValueBase() * Random.Range(healthVarianceMin, healthVarianceMax));
 		if (CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetAllNPCs()
 			.Count > 1)
 		{
 			RemoveOldestNpcOfSameType();
 		}
-		switch (ManagerDB.GetDifficulty())
-		{
-		case "Casual":
-			AddStatModifier("HealthMax", GetStat("HealthMax").GetValueBase() * 0.25f * -1f);
-			break;
-		case "Hard":
-			AddStatModifier("HealthMax", GetStat("HealthMax").GetValueBase() * 0.25f);
-			break;
-		}
+		DifficultyDefinition difficulty = DifficultyRegistry.Current;
+		float healthMultiplier = difficulty == null ? 1f : difficulty.EnemyHealthMultiplier;
+		AddStatModifier("HealthMax", GetStat("HealthMax").GetValueBase() * (healthMultiplier - 1f));
 		m_healthCurrent = GetStat("HealthMax").GetValueTotal();
 		if ((bool)CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetManagerWave())
 		{
@@ -131,7 +132,13 @@ public abstract class NPC : Actor
 			numWaveCurrent--;
 			if (numWaveCurrent != 0)
 			{
-				AddStatModifier("HealthMax", (float)numWaveCurrent * m_amountIncreaseHealthMaxPerWave);
+				AddStatModifier("HealthMax", ExternalRuleProfileFactory.EnemyWaveHealthGrowth((float)numWaveCurrent * m_amountIncreaseHealthMaxPerWave));
+				float postWaveSpeed = ExternalRuleProfileFactory.EnemyPostWaveSpeed(numWaveCurrent);
+				if (postWaveSpeed > 0f)
+				{
+					AddStatModifier("SpeedAccel", postWaveSpeed);
+					AddStatModifier("SpeedMax", postWaveSpeed);
+				}
 				m_healthCurrent = GetStat("HealthMax").GetValueTotal();
 			}
 		}
@@ -143,7 +150,8 @@ public abstract class NPC : Actor
 		List<NPC> list = new List<NPC>();
 		for (int i = 0; i < allNPCs.Count; i++)
 		{
-			if (!(allNPCs[i] == null) && !(allNPCs[i] == this) && allNPCs[i].GetId() != -1 && allNPCs[i].GetId() == GetId() && !allNPCs[i].GetRaper().GetIsRaping() && !allNPCs[i].IsDead() && (!(allNPCs[i] is HeadHumper) || !((HeadHumper)allNPCs[i]).IsHeadHugging()))
+			Raper otherRaper = allNPCs[i] == null ? null : allNPCs[i].GetRaper();
+			if (!(allNPCs[i] == null) && !(allNPCs[i] == this) && allNPCs[i].GetId() != -1 && allNPCs[i].GetId() == GetId() && (otherRaper == null || !otherRaper.GetIsRaping()) && !allNPCs[i].IsDead() && (!(allNPCs[i] is HeadHumper) || !((HeadHumper)allNPCs[i]).IsHeadHugging()))
 			{
 				list.Add(allNPCs[i]);
 			}
@@ -322,12 +330,17 @@ public abstract class NPC : Actor
 
 	public void PerformAttack(Actor i_targetActor)
 	{
+		PerformAttack(i_targetActor, true);
+	}
+
+	protected void PerformAttack(Actor i_targetActor, bool i_startCooldown)
+	{
 		if (IsDead() || GetStateActorCurrent() == StateActor.Climbing)
 		{
 			return;
 		}
 		PlayAudio(m_attackCurrent.GetAudiosAttackPerform());
-		StartCoroutine(CoroutineAttackCooldown());
+		if (i_startCooldown) StartAttackCooldown();
 		Player player = (Player)i_targetActor;
 		if (GetIsRaper())
 		{
@@ -361,6 +374,17 @@ public abstract class NPC : Actor
 		m_attackCurrent.HandleAttackPerform();
 	}
 
+	protected void StartAttackCooldown()
+	{
+		StartCoroutine(CoroutineAttackCooldown());
+	}
+
+	protected void NotifyDirectAttackHit(Actor i_targetActor)
+	{
+		m_attackCurrent?.HandleAttackHit();
+		OnHit?.Invoke(this, i_targetActor);
+	}
+
 	private IEnumerator CoroutineAttackCooldown()
 	{
 		m_isCanAttack = false;
@@ -373,6 +397,12 @@ public abstract class NPC : Actor
 	public virtual bool TakeHitBullet(Actor i_initiator, Bullet i_bullet, BodyPartActor i_bodyPart)
 	{
 		this.OnTakeHitBullet?.Invoke();
+		LegacyShackAberrant aberrant = GetComponent<LegacyShackAberrant>();
+		if (aberrant != null && aberrant.HandleBullet(i_bullet, i_bodyPart))
+		{
+			this.OnGetHit?.Invoke(i_initiator, this);
+			return true;
+		}
 		if (m_isInvulnerable)
 		{
 			return false;
@@ -435,6 +465,7 @@ public abstract class NPC : Actor
 
 	public virtual void StartRape()
 	{
+		if (!ExternalRuleProfileFactory.AreEnemyFinishersEnabled()) return;
 		if (IsOnFire())
 		{
 			Extinguish();
@@ -500,8 +531,10 @@ public abstract class NPC : Actor
 
 	public override void Die()
 	{
+		ModEnemyBehaviorController modBehavior = GetComponent<ModEnemyBehaviorController>();
+		if (modBehavior != null) modBehavior.HandleDeathModules();
 		base.Die();
-		CommonReferences.Instance.GetPlayerController().GainMoney(m_bounty);
+		CommonReferences.Instance.GetPlayerController().GainMoney(ExternalRuleProfileFactory.ApplyBounty(m_bounty));
 		CommonReferences.Instance.GetUtilityTools().DestroyObjectAfterTime(base.gameObject, 20f);
 		CommonReferences.Instance.GetManagerAudio().PlayAudioHitsound(1f, i_isKill: true);
 		CommonReferences.Instance.GetPlayer().KillNpc(this);
@@ -511,15 +544,14 @@ public abstract class NPC : Actor
 
 	private void TryDropAmmoBox()
 	{
-		int num = Random.Range(0, 101);
-		int num2 = 7;
-		if (num > 100 - num2)
+		float chance = ExternalRuleProfileFactory.GetAmmoDropChance(0.07f);
+		if (Random.value < chance)
 		{
 			AmmoBox ammoBoxDupe = Library.Instance.Items.GetAmmoBoxDupe();
 			ammoBoxDupe.transform.parent = CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetItemsParent();
 			ammoBoxDupe.transform.position = GetPos();
 			ammoBoxDupe.gameObject.SetActive(value: true);
-			Object.Destroy(ammoBoxDupe.gameObject, 15f);
+			Object.Destroy(ammoBoxDupe.gameObject, ExternalRuleProfileFactory.GetAmmoDropLifetime(15f));
 		}
 	}
 
@@ -608,9 +640,11 @@ public abstract class NPC : Actor
 		return m_sprIcon;
 	}
 
+	public void SetModIcon(Sprite i_icon) { m_sprIcon = i_icon; }
+
 	public float GetRangeVision()
 	{
-		return 20f;
+		return m_rangeVision;
 	}
 
 	public bool GetIsCloseEnoughToSeePlayer()
@@ -796,6 +830,59 @@ public abstract class NPC : Actor
 	public void SetId(int i_id)
 	{
 		m_id = i_id;
+	}
+
+	public int GetAttackCount()
+	{
+		return m_attacks == null ? 0 : m_attacks.Count;
+	}
+
+	public void ConfigureModEnemy(string i_displayName, string i_description, EnemyStatsDefinition i_stats)
+	{
+		SetId(-1);
+		ConfigureModIdentity(i_displayName);
+		m_description = i_description ?? string.Empty;
+		if (i_stats == null) return;
+		if (i_stats.Bounty.HasValue) m_bounty = i_stats.Bounty.Value;
+		if (i_stats.HealthIncreasePerWave.HasValue) m_amountIncreaseHealthMaxPerWave = i_stats.HealthIncreasePerWave.Value;
+		ConfigureModStats(i_stats);
+	}
+
+	public void ConfigureCoreEnemy(string i_displayName, string i_description, EnemyStatsDefinition i_stats,
+		EnemyBehaviorDefinition i_behavior)
+	{
+		ConfigureModIdentity(i_displayName);
+		if (i_description != null) m_description = i_description;
+		if (i_stats != null)
+		{
+			if (i_stats.Bounty.HasValue) m_bounty = i_stats.Bounty.Value;
+			if (i_stats.HealthIncreasePerWave.HasValue) m_amountIncreaseHealthMaxPerWave = i_stats.HealthIncreasePerWave.Value;
+			ConfigureModStats(i_stats);
+		}
+		if (i_behavior != null)
+		{
+			if (i_behavior.VisionRange.HasValue) m_rangeVision = i_behavior.VisionRange.Value;
+			if (i_behavior.IgnoreWave.HasValue) m_isIgnoreWave = i_behavior.IgnoreWave.Value;
+		}
+	}
+
+	public void ConfigureModEnemyGameplay(EnemyBehaviorDefinition i_behavior,
+		IEnumerable<EnemyAttackDefinition> i_attacks, EnemyAnimationDefinition i_animation)
+	{
+		if (i_behavior != null)
+		{
+			if (i_behavior.VisionRange.HasValue) m_rangeVision = i_behavior.VisionRange.Value;
+			if (i_behavior.IgnoreWave.HasValue) m_isIgnoreWave = i_behavior.IgnoreWave.Value;
+		}
+		if (i_attacks != null)
+			foreach (EnemyAttackDefinition attack in i_attacks)
+				if (attack != null && attack.Index >= 0 && attack.Index < m_attacks.Count)
+					m_attacks[attack.Index].ConfigureModAttack(attack);
+		if (i_animation?.SpeedMultiplier != null)
+		{
+			Animator animator = GetAnimator();
+			if (animator != null) animator.speed = i_animation.SpeedMultiplier.Value;
+		}
 	}
 
 	public Stage GetStageAppearance()

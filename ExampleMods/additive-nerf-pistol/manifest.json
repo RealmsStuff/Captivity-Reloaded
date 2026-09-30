@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "somescrub.additive-nerf-pistol",
+  "displayName": "Additive Nerf Pistol",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["@SomeScrub"],
+  "description": "Adds the legacy Nerf-styled pistol as a separate weapon while retaining the Core pistol.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

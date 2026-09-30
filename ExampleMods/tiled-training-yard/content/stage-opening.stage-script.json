@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.tiled-training-yard:stage-script/opening",
+  "stage": "example.tiled-training-yard:stage/tiled-training-yard",
+  "variables": { "wavesStarted": 0 },
+  "sequences": [
+    {
+      "id": "welcome",
+      "trigger": "stage-open",
+      "once": true,
+      "actions": [
+        { "type": "run-sequence", "sequence": "opening-notice" }
+      ]
+    },
+    {
+      "id": "opening-notice",
+      "trigger": "manual",
+      "actions": [
+        { "type": "notify", "message": "Training Yard stage script loaded." }
+      ]
+    },
+    {
+      "id": "count-waves",
+      "trigger": "wave-start",
+      "actions": [
+        { "type": "add-variable", "variable": "wavesStarted", "value": 1 }
+      ]
+    }
+  ]
+}

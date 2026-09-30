@@ -1,0 +1,678 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/zombie-grabber",
+  "enemy": "core:enemy/zombie-grabber",
+  "prefab": "Assets/Actors/Npcs/npc_zombieGrabber.prefab",
+  "controller": "Assets/AnimatorController/SkeletonZombieGrabber.controller",
+  "sampleRoot": "SkeletonZombie",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "skeleton-zombie",
+      "parent": "root",
+      "unityPath": "SkeletonZombie",
+      "unityPaths": [
+        "SkeletonZombie"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "skeleton-zombie",
+      "unityPath": "SkeletonZombie/hips",
+      "unityPaths": [
+        "SkeletonZombie/hips",
+        "SkeletonZombie/hips/bp_hips"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/bp_hips",
+          "name": "Hip_8",
+          "asset": "Assets/Sprite/Hip_8.asset",
+          "pivotX": 0.6667073,
+          "pivotY": 0.528129935,
+          "width": 17.9219322,
+          "height": 16.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 10
+        }
+      ]
+    },
+    {
+      "name": "butt",
+      "parent": "hips",
+      "unityPath": "SkeletonZombie/hips/butt",
+      "unityPaths": [
+        "SkeletonZombie/hips/butt",
+        "SkeletonZombie/hips/butt/bp_butt"
+      ],
+      "defaultTransform": {
+        "x": -0.041,
+        "y": 0.069,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/butt/bp_butt",
+          "name": "Butt_9",
+          "asset": "Assets/Sprite/Butt_9.asset",
+          "pivotX": 0.6444277,
+          "pivotY": 0.5,
+          "width": 13.8477592,
+          "height": 17.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "leg-left-upper",
+      "parent": "hips",
+      "unityPath": "SkeletonZombie/hips/lLegUpper",
+      "unityPaths": [
+        "SkeletonZombie/hips/lLegUpper",
+        "SkeletonZombie/hips/lLegUpper/bp_lLegUpper"
+      ],
+      "defaultTransform": {
+        "x": 0.005,
+        "y": -0.12,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/lLegUpper/bp_lLegUpper",
+          "name": "LegUpper_10",
+          "asset": "Assets/Sprite/LegUpper_10.asset",
+          "pivotX": 0.6605117,
+          "pivotY": 0.8777587,
+          "width": 16.84776,
+          "height": 23.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -11
+        }
+      ]
+    },
+    {
+      "name": "penis",
+      "parent": "hips",
+      "unityPath": "SkeletonZombie/hips/penis",
+      "unityPaths": [
+        "SkeletonZombie/hips/penis",
+        "SkeletonZombie/hips/penis/bp_penis"
+      ],
+      "defaultTransform": {
+        "x": 0.034,
+        "y": -0.094,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/penis/bp_penis",
+          "name": "penis_5",
+          "asset": "Assets/Sprite/penis_5.asset",
+          "pivotX": 0.0970660746,
+          "pivotY": 0.507295549,
+          "width": 20.84776,
+          "height": 10.936964,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "leg-right-upper",
+      "parent": "hips",
+      "unityPath": "SkeletonZombie/hips/rLegUpper",
+      "unityPaths": [
+        "SkeletonZombie/hips/rLegUpper",
+        "SkeletonZombie/hips/rLegUpper/bp_rLegUpper"
+      ],
+      "defaultTransform": {
+        "x": 0.005,
+        "y": -0.12,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/rLegUpper/bp_rLegUpper",
+          "name": "LegUpper_10",
+          "asset": "Assets/Sprite/LegUpper_10.asset",
+          "pivotX": 0.6605117,
+          "pivotY": 0.8777587,
+          "width": 16.84776,
+          "height": 23.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "spine",
+      "parent": "hips",
+      "unityPath": "SkeletonZombie/hips/spine",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine",
+        "SkeletonZombie/hips/spine/bp_spine"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.071,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/bp_spine",
+          "name": "TorsoLower_4",
+          "asset": "Assets/Sprite/TorsoLower_4.asset",
+          "pivotX": 0.644595563,
+          "pivotY": 0.2120718,
+          "width": 16.8725624,
+          "height": 24.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "leg-left-lower",
+      "parent": "leg-left-upper",
+      "unityPath": "SkeletonZombie/hips/lLegUpper/lLegLower",
+      "unityPaths": [
+        "SkeletonZombie/hips/lLegUpper/lLegLower",
+        "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower"
+      ],
+      "defaultTransform": {
+        "x": 0.018,
+        "y": -0.653,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "name": "LegLower_12",
+          "asset": "Assets/Sprite/LegLower_12.asset",
+          "pivotX": 0.7373238,
+          "pivotY": 0.816455066,
+          "width": 11.8608131,
+          "height": 26.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -12
+        }
+      ]
+    },
+    {
+      "name": "leg-right-lower",
+      "parent": "leg-right-upper",
+      "unityPath": "SkeletonZombie/hips/rLegUpper/rLegLower",
+      "unityPaths": [
+        "SkeletonZombie/hips/rLegUpper/rLegLower",
+        "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower"
+      ],
+      "defaultTransform": {
+        "x": 0.018,
+        "y": -0.653,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "name": "LegLower_12",
+          "asset": "Assets/Sprite/LegLower_12.asset",
+          "pivotX": 0.7373238,
+          "pivotY": 0.816455066,
+          "width": 11.8608131,
+          "height": 26.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "chest",
+      "parent": "spine",
+      "unityPath": "SkeletonZombie/hips/spine/chest",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest",
+        "SkeletonZombie/hips/spine/chest/bp_chest"
+      ],
+      "defaultTransform": {
+        "x": 0.032,
+        "y": 0.264,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/bp_chest",
+          "name": "Chest_1",
+          "asset": "Assets/Sprite/Chest_1.asset",
+          "pivotX": 0.666607141,
+          "pivotY": 0.07613297,
+          "width": 20.89713,
+          "height": 23.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "foot-left",
+      "parent": "leg-left-lower",
+      "unityPath": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+      "unityPaths": [
+        "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+        "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+      ],
+      "defaultTransform": {
+        "x": -0.074,
+        "y": -0.5607,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "name": "Foot_3",
+          "asset": "Assets/Sprite/Foot_3.asset",
+          "pivotX": 0.3315596,
+          "pivotY": 0.935100257,
+          "width": 17.84776,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -11
+        }
+      ]
+    },
+    {
+      "name": "foot-right",
+      "parent": "leg-right-lower",
+      "unityPath": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+      "unityPaths": [
+        "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+        "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+      ],
+      "defaultTransform": {
+        "x": -0.074,
+        "y": -0.5607,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "name": "Foot_3",
+          "asset": "Assets/Sprite/Foot_3.asset",
+          "pivotX": 0.3315596,
+          "pivotY": 0.935100257,
+          "width": 17.84776,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "arm-left-upper",
+      "parent": "chest",
+      "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/lArmUpper",
+        "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper"
+      ],
+      "defaultTransform": {
+        "x": -0.284,
+        "y": 0.528,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "name": "ArmUpper_4",
+          "asset": "Assets/Sprite/ArmUpper_4.asset",
+          "pivotX": 0.530023754,
+          "pivotY": 0.793461263,
+          "width": 12.8971291,
+          "height": 24.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -15
+        }
+      ]
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "unityPath": "SkeletonZombie/hips/spine/chest/neck",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/neck",
+        "SkeletonZombie/hips/spine/chest/neck/bp_neck"
+      ],
+      "defaultTransform": {
+        "x": -0.172,
+        "y": 0.596,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/neck/bp_neck",
+          "name": "Neck_17",
+          "asset": "Assets/Sprite/Neck_17.asset",
+          "pivotX": 0.558391333,
+          "pivotY": 0.289370954,
+          "width": 9.847759,
+          "height": 13.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "arm-right-upper",
+      "parent": "chest",
+      "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/rArmUpper",
+        "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper"
+      ],
+      "defaultTransform": {
+        "x": -0.284,
+        "y": 0.528,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "name": "ArmUpper_4",
+          "asset": "Assets/Sprite/ArmUpper_4.asset",
+          "pivotX": 0.530023754,
+          "pivotY": 0.793461263,
+          "width": 12.8971291,
+          "height": 24.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "arm-left-lower",
+      "parent": "arm-left-upper",
+      "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+        "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+      ],
+      "defaultTransform": {
+        "x": -0.006,
+        "y": -0.48,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "name": "ArmLower_18",
+          "asset": "Assets/Sprite/ArmLower_18.asset",
+          "pivotX": 0.4610041,
+          "pivotY": 0.871912658,
+          "width": 9.862865,
+          "height": 15.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -14
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "unityPath": "SkeletonZombie/hips/spine/chest/neck/head",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/neck/head",
+        "SkeletonZombie/hips/spine/chest/neck/head/bp_head"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.068,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/neck/head/bp_head",
+          "name": "Head_4",
+          "asset": "Assets/Sprite/Head_4.asset",
+          "pivotX": 0.4451297,
+          "pivotY": 0.035760425,
+          "width": 24.9464989,
+          "height": 29.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "arm-right-lower",
+      "parent": "arm-right-upper",
+      "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+        "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+      ],
+      "defaultTransform": {
+        "x": -0.006,
+        "y": -0.48,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "name": "ArmLower_18",
+          "asset": "Assets/Sprite/ArmLower_18.asset",
+          "pivotX": 0.4610041,
+          "pivotY": 0.871912658,
+          "width": 9.862865,
+          "height": 15.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 14
+        }
+      ]
+    },
+    {
+      "name": "hand-left",
+      "parent": "arm-left-lower",
+      "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+        "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+      ],
+      "defaultTransform": {
+        "x": 0.006,
+        "y": -0.375,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "name": "Hand_17",
+          "asset": "Assets/Sprite/Hand_17.asset",
+          "pivotX": 0.482859045,
+          "pivotY": 0.8422104,
+          "width": 11.9219322,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": -13
+        }
+      ]
+    },
+    {
+      "name": "hand-right",
+      "parent": "arm-right-lower",
+      "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+      "unityPaths": [
+        "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+        "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+      ],
+      "defaultTransform": {
+        "x": 0.006,
+        "y": -0.375,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "name": "Hand_17",
+          "asset": "Assets/Sprite/Hand_17.asset",
+          "pivotX": 0.482859045,
+          "pivotY": 0.8422104,
+          "width": 11.9219322,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 15
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

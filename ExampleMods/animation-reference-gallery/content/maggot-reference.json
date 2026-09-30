@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/maggot",
+  "displayName": "Animation Reference - Maggot",
+  "description": "Reference copy of the compact crawling Maggot animation family. It does not join normal spawners.",
+  "extends": "core:enemy/maggot",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-leap": "example.animation-reference-gallery:enemy-animation/maggot/attack-leap",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/maggot/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/maggot/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/maggot/finisher-phase-3",
+    "jump": "example.animation-reference-gallery:enemy-animation/maggot/jump",
+    "move": "example.animation-reference-gallery:enemy-animation/maggot/move"
+  }
+}

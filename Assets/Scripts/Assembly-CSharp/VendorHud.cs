@@ -85,6 +85,8 @@ public class VendorHud : MonoBehaviour
 
 	private bool m_isLayoutConfigured;
 
+	private UnityEngine.UI.Button m_btnRepairClothing;
+
 	private void Awake()
 	{
 		ConfigureLayout();
@@ -147,6 +149,7 @@ public class VendorHud : MonoBehaviour
 			{
 				componentInChildren2.text = "Refill";
 			}
+			CreateRepairButton();
 			UnityEngine.UI.Button[] componentsInChildren = m_vendorWindow.GetComponentsInChildren<UnityEngine.UI.Button>(includeInactive: true);
 			foreach (UnityEngine.UI.Button button in componentsInChildren)
 			{
@@ -188,10 +191,56 @@ public class VendorHud : MonoBehaviour
 		i_rectTransform.localScale = Vector3.one;
 	}
 
+	private void CreateRepairButton()
+	{
+		if (m_btnRepairClothing != null) return;
+		m_btnRepairClothing = Object.Instantiate(m_btnBuySellUsable, m_vendorWindow.transform);
+		m_btnRepairClothing.gameObject.name = "btn_repair_clothing";
+		m_btnRepairClothing.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+		m_btnRepairClothing.onClick.AddListener(RepairClothing);
+		ConfigureRect(m_btnRepairClothing.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0f, 38f), new Vector2(322f, 48f));
+		m_btnRepairClothing.gameObject.SetActive(value: true);
+	}
+
 	private void LoadPlayerData()
 	{
 		m_txtMoneyPlayer.text = CommonReferences.Instance.GetPlayerController().GetInventory().GetMoney() + "$";
 		m_txtWeightPlayer.text = CommonReferences.Instance.GetPlayerController().GetInventory().GetEncumbrance() + "/" + CommonReferences.Instance.GetPlayerController().GetInventory().GetRoom();
+		RefreshRepairButton();
+	}
+
+	private void RefreshRepairButton()
+	{
+		if (m_btnRepairClothing == null) return;
+		bool enabled = ExternalRuleProfileFactory.IsClothingRepairEnabled();
+		m_btnRepairClothing.gameObject.SetActive(enabled);
+		if (!enabled) return;
+		SkeletonPlayer skeleton = CommonReferences.Instance.GetPlayer().GetSkeletonPlayer();
+		int pieces = skeleton.GetMissingClothingPieceCount();
+		int price = Mathf.Max(0, Mathf.RoundToInt(skeleton.GetClothingRepairCost() * ExternalRuleProfileFactory.GetClothingRepairCostMultiplier()));
+		Text label = m_btnRepairClothing.GetComponentInChildren<Text>(includeInactive: true);
+		if (pieces <= 0)
+		{
+			if (label != null) label.text = "Outfit intact";
+			m_btnRepairClothing.interactable = false;
+			return;
+		}
+		if (label != null) label.text = "Repair outfit (" + price + "$)";
+		m_btnRepairClothing.interactable = CommonReferences.Instance.GetPlayerController().GetInventory().GetMoney() >= price;
+	}
+
+	public void RepairClothing()
+	{
+		if (!ExternalRuleProfileFactory.IsClothingRepairEnabled()) return;
+		Player player = CommonReferences.Instance.GetPlayer();
+		SkeletonPlayer skeleton = player.GetSkeletonPlayer();
+		int price = Mathf.Max(0, Mathf.RoundToInt(skeleton.GetClothingRepairCost() * ExternalRuleProfileFactory.GetClothingRepairCostMultiplier()));
+		if (skeleton.GetMissingClothingPieceCount() <= 0 || CommonReferences.Instance.GetPlayerController().GetInventory().GetMoney() < price) return;
+		CommonReferences.Instance.GetPlayerController().LoseMoney(price);
+		int repaired = skeleton.RepairEquippedClothing();
+		CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().CreateAndAddStatus("Outfit repaired", repaired + (repaired == 1 ? " piece restored" : " pieces restored"), StatusPlayerHudItemColor.Special, 5f);
+		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(Resources.Load<AudioClip>("Audio/Buy"));
+		LoadPlayerData();
 	}
 
 	private void ClearData()
@@ -489,7 +538,8 @@ public class VendorHud : MonoBehaviour
 			((Gun)pickUpable).FillEntireGun();
 		}
 		CommonReferences.Instance.GetPlayer().PickUp(pickUpable, i_isDuplicate: false);
-		m_vendorCurrent.RemovePickUpable(m_vendorItemSelected.GetPickUpable());
+		if (!(m_vendorItemSelected.GetPickUpable() is Usable) || !ExternalRuleProfileFactory.ShouldRetainConsumableVendorStock())
+			m_vendorCurrent.RemovePickUpable(m_vendorItemSelected.GetPickUpable());
 		m_vendorItemSelected = null;
 		ClearData();
 		HideSections();

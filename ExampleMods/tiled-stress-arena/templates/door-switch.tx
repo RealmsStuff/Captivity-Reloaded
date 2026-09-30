@@ -1,0 +1,12 @@
+{
+  "type": "template",
+  "object": {
+    "class": "door-switch", "id": 1, "name": "door-switch", "point": true,
+    "properties": [
+      { "name": "targetDoors", "type": "string", "value": "standard-door" },
+      { "name": "offVisualFile", "type": "file", "value": "" },
+      { "name": "onVisualFile", "type": "file", "value": "" }
+    ],
+    "rotation": 0, "visible": true
+  }
+}

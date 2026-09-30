@@ -10718,6 +10718,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 1
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &3192465141621254112
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -17027,6 +17029,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &3192465141621252107
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -20585,6 +20589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 1
+  m_isRuntimeTemplate: 0
   m_nameStage: Shack
   m_description: "The dead are rising. They are hungry and aching for human flesh.
     You have found an old shack to take shelter in and hide from the undead. Oh no,

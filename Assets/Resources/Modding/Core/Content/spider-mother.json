@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/spider-mother",
+  "legacyId": 14,
+  "displayName": "Spider Mother",
+  "stats": {
+    "healthMax": 35,
+    "speedAcceleration": 4,
+    "speedMax": 4,
+    "traction": 1,
+    "bounty": 75,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-spider-stab-lower": "core:enemy-animation/spider-mother/attack-spider-stab-lower",
+    "attack-spider-stab-upper": "core:enemy-animation/spider-mother/attack-spider-stab-upper",
+    "finisher-phase-1": "core:enemy-animation/spider-mother/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/spider-mother/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/spider-mother/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/spider-mother/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/spider-mother/finisher-phase-5",
+    "lower-body-idle": "core:enemy-animation/spider-mother/lower-body-idle",
+    "lower-body-move": "core:enemy-animation/spider-mother/lower-body-move",
+    "upper-body-attack-primary": "core:enemy-animation/spider-mother/upper-body-attack-primary",
+    "upper-body-idle": "core:enemy-animation/spider-mother/upper-body-idle",
+    "upper-body-move": "core:enemy-animation/spider-mother/upper-body-move"
+  }
+}

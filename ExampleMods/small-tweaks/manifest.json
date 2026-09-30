@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.small-tweaks",
+  "displayName": "Small Tweaks",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Original author unknown"],
+  "description": "Faithful data-only conversion of the legacy player, hair, placed-character, and muzzle-flash sprite tweaks.",
+  "dependencies": [
+    { "id": "core", "version": ">=0.1.0" }
+  ],
+  "contentRoots": ["content"],
+  "previewImages": ["preview.png"]
+}

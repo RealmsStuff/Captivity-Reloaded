@@ -105,10 +105,6 @@ public class ManagerInput : MonoBehaviour
 		if (gamepad != null)
 		{
 			Vector2 vector = gamepad.rightStick.ReadValue();
-			if (vector.sqrMagnitude <= 0.04f)
-			{
-				vector = gamepad.leftStick.ReadValue();
-			}
 			if (vector.sqrMagnitude > 0.04f)
 			{
 				m_lastControllerAim = vector.normalized;
@@ -160,6 +156,7 @@ public class ManagerInput : MonoBehaviour
 		m_buttonsDefault.Add(new InputButtonXGame(InputButton.DropWeapon, m_keyDefaultDropWeapon));
 		m_buttonsDefault.Add(new InputButtonXGame(InputButton.DrugSelection, m_keyDefaultDrugSelection));
 		m_buttonsDefault.Add(new InputButtonXGame(InputButton.Expose, m_keyDefaultExpose));
+		m_buttonsDefault.Add(new InputButtonXGame(InputButton.SelfPleasure, KeyCode.M));
 	}
 
 	public bool IsButton(InputButton i_inputButton)
@@ -168,6 +165,7 @@ public class ManagerInput : MonoBehaviour
 		{
 			return true;
 		}
+		if (i_inputButton == InputButton.AlternateFire && Input.GetMouseButton(1)) return true;
 		for (int i = 0; i < m_buttons.Count; i++)
 		{
 			if (m_buttons[i].GetInputButton() == i_inputButton)
@@ -188,6 +186,7 @@ public class ManagerInput : MonoBehaviour
 		{
 			return true;
 		}
+		if (i_inputButton == InputButton.AlternateFire && Input.GetMouseButtonDown(1)) return true;
 		for (int i = 0; i < m_buttons.Count; i++)
 		{
 			if (m_buttons[i].GetInputButton() == i_inputButton)
@@ -208,6 +207,7 @@ public class ManagerInput : MonoBehaviour
 		{
 			return true;
 		}
+		if (i_inputButton == InputButton.AlternateFire && Input.GetMouseButtonUp(1)) return true;
 		for (int i = 0; i < m_buttons.Count; i++)
 		{
 			if (m_buttons[i].GetInputButton() == i_inputButton)
@@ -269,6 +269,13 @@ public class ManagerInput : MonoBehaviour
 		{
 			m_buttons.Add(inputButtons[i]);
 		}
+		foreach (InputButtonXGame defaultButton in m_buttonsDefault)
+		{
+			bool found = false;
+			foreach (InputButtonXGame button in m_buttons)
+				if (button.GetInputButton() == defaultButton.GetInputButton()) { found = true; break; }
+			if (!found) m_buttons.Add(defaultButton);
+		}
 	}
 
 	public List<InputButtonXGame> GetButtons()
@@ -317,6 +324,11 @@ public class ManagerInput : MonoBehaviour
 
 	public Vector3 GetAimScreenPosition(Vector3 i_worldOrigin)
 	{
+		PlayerController playerController = CommonReferences.Instance.GetPlayerController();
+		if (playerController != null && playerController.GetIsMobileControlsEnabled())
+		{
+			return ApplyAimAssist(playerController.GetMobileAimScreenPosition(i_worldOrigin));
+		}
 		if (!IsControllerAiming() || Camera.main == null)
 		{
 			return Input.mousePosition;
@@ -327,7 +339,8 @@ public class ManagerInput : MonoBehaviour
 
 	public Vector3 GetAimWorldPosition(Vector3 i_worldOrigin)
 	{
-		if (!IsControllerAiming())
+		PlayerController playerController = CommonReferences.Instance.GetPlayerController();
+		if (!IsControllerAiming() && (playerController == null || !playerController.GetIsMobileControlsEnabled()))
 		{
 			return CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity()
 				.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
@@ -467,6 +480,7 @@ public class ManagerInput : MonoBehaviour
 			}
 			current.SetSelectedGameObject(selectable.gameObject);
 		}
+		UpdateControllerScrollbar(i_gamepad, selectable);
 		Vector2 vector2 = i_gamepad.dpad.ReadValue();
 		bool flag3 = vector2.sqrMagnitude >= 0.25f;
 		Vector2 vector = flag3 ? vector2 : i_gamepad.leftStick.ReadValue();
@@ -546,6 +560,34 @@ public class ManagerInput : MonoBehaviour
 		{
 			MoveControllerCursorTo(selectable);
 		}
+	}
+
+	private static void UpdateControllerScrollbar(Gamepad i_gamepad, Selectable i_selected)
+	{
+		Vector2 input = i_gamepad.rightStick.ReadValue();
+		if (Mathf.Abs(input.x) < 0.2f && Mathf.Abs(input.y) < 0.2f) return;
+		ScrollRect scroll = i_selected == null ? null : i_selected.GetComponentInParent<ScrollRect>();
+		if (scroll == null)
+		{
+			foreach (ScrollRect candidate in UnityEngine.Object.FindObjectsOfType<ScrollRect>())
+			{
+				if (!candidate.gameObject.activeInHierarchy || candidate.content == null) continue;
+				if (candidate.gameObject.name.StartsWith("tabMenu", StringComparison.Ordinal)
+					|| candidate.transform.Find("LocationScrollbar") != null)
+				{
+					scroll = candidate;
+					break;
+				}
+			}
+		}
+		if (scroll == null) return;
+		scroll.StopMovement();
+		if (scroll.vertical && Mathf.Abs(input.y) >= 0.2f)
+			scroll.verticalNormalizedPosition = Mathf.Clamp01(scroll.verticalNormalizedPosition
+				+ input.y * Time.unscaledDeltaTime * 1.5f);
+		if (scroll.horizontal && Mathf.Abs(input.x) >= 0.2f)
+			scroll.horizontalNormalizedPosition = Mathf.Clamp01(scroll.horizontalNormalizedPosition
+				+ input.x * Time.unscaledDeltaTime * 1.5f);
 	}
 
 	private void SimulateControllerClick(EventSystem i_eventSystem, GameObject i_target)
@@ -696,11 +738,40 @@ public class ManagerInput : MonoBehaviour
 		{
 			return;
 		}
+		ScrollSelectableIntoView(i_selectable, component);
 		Canvas canvas = i_selectable.GetComponentInParent<Canvas>();
 		Camera camera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
 		Vector2 vector = RectTransformUtility.WorldToScreenPoint(camera, component.TransformPoint(component.rect.center));
 		mouse.WarpCursorPosition(vector);
 		m_ignoreMouseMovementFrames = 4;
+	}
+
+	private static void ScrollSelectableIntoView(Selectable i_selectable, RectTransform i_selectedRect)
+	{
+		ScrollRect scroll = i_selectable.GetComponentInParent<ScrollRect>();
+		if (scroll == null || scroll.content == null) return;
+		RectTransform viewport = scroll.viewport != null ? scroll.viewport : scroll.transform as RectTransform;
+		if (viewport == null || i_selectedRect == scroll.verticalScrollbar?.GetComponent<RectTransform>()) return;
+		Canvas.ForceUpdateCanvases();
+		Bounds selectedBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, i_selectedRect);
+		Rect visible = viewport.rect;
+		Vector2 correction = Vector2.zero;
+		if (scroll.vertical)
+		{
+			if (selectedBounds.min.y < visible.yMin) correction.y = visible.yMin - selectedBounds.min.y;
+			else if (selectedBounds.max.y > visible.yMax) correction.y = visible.yMax - selectedBounds.max.y;
+		}
+		if (scroll.horizontal)
+		{
+			if (selectedBounds.min.x < visible.xMin) correction.x = visible.xMin - selectedBounds.min.x;
+			else if (selectedBounds.max.x > visible.xMax) correction.x = visible.xMax - selectedBounds.max.x;
+		}
+		if (correction != Vector2.zero)
+		{
+			scroll.StopMovement();
+			scroll.content.anchoredPosition += correction;
+			Canvas.ForceUpdateCanvases();
+		}
 	}
 
 	private void UpdateUIInputModuleMode()
@@ -855,7 +926,7 @@ public class ManagerInput : MonoBehaviour
 		switch (i_inputButton)
 		{
 		case InputButton.MoveLeft:
-		case InputButton.MoveRight: return "Left Stick (Move / Aim)";
+		case InputButton.MoveRight: return "Left Stick (Move)";
 		case InputButton.Jump: return "A / Cross";
 		case InputButton.Walk: return "Right Stick Click";
 		case InputButton.Crouch: return "B / Circle";
@@ -868,6 +939,7 @@ public class ManagerInput : MonoBehaviour
 		case InputButton.DropWeapon: return "D-Pad Right";
 		case InputButton.DrugSelection: return "D-Pad Up / Down (Cycle Drugs)";
 		case InputButton.Expose: return "Left Trigger";
+		case InputButton.SelfPleasure: return "View / Share";
 		default: return "";
 		}
 	}
@@ -888,6 +960,7 @@ public class ManagerInput : MonoBehaviour
 			case InputButton.Fire: return "Fire button";
 			case InputButton.Reload: return "Reload button";
 			case InputButton.Dash: return "Dash button";
+			case InputButton.SelfPleasure: return "Pleasure button";
 			default: return "Touch control";
 			}
 		}
@@ -943,6 +1016,8 @@ public class ManagerInput : MonoBehaviour
 		case InputButton.DropWeapon: button = gamepad.dpad.right; break;
 		case InputButton.DrugSelection: button = gamepad.dpad.up; break;
 		case InputButton.Expose: button = gamepad.leftTrigger; break;
+		case InputButton.AlternateFire: button = gamepad.leftTrigger; break;
+		case InputButton.SelfPleasure: button = gamepad.selectButton; break;
 		}
 		if (button == null)
 		{

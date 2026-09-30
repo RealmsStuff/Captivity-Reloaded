@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.zombie-1-template:enemy/zombie-1-template",
+  "displayName": "Zombie I Template Test",
+  "description": "A separate Zombie I using the atlas exported by the public LibreSprite template.",
+  "extends": "core:enemy/zombie-1",
+  "spawn": {
+    "inheritTemplateSpawners": true,
+    "selectionWeight": 0.25
+  },
+  "stats": {
+    "healthMax": 80,
+    "bounty": 1
+  },
+  "animation": {
+    "speedMultiplier": 0.85
+  },
+  "behavior": {
+    "modules": [
+      { "type": "thorns", "amount": 2 },
+      { "type": "onHitRagdoll", "durationSeconds": 0.25 },
+      { "type": "spawnOnDeath", "enemy": "core:enemy/zombie-1", "count": 1, "radius": 1 },
+      { "type": "speedPulse", "speedBonus": 7, "intervalSeconds": 5, "durationSeconds": 2 }
+    ]
+  },
+  "visual": {
+    "type": "coreRigAtlas",
+    "atlas": "assets/enemies/zombie-1-template.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "body/torso-lower": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "body/butt": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "body/hips": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "body/chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "body/neck": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "body/head": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "body/arm-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "body/arm-lower": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "body/hand": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "body/leg-upper": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "body/leg-lower": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "body/foot-left": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "body/foot-right": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

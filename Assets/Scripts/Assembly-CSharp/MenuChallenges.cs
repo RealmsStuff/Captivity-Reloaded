@@ -24,7 +24,7 @@ public class MenuChallenges : Menu
 		list.Add("Select a location...");
 		foreach (Stage allStage in CommonReferences.Instance.GetManagerStages().GetAllStages())
 		{
-			if (!(allStage is StageHub))
+			if (!(allStage is StageHub) && !allStage.GetIsRuntimeTemplate())
 			{
 				list.Add(allStage.GetName());
 			}

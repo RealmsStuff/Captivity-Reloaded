@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.core-fer-tiled-port:stage-script/fer-statues",
+  "stage": "example.core-fer-tiled-port:stage/fer-tiled-port",
+  "sequences": [
+    {
+      "id": "as-jennytheatre-wave-5",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 5
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre1",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre1",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennytheatre",
+          "animation": "JennyTheatre1"
+        }
+      ]
+    },
+    {
+      "id": "as-jennytheatre-wave-10",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 10
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre2",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre2",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennytheatre",
+          "animation": "JennyTheatre2"
+        }
+      ]
+    },
+    {
+      "id": "as-jennytheatre-wave-15",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 15
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre3",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennytheatre",
+          "destinationId": "atp-jennytheatre3",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennytheatre",
+          "animation": "JennyTheatre3"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnytheatre-wave-5",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 5
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre1",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre1",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnytheatre",
+          "animation": "SunnyTheatre1"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnytheatre-wave-10",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 10
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre2",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre2",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnytheatre",
+          "animation": "SunnyTheatre2"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnytheatre-wave-15",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 15
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre3",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnytheatre",
+          "destinationId": "atp-sunnytheatre3",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnytheatre",
+          "animation": "SunnyTheatre3"
+        }
+      ]
+    },
+    {
+      "id": "as-jennydining-wave-5",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 5
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining1",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining1",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennydining",
+          "animation": "JennyDining1"
+        }
+      ]
+    },
+    {
+      "id": "as-jennydining-wave-10",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 10
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining2",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining2",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennydining",
+          "animation": "JennyDining2"
+        }
+      ]
+    },
+    {
+      "id": "as-jennydining-wave-15",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 15
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining3",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-jennydining",
+          "destinationId": "atp-jennydining3",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-jennydining",
+          "animation": "JennyDining3"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnydining-wave-5",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 5
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining1",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining1",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnydining",
+          "animation": "SunnyDining1"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnydining-wave-10",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 10
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining2",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining2",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnydining",
+          "animation": "SunnyDining2"
+        }
+      ]
+    },
+    {
+      "id": "as-sunnydining-wave-15",
+      "trigger": "wave-end",
+      "once": true,
+      "conditions": [
+        {
+          "source": "wave",
+          "operator": "==",
+          "value": 15
+        }
+      ],
+      "actions": [
+        {
+          "type": "wait-until-player-distant",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining3",
+          "value": 20,
+          "seconds": 0
+        },
+        {
+          "type": "move-object-to",
+          "objectId": "as-sunnydining",
+          "destinationId": "atp-sunnydining3",
+          "seconds": 0
+        },
+        {
+          "type": "play-animation",
+          "objectId": "as-sunnydining",
+          "animation": "SunnyDining3"
+        }
+      ]
+    }
+  ]
+}

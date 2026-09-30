@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/maggot",
+  "enemy": "core:enemy/maggot",
+  "prefab": "Assets/Actors/Npcs/npc_maggot.prefab",
+  "controller": "Assets/AnimatorController/SkeletonMaggot.controller",
+  "sampleRoot": "SkeletonMaggot",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "skeleton-maggot",
+      "parent": "root",
+      "unityPath": "SkeletonMaggot",
+      "unityPaths": [
+        "SkeletonMaggot"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "skeleton-maggot",
+      "unityPath": "SkeletonMaggot/hips",
+      "unityPaths": [
+        "SkeletonMaggot/hips",
+        "SkeletonMaggot/hips/bp_hips"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonMaggot/hips/bp_hips",
+          "name": "Mid",
+          "asset": "Assets/Sprite/Mid.asset",
+          "pivotX": 0.5,
+          "pivotY": 0.5730166,
+          "width": 5.84775925,
+          "height": 6.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "back",
+      "parent": "hips",
+      "unityPath": "SkeletonMaggot/hips/back",
+      "unityPaths": [
+        "SkeletonMaggot/hips/back",
+        "SkeletonMaggot/hips/back/bp_back"
+      ],
+      "defaultTransform": {
+        "x": -0.03,
+        "y": -0.0028,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonMaggot/hips/back/bp_back",
+          "name": "Back",
+          "asset": "Assets/Sprite/Back.asset",
+          "pivotX": 0.6727672,
+          "pivotY": 0.5604993,
+          "width": 8.847759,
+          "height": 6.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 10
+        }
+      ]
+    },
+    {
+      "name": "front",
+      "parent": "hips",
+      "unityPath": "SkeletonMaggot/hips/front",
+      "unityPaths": [
+        "SkeletonMaggot/hips/front",
+        "SkeletonMaggot/hips/front/bp_front"
+      ],
+      "defaultTransform": {
+        "x": 0.03,
+        "y": 0.0007,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "SkeletonMaggot/hips/front/bp_front",
+          "name": "Front",
+          "asset": "Assets/Sprite/Front.asset",
+          "pivotX": 0.3263676,
+          "pivotY": 0.577160358,
+          "width": 8.847759,
+          "height": 6.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/maggot",
+  "legacyId": 6,
+  "displayName": "Maggot",
+  "stats": {
+    "healthMax": 1,
+    "speedAcceleration": 3,
+    "speedMax": 3,
+    "traction": 1,
+    "bounty": 25,
+    "healthIncreasePerWave": 0
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-leap": "core:enemy-animation/maggot/attack-leap",
+    "finisher-phase-1": "core:enemy-animation/maggot/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/maggot/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/maggot/finisher-phase-3",
+    "jump": "core:enemy-animation/maggot/jump",
+    "move": "core:enemy-animation/maggot/move"
+  }
+}

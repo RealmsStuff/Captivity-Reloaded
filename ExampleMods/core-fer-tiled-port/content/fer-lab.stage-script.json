@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.core-fer-tiled-port:stage-script/fer-laboratory",
+  "stage": "example.core-fer-tiled-port:stage/fer-tiled-port",
+  "variables": {
+    "fusesActivated": 0
+  },
+  "sequences": [
+    {
+      "id": "activate-int-fuseboxlab",
+      "trigger": "interaction",
+      "signal": "int-fuseboxlab",
+      "once": true,
+      "actions": [
+        {
+          "type": "play-audio",
+          "objectId": "fer-fuse-lab-audio"
+        },
+        {
+          "type": "add-variable",
+          "variable": "fusesActivated",
+          "value": 1
+        },
+        {
+          "type": "send-signal",
+          "signal": "fer-fuse-changed"
+        }
+      ]
+    },
+    {
+      "id": "activate-int-fuseboxattic",
+      "trigger": "interaction",
+      "signal": "int-fuseboxattic",
+      "once": true,
+      "actions": [
+        {
+          "type": "play-audio",
+          "objectId": "fer-fuse-attic-audio"
+        },
+        {
+          "type": "add-variable",
+          "variable": "fusesActivated",
+          "value": 1
+        },
+        {
+          "type": "send-signal",
+          "signal": "fer-fuse-changed"
+        }
+      ]
+    },
+    {
+      "id": "activate-int-fuseboxbasement",
+      "trigger": "interaction",
+      "signal": "int-fuseboxbasement",
+      "once": true,
+      "actions": [
+        {
+          "type": "play-audio",
+          "objectId": "fer-fuse-basement-audio"
+        },
+        {
+          "type": "add-variable",
+          "variable": "fusesActivated",
+          "value": 1
+        },
+        {
+          "type": "send-signal",
+          "signal": "fer-fuse-changed"
+        }
+      ]
+    },
+    {
+      "id": "activate-laboratory",
+      "trigger": "signal",
+      "signal": "fer-fuse-changed",
+      "once": true,
+      "conditions": [
+        {
+          "variable": "fusesActivated",
+          "operator": ">=",
+          "value": 3
+        }
+      ],
+      "actions": [
+        {
+          "type": "set-object-active",
+          "objectId": "int-pllight-7",
+          "active": true
+        },
+        {
+          "type": "set-object-active",
+          "objectId": "point-light-2d",
+          "active": true
+        },
+        {
+          "type": "set-interaction-enabled",
+          "objectId": "int-doorjackyroom",
+          "active": true
+        },
+        {
+          "type": "play-audio",
+          "objectId": "fer-lab-activation-audio"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/litigant",
+  "legacyId": 13,
+  "displayName": "Litigant",
+  "stats": {
+    "healthMax": 5,
+    "speedAcceleration": 3,
+    "speedMax": 10.5,
+    "traction": 0.1,
+    "bounty": 25,
+    "healthIncreasePerWave": 1.5
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-claw": "core:enemy-animation/litigant/attack-claw",
+    "finisher-phase-1": "core:enemy-animation/litigant/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/litigant/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/litigant/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/litigant/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/litigant/finisher-phase-5",
+    "lower-body-move": "core:enemy-animation/litigant/lower-body-move",
+    "upper-body-attack-primary": "core:enemy-animation/litigant/upper-body-attack-primary",
+    "upper-body-idle": "core:enemy-animation/litigant/upper-body-idle",
+    "upper-body-move": "core:enemy-animation/litigant/upper-body-move"
+  }
+}

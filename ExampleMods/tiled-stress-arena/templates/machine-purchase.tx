@@ -1,0 +1,14 @@
+{
+  "type": "template",
+  "tileset": { "firstgid": 1, "source": "../tilesets/preview-brain-machine.tsj" },
+  "object": {
+    "class": "machine", "gid": 1, "height": 96, "id": 1, "name": "purchase-machine", "rotation": 0, "visible": true, "width": 48,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "use" },
+      { "name": "price", "type": "int", "value": 100 },
+      { "name": "message", "type": "string", "value": "The machine activates." },
+      { "name": "visualArt", "type": "string", "value": "fer-brain-machine" },
+      { "name": "visualScale", "type": "float", "value": 1 }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/orc",
+  "legacyId": 9,
+  "displayName": "Orc",
+  "stats": {
+    "healthMax": 35,
+    "speedAcceleration": 3,
+    "speedMax": 4,
+    "traction": 0,
+    "bounty": 150,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/orc/attack-primary",
+    "await": "core:enemy-animation/orc/await",
+    "climb": "core:enemy-animation/orc/climb",
+    "finisher-phase-1": "core:enemy-animation/orc/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/orc/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/orc/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/orc/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/orc/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/orc/finisher-phase-6",
+    "finisher-phase-7": "core:enemy-animation/orc/finisher-phase-7",
+    "finisher-phase-8": "core:enemy-animation/orc/finisher-phase-8",
+    "idle": "core:enemy-animation/orc/idle",
+    "jump": "core:enemy-animation/orc/jump",
+    "move": "core:enemy-animation/orc/move",
+    "shield-raised": "core:enemy-animation/orc/shield-raised"
+  }
+}

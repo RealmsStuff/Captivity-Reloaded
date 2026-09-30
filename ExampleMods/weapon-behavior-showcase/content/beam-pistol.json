@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1, "type": "weapon",
+  "id": "example.weapon-behavior-showcase:item/weapon/beam-pistol",
+  "displayName": "Beam Pistol", "description": "Primary fire emits a cyan beam; alternate fire shoots a single pulse.",
+  "extends": "core:item/weapon/pistol",
+  "stats": { "damage": 8, "ammoMax": 100, "magazineSize": 20, "fireIntervalSeconds": 0.7, "value": 30, "marketable": true, "semiAutomatic": true },
+  "behavior": {
+    "ammunition": {
+      "type": "freeze", "damageMultiplier": 0.8,
+      "slowMultiplier": 0.5, "slowDurationSeconds": 2.0
+    },
+    "beam": {
+      "input": "primary", "durationSeconds": 0.5, "tickIntervalSeconds": 0.1,
+      "damageMultiplier": 0.25, "ammoPerTick": 1, "color": "#33EEFFFF", "thickness": 3
+    },
+    "alternateFire": {
+      "mode": "hitscan", "damageMultiplier": 1.25, "ammoCost": 2, "cooldownSeconds": 0.35,
+      "burstCount": 2, "burstIntervalSeconds": 0.1, "recoilMultiplier": 1.35
+    }
+  },
+  "visual": { "type": "coreWeaponSprites", "pixelsPerUnit": 32, "sprites": {
+    "body": "assets/weapon/body.png", "base": "assets/weapon/base.png", "slide": "assets/weapon/slide.png"
+  } }
+}

@@ -1,0 +1,28 @@
+name: Mod catalog validation
+
+on:
+  pull_request:
+    paths:
+      - "ModCatalog/**"
+      - "Docs/Modding/schemas/catalog-v1.schema.json"
+      - "Tools/ModCatalogValidator/**"
+      - "Tools/ModSchemaValidator/**"
+      - ".github/workflows/mod-catalog-validation.yml"
+  push:
+    paths:
+      - "ModCatalog/**"
+      - "Docs/Modding/schemas/catalog-v1.schema.json"
+      - "Tools/ModCatalogValidator/**"
+      - "Tools/ModSchemaValidator/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Validate catalog and release archives
+        run: dotnet run --project Tools/ModCatalogValidator -- . ModCatalog/catalog-v1.json

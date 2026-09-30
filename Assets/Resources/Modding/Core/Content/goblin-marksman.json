@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/goblin-marksman",
+  "legacyId": 10,
+  "displayName": "Goblin Marksman",
+  "stats": {
+    "healthMax": 15,
+    "speedAcceleration": 3,
+    "speedMax": 5,
+    "traction": 0,
+    "bounty": 25,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/goblin-marksman/attack-primary",
+    "attack-shoot": "core:enemy-animation/goblin-marksman/attack-shoot",
+    "await": "core:enemy-animation/goblin-marksman/await",
+    "climb": "core:enemy-animation/goblin-marksman/climb",
+    "finisher-phase-1": "core:enemy-animation/goblin-marksman/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/goblin-marksman/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/goblin-marksman/finisher-phase-3",
+    "idle": "core:enemy-animation/goblin-marksman/idle",
+    "jump": "core:enemy-animation/goblin-marksman/jump",
+    "move": "core:enemy-animation/goblin-marksman/move"
+  }
+}

@@ -473,7 +473,8 @@ public abstract class Actor : MonoBehaviour
 
 	private IEnumerator CoroutineGetUp()
 	{
-		m_animator.Play("GetUp");
+		if (m_animator != null && m_animator.runtimeAnimatorController != null) m_animator.Play("GetUp");
+		else GetComponent<ModularEnemyAnimationController>()?.Play("idle", true);
 		yield return new WaitForSeconds(1f);
 		SetStateActor(StateActor.Idle);
 		SetIsThinking(i_isThinking: true);
@@ -704,6 +705,35 @@ public abstract class Actor : MonoBehaviour
 	public string GetName()
 	{
 		return m_name;
+	}
+
+	public void ConfigureModDrops(float? i_chance, IEnumerable<PickUpable> i_items)
+	{
+		if (i_chance.HasValue) m_chanceDropPickUpables01 = i_chance.Value;
+		if (i_items == null) return;
+		m_pickUpablesToDrop.Clear();
+		foreach (PickUpable item in i_items) if (item != null) m_pickUpablesToDrop.Add(item);
+	}
+
+	public void ConfigureModIdentity(string i_name)
+	{
+		m_name = i_name;
+	}
+
+	public void ConfigureModStats(CaptivityReloaded.Modding.EnemyStatsDefinition i_stats)
+	{
+		if (i_stats == null) return;
+		if (i_stats.HealthMax.HasValue) SetBaseStat("HealthMax", i_stats.HealthMax.Value, ref m_healthMax);
+		if (i_stats.SpeedAcceleration.HasValue) SetBaseStat("SpeedAccel", i_stats.SpeedAcceleration.Value, ref m_speedAcceleration);
+		if (i_stats.SpeedMax.HasValue) SetBaseStat("SpeedMax", i_stats.SpeedMax.Value, ref m_speedMax);
+		if (i_stats.Traction.HasValue) SetBaseStat("Traction", i_stats.Traction.Value, ref m_traction01);
+	}
+
+	private void SetBaseStat(string i_name, float i_value, ref float io_serializedValue)
+	{
+		io_serializedValue = i_value;
+		Stat stat = GetStat(i_name);
+		if (stat != null) stat.SetValueBase(i_value);
 	}
 
 	public Animator GetAnimator()

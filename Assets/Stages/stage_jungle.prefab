@@ -15893,6 +15893,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 1
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6320778753019187878
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -40898,6 +40900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 3
+  m_isRuntimeTemplate: 0
   m_nameStage: Jungle
   m_description: Your helicopter has crashed in a jungle. As you gather your bearings,
     you look around you to figure out where you are. You can see odd creatures in
@@ -44707,6 +44710,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 2
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6320778753019210521
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -64446,6 +64451,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &6320778753019211118
 SpriteRenderer:
   m_ObjectHideFlags: 0

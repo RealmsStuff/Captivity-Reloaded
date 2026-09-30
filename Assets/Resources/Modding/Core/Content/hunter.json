@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/hunter",
+  "legacyId": 5,
+  "displayName": "Hunter",
+  "stats": {
+    "healthMax": 7.5,
+    "speedAcceleration": 7,
+    "speedMax": 6,
+    "traction": 0,
+    "bounty": 50,
+    "healthIncreasePerWave": 1.5
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-leap": "core:enemy-animation/hunter/attack-leap",
+    "await": "core:enemy-animation/hunter/await",
+    "climb": "core:enemy-animation/hunter/climb",
+    "finisher-phase-1": "core:enemy-animation/hunter/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/hunter/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/hunter/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/hunter/finisher-phase-4",
+    "idle": "core:enemy-animation/hunter/idle",
+    "jump": "core:enemy-animation/hunter/jump",
+    "move": "core:enemy-animation/hunter/move",
+    "prowl": "core:enemy-animation/hunter/prowl",
+    "retreat": "core:enemy-animation/hunter/retreat"
+  }
+}

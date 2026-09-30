@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/tiled-tileset.schema.json",
+  "title": "Captivity Reloaded Tiled JSON Tileset",
+  "description": "Experimental schema for an external Tiled JSON/TSJ tileset referenced by a Mod API v1 authored map. Tiled-owned editor metadata remains open.",
+  "x-stability": "experimental",
+  "type": "object",
+  "required": ["type", "name", "tilewidth", "tileheight", "tilecount", "columns", "image", "imagewidth", "imageheight"],
+  "properties": {
+    "type": { "const": "tileset", "x-stability": "experimental" },
+    "name": { "type": "string", "minLength": 1, "x-stability": "experimental" },
+    "tilewidth": { "type": "integer", "minimum": 1, "maximum": 1000000, "x-stability": "experimental" },
+    "tileheight": { "type": "integer", "minimum": 1, "maximum": 1000000, "x-stability": "experimental" },
+    "tilecount": { "type": "integer", "minimum": 1, "maximum": 1000000, "x-stability": "experimental" },
+    "columns": { "type": "integer", "minimum": 1, "maximum": 1000000, "x-stability": "experimental" },
+    "spacing": { "type": "integer", "minimum": 0, "default": 0, "x-stability": "experimental" },
+    "margin": { "type": "integer", "minimum": 0, "default": 0, "x-stability": "experimental" },
+    "image": { "$ref": "#/$defs/pngPath", "x-stability": "experimental" },
+    "imagewidth": { "type": "integer", "minimum": 1, "x-stability": "experimental" },
+    "imageheight": { "type": "integer", "minimum": 1, "x-stability": "experimental" },
+	"objectalignment": { "enum": ["unspecified", "topleft", "top", "topright", "left", "center", "right", "bottomleft", "bottom", "bottomright"], "x-stability": "experimental" },
+    "tiles": { "type": "array", "items": { "$ref": "#/$defs/tile" }, "x-stability": "experimental" },
+    "properties": { "type": "array", "items": { "$ref": "#/$defs/property" }, "x-stability": "experimental" },
+    "version": { "type": ["string", "number"], "x-stability": "experimental" },
+    "tiledversion": { "type": "string", "x-stability": "experimental" }
+  },
+  "$defs": {
+    "pngPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\).+\\.[pP][nN][gG]$"
+    },
+    "tile": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "integer", "minimum": 0 },
+        "animation": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/frame" }
+        }
+      }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tileid", "duration"],
+      "properties": {
+        "tileid": { "type": "integer", "minimum": 0 },
+        "duration": { "type": "integer", "minimum": 16, "maximum": 60000 }
+      }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "value"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["string", "file", "bool", "int", "float", "color"] },
+        "value": {}
+      }
+	}
+  }
+}

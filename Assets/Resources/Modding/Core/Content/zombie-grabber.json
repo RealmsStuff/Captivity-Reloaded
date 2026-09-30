@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/zombie-grabber",
+  "legacyId": 3,
+  "displayName": "Zombie Grabber",
+  "stats": {
+    "healthMax": 25.0,
+    "speedAcceleration": 3.0,
+    "speedMax": 3.5,
+    "traction": 0.0,
+    "bounty": 35,
+    "healthIncreasePerWave": 1.0
+  },
+  "behavior": {
+    "visionRange": 20.0,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-default-attack-primary": "core:enemy-animation/zombie-grabber/attack-default-attack-primary",
+    "await": "core:enemy-animation/zombie-grabber/await",
+    "climb": "core:enemy-animation/zombie-grabber/climb",
+    "finisher-phase-1": "core:enemy-animation/zombie-grabber/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/zombie-grabber/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/zombie-grabber/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/zombie-grabber/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/zombie-grabber/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/zombie-grabber/finisher-phase-6",
+    "get-up": "core:enemy-animation/zombie-grabber/get-up",
+    "idle": "core:enemy-animation/zombie-grabber/idle",
+    "jump": "core:enemy-animation/zombie-grabber/jump",
+    "move": "core:enemy-animation/zombie-grabber/move"
+  }
+}

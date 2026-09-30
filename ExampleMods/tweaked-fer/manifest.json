@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.tweaked-fer",
+  "displayName": "Tweaked FER",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Legacy mod author"],
+  "description": "Faithful conversion of the legacy FER character retouch and expanded blood artwork.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "conflicts": [
+    "legacy.captivity-sfw",
+    "legacy.smaller-breast",
+    "legacy.smaller-breast-and-butt"
+  ],
+  "overrides": [
+    "core:enemy-anatomy/sprite/penis-base-0",
+    "core:enemy-anatomy/sprite/penis-end-0",
+    "core:sprite/butt-6/image",
+    "core:stage-art/fer/actor/head-turned-off",
+    "core:stage-art/fer/actor/head-turned-off-alt",
+    "core:stage-art/fer/actor/spine-3",
+    "core:stage-art/fer/actor/spine-5",
+    "core:stage-art/fer/actor/spine-9",
+    "core:stage-art/fer/actor/leg-upper-4",
+    "core:stage-art/fer/actor/leg-upper-6",
+    "core:stage-art/fer/actor/leg-upper-17",
+    "core:stage-art/fer/actor/butt-12",
+    "core:stage-art/fer/actor/hand-broken",
+    "core:stage-art/fer/actor/head-11",
+    "core:stage-art/fer/actor/head-17",
+    "core:stage-art/fer/actor/head-18",
+    "core:stage-art/fer/actor/chest-12",
+    "core:stage-art/fer/actor/chest-15",
+    "core:stage-art/fer/actor/leg-upper-bloody",
+    "core:stage-art/fer/actor/leg-lower-bloody",
+    "core:stage-art/fer/effects/blood-big-1",
+    "core:stage-art/fer/effects/blood-big-2",
+    "core:stage-art/fer/effects/blood-wall-1",
+    "core:stage-art/fer/effects/blood-wall-2",
+    "core:stage-art/fer/effects/blood-wall-3",
+    "core:stage-art/fer/effects/blood-small-1",
+    "core:stage-art/fer/effects/blood-small-2",
+    "core:stage-art/fer/effects/blood-small-3",
+    "core:stage-art/fer/effects/blood-small-4",
+    "core:stage-art/fer/effects/blood-platform"
+  ],
+  "priority": 20,
+  "contentRoots": ["content"],
+  "previewImages": ["preview2.png", "preview3.png", "preview4.png", "preview5.png"]
+}

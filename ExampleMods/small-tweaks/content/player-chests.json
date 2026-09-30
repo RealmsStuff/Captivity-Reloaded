@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "legacy.small-tweaks:patch/player-chests",
+  "target": "core:player",
+  "replacements": {
+    "body/chest/pale": "assets/chest-pale.png",
+    "body/chest/white": "assets/chest-white.png",
+    "body/chest/tan": "assets/chest-tan.png",
+    "body/chest/black": "assets/chest-black.png"
+  }
+}

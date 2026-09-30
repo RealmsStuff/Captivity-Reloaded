@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "example.training-yard",
+  "displayName": "Training Yard Stage",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Captivity Reloaded Mod API example"],
+  "description": "A template-backed stage demonstrating data-defined waves and enemy spawners.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "contentRoots": ["content"]
+}

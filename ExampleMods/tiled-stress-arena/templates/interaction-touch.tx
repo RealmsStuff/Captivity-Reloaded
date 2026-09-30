@@ -1,0 +1,16 @@
+{
+  "type": "template",
+  "object": {
+    "class": "interaction",
+    "name": "touch-zone",
+    "height": 64,
+    "rotation": 0,
+    "visible": true,
+    "width": 64,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "touch" },
+      { "name": "singleUse", "type": "bool", "value": false },
+      { "name": "message", "type": "string", "value": "You entered the trigger zone." }
+    ]
+  }
+}

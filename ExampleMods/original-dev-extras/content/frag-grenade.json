@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "perveloper.original-dev-extras:item/weapon/frag-grenade",
+  "displayName": "Frag Grenade",
+  "description": "A timed explosive recovered from Captivity v1.0.5bDebug. Its fuse starts when aiming begins.",
+  "stats": {
+    "damage": 24,
+    "ammoMax": 9,
+    "magazineSize": 3,
+    "rangeMultiplier": 1,
+    "fireIntervalSeconds": 0.65,
+    "reloadSeconds": 0.75,
+    "equipSeconds": 0.25,
+    "weight": 1,
+    "value": 15,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "OneHanded",
+    "reloadType": "Magazine",
+    "weaponType": "Special"
+  },
+  "behavior": {
+    "playShootSound": true,
+    "showMuzzleFlash": false,
+    "shootSounds": ["assets/audio/throw.wav"],
+    "throwable": {
+      "throwSpeed": 11,
+      "gravity": 1,
+      "angularVelocity": 180,
+      "lifetimeSeconds": 8,
+      "impactDamageMultiplier": 0,
+      "destroyOnImpact": false,
+      "fuseSeconds": 3,
+      "explosionRadius": 3,
+      "explosionDamageMultiplier": 1,
+      "explosionForce": 12,
+      "tickIntervalSeconds": 0.5,
+      "impactSounds": ["assets/audio/hit-1a.wav", "assets/audio/hit-2.wav"],
+      "tickSounds": ["assets/audio/grenade-click.wav"],
+      "explosionSounds": ["assets/audio/explosion.wav"],
+      "explosionColor": "#FF7926FF"
+    }
+  },
+  "visual": {
+    "type": "originalWeaponSprites",
+    "pixelsPerUnit": 32,
+    "pivotX": 0.5,
+    "pivotY": 0.5,
+    "colliderWidth": 0.42,
+    "colliderHeight": 0.42,
+    "sprites": { "body": "assets/weapon/frag-grenade.png", "icon": "assets/weapon/frag-grenade.png" }
+  }
+}

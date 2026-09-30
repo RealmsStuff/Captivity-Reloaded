@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "playerAttachment",
+  "id": "perveloper.original-dev-extras:player-attachment/pregnancy-belly",
+  "sprite": "assets/player/belly-white.png",
+  "skinSprites": {
+    "pale": "assets/player/belly-pale.png",
+    "white": "assets/player/belly-white.png",
+    "tan": "assets/player/belly-tan.png",
+    "black": "assets/player/belly-black.png"
+  },
+  "pixelsPerUnit": 32,
+  "bone": "Spine",
+  "attachToBone": true,
+  "pivotX": 0.5,
+  "pivotY": 0.5,
+  "sortingOffset": 1,
+  "tintWithSkin": true,
+  "pregnancyGrowth": {
+    "transitionSeconds": 1.5,
+    "breakSpineClothing": true,
+    "clothingBreakDelaySeconds": 0.5,
+    "stages": [
+      { "minimumFetuses": 0, "offsetX": 0.095, "offsetY": 0.131, "scaleX": 0, "scaleY": 0.75 },
+      { "minimumFetuses": 1, "offsetX": 0.085, "offsetY": 0.131, "scaleX": 0.5, "scaleY": 0.75 },
+      { "minimumFetuses": 2, "offsetX": 0.085, "offsetY": 0.131, "scaleX": 0.7, "scaleY": 0.85 },
+      { "minimumFetuses": 3, "offsetX": 0.085, "offsetY": 0.131, "scaleX": 0.8, "scaleY": 0.92 },
+      { "minimumFetuses": 4, "offsetX": 0.085, "offsetY": 0.131, "scaleX": 1, "scaleY": 1 }
+    ]
+  }
+}

@@ -8,6 +8,9 @@ public class Stage : MonoBehaviour
 	private int m_id;
 
 	[SerializeField]
+	private bool m_isRuntimeTemplate;
+
+	[SerializeField]
 	private string m_nameStage;
 
 	[TextArea(5, 10)]
@@ -44,6 +47,10 @@ public class Stage : MonoBehaviour
 
 	private bool m_isDuplicate;
 
+	private float m_fallRecoveryY = float.NaN;
+	private bool m_hasModCameraBounds;
+	private Rect m_modCameraBounds;
+
 	private List<Ledge> m_ledges = new List<Ledge>();
 
 	private void Awake()
@@ -63,6 +70,14 @@ public class Stage : MonoBehaviour
 	public virtual void OpenStage()
 	{
 		base.gameObject.SetActive(value: true);
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
+		if (m_hasModCameraBounds)
+		{
+			Vector2 origin = transform.position;
+			camera.SetWorldBounds(new Rect(origin.x + m_modCameraBounds.x, origin.y + m_modCameraBounds.y,
+				m_modCameraBounds.width, m_modCameraBounds.height));
+		}
+		else camera.ClearWorldBounds();
 		CommonReferences.Instance.GetPlayer().transform.SetParent(GetActorsParent().transform);
 		if ((bool)GetComponent<ManagerWave>())
 		{
@@ -74,11 +89,16 @@ public class Stage : MonoBehaviour
 			componentsInChildren[i].CreateLedgesAndEdges();
 		}
 		m_ledges.Clear();
-		Ledge[] componentsInChildren2 = GetComponentsInChildren<Ledge>(includeInactive: true);
+		// Disabled inherited platforms in a Tiled stage still retain their old
+		// ledges. Excluding inactive objects prevents AI from climbing toward
+		// invisible geometry instead of the active mod platforms.
+		Ledge[] componentsInChildren2 = GetComponentsInChildren<Ledge>();
 		foreach (Ledge item in componentsInChildren2)
 		{
 			m_ledges.Add(item);
 		}
+		if (m_navMap != null) m_navMap.FinalizeModPlatformConnections();
+		m_fallRecoveryY = CalculateFallRecoveryY();
 	}
 
 	public void CloseStage()
@@ -212,9 +232,25 @@ public class Stage : MonoBehaviour
 		return m_lightGlobal;
 	}
 
+	public void ConfigureModGlobalLight(UnityEngine.Rendering.Universal.Light2D i_light)
+	{
+		if (i_light != null) m_lightGlobal = i_light;
+	}
+
 	public int GetId()
 	{
 		return m_id;
+	}
+
+	public bool GetIsRuntimeTemplate()
+	{
+		return m_isRuntimeTemplate;
+	}
+
+	public void ConfigureRuntimeTemplate(int i_templateId)
+	{
+		m_id = i_templateId;
+		m_isRuntimeTemplate = true;
 	}
 
 	public NavMap GetNavMap()
@@ -252,5 +288,76 @@ public class Stage : MonoBehaviour
 	public string GetDescription()
 	{
 		return m_description;
+	}
+
+	public float GetFallRecoveryY()
+	{
+		if (float.IsNaN(m_fallRecoveryY)) m_fallRecoveryY = CalculateFallRecoveryY();
+		return m_fallRecoveryY;
+	}
+
+	private float CalculateFallRecoveryY()
+	{
+		float lowestGeometryY = float.PositiveInfinity;
+		int platformLayer = LayerMask.NameToLayer("Platform");
+		int invisibleWallLayer = LayerMask.NameToLayer("InvisibleWall");
+		foreach (Collider2D collider in GetComponentsInChildren<Collider2D>(includeInactive: false))
+		{
+			if (collider == null || !collider.enabled || collider.isTrigger) continue;
+			int layer = collider.gameObject.layer;
+			if (layer != platformLayer && layer != invisibleWallLayer) continue;
+			lowestGeometryY = Mathf.Min(lowestGeometryY, collider.bounds.min.y);
+		}
+		float spawnY = m_waypointStart != null ? m_waypointStart.GetPos().y : m_posStart.y;
+		return float.IsPositiveInfinity(lowestGeometryY)
+			? spawnY - 25f
+			: Mathf.Min(spawnY - 10f, lowestGeometryY - 10f);
+	}
+
+	public Vector2 GetPlayerSpawnPosition()
+	{
+		return m_waypointStart != null ? m_waypointStart.GetPos() : (Vector2)m_posStart;
+	}
+
+	public void ConfigureModStage(int i_runtimeId, string i_name, string i_description, Vector2 i_playerSpawn)
+	{
+		m_id = i_runtimeId;
+		m_isRuntimeTemplate = false;
+		m_nameStage = i_name;
+		m_description = i_description ?? string.Empty;
+		if (m_waypointStart != null)
+		{
+			m_waypointStart.transform.position = transform.TransformPoint(i_playerSpawn);
+			m_posStart = m_waypointStart.transform.position;
+		}
+		m_fallRecoveryY = float.NaN;
+	}
+
+	public void ConfigureModCameraBounds(Rect i_bounds)
+	{
+		m_modCameraBounds = i_bounds;
+		m_hasModCameraBounds = i_bounds.width > 0f && i_bounds.height > 0f;
+	}
+
+	public void CopyModRuntimeSettingsFrom(Stage i_source)
+	{
+		if (i_source == null) return;
+		m_modCameraBounds = i_source.m_modCameraBounds;
+		m_hasModCameraBounds = i_source.m_hasModCameraBounds;
+	}
+
+	public void ConfigureModAudioSlot(string i_slot, AudioClip i_clip)
+	{
+		if (i_clip == null) return;
+		if (i_slot == "ambience") m_audioAmbience = i_clip;
+		else if (i_slot == "entryMusic") m_audioEnterStage = i_clip;
+		else if (i_slot == "waveMusic") m_audioStartWave = i_clip;
+		else if (i_slot == "waveComplete") m_audioWinWave = i_clip;
+	}
+
+	public void ConfigureCoreStage(string i_name, string i_description)
+	{
+		m_nameStage = i_name;
+		m_description = i_description ?? string.Empty;
 	}
 }

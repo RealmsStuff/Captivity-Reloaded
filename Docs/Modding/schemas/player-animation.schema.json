@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/player-animation.schema.json",
+  "title": "Captivity Reloaded Normalized Player Animation",
+  "x-stability": "experimental",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "rig", "displayName", "durationSeconds", "frameRate", "loop", "tracks"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "playerAnimation", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-animation/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "rig": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-rig/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 100, "x-stability": "stable" },
+    "durationSeconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 600, "x-stability": "stable" },
+    "frameRate": { "type": "number", "exclusiveMinimum": 0, "maximum": 240, "x-stability": "stable" },
+    "loop": { "type": "boolean", "x-stability": "stable" },
+    "tracks": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/numericTrack" }, "x-stability": "stable" },
+    "objectTracks": { "type": "array", "maxItems": 256, "items": { "$ref": "#/$defs/objectTrack" }, "x-stability": "experimental" },
+    "events": { "type": "array", "maxItems": 256, "items": { "$ref": "#/$defs/event" }, "x-stability": "experimental" },
+    "effects": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/effect" }, "x-stability": "experimental" },
+    "effectTriggers": { "type": "array", "maxItems": 512, "items": { "$ref": "#/$defs/effectTrigger" }, "x-stability": "experimental" },
+    "warnings": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 }, "x-stability": "experimental" },
+    "source": { "$ref": "#/$defs/source", "x-stability": "experimental" }
+  },
+  "$defs": {
+    "target": { "type": "string", "pattern": "^(?:bone|sprite)/(?:hips|butt|spine|chest|neck|head|arm-right-upper|arm-right-lower|hand-right|arm-left-upper|arm-left-lower|hand-left|leg-right-upper|leg-right-lower|foot-right|leg-left-upper|leg-left-lower|foot-left|ear|face)$" },
+    "numericProperty": { "enum": ["position.x", "position.y", "position.z", "rotation.x", "rotation.y", "rotation.z", "scale.x", "scale.y", "scale.z", "color.r", "color.g", "color.b", "color.a", "sortingOrder"] },
+    "key": {
+      "type": "object", "additionalProperties": false, "required": ["time", "value", "inTangent", "outTangent"],
+      "properties": { "time": { "type": "number", "minimum": 0 }, "value": { "type": "number" }, "inTangent": { "type": ["number", "null"] }, "outTangent": { "type": ["number", "null"] } }
+    },
+    "numericTrack": {
+      "type": "object", "additionalProperties": false, "required": ["target", "property", "keys"],
+      "properties": { "target": { "$ref": "#/$defs/target" }, "property": { "$ref": "#/$defs/numericProperty" }, "keys": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/key" } } }
+    },
+    "objectTrack": {
+      "type": "object", "additionalProperties": false, "required": ["target", "property", "keys"],
+      "properties": {
+        "target": { "$ref": "#/$defs/target" }, "property": { "const": "sprite" },
+        "keys": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["time"], "properties": { "time": { "type": "number", "minimum": 0 }, "asset": { "type": ["string", "null"] }, "name": { "type": ["string", "null"] } } } }
+      }
+    },
+    "event": {
+      "type": "object", "additionalProperties": false, "required": ["time", "name"],
+      "properties": { "time": { "type": "number", "minimum": 0 }, "name": { "type": "string", "minLength": 1 }, "stringValue": { "type": "string" }, "floatValue": { "type": "number" }, "intValue": { "type": "integer" } }
+    },
+    "effect": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "trigger", "index", "target", "durationSeconds", "loop", "maxParticles", "startLifetimeMin", "startLifetimeMax", "startSpeedMin", "startSpeedMax", "startSizeMin", "startSizeMax", "gravityMin", "gravityMax", "scaleX", "scaleY", "scaleZ", "simulationSpace", "startColorMin", "startColorMax", "emissionRateMin", "emissionRateMax", "shapeEnabled", "shape", "shapeRadius", "shapeAngle", "textureSheetTilesX", "textureSheetTilesY", "textureSheetSprites", "sortingOrder", "source"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._/-]*$" },
+        "kind": { "enum": ["particle", "light", "trail", "decal"] },
+        "trigger": { "enum": ["thrust", "cumThrust", "unique"] },
+        "index": { "type": "integer", "minimum": 0, "maximum": 127 },
+        "target": { "type": "string", "pattern": "^(?:bone/(?:hips|butt|spine|chest|neck|head|arm-right-upper|arm-right-lower|hand-right|arm-left-upper|arm-left-lower|hand-left|leg-right-upper|leg-right-lower|foot-right|leg-left-upper|leg-left-lower|foot-left|ear|face)|enemy-bone/[A-Za-z0-9_. -]+)$" },
+        "durationSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "loop": { "type": "boolean" },
+        "maxParticles": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "startLifetimeMin": { "type": "number" }, "startLifetimeMax": { "type": "number" },
+        "startSpeedMin": { "type": "number" }, "startSpeedMax": { "type": "number" },
+        "startSizeMin": { "type": "number" }, "startSizeMax": { "type": "number" },
+        "gravityMin": { "type": "number" }, "gravityMax": { "type": "number" },
+        "scaleX": { "type": "number" }, "scaleY": { "type": "number" }, "scaleZ": { "type": "number" },
+        "positionX": { "type": "number" }, "positionY": { "type": "number" }, "positionZ": { "type": "number" },
+        "rotationX": { "type": "number" }, "rotationY": { "type": "number" }, "rotationZ": { "type": "number" },
+        "simulationSpace": { "enum": ["Local", "World", "Custom"] },
+        "startColorMin": { "$ref": "#/$defs/color" }, "startColorMax": { "$ref": "#/$defs/color" },
+        "emissionRateMin": { "type": "number", "minimum": 0 }, "emissionRateMax": { "type": "number", "minimum": 0 },
+        "shapeEnabled": { "type": "boolean" }, "shape": { "type": "string" },
+        "shapeRadius": { "type": "number", "minimum": 0 }, "shapeAngle": { "type": "number", "minimum": 0, "maximum": 360 },
+        "textureSheetTilesX": { "type": "integer", "minimum": 1, "maximum": 64 }, "textureSheetTilesY": { "type": "integer", "minimum": 1, "maximum": 64 }, "textureSheetFrame": { "type": "integer", "minimum": 0, "maximum": 4095 },
+        "textureSheetSprites": { "type": "array", "maxItems": 256, "items": { "type": "string" } },
+        "bursts": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/particleBurst" } },
+        "startLifetimeCurve": { "$ref": "#/$defs/particleCurve" }, "startSpeedCurve": { "$ref": "#/$defs/particleCurve" }, "startSizeCurve": { "$ref": "#/$defs/particleCurve" },
+        "gravityCurve": { "$ref": "#/$defs/particleCurve" }, "emissionRateCurve": { "$ref": "#/$defs/particleCurve" }, "emissionRateOverDistanceCurve": { "$ref": "#/$defs/particleCurve" },
+        "startColorGradient": { "$ref": "#/$defs/particleGradient" },
+        "colorOverLifetime": { "$ref": "#/$defs/particleGradient" }, "sizeOverLifetime": { "$ref": "#/$defs/particleAxes" },
+        "velocityOverLifetime": { "$ref": "#/$defs/particleAxes" }, "rotationOverLifetime": { "$ref": "#/$defs/particleAxes" }, "noise": { "$ref": "#/$defs/particleNoise" },
+        "textureSheetFrameOverTime": { "$ref": "#/$defs/particleCurve" }, "textureSheetStartFrame": { "$ref": "#/$defs/particleCurve" },
+        "textureSheetAnimation": { "enum": ["WholeSheet", "SingleRow"] }, "textureSheetCycleCount": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "textureSheetRowIndex": { "type": "integer", "minimum": 0, "maximum": 63 }, "textureSheetUseRandomRow": { "type": "boolean" },
+        "sortingLayer": { "type": "string" }, "sortingOrder": { "type": "integer", "minimum": -32768, "maximum": 32767 },
+        "renderMode": { "type": "string" }, "mesh": { "type": "string" }, "material": { "type": "string" }, "texture": { "type": "string", "pattern": "^(?![A-Za-z]:|/|.*(?:^|/)\\.\\.(?:/|$)).+\\.png$" },
+        "lightIntensity": { "type": "number", "minimum": 0, "maximum": 20 }, "lightRadius": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "trailWidth": { "type": "number", "exclusiveMinimum": 0, "maximum": 20 }, "trailTime": { "type": "number", "exclusiveMinimum": 0, "maximum": 30 },
+        "decalPixelsPerUnit": { "type": "number", "minimum": 1, "maximum": 1024 },
+        "source": { "type": "object", "additionalProperties": false, "required": ["unityPrefab", "hierarchyPath"], "properties": { "unityPrefab": { "type": "string" }, "hierarchyPath": { "type": "string" } } }
+      }
+    },
+    "effectTrigger": {
+      "type": "object", "additionalProperties": false, "required": ["time", "source", "effects"],
+      "properties": {
+        "time": { "type": "number", "minimum": 0 }, "source": { "enum": ["enemy:Thrust", "enemy:CumThrust", "enemy:PlayParticleUnique"] },
+        "effects": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^vfx/[a-z0-9][a-z0-9-]*$" } }
+      }
+    },
+    "color": {
+      "type": "object", "additionalProperties": false, "required": ["r", "g", "b", "a"],
+      "properties": { "r": { "type": "number" }, "g": { "type": "number" }, "b": { "type": "number" }, "a": { "type": "number" } }
+    },
+    "particleCurveKey": { "type": "object", "additionalProperties": false, "required": ["time", "value", "inTangent", "outTangent"], "properties": { "time": { "type": "number" }, "value": { "type": "number" }, "inTangent": { "type": "number" }, "outTangent": { "type": "number" } } },
+    "particleCurve": { "type": "object", "additionalProperties": false, "required": ["mode", "multiplier", "constantMin", "constantMax", "curveMin", "curveMax"], "properties": { "mode": { "enum": ["Constant", "Curve", "TwoCurves", "TwoConstants"] }, "multiplier": { "type": "number" }, "constantMin": { "type": "number" }, "constantMax": { "type": "number" }, "curveMin": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/particleCurveKey" } }, "curveMax": { "type": "array", "maxItems": 128, "items": { "$ref": "#/$defs/particleCurveKey" } } } },
+    "particleColorKey": { "type": "object", "additionalProperties": false, "required": ["time", "color"], "properties": { "time": { "type": "number", "minimum": 0, "maximum": 1 }, "color": { "$ref": "#/$defs/color" } } },
+    "particleGradient": { "type": "object", "additionalProperties": false, "required": ["mode", "gradientMin", "gradientMax"], "properties": { "mode": { "enum": ["Color", "Gradient", "TwoColors", "TwoGradients", "RandomColor"] }, "colorMin": { "$ref": "#/$defs/color" }, "colorMax": { "$ref": "#/$defs/color" }, "gradientMin": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/particleColorKey" } }, "gradientMax": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/particleColorKey" } } } },
+    "particleAxes": { "type": "object", "additionalProperties": false, "required": ["enabled", "separateAxes"], "properties": { "enabled": { "type": "boolean" }, "separateAxes": { "type": "boolean" }, "space": { "enum": ["Local", "World", "Custom"] }, "x": { "$ref": "#/$defs/particleCurve" }, "y": { "$ref": "#/$defs/particleCurve" }, "z": { "$ref": "#/$defs/particleCurve" } } },
+    "particleBurst": { "type": "object", "additionalProperties": false, "required": ["time", "countMin", "countMax", "cycleCount", "repeatInterval", "probability"], "properties": { "time": { "type": "number", "minimum": 0 }, "countMin": { "type": "number", "minimum": 0 }, "countMax": { "type": "number", "minimum": 0 }, "cycleCount": { "type": "integer", "minimum": 1, "maximum": 1000 }, "repeatInterval": { "type": "number", "minimum": 0 }, "probability": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "particleNoise": { "type": "object", "additionalProperties": false, "required": ["enabled", "separateAxes", "frequency", "damping", "octaveCount", "octaveMultiplier", "octaveScale"], "properties": { "enabled": { "type": "boolean" }, "separateAxes": { "type": "boolean" }, "strengthX": { "$ref": "#/$defs/particleCurve" }, "strengthY": { "$ref": "#/$defs/particleCurve" }, "strengthZ": { "$ref": "#/$defs/particleCurve" }, "frequency": { "type": "number", "exclusiveMinimum": 0 }, "scrollSpeed": { "$ref": "#/$defs/particleCurve" }, "damping": { "type": "boolean" }, "octaveCount": { "type": "integer", "minimum": 1, "maximum": 4 }, "octaveMultiplier": { "type": "number", "minimum": 0, "maximum": 1 }, "octaveScale": { "type": "number", "exclusiveMinimum": 0 }, "quality": { "enum": ["Low", "Medium", "High"] } } },
+    "source": { "type": "object", "additionalProperties": false, "properties": { "unityClip": { "type": "string" } } }
+  }
+}

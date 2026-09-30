@@ -28,6 +28,10 @@ public class SkeletonPlayer : Skeleton
 
 	private EyeColor m_eyeColor;
 
+	private readonly List<SpriteRenderer> m_auxiliarySkinRenderers = new List<SpriteRenderer>();
+
+	private Color m_auxiliarySkinTint = Color.white;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -272,6 +276,7 @@ public class SkeletonPlayer : Skeleton
 			return;
 		}
 		m_clothesEquipped.Add(i_clothing);
+		i_clothing.ApplyModEffects(CommonReferences.Instance.GetPlayer());
 		Clothing clothing = Object.Instantiate(i_clothing);
 		clothing.Initialize();
 		foreach (ClothingPiece clothingPiece in clothing.GetClothingPieces())
@@ -312,6 +317,7 @@ public class SkeletonPlayer : Skeleton
 			}
 		}
 		m_clothesEquipped.Remove(i_clothing);
+		i_clothing.RemoveModEffects(CommonReferences.Instance.GetPlayer());
 		StartCoroutine(CoroutineWaitForHandleHat());
 	}
 
@@ -363,6 +369,62 @@ public class SkeletonPlayer : Skeleton
 		return m_clothesEquipped;
 	}
 
+	public int GetMissingClothingPieceCount()
+	{
+		int missing = 0;
+		foreach (Clothing clothing in m_clothesEquipped)
+		{
+			int attached = GetClothingPiecesAttachedFromClothing(clothing).Count;
+			missing += Mathf.Max(0, clothing.GetClothingPieces().Count - attached);
+		}
+		return missing;
+	}
+
+	public int GetClothingRepairCost()
+	{
+		int cost = 0;
+		foreach (Clothing clothing in m_clothesEquipped)
+		{
+			int missing = Mathf.Max(0, clothing.GetClothingPieces().Count - GetClothingPiecesAttachedFromClothing(clothing).Count);
+			cost += missing * GetRepairCostPerPiece(clothing.GetCatergoryClothing());
+		}
+		return cost;
+	}
+
+	public int RepairEquippedClothing()
+	{
+		List<Clothing> damaged = new List<Clothing>();
+		int repairedPieces = 0;
+		foreach (Clothing clothing in m_clothesEquipped)
+		{
+			int missing = Mathf.Max(0, clothing.GetClothingPieces().Count - GetClothingPiecesAttachedFromClothing(clothing).Count);
+			if (missing <= 0) continue;
+			damaged.Add(clothing);
+			repairedPieces += missing;
+		}
+		foreach (Clothing clothing in damaged)
+		{
+			RemoveClothing(clothing);
+			EquipClothing(clothing);
+		}
+		return repairedPieces;
+	}
+
+	private static int GetRepairCostPerPiece(ClothingCategory i_category)
+	{
+		switch (i_category)
+		{
+		case ClothingCategory.Upper: return 40;
+		case ClothingCategory.Lower: return 50;
+		case ClothingCategory.Stockings: return 25;
+		case ClothingCategory.Sleeves:
+		case ClothingCategory.Shoes: return 15;
+		case ClothingCategory.Hair:
+		case ClothingCategory.Hat: return 0;
+		default: return 25;
+		}
+	}
+
 	public bool IsClothingEquipped(Clothing i_clothingToCheck)
 	{
 		if (m_clothesEquipped.Contains(i_clothingToCheck))
@@ -381,6 +443,7 @@ public class SkeletonPlayer : Skeleton
 			if (!IsClothingEquipped(clothing))
 			{
 				m_clothesEquipped.Add(clothing);
+				clothing.ApplyModEffects(CommonReferences.Instance.GetPlayer());
 			}
 		}
 		HandleHat();
@@ -393,7 +456,7 @@ public class SkeletonPlayer : Skeleton
 		{
 			if (item is ClothingPieceHat)
 			{
-				flag = ((ClothingPieceHat)item).IsHidesHair();
+				flag |= ((ClothingPieceHat)item).IsHidesHair();
 			}
 		}
 		foreach (ClothingPiece item2 in GetClothingPiecesAttached())
@@ -445,6 +508,42 @@ public class SkeletonPlayer : Skeleton
 			item.SetSkinColor(i_skinColor);
 		}
 		m_skinColor = i_skinColor;
+		ApplyAuxiliarySkinTint(i_skinColor);
+		foreach (ModPersistentPlayerAttachment attachment in GetComponentsInChildren<ModPersistentPlayerAttachment>(includeInactive: true))
+			attachment.RefreshForSkinTone();
+	}
+
+	private void ApplyAuxiliarySkinTint(SkinColor i_skinColor)
+	{
+		m_auxiliarySkinTint = SkinTonePalette.GetRendererTint(i_skinColor);
+		m_auxiliarySkinRenderers.Clear();
+		foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>(includeInactive: true))
+		{
+			if (renderer.name != "bp_ear" && renderer.name != "eyelidLowerHideEye"
+				&& renderer.name != "face_eyelidLowerHideEye") continue;
+			m_auxiliarySkinRenderers.Add(renderer);
+		}
+		RefreshAuxiliarySkinTint();
+	}
+
+	private void LateUpdate()
+	{
+		// Facial animations write these renderer colors. Reapply only RGB after the
+		// Animator so eyelid/blush alpha animation remains untouched.
+		RefreshAuxiliarySkinTint();
+	}
+
+	private void RefreshAuxiliarySkinTint()
+	{
+		foreach (SpriteRenderer renderer in m_auxiliarySkinRenderers)
+		{
+			if (renderer == null) continue;
+			Color color = renderer.color;
+			color.r = m_auxiliarySkinTint.r;
+			color.g = m_auxiliarySkinTint.g;
+			color.b = m_auxiliarySkinTint.b;
+			renderer.color = color;
+		}
 	}
 
 	public SkinColor GetSkinColor()

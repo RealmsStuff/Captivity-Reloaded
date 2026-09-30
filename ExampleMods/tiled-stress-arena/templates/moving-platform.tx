@@ -1,0 +1,15 @@
+{
+  "type": "template",
+  "object": {
+    "class": "moving-platform", "name": "moving-platform", "width": 256, "height": 32, "rotation": 0, "visible": true,
+    "properties": [
+      { "name": "moveX", "type": "float", "value": 0 },
+      { "name": "moveY", "type": "float", "value": -256 },
+      { "name": "travelSeconds", "type": "float", "value": 3 },
+      { "name": "pauseSeconds", "type": "float", "value": 0.5 },
+      { "name": "climbableLeft", "type": "bool", "value": true },
+      { "name": "climbableRight", "type": "bool", "value": true },
+      { "name": "art", "type": "string", "value": "field-day-grass-platform" }
+    ]
+  }
+}

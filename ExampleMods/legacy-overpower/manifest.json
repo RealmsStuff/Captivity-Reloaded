@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy.overpower",
+  "displayName": "Overpower",
+  "version": "1.0.0",
+  "modApiVersion": 1,
+  "authors": ["Original Overpower author", "Captivity Reloaded port"],
+  "description": "C4C plus automatic weapons, life drain, event rewards, longer range, and wider camera framing.",
+  "dependencies": [
+    { "id": "core", "version": ">=0.1.0" },
+    { "id": "legacy.c4c", "version": ">=1.0.0" }
+  ],
+  "contentRoots": ["content"]
+}

@@ -35,17 +35,41 @@ public class CameraXGame : MonoBehaviour
 
 	private float m_zoomOriginal;
 
+	private float m_orthographicSizeOriginal;
+
+	private float m_zoomAuthored;
+
+	private float m_orthographicSizeAuthored;
+
 	private float m_swayAmountOriginal;
 
 	private Vector2 m_offsetCamera = Vector2.zero;
 
 	private Coroutine m_coroutineZoom;
+	private bool m_hasWorldBounds;
+	private Rect m_worldBounds;
 
 	private void Awake()
 	{
 		m_camera = GetComponent<Camera>();
-		m_zoomOriginal = m_camera.fieldOfView;
+		m_zoomAuthored = m_camera.fieldOfView;
+		m_orthographicSizeAuthored = m_camera.orthographicSize;
+		ApplyRuleProfileZoom();
 		m_swayAmountOriginal = m_swayAmount;
+	}
+
+	public void ApplyRuleProfileZoom()
+	{
+		if (m_camera == null) m_camera = GetComponent<Camera>();
+		if (m_camera == null) return;
+		if (m_zoomAuthored <= 0f) m_zoomAuthored = m_camera.fieldOfView;
+		if (m_orthographicSizeAuthored <= 0f) m_orthographicSizeAuthored = m_camera.orthographicSize;
+		float multiplier = ExternalRuleProfileFactory.ApplyCameraZoom(1f);
+		m_zoomOriginal = m_zoomAuthored * multiplier;
+		m_orthographicSizeOriginal = m_orthographicSizeAuthored * multiplier;
+		m_camera.fieldOfView = m_zoomOriginal;
+		m_camera.orthographicSize = m_orthographicSizeOriginal;
+		ApplyWorldBounds();
 	}
 
 	private void LateUpdate()
@@ -57,6 +81,7 @@ public class CameraXGame : MonoBehaviour
 			m_distanceYBetweenObjectCamera = m_focusedObject.transform.position.y - base.transform.position.y;
 			FollowObject3();
 		}
+		ApplyWorldBounds();
 	}
 
 	private void FollowObject()
@@ -168,6 +193,43 @@ public class CameraXGame : MonoBehaviour
 		position.x = m_focusedObject.transform.position.x;
 		position.y = m_focusedObject.transform.position.y;
 		base.transform.position = position;
+		ApplyWorldBounds();
+	}
+
+	public void SetWorldBounds(Rect i_bounds)
+	{
+		m_worldBounds = i_bounds;
+		m_hasWorldBounds = i_bounds.width > 0f && i_bounds.height > 0f;
+		ApplyWorldBounds();
+	}
+
+	public void ClearWorldBounds() { m_hasWorldBounds = false; }
+
+	private void ApplyWorldBounds()
+	{
+		if (!m_hasWorldBounds || m_camera == null) return;
+		float distance = Mathf.Abs(transform.position.z);
+		float halfHeight;
+		float halfWidth;
+		if (m_camera.orthographic)
+		{
+			halfHeight = m_camera.orthographicSize;
+			halfWidth = halfHeight * m_camera.aspect;
+		}
+		else
+		{
+			halfHeight = Mathf.Tan(m_camera.fieldOfView * 0.5f * Mathf.Deg2Rad) * Mathf.Max(0.01f, distance);
+			halfWidth = halfHeight * m_camera.aspect;
+		}
+		Vector3 position = transform.position;
+		position.x = ClampCameraAxis(position.x, m_worldBounds.xMin + halfWidth, m_worldBounds.xMax - halfWidth, m_worldBounds.center.x);
+		position.y = ClampCameraAxis(position.y, m_worldBounds.yMin + halfHeight, m_worldBounds.yMax - halfHeight, m_worldBounds.center.y);
+		transform.position = position;
+	}
+
+	private static float ClampCameraAxis(float i_value, float i_min, float i_max, float i_center)
+	{
+		return i_min <= i_max ? Mathf.Clamp(i_value, i_min, i_max) : i_center;
 	}
 
 	public void Shake(float i_shakeAmount01, float i_smoothingAmount01)
@@ -207,16 +269,43 @@ public class CameraXGame : MonoBehaviour
 
 	protected IEnumerator CoroutineAnimateZoom(float i_fovLevel, float i_timeToZoom)
 	{
-		float l_zoomFrom = m_camera.fieldOfView;
+		float l_zoomFrom = GetCurrentZoomLevel();
+		if (i_timeToZoom <= 0f)
+		{
+			ApplyZoomLevel(i_fovLevel);
+			m_coroutineZoom = null;
+			yield break;
+		}
 		float l_timeCurrent = 0f;
 		while (l_timeCurrent < i_timeToZoom)
 		{
 			l_timeCurrent += Time.fixedDeltaTime;
-			float i_time = l_timeCurrent / i_timeToZoom;
-			float fieldOfView = AnimationTools.CalculateOverTime(AnimationTools.Transition.Steep, AnimationTools.Transition.Smooth, l_zoomFrom, i_fovLevel, i_time);
-			m_camera.fieldOfView = fieldOfView;
+			float i_time = Mathf.Clamp01(l_timeCurrent / i_timeToZoom);
+			float zoom = AnimationTools.CalculateOverTime(AnimationTools.Transition.Steep, AnimationTools.Transition.Smooth, l_zoomFrom, i_fovLevel, i_time);
+			ApplyZoomLevel(zoom);
 			yield return new WaitForEndOfFrame();
 		}
+		ApplyZoomLevel(i_fovLevel);
+		m_coroutineZoom = null;
+	}
+
+	private float GetCurrentZoomLevel()
+	{
+		if (!m_camera.orthographic) return m_camera.fieldOfView;
+		if (m_orthographicSizeOriginal <= 0f) return m_zoomOriginal;
+		return m_zoomOriginal * (m_camera.orthographicSize / m_orthographicSizeOriginal);
+	}
+
+	private void ApplyZoomLevel(float i_zoomLevel)
+	{
+		if (!m_camera.orthographic)
+		{
+			m_camera.fieldOfView = i_zoomLevel;
+			return;
+		}
+		float ratio = i_zoomLevel / Mathf.Max(0.01f, m_zoomOriginal);
+		m_camera.orthographicSize = Mathf.Max(0.01f, m_orthographicSizeOriginal * ratio);
+		ApplyWorldBounds();
 	}
 
 	public float GetFOVOriginal()

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/enemy-rig-reference.schema.json",
+  "title": "Captivity Reloaded Core Enemy Rig Reference",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "enemy", "prefab", "sampleRoot", "bones", "warnings"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "enemyRigReference", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^core:enemy-rig/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "enemy": { "type": "string", "pattern": "^core:enemy/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "prefab": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "controller": { "type": ["string", "null"], "x-stability": "stable" },
+    "sampleRoot": { "type": "string", "x-stability": "stable" },
+    "bones": { "type": "array", "minItems": 1, "maxItems": 512, "items": { "$ref": "#/$defs/bone" }, "x-stability": "stable" },
+    "warnings": { "type": "array", "items": { "type": "string" }, "x-stability": "stable" }
+  },
+  "$defs": {
+    "transform": {
+      "type": "object", "additionalProperties": false,
+      "required": ["x", "y", "z", "rotationX", "rotationY", "rotationZ", "scaleX", "scaleY", "scaleZ"],
+      "properties": {
+        "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" },
+        "rotationX": { "type": "number" }, "rotationY": { "type": "number" }, "rotationZ": { "type": "number" },
+        "scaleX": { "type": "number" }, "scaleY": { "type": "number" }, "scaleZ": { "type": "number" }
+      }
+    },
+    "sprite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["unityPath", "pivotX", "pivotY", "width", "height", "sortingLayer", "sortingOrder"],
+      "properties": {
+        "unityPath": { "type": "string" }, "name": { "type": ["string", "null"] }, "asset": { "type": ["string", "null"] },
+        "pivotX": { "type": "number" }, "pivotY": { "type": "number" },
+        "width": { "type": "number", "minimum": 0 }, "height": { "type": "number", "minimum": 0 },
+        "sortingLayer": { "type": "string" }, "sortingOrder": { "type": "integer", "minimum": -32768, "maximum": 32767 }
+      }
+    },
+    "bone": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "unityPath", "unityPaths", "defaultTransform", "sprites"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "parent": { "type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "unityPath": { "type": "string" },
+        "unityPaths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "defaultTransform": { "$ref": "#/$defs/transform" },
+        "sprites": { "type": "array", "items": { "$ref": "#/$defs/sprite" } }
+      }
+    }
+  }
+}

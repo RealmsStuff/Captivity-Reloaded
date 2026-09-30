@@ -52,4 +52,12 @@ public class ChallengeKillCount : Challenge
 			}
 		}
 	}
+
+	public void ConfigureModKillCount(IEnumerable<NPC> i_npcs, int i_count)
+	{
+		m_npcsToKill = new List<NPC>();
+		if (i_npcs != null) foreach (NPC npc in i_npcs) if (npc != null) m_npcsToKill.Add(npc);
+		m_timesKillToComplete = i_count;
+		m_isTotalKillCount = false;
+	}
 }

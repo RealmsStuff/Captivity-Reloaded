@@ -35,7 +35,7 @@ public class ClothingPiece : MonoBehaviour
 	private bool m_isPlayRipSoundOnDropOrDestroy;
 
 	[SerializeField]
-	private List<ClothingPiece> m_clothingPiecesConnected;
+	private List<ClothingPiece> m_clothingPiecesConnected = new List<ClothingPiece>();
 
 	[SerializeField]
 	private bool m_isDropOnOralThrust;
@@ -133,6 +133,8 @@ public class ClothingPiece : MonoBehaviour
 
 	public void Drop()
 	{
+		ModClothingSway sway = GetComponent<ModClothingSway>();
+		if (sway != null) sway.enabled = false;
 		base.transform.SetParent(CommonReferences.Instance.GetManagerStages().GetStageCurrent().transform);
 		if (!GetComponent<Rigidbody2D>())
 		{
@@ -151,6 +153,8 @@ public class ClothingPiece : MonoBehaviour
 
 	public void Destroy()
 	{
+		ModClothingSway sway = GetComponent<ModClothingSway>();
+		if (sway != null) sway.enabled = false;
 		m_isDestroyed = true;
 		Object.Destroy(base.gameObject);
 	}
@@ -219,4 +223,32 @@ public class ClothingPiece : MonoBehaviour
 	{
 		return m_isDestroyOnOralThrust;
 	}
+
+	public bool IsPlayRipSoundOnDropOrDestroy() { return m_isPlayRipSoundOnDropOrDestroy; }
+
+	public void ConfigureConnectedPieces(IEnumerable<ClothingPiece> i_pieces)
+	{
+		m_clothingPiecesConnected.Clear();
+		if (i_pieces != null) foreach (ClothingPiece piece in i_pieces)
+			if (piece != null && piece != this && !m_clothingPiecesConnected.Contains(piece)) m_clothingPiecesConnected.Add(piece);
+	}
+
+	public void ConfigureModAttachment(CaptivityReloaded.Modding.ClothingAttachmentDefinition i_attachment)
+	{
+		if (i_attachment == null) return;
+		if (!string.IsNullOrWhiteSpace(i_attachment.Bone)
+			&& System.Enum.TryParse(i_attachment.Bone, true, out BoneTypePlayer bone)) m_boneToAttachTo = bone;
+		if (i_attachment.OffsetX.HasValue) m_localPosition.x = i_attachment.OffsetX.Value;
+		if (i_attachment.OffsetY.HasValue) m_localPosition.y = i_attachment.OffsetY.Value;
+		if (i_attachment.Rotation.HasValue) m_localEulerAngleZ = i_attachment.Rotation.Value;
+		if (i_attachment.SortingOffset.HasValue) m_sortingNumberClothingPiece = i_attachment.SortingOffset.Value;
+		if (i_attachment.AttachToBone.HasValue) m_isAttachToBoneInsteadOfBodypart = i_attachment.AttachToBone.Value;
+		if (i_attachment.HideBodyPart.HasValue) m_isHideBodyPartAttachedTo = i_attachment.HideBodyPart.Value;
+		if (i_attachment.Droppable.HasValue) m_isDroppable = i_attachment.Droppable.Value;
+		if (i_attachment.Destroyable.HasValue) m_isDestroyable = i_attachment.Destroyable.Value;
+		if (i_attachment.DropOnOralThrust.HasValue) m_isDropOnOralThrust = i_attachment.DropOnOralThrust.Value;
+		if (i_attachment.DestroyOnOralThrust.HasValue) m_isDestroyOnOralThrust = i_attachment.DestroyOnOralThrust.Value;
+	}
+
+	public void ConfigureRipSound(bool i_play) { m_isPlayRipSoundOnDropOrDestroy = i_play; }
 }

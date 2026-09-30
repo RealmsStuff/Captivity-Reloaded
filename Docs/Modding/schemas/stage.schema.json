@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/stage.schema.json",
+  "title": "Captivity Reloaded Stage",
+  "x-stability": "stable",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "displayName", "extends", "layout", "waves", "spawners"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "stage", "x-stability": "stable" },
+    "id": { "$ref": "#/$defs/stageId", "x-stability": "stable" },
+    "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
+    "extends": { "$ref": "#/$defs/coreStageId", "x-stability": "stable" },
+    "description": { "type": "string", "x-stability": "stable" },
+    "layout": { "$ref": "#/$defs/layout", "x-stability": "experimental" },
+    "waves": { "$ref": "#/$defs/waves", "x-stability": "stable" },
+	"audio": { "$ref": "#/$defs/audio", "x-stability": "experimental" },
+	"camera": { "$ref": "#/$defs/camera", "x-stability": "experimental" },
+	"testTools": { "$ref": "#/$defs/testTools", "x-stability": "experimental" },
+    "spawners": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/spawner" }, "x-stability": "stable" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "extends": { "const": "core:stage/mod-template" } }, "required": ["extends"] },
+      "then": {
+        "properties": {
+          "layout": {
+            "properties": {
+              "type": { "const": "tiledJson" },
+              "preserveInheritedStageObjects": { "const": false },
+              "reuseInheritedSpawners": { "const": false }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "stageId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:stage/[a-z0-9][a-z0-9._/-]*$" },
+    "coreStageId": { "type": "string", "pattern": "^core:stage/(?!hub$)[a-z0-9][a-z0-9._/-]*$" },
+    "enemyId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:enemy/[a-z0-9][a-z0-9._/-]*$" },
+    "path": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$" },
+    "point": { "type": "object", "additionalProperties": false, "required": ["x", "y"], "properties": { "x": { "type": "number", "minimum": -100000, "maximum": 100000 }, "y": { "type": "number", "minimum": -100000, "maximum": 100000 } } },
+    "layout": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["type", "playerSpawn"], "properties": { "type": { "const": "coreStageLayout" }, "playerSpawn": { "$ref": "#/$defs/point" } } },
+		{ "type": "object", "additionalProperties": false, "required": ["type", "path", "pixelsPerUnit"], "properties": { "type": { "const": "tiledJson" }, "path": { "allOf": [{ "$ref": "#/$defs/path" }, { "pattern": "\\.[jJ][sS][oO][nN]$" }] }, "pixelsPerUnit": { "type": "integer", "minimum": 1, "maximum": 512 }, "hideInheritedVisuals": { "type": "boolean", "default": false }, "preserveInheritedStageObjects": { "type": "boolean", "default": false }, "reuseInheritedSpawners": { "type": "boolean", "default": false, "x-stability": "experimental" } } }
+      ]
+    },
+    "waves": { "type": "object", "additionalProperties": false, "required": ["firstWaveEnemyCount"], "properties": { "firstWaveEnemyCount": { "type": "integer", "minimum": 1, "maximum": 1000 } } },
+	"audio": { "type": "object", "additionalProperties": false, "minProperties": 1, "properties": { "ambience": { "$ref": "#/$defs/audioPath" }, "entryMusic": { "$ref": "#/$defs/audioPath" }, "waveMusic": { "$ref": "#/$defs/audioPath" }, "waveComplete": { "$ref": "#/$defs/audioPath" } } },
+	"camera": { "type": "object", "additionalProperties": false, "oneOf": [{ "required": ["bounds"] }, { "required": ["unbounded"] }], "properties": { "bounds": { "$ref": "#/$defs/cameraBounds" }, "unbounded": { "const": true } } },
+	"cameraBounds": { "type": "object", "additionalProperties": false, "required": ["minX", "minY", "maxX", "maxY"], "properties": { "minX": { "type": "number", "minimum": -100000, "maximum": 100000 }, "minY": { "type": "number", "minimum": -100000, "maximum": 100000 }, "maxX": { "type": "number", "minimum": -100000, "maximum": 100000 }, "maxY": { "type": "number", "minimum": -100000, "maximum": 100000 } } },
+	"testTools": { "type": "object", "additionalProperties": false, "required": ["enabled", "enemy"], "properties": { "enabled": { "const": true }, "enemy": { "$ref": "#/$defs/enemyId" }, "spawnPosition": { "$ref": "#/$defs/point" } } },
+    "audioPath": { "allOf": [{ "$ref": "#/$defs/path" }, { "pattern": "\\.(?:[wW][aA][vV]|[oO][gG][gG])$" }] },
+    "spawner": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "position", "enemies", "selectionWeight", "delaySeconds"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }, "position": { "$ref": "#/$defs/point" },
+        "enemies": { "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/enemyId" } },
+        "selectionWeight": { "type": "number", "minimum": 0.001, "maximum": 1000 }, "minimumWave": { "type": "integer", "minimum": 0, "maximum": 10000, "default": 0 },
+        "delaySeconds": { "type": "number", "minimum": 0.02, "maximum": 300 }, "delayJitterSeconds": { "type": "number", "minimum": 0, "maximum": 300, "default": 0 },
+        "initialDelaySeconds": { "type": "number", "minimum": 0, "maximum": 300, "default": 0 }, "initialDelayJitterSeconds": { "type": "number", "minimum": 0, "maximum": 300, "default": 0 },
+		"spawnOutOfSight": { "type": "boolean", "default": false }
+		,"enabled": { "type": "boolean", "default": true, "x-stability": "experimental" }
+		,"requiredOpenDoors": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/localId" }, "x-stability": "experimental" }
+		,"requiredClosedDoors": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/localId" }, "x-stability": "experimental" }
+		}
+	},
+	"localId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+  }
+}

@@ -34,7 +34,7 @@ public class ScreenGame : Screen
 
 	private void Update()
 	{
-		if (m_isDebugMode)
+		if (m_isDebugMode || ExternalRuleProfileFactory.AreDebugHotkeysEnabled())
 		{
 			HandleDebugKeys();
 		}
@@ -114,7 +114,9 @@ public class ScreenGame : Screen
 		}
 		if (Input.GetKeyDown(KeyCode.Mouse3))
 		{
-			ScreenCapture.CaptureScreenshot(Application.dataPath + "/StreamingAssets/Screenshots/" + DateTime.Now.ToString("HH-mm-ss") + ".png");
+			string directory = System.IO.Path.Combine(Application.dataPath, "StreamingAssets", "Screenshots");
+			System.IO.Directory.CreateDirectory(directory);
+			ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(directory, DateTime.Now.ToString("HH-mm-ss") + ".png"));
 		}
 	}
 

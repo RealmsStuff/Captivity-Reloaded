@@ -1,0 +1,36 @@
+{
+  "compressionlevel": -1,
+  "height": 20,
+  "infinite": false,
+  "layers": [
+    {
+      "draworder": "topdown",
+      "id": 1,
+      "name": "Gameplay",
+      "objects": [
+        { "id": 1, "name": "ground", "type": "platform", "x": 64, "y": 544, "width": 1152, "height": 64, "rotation": 0, "visible": true },
+        { "id": 2, "name": "west-platform", "type": "platform", "x": 160, "y": 384, "width": 256, "height": 32, "rotation": 0, "visible": true },
+        { "id": 3, "name": "east-platform", "type": "platform", "x": 864, "y": 384, "width": 256, "height": 32, "rotation": 0, "visible": true },
+        { "id": 4, "name": "player", "type": "player-spawn", "point": true, "x": 640, "y": 544, "rotation": 0, "visible": true },
+        { "id": 5, "name": "west-ground", "type": "enemy-spawner", "point": true, "x": 128, "y": 544, "rotation": 0, "visible": true },
+        { "id": 6, "name": "east-ground", "type": "enemy-spawner", "point": true, "x": 1152, "y": 544, "rotation": 0, "visible": true }
+      ],
+      "opacity": 1,
+      "type": "objectgroup",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextlayerid": 2,
+  "nextobjectid": 7,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "tiledversion": "1.12.2",
+  "tileheight": 32,
+  "tilesets": [],
+  "tilewidth": 32,
+  "type": "map",
+  "version": "1.10",
+  "width": 40
+}

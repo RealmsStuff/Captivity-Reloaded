@@ -29,11 +29,25 @@ public class LibraryGuns : MonoBehaviour
 	{
 		foreach (Gun gun in m_guns)
 		{
+			if (gun.gameObject.name == i_nameGun && gun.GetName() == i_nameGun)
+			{
+				return gun;
+			}
+		}
+		foreach (Gun gun in m_guns)
+		{
 			if (gun.GetName() == i_nameGun)
 			{
 				return gun;
 			}
 		}
 		return null;
+	}
+
+	public void AddRuntimeGun(Gun i_gun)
+	{
+		if (i_gun == null || m_guns.Contains(i_gun)) return;
+		i_gun.gameObject.SetActive(false);
+		m_guns.Add(i_gun);
 	}
 }

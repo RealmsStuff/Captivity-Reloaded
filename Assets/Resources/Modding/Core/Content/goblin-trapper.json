@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/goblin-trapper",
+  "legacyId": 11,
+  "displayName": "Goblin Trapper",
+  "stats": {
+    "healthMax": 15,
+    "speedAcceleration": 3,
+    "speedMax": 5,
+    "traction": 0.5,
+    "bounty": 25,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-attack-primary": "core:enemy-animation/goblin-trapper/attack-attack-primary",
+    "attack-place-trap": "core:enemy-animation/goblin-trapper/attack-place-trap",
+    "await": "core:enemy-animation/goblin-trapper/await",
+    "climb": "core:enemy-animation/goblin-trapper/climb",
+    "finisher-phase-1": "core:enemy-animation/goblin-trapper/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/goblin-trapper/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/goblin-trapper/finisher-phase-3",
+    "idle": "core:enemy-animation/goblin-trapper/idle",
+    "jump": "core:enemy-animation/goblin-trapper/jump",
+    "move": "core:enemy-animation/goblin-trapper/move"
+  }
+}

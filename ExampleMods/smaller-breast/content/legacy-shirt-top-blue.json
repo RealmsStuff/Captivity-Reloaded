@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "legacy.smaller-breast:patch/shirt-top-blue",
+  "target": "core:clothing/shirt-top-blue",
+  "replacements": {
+    "icon": "assets/clothing/ShirtTopBlue.png",
+    "piece/shirt-chest": "assets/clothing/ShirtTopBlue.png"
+  }
+}

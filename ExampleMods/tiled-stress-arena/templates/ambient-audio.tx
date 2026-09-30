@@ -1,0 +1,16 @@
+{
+  "type": "template",
+  "object": {
+    "class": "ambient-audio",
+    "name": "ambient-audio",
+    "point": true,
+    "visible": true,
+    "properties": [
+      { "name": "file", "type": "file", "value": "assets/audio/ambient.ogg" },
+      { "name": "loop", "type": "bool", "value": true },
+      { "name": "volume", "type": "float", "value": 0.08 },
+      { "name": "minDistance", "type": "float", "value": 4 },
+      { "name": "maxDistance", "type": "float", "value": 30 }
+    ]
+  }
+}

@@ -1,0 +1,738 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/sqoid/finisher-phase-2",
+  "enemy": "core:enemy/sqoid",
+  "displayName": "sqoid finisher-phase-2",
+  "durationSeconds": 7.0,
+  "frameRate": 60.0,
+  "loop": false,
+  "tracks": [
+    {
+      "target": "sprite/hips",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 0.0,
+          "inTangent": -1.82539225E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.0,
+          "inTangent": -7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 0.342805862,
+          "inTangent": 0.266666651,
+          "outTangent": 0.266666681
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 5.96046448E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.0,
+          "inTangent": -7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 1.0,
+          "inTangent": 1.82539225E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.0,
+          "inTangent": -7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 0.971369267,
+          "inTangent": 0.0305393338,
+          "outTangent": 0.0305394512
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.951892853,
+          "inTangent": -1.24350549E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": 1.24350549E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.951892853,
+          "inTangent": 2.48645421E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": 1.24350549E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.951892853,
+          "inTangent": -1.24350549E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": -2.48645421E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.951892853,
+          "inTangent": -0.10496112,
+          "outTangent": -0.104961053
+        },
+        {
+          "time": 5.0,
+          "value": 0.0,
+          "inTangent": 2.66358256E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 0.0,
+          "inTangent": -1.82539225E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.0,
+          "inTangent": -7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 0.342805862,
+          "inTangent": 0.266666651,
+          "outTangent": 0.266666681
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 5.96046448E-08,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.66666675,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.75,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.83333325,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.91666675,
+          "value": 0.0,
+          "inTangent": -7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.0,
+          "value": 1.0,
+          "inTangent": -2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.08333325,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.16666675,
+          "value": 1.0,
+          "inTangent": 7.858034E-10,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 0.0,
+          "inTangent": 2.54293013E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 1.0,
+          "inTangent": 1.82539225E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 1.26,
+          "inTangent": -1.62981451E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 3.25,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 5.0,
+          "value": 1.18,
+          "inTangent": -2.60770321E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 7.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [
+    "Unconverted Unity event at 0.983: PlayRandomAudioRaper1",
+    "Unconverted Unity event at 2.75: Electrocute",
+    "Unconverted Unity event at 2.917: Electrocute",
+    "Unconverted Unity event at 3.083: Electrocute",
+    "Unconverted Unity event at 3.167: DropPlayerWeapon",
+    "Unconverted Unity event at 3.25: Electrocute",
+    "Unconverted Unity event at 3.333: Electrocute",
+    "Unconverted Unity event at 3.367: EnableHypnotize"
+  ],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Rape2_14.anim",
+    "semanticName": "finisher-phase-2"
+  }
+}

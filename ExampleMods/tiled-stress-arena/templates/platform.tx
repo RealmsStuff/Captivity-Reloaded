@@ -1,0 +1,16 @@
+{
+  "type": "template",
+  "object": {
+    "class": "platform",
+    "height": 32,
+    "id": 1,
+    "name": "platform",
+    "properties": [
+      { "name": "climbableLeft", "type": "bool", "value": true },
+      { "name": "climbableRight", "type": "bool", "value": true }
+    ],
+    "rotation": 0,
+    "visible": true,
+    "width": 128
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.zombie-variant:enemy/zombie-variant",
+  "displayName": "Zombie Variant",
+  "description": "An inherited Zombie I variant made with the public Aseprite template.",
+  "extends": "core:enemy/zombie-1",
+  "spawn": {
+    "inheritTemplateSpawners": true,
+    "selectionWeight": 0.25
+  },
+  "visual": {
+    "type": "coreRigAtlas",
+    "atlas": "assets/enemies/zombie-variant.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "body/torso-lower": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "body/butt": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "body/hips": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "body/chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "body/neck": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "body/head": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "body/arm-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "body/arm-lower": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "body/hand": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "body/leg-upper": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "body/leg-lower": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "body/foot-left": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "body/foot-right": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://captivity-reloaded.invalid/mod-api/v1/player-rig.schema.json",
+  "title": "Captivity Reloaded Normalized Player Rig",
+  "x-stability": "experimental",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "id", "coordinateSystem", "bones", "clothingContract"],
+  "properties": {
+    "schemaVersion": { "const": 1, "x-stability": "stable" },
+    "type": { "const": "playerRig", "x-stability": "stable" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-rig/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
+    "coordinateSystem": { "$ref": "#/$defs/coordinateSystem", "x-stability": "stable" },
+    "bones": { "type": "array", "minItems": 1, "maxItems": 128, "items": { "$ref": "#/$defs/bone" }, "x-stability": "stable" },
+    "clothingContract": { "$ref": "#/$defs/clothingContract", "x-stability": "stable" },
+    "source": { "$ref": "#/$defs/source", "x-stability": "experimental" }
+  },
+  "$defs": {
+    "boneName": { "enum": ["hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face"] },
+    "coordinateSystem": {
+      "type": "object", "additionalProperties": false,
+      "required": ["units", "yUp", "rotation", "pixelsPerUnit"],
+      "properties": {
+        "units": { "const": "world" }, "yUp": { "const": true },
+        "rotation": { "const": "degrees-clockwise-negative" },
+        "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024 }
+      }
+    },
+    "transform": {
+      "type": "object", "additionalProperties": false,
+      "required": ["x", "y", "rotation", "scaleX", "scaleY"],
+      "properties": {
+        "x": { "type": "number" }, "y": { "type": "number" }, "rotation": { "type": "number" },
+        "scaleX": { "type": "number" }, "scaleY": { "type": "number" }
+      }
+    },
+    "attachment": {
+      "type": "object", "additionalProperties": false, "required": ["target", "pivotX", "pivotY"],
+      "properties": {
+        "target": { "type": "string", "pattern": "^bone/[a-z0-9-]+$" },
+        "pivotX": { "type": "number", "minimum": 0, "maximum": 1 },
+        "pivotY": { "type": "number", "minimum": 0, "maximum": 1 }
+      }, "x-stability": "stable"
+    },
+    "spriteCanvas": {
+      "type": "object", "additionalProperties": false, "required": ["width", "height", "pivotX", "pivotY", "sortingOrder"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1, "maximum": 8192 }, "height": { "type": "integer", "minimum": 1, "maximum": 8192 },
+        "pivotX": { "type": "number" }, "pivotY": { "type": "number" },
+        "sortingOrder": { "type": "integer", "minimum": -32768, "maximum": 32767 }
+      }, "x-stability": "experimental"
+    },
+    "bone": {
+      "type": "object", "additionalProperties": false, "required": ["name", "parent", "defaultTransform", "attachment"],
+      "properties": {
+        "name": { "$ref": "#/$defs/boneName" },
+        "parent": { "oneOf": [{ "$ref": "#/$defs/boneName" }, { "type": "null" }] },
+        "defaultTransform": { "$ref": "#/$defs/transform" },
+        "attachment": { "$ref": "#/$defs/attachment" },
+        "spriteCanvas": { "$ref": "#/$defs/spriteCanvas" }
+      }
+    },
+    "clothingContract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["slots", "categories", "pivotCoordinates", "canvasBounds", "sortingOrderMin", "sortingOrderMax", "sortingOffsetMin", "sortingOffsetMax", "sameCategoryCompatible", "incompatibleCategoriesSymmetric", "bodyVariantMatchOrder", "bodyVariantFallback"],
+      "properties": {
+        "slots": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^(?:icon|piece/[a-z0-9][a-z0-9/-]*)$" }, "x-stability": "stable" },
+        "categories": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["Hair", "Upper", "Lower", "Shoes", "Hat", "Sleeves", "Stockings", "Other"] }, "x-stability": "stable" },
+        "pivotCoordinates": { "const": "normalized-bottom-left", "x-stability": "stable" },
+        "canvasBounds": { "const": "sprite-rectangle", "description": "Artwork is not restricted to a legacy 32 by 32 canvas.", "x-stability": "stable" },
+        "sortingOrderMin": { "const": -32768, "x-stability": "stable" }, "sortingOrderMax": { "const": 32767, "x-stability": "stable" },
+        "sortingOffsetMin": { "const": -100, "x-stability": "stable" }, "sortingOffsetMax": { "const": 100, "x-stability": "stable" },
+        "sameCategoryCompatible": { "const": false, "x-stability": "stable" },
+        "incompatibleCategoriesSymmetric": { "const": true, "x-stability": "stable" },
+        "bodyVariantMatchOrder": { "type": "array", "prefixItems": [{ "const": "ModBodyVariant" }, { "const": "player-prefab-name" }, { "const": "loaded-pack-id" }, { "const": "default" }], "items": false, "x-stability": "experimental" },
+        "bodyVariantFallback": { "const": "visual.sprites", "x-stability": "experimental" }
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "unityPrefab": { "type": "string" } }
+    }
+  }
+}

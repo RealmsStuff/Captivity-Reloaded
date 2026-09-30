@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "somescrub.simple-nerf-gun:patch/starter-pistol",
+  "target": "core:weapon/pistol",
+  "replacements": {
+    "body": "assets/pistol.png",
+    "slide": "assets/slide.png",
+    "base": "assets/base.png"
+  }
+}

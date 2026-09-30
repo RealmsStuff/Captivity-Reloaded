@@ -1,0 +1,548 @@
+{
+  "schemaVersion": 1,
+  "type": "playerRig",
+  "id": "core:player-rig/alex",
+  "coordinateSystem": {
+    "units": "world",
+    "yUp": true,
+    "rotation": "degrees-clockwise-negative",
+    "pixelsPerUnit": 32.0
+  },
+  "bones": [
+    {
+      "name": "hips",
+      "parent": null,
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/hips",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 18,
+        "height": 15,
+        "pivotX": 0.6680883,
+        "pivotY": 0.464779466,
+        "sortingOrder": 9
+      }
+    },
+    {
+      "name": "butt",
+      "parent": "hips",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": -0.065,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/butt",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 14,
+        "height": 18,
+        "pivotX": 0.6444277,
+        "pivotY": 0.5,
+        "sortingOrder": 8
+      }
+    },
+    {
+      "name": "spine",
+      "parent": "hips",
+      "defaultTransform": {
+        "x": -0.001,
+        "y": 0.052,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/spine",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 17,
+        "height": 19,
+        "pivotX": 0.644595563,
+        "pivotY": 0.120412685,
+        "sortingOrder": 12
+      }
+    },
+    {
+      "name": "chest",
+      "parent": "spine",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.337,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/chest",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 21,
+        "height": 23,
+        "pivotX": 0.52341187,
+        "pivotY": 0.0796296,
+        "sortingOrder": 13
+      }
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "defaultTransform": {
+        "x": -0.056,
+        "y": 0.484,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/neck",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 9,
+        "height": 12,
+        "pivotX": 0.5084794,
+        "pivotY": 0.169410869,
+        "sortingOrder": 9
+      }
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "defaultTransform": {
+        "x": 0.0015,
+        "y": 0.135,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/head",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 25,
+        "height": 26,
+        "pivotX": 0.446012348,
+        "pivotY": 0.0440936163,
+        "sortingOrder": 10
+      }
+    },
+    {
+      "name": "arm-right-upper",
+      "parent": "chest",
+      "defaultTransform": {
+        "x": -0.164,
+        "y": 0.495,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/arm-right-upper",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 25,
+        "pivotX": 0.535534143,
+        "pivotY": 0.793461263,
+        "sortingOrder": 16
+      }
+    },
+    {
+      "name": "arm-right-lower",
+      "parent": "arm-right-upper",
+      "defaultTransform": {
+        "x": -0.01,
+        "y": -0.443,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/arm-right-lower",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 9,
+        "height": 16,
+        "pivotX": 0.5130194,
+        "pivotY": 0.871912658,
+        "sortingOrder": 17
+      }
+    },
+    {
+      "name": "hand-right",
+      "parent": "arm-right-lower",
+      "defaultTransform": {
+        "x": 0.006,
+        "y": -0.365,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/hand-right",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 12,
+        "pivotX": 0.5270691,
+        "pivotY": 0.8288923,
+        "sortingOrder": 18
+      }
+    },
+    {
+      "name": "arm-left-upper",
+      "parent": "chest",
+      "defaultTransform": {
+        "x": -0.164,
+        "y": 0.495,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/arm-left-upper",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 25,
+        "pivotX": 0.535534143,
+        "pivotY": 0.793461263,
+        "sortingOrder": -18
+      }
+    },
+    {
+      "name": "arm-left-lower",
+      "parent": "arm-left-upper",
+      "defaultTransform": {
+        "x": -0.01,
+        "y": -0.443,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/arm-left-lower",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 9,
+        "height": 16,
+        "pivotX": 0.5130194,
+        "pivotY": 0.871912658,
+        "sortingOrder": -17
+      }
+    },
+    {
+      "name": "hand-left",
+      "parent": "arm-left-lower",
+      "defaultTransform": {
+        "x": 0.006,
+        "y": -0.36499998,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/hand-left",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 12,
+        "pivotX": 0.5270691,
+        "pivotY": 0.8288923,
+        "sortingOrder": -16
+      }
+    },
+    {
+      "name": "leg-right-upper",
+      "parent": "hips",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": -0.06,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/leg-right-upper",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 17,
+        "height": 24,
+        "pivotX": 0.6605117,
+        "pivotY": 0.8777587,
+        "sortingOrder": 11
+      }
+    },
+    {
+      "name": "leg-right-lower",
+      "parent": "leg-right-upper",
+      "defaultTransform": {
+        "x": -0.003,
+        "y": -0.572,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/leg-right-lower",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 28,
+        "pivotX": 0.5284231,
+        "pivotY": 0.8227976,
+        "sortingOrder": 10
+      }
+    },
+    {
+      "name": "foot-right",
+      "parent": "leg-right-lower",
+      "defaultTransform": {
+        "x": 0.06869987,
+        "y": -0.6259999,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/foot-right",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 17,
+        "height": 12,
+        "pivotX": 0.470696062,
+        "pivotY": 0.7467038,
+        "sortingOrder": 12
+      }
+    },
+    {
+      "name": "leg-left-upper",
+      "parent": "hips",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": -0.06,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/leg-left-upper",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 17,
+        "height": 24,
+        "pivotX": 0.6605117,
+        "pivotY": 0.8777587,
+        "sortingOrder": -11
+      }
+    },
+    {
+      "name": "leg-left-lower",
+      "parent": "leg-left-upper",
+      "defaultTransform": {
+        "x": -0.003,
+        "y": -0.572,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/leg-left-lower",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 11,
+        "height": 28,
+        "pivotX": 0.5284231,
+        "pivotY": 0.8227976,
+        "sortingOrder": -12
+      }
+    },
+    {
+      "name": "foot-left",
+      "parent": "leg-left-lower",
+      "defaultTransform": {
+        "x": 0.06869987,
+        "y": -0.6259999,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/foot-left",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 17,
+        "height": 12,
+        "pivotX": 0.470696062,
+        "pivotY": 0.7467038,
+        "sortingOrder": -10
+      }
+    },
+    {
+      "name": "ear",
+      "parent": "head",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/ear",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 7,
+        "height": 9,
+        "pivotX": 0.884239256,
+        "pivotY": -0.444278121,
+        "sortingOrder": 11
+      }
+    },
+    {
+      "name": "face",
+      "parent": "head",
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0
+      },
+      "attachment": {
+        "target": "bone/face",
+        "pivotX": 0.5,
+        "pivotY": 0.5
+      },
+      "spriteCanvas": {
+        "width": 10,
+        "height": 6,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "sortingOrder": 14
+      }
+    }
+  ],
+  "clothingContract": {
+    "slots": [
+      "icon",
+      "piece/arm-upper",
+      "piece/back",
+      "piece/belt",
+      "piece/butt",
+      "piece/chest",
+      "piece/ear",
+      "piece/glasses",
+      "piece/hair",
+      "piece/head",
+      "piece/hips",
+      "piece/l-arm-lower",
+      "piece/l-arm-upper",
+      "piece/l-foot",
+      "piece/l-hand",
+      "piece/l-leg-lower",
+      "piece/l-leg-lower-armor",
+      "piece/l-leg-lower-shoes",
+      "piece/l-leg-lower-stocking",
+      "piece/l-leg-upper",
+      "piece/l-leg-upper-stocking",
+      "piece/mask",
+      "piece/neck",
+      "piece/r-arm-lower",
+      "piece/r-arm-upper",
+      "piece/r-foot",
+      "piece/r-hand",
+      "piece/r-leg-lower",
+      "piece/r-leg-lower-armor",
+      "piece/r-leg-lower-shoes",
+      "piece/r-leg-lower-stocking",
+      "piece/r-leg-upper",
+      "piece/r-leg-upper-stocking",
+      "piece/shirt-chest",
+      "piece/shirt-collar",
+      "piece/shirt-l-arm-lower",
+      "piece/shirt-l-arm-upper",
+      "piece/shirt-neck",
+      "piece/shirt-r-arm-lower",
+      "piece/shirt-r-arm-upper",
+      "piece/shirt-spine",
+      "piece/skirt-hips",
+      "piece/spine"
+    ],
+    "categories": [
+      "Hair",
+      "Upper",
+      "Lower",
+      "Shoes",
+      "Hat",
+      "Sleeves",
+      "Stockings",
+      "Other"
+    ],
+    "pivotCoordinates": "normalized-bottom-left",
+    "canvasBounds": "sprite-rectangle",
+    "sortingOrderMin": -32768,
+    "sortingOrderMax": 32767,
+    "sortingOffsetMin": -100,
+    "sortingOffsetMax": 100,
+    "sameCategoryCompatible": false,
+    "incompatibleCategoriesSymmetric": true,
+    "bodyVariantMatchOrder": [
+      "ModBodyVariant",
+      "player-prefab-name",
+      "loaded-pack-id",
+      "default"
+    ],
+    "bodyVariantFallback": "visual.sprites"
+  },
+  "source": {
+    "unityPrefab": "Assets/Actors/Players/Alex.prefab"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.acid-gremlin:enemy/acid-gremlin",
+  "displayName": "Acid Gremlin",
+  "description": "A Gremlin variant used to prove the external content pipeline.",
+  "extends": "core:enemy/gremlin",
+  "visualModel": "inheritedRig",
+  "assets": {
+    "spriteAtlas": {
+      "texture": "assets/sprites/acid-gremlin.png",
+      "pixelsPerUnit": 100,
+      "filterMode": "point",
+      "cellWidth": 128,
+      "cellHeight": 128,
+      "slots": {
+        "body/head": 0,
+        "body/neck": 1,
+        "body/chest": 2,
+        "body/spine": 3,
+        "body/hips": 4,
+        "body/arm-left-upper": 5,
+        "body/arm-left-lower": 6,
+        "body/hand-left": 7,
+        "body/arm-right-upper": 8,
+        "body/arm-right-lower": 9,
+        "body/hand-right": 10,
+        "body/leg-left-upper": 11,
+        "body/leg-left-lower": 12,
+        "body/foot-left": 13,
+        "body/leg-right-upper": 14,
+        "body/leg-right-lower": 15,
+        "body/foot-right": 16
+      }
+    }
+  },
+  "stats": {
+    "health": 12,
+    "speedAcceleration": 4.5,
+    "speedMaximum": 3.5,
+    "bounty": 15
+  },
+  "spawnTags": [
+    "ground",
+    "gremlin"
+  ]
+}

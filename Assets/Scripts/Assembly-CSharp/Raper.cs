@@ -83,6 +83,8 @@ public abstract class Raper : MonoBehaviour
 	[SerializeField]
 	protected bool m_isImpregnateOnCumThrust;
 
+	protected bool m_wasPlayerExposingAtBeginRape;
+
 	[SerializeField]
 	protected bool m_isEgg;
 
@@ -220,7 +222,10 @@ public abstract class Raper : MonoBehaviour
 
 	public virtual void BeginRape()
 	{
-		if (!m_player.GetIsCanBeRaped() && !m_player.IsExposing())
+		m_wasPlayerExposingAtBeginRape = false;
+		m_player.StopSelfPleasure();
+		bool wasExposing = m_player.IsExposing();
+		if (!m_player.GetIsCanBeRaped() && !wasExposing)
 		{
 			return;
 		}
@@ -232,6 +237,7 @@ public abstract class Raper : MonoBehaviour
 		{
 			return;
 		}
+		m_wasPlayerExposingAtBeginRape = wasExposing;
 		m_isCanRape = false;
 		m_isRaping = true;
 		m_isPlayerMuteBeforeRape = m_player.IsMute();
@@ -914,14 +920,14 @@ public abstract class Raper : MonoBehaviour
 
 	private void PlayerGainPleasure()
 	{
-		m_player.GainLibido(m_raperAnimationCurrent.GetPowerThrustLibido01() * 10f);
+		m_player.GainLibido(ExternalRuleProfileFactory.ApplyRapeLibidoGain(m_raperAnimationCurrent.GetPowerThrustLibido01() * 10f));
 		m_player.GainPleasure(m_raperAnimationCurrent.GetPowerThrustPleasure01() * 2f);
 		m_player.DamageStrength((m_raperAnimationCurrent.GetPowerThrustLibido01() + m_raperAnimationCurrent.GetPowerThrustPleasure01()) * 5f);
 	}
 
 	private void PlayerGainCumPleasure()
 	{
-		m_player.GainLibido(m_raperAnimationCurrent.GetPowerThrustLibido01() * 10f + m_raperAnimationCurrent.GetAdditionalPowerCumThrustLibido01() * 10f);
+		m_player.GainLibido(ExternalRuleProfileFactory.ApplyRapeLibidoGain(m_raperAnimationCurrent.GetPowerThrustLibido01() * 10f + m_raperAnimationCurrent.GetAdditionalPowerCumThrustLibido01() * 10f));
 		m_player.GainPleasure(m_raperAnimationCurrent.GetPowerThrustPleasure01() * 2f + m_raperAnimationCurrent.GetAdditionalPowerCumThrustPleasure01() * 2f);
 		m_player.DamageStrength((m_raperAnimationCurrent.GetPowerThrustLibido01() + m_raperAnimationCurrent.GetAdditionalPowerCumThrustLibido01() + m_raperAnimationCurrent.GetPowerThrustPleasure01() + m_raperAnimationCurrent.GetAdditionalPowerCumThrustPleasure01()) * 5f);
 	}

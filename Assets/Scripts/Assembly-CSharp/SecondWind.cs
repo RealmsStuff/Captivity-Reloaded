@@ -8,7 +8,8 @@ public class SecondWind : Usable
 	protected override bool HandleUse(bool i_isAltFire)
 	{
 		base.HandleUse(i_isAltFire);
-		SESecondWind sESecondWind = new SESecondWind("Second Wind", GetName() + GetInstanceID(), TypeStatusEffect.Positive, 9999f, i_isStackable: false, m_audioKoPrevention);
+		float healthRestore = ExternalRuleProfileFactory.TryGetConsumableRule("second-wind", out CaptivityReloaded.Modding.ConsumableRule rule) ? (rule.HealthRestore ?? 0f) : 0f;
+		SESecondWind sESecondWind = new SESecondWind("Second Wind", GetName() + GetInstanceID(), TypeStatusEffect.Positive, 9999f, i_isStackable: false, m_audioKoPrevention, healthRestore);
 		sESecondWind.AddPlayerStatusHudItem("Second Wind", "K.O. protection", StatusPlayerHudItemColor.Buff);
 		bool num = CommonReferences.Instance.GetPlayer().ApplyStatusEffect(sESecondWind);
 		if (num)

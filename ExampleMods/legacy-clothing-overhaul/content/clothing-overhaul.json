@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "legacy.clothing-overhaul:rule/clothing-overhaul",
+  "displayName": "Clothing + Shack Overhaul",
+  "description": "Higher clothing loss and harsher pressure while clothes are damaged.",
+  "modules": [
+    {
+      "type": "playerRules",
+      "clothingDamageEnabled": true,
+      "clothingDamageChance": 0.41,
+      "strengthDamageWhileRestrainedMultiplier": 1.0,
+      "strengthDamageFreeMultiplier": 1.0
+    },
+    {
+      "type": "spawnModifiers",
+      "waveSpawnMultiplier": 1.0,
+      "legacyShackAberrants": true
+    }
+  ]
+}

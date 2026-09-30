@@ -25,7 +25,7 @@ public class ChallengeMindBrokenCountTotal : Challenge
 	private void OnDie()
 	{
 		m_timesMindBroken++;
-		if (m_timesMindBroken >= m_timesToMindBreak)
+		if (m_timesMindBroken >= ExternalRuleProfileFactory.MindBreakTarget(m_timesToMindBreak))
 		{
 			Complete();
 		}

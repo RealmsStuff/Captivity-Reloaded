@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "legacy.smaller-breast:patch/default-shirt",
+  "target": "core:clothing/shirt-default",
+  "replacements": {
+    "icon": "assets/clothing/DefaultShirtChest.png",
+    "piece/shirt-chest": "assets/clothing/DefaultShirtChest.png"
+  }
+}

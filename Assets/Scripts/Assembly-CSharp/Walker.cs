@@ -19,6 +19,8 @@ public class Walker : NPC
 
 	private Coroutine m_coroutineClimb;
 
+	private Coroutine m_coroutineWalkOff;
+
 	protected override void OnEnable()
 	{
 		base.OnEnable();
@@ -181,6 +183,56 @@ public class Walker : NPC
 		m_coroutineJumpZeroGravity = StartCoroutine(CoroutineJumpNoGravity(i_posToJumpTo, i_duration));
 	}
 
+	public void WalkOffPlatformTowards(Vector2 i_destination)
+	{
+		if (m_coroutineWalkOff != null || GetRigidbody2D().bodyType == RigidbodyType2D.Static) return;
+		if (m_coroutineJump != null) { StopCoroutine(m_coroutineJump); m_coroutineJump = null; }
+		if (m_coroutineJumpZeroGravity != null) { StopCoroutine(m_coroutineJumpZeroGravity); m_coroutineJumpZeroGravity = null; }
+		m_coroutineWalkOff = StartCoroutine(CoroutineWalkOffPlatform(i_destination));
+	}
+
+	private IEnumerator CoroutineWalkOffPlatform(Vector2 i_destination)
+	{
+		m_isThinking = false;
+		m_isCanMove = true;
+		Platform platform = GetPlatformCurrent();
+		Collider2D platformCollider = platform == null ? null : platform.GetComponent<Collider2D>();
+		bool walkLeft;
+		if (platformCollider != null)
+			walkLeft = GetPos().x <= platformCollider.bounds.center.x;
+		else
+			walkLeft = i_destination.x < GetPos().x;
+		float elapsed = 0f;
+		while (GetIsGroundedRayCast() && elapsed < 0.6f)
+		{
+			MoveHorizontal(walkLeft);
+			elapsed += Time.fixedDeltaTime;
+			yield return new WaitForFixedUpdate();
+		}
+		// A destination directly below the actor supplies no useful horizontal
+		// direction. If ordinary movement has not cleared the platform, put the
+		// actor's feet just beyond its edge and let normal gravity do the fall.
+		if (GetIsGroundedRayCast() && platformCollider != null)
+		{
+			Collider2D actorCollider = GetComponent<Collider2D>();
+			float halfWidth = actorCollider == null ? 0.25f : actorCollider.bounds.extents.x;
+			float edgeX = walkLeft
+				? platformCollider.bounds.min.x - halfWidth - 0.05f
+				: platformCollider.bounds.max.x + halfWidth + 0.05f;
+			Vector2 position = GetRigidbody2D().position;
+			GetRigidbody2D().position = new Vector2(edgeX, position.y);
+			GetRigidbody2D().velocity = new Vector2(walkLeft ? -0.5f : 0.5f, GetRigidbody2D().velocity.y);
+			yield return new WaitForFixedUpdate();
+		}
+		for (elapsed = 0f; elapsed < 0.2f; elapsed += Time.fixedDeltaTime)
+		{
+			MoveHorizontal(walkLeft);
+			yield return new WaitForFixedUpdate();
+		}
+		m_isThinking = true;
+		m_coroutineWalkOff = null;
+	}
+
 	private IEnumerator CoroutineJumpNoGravity(Vector2 i_posToJumpTo, float i_duration)
 	{
 		GetRigidbody2D().isKinematic = true;
@@ -279,6 +331,8 @@ public class Walker : NPC
 			InterruptClimb();
 		}
 		base.StartRape();
+		LegacyShackAberrant aberrant = GetComponent<LegacyShackAberrant>();
+		if (aberrant != null) aberrant.HandleRape();
 	}
 
 	private void InterruptClimb()

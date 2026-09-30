@@ -16,11 +16,14 @@ public class EnergyBlast : Projectile
 		Player player = CommonReferences.Instance.GetPlayer();
 		if (!m_isDodged && player.GetIsInvulnerable() && player.GetStatePlayerCurrent() == StatePlayer.Dashing)
 		{
-			CHSamus cHSamus = (CHSamus)CommonReferences.Instance.GetManagerChallenge().GetChallenge("Samus");
-			if (cHSamus.IsActive())
+			foreach (Challenge challenge in CommonReferences.Instance.GetManagerChallenge().GetAllChallenges())
 			{
-				cHSamus.DodgeEnergyBlast((Sqoid)m_owner);
-				m_isDodged = true;
+				CHSamus cHSamus = challenge as CHSamus;
+				if (cHSamus != null && cHSamus.IsActive())
+				{
+					cHSamus.DodgeEnergyBlast((Sqoid)m_owner);
+					m_isDodged = true;
+				}
 			}
 		}
 		if (!player.GetIsBeingRaped() && !player.GetIsInvulnerable() && player.GetStateActorCurrent() != StateActor.Ragdoll)

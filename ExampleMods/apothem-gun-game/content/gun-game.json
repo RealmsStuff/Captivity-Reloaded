@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "apothem.gun-game:rule/gun-game",
+  "displayName": "Gun Game",
+  "description": "Replace the player's guns with a random weapon after every enemy kill.",
+  "modules": [
+    {
+      "type": "weaponProgression",
+      "trigger": "enemyKilled",
+      "selection": "random",
+      "starterWeapon": "core:item/weapon/pistol",
+      "replaceExistingWeapons": true,
+      "weaponPool": [
+      "core:item/weapon/pistol",
+      "core:item/weapon/qlock-17-s",
+      "core:item/weapon/muger-p08",
+      "core:item/weapon/qlock-17-a",
+      "core:item/weapon/snub-revolver-32",
+      "core:item/weapon/revolver-44",
+      "core:item/weapon/usi",
+      "core:item/weapon/np-40",
+      "core:item/weapon/np-9",
+      "core:item/weapon/ssph-42",
+      "core:item/weapon/sl-defender",
+      "core:item/weapon/harrington-model-1892",
+      "core:item/weapon/ronigsberg-543",
+      "core:item/weapon/sawed-off",
+      "core:item/weapon/tenelli-so3",
+      "core:item/weapon/tenelli-m5",
+      "core:item/weapon/css446",
+      "core:item/weapon/halman-785",
+      "core:item/weapon/m4b1",
+      "core:item/weapon/mg32",
+      "core:item/weapon/lk-235"
+      ]
+    },
+    {
+      "type": "spawnModifiers",
+      "waveSpawnMultiplier": 1.15,
+      "spawnDelayMultiplier": 0.85,
+      "initialSpawnDelayMultiplier": 0.75
+    }
+  ]
+}

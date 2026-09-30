@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.core-fer-tiled-port:stage-script/fer-encounters",
+  "stage": "example.core-fer-tiled-port:stage/fer-tiled-port",
+  "sequences": [
+    {
+      "id": "linked-int-doorbasement",
+      "trigger": "interaction",
+      "signal": "int-doorbasement",
+      "once": true,
+      "actions": [
+        {
+          "type": "spawn-actor",
+          "objectId": "abbycrawler"
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-13",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-16",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-14",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-11",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-15",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "linked-int-doorlab",
+      "trigger": "interaction",
+      "signal": "int-doorlab",
+      "once": true,
+      "actions": [
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-10",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-12",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "linked-int-doorhalls",
+      "trigger": "interaction",
+      "signal": "int-doorhalls",
+      "once": true,
+      "actions": [
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-1",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-3",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "linked-int-doorhalls-2",
+      "trigger": "interaction",
+      "signal": "int-doorhalls-2",
+      "once": true,
+      "actions": [
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-0",
+          "active": true
+        },
+        {
+          "type": "set-spawner-enabled",
+          "objectId": "fer-spawner-2",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "linked-int-doorgewehr",
+      "trigger": "interaction",
+      "signal": "int-doorgewehr",
+      "once": true,
+      "actions": [
+        {
+          "type": "set-object-active",
+          "objectId": "int-pllightgewehr",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "linked-int-fuseboxattic",
+      "trigger": "interaction",
+      "signal": "int-fuseboxattic",
+      "once": true,
+      "actions": [
+        {
+          "type": "spawn-actor",
+          "objectId": "npc-android"
+        },
+        {
+          "type": "set-object-active",
+          "objectId": "android-6",
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "pickup-item-jackyroomkeycard",
+      "trigger": "signal",
+      "signal": "fer-keycard-picked-up",
+      "once": true,
+      "actions": [
+        {
+          "type": "spawn-actor",
+          "objectId": "npc-jacky-1"
+        }
+      ]
+    }
+  ]
+}

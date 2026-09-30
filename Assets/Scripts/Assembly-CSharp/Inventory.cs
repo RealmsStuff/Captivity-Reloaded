@@ -247,6 +247,7 @@ public class Inventory
 
 	public bool IsHasRoomForPickUpable(PickUpable i_pickUpable)
 	{
+		if (ExternalRuleProfileFactory.ShouldIgnoreWeightLimit()) return true;
 		if (GetEncumbrance() + i_pickUpable.GetWeight() > m_room)
 		{
 			return false;

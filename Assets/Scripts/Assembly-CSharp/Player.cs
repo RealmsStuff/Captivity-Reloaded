@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public class Player : Actor
@@ -72,6 +73,14 @@ public class Player : Actor
 
 	[SerializeField]
 	private int m_numOfHeartsCurrent;
+
+	private int m_numOfHeartsBase;
+
+	private float m_pleasureMaxBase;
+
+	private float m_libidoMaxBase;
+
+	private float m_healthMaxRuleBase;
 
 	[SerializeField]
 	private ManagerArmWeaponPlayer m_managerArmWeaponPlayer;
@@ -220,6 +229,18 @@ public class Player : Actor
 
 	private Coroutine m_coroutineWakeUp;
 
+	private Coroutine m_coroutineSelfPleasure;
+
+	private bool m_isSelfPleasuring;
+
+	private RuntimeAnimatorController m_animatorBeforeSelfPleasure;
+
+	private Dictionary<Bone, Vector3[]> m_poseBeforeSelfPleasure;
+
+	private StatusPlayerHud m_selfPleasureHudOwner;
+
+	private StatusPlayerHudItem m_selfPleasureHudItem;
+
 	public event FireGun OnShoot;
 
 	public new event DelPickUp OnPickUp;
@@ -265,6 +286,11 @@ public class Player : Actor
 		m_libidoCurrent = 0f;
 		m_pleasureCurrent = 0f;
 		m_strengthCurrent = m_strengthMax;
+		m_numOfHeartsBase = m_numOfHeartsMax;
+		m_pleasureMaxBase = m_pleasureMax;
+		m_libidoMaxBase = m_libidoMax;
+		m_healthMaxRuleBase = m_healthMax;
+		ApplyRuleProfileLimits(true);
 		m_isReloading = false;
 		m_isWalkingBackwards = false;
 		m_staminaCurrent = GetStat("HealthMax").GetValueTotal();
@@ -298,6 +324,7 @@ public class Player : Actor
 	public override void FixedUpdate()
 	{
 		base.FixedUpdate();
+		RecoverFromFallingOutOfStage();
 		HandleStamina();
 		HandleAnimatorLayerWeight();
 		HandleLibidoParticle();
@@ -353,6 +380,7 @@ public class Player : Actor
 
 	private void HandleAnimatorLayerWeight()
 	{
+		if (m_isSelfPleasuring) return;
 		if (m_statePlayerCurrent != StatePlayer.BeingRaped)
 		{
 			if (m_stateActorCurrent == StateActor.Climbing || m_isFear)
@@ -383,6 +411,11 @@ public class Player : Actor
 
 	public override void UpdateAnim()
 	{
+		if (m_isSelfPleasuring)
+		{
+			m_animator.speed = 1f;
+			return;
+		}
 		if (m_statePlayerCurrent == StatePlayer.BeingRaped || m_statePlayerCurrent == StatePlayer.Labor || m_stateActorCurrent == StateActor.Climbing || m_statePlayerCurrent == StatePlayer.Grappling || m_statePlayerCurrent == StatePlayer.Dashing || m_stateActorCurrent == StateActor.Ragdoll)
 		{
 			m_animator.speed = 1f;
@@ -793,7 +826,17 @@ public class Player : Actor
 			GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
 			PlaceFeetOnPos(i_ledgeToClimb.transform.position);
 			m_animator.Play("Climb");
-			yield return new WaitForSeconds(1.5f);
+			if (i_ledgeToClimb.GetComponentInParent<ModMovingPlatform>() != null)
+			{
+				float climbTimeRemaining = 1.5f;
+				while (climbTimeRemaining > 0f && i_ledgeToClimb != null)
+				{
+					PlaceFeetOnPos(i_ledgeToClimb.transform.position);
+					climbTimeRemaining -= Time.deltaTime;
+					yield return null;
+				}
+			}
+			else yield return new WaitForSeconds(1.5f);
 			GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
 			CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(i_isForceIgnoreInput: false);
 			SetStateToIdleAndNone();
@@ -850,6 +893,21 @@ public class Player : Actor
 		if (!i_isAltFire)
 		{
 			gun.Use(i_isAltFire: false);
+			if (gun.IsPrimaryBeam())
+			{
+				List<Bullet> beamHits = gun.BeginBeam(false);
+				this.OnShoot?.Invoke(beamHits);
+				StartCoroutine(CoroutineWaitForNextAttack());
+				return;
+			}
+			if (gun.IsPrimaryMelee())
+			{
+				m_managerArmWeaponPlayer.ShootGun(gun);
+				List<Bullet> meleeHits = gun.MeleeAttack();
+				this.OnShoot?.Invoke(meleeHits);
+				StartCoroutine(CoroutineWaitForNextAttack());
+				return;
+			}
 			if (gun.GetAmmoMagazineLeft() < 1)
 			{
 				return;
@@ -865,12 +923,55 @@ public class Player : Actor
 		else
 		{
 			gun.Use(i_isAltFire: true);
+			if (gun.CanAlternateAttack() && gun.ShouldAnimateAlternateRecoil())
+				m_managerArmWeaponPlayer.ShootGun(gun, gun.GetAlternateRecoilMultiplier());
+			List<Bullet> alternateHits = gun.AlternateAttack();
+			this.OnShoot?.Invoke(alternateHits);
 			if (gun.GetIsKnocksbackShooterAltFire())
 			{
 				TakeKnockbackFromWeapon(gun);
 			}
 		}
 		StartCoroutine(CoroutineWaitForNextAttack());
+	}
+
+	private void RecoverFromFallingOutOfStage()
+	{
+		if (m_isDead || CommonReferences.Instance == null) return;
+		ManagerStages stages = CommonReferences.Instance.GetManagerStages();
+		Stage stage = stages == null ? null : stages.GetStageCurrent();
+		if (stage == null || GetPos().y >= stage.GetFallRecoveryY()) return;
+		if (GetIsBeingRaped() && GetRaperCurrent() != null) GetRaperCurrent().ForceEndRape();
+		StopMoving();
+		Rigidbody2D body = GetRigidbody2D();
+		if (body != null)
+		{
+			body.velocity = Vector2.zero;
+			body.angularVelocity = 0f;
+		}
+		PlaceFeetOnPos(stage.GetPlayerSpawnPosition());
+		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().CenterCamera();
+	}
+
+	public void ReleaseChargedGun(Gun i_gun)
+	{
+		if (i_gun == null || i_gun != GetEquippableEquipped()) return;
+		m_managerArmWeaponPlayer.ShootGun(i_gun);
+		List<Bullet> hits = i_gun.ReleaseCharge();
+		this.OnShoot?.Invoke(hits);
+		StartCoroutine(CoroutineWaitForNextAttack());
+	}
+
+	public void ReleaseThrowableGun(Gun i_gun)
+	{
+		if (i_gun == null || i_gun != GetEquippableEquipped() || !i_gun.ReleaseThrowable()) return;
+		this.OnShoot?.Invoke(new List<Bullet>());
+		StartCoroutine(CoroutineWaitForNextAttack());
+	}
+
+	public void PresentModWeaponRecoil(Gun i_gun, float i_multiplier = 1f)
+	{
+		if (i_gun != null && i_gun == GetEquippableEquipped()) m_managerArmWeaponPlayer.ShootGun(i_gun, i_multiplier);
 	}
 
 	public void HandleGrappling()
@@ -921,7 +1022,14 @@ public class Player : Actor
 		Gun l_weapon = (Gun)GetEquippableEquipped();
 		if (l_weapon.GetReloadTypeGun() == GunReloadType.SingleBarrel)
 		{
-			m_animator.SetTrigger("ReloadSingleBarrel");
+			// This layer normally transitions only from EmptyStateWeaponLayer. A fast
+			// weapon swap can leave it elsewhere, producing reload audio with no pose.
+			m_animator.ResetTrigger("ReloadSingleBarrel");
+			int weaponLayer = m_animator.GetLayerIndex("Weapon");
+			if (weaponLayer >= 0)
+				m_animator.Play("ReloadSingleBarrel", weaponLayer, 0f);
+			else
+				m_animator.SetTrigger("ReloadSingleBarrel");
 		}
 		else
 		{
@@ -1097,39 +1205,49 @@ public class Player : Actor
 
 	private IEnumerator CoroutineWaitForEquipWeapon()
 	{
+		int weaponLayer = m_animator.GetLayerIndex("Weapon");
+		// A temporary finisher/mod controller may not expose the normal Weapon
+		// layer. Equipping is still valid; its pose will resume with that layer.
+		if (weaponLayer < 0)
+		{
+			m_isEquipping = true;
+			yield return new WaitForSeconds(GetEquippableEquipped().GetDurationEquip());
+			m_isEquipping = false;
+			yield break;
+		}
 		switch (GetEquippableEquipped().GetWeaponType())
 		{
 		case WeaponType.Pistol:
-			m_animator.Play("EquipPistol", m_animator.GetLayerIndex("Weapon"), 0f);
+			m_animator.Play("EquipPistol", weaponLayer, 0f);
 			break;
 		case WeaponType.Smg:
 			if (((Gun)GetEquippableEquipped()).GetHoldTypeGun() == GunHoldType.OneHanded)
 			{
-				m_animator.Play("EquipPistol", m_animator.GetLayerIndex("Weapon"), 0f);
+				m_animator.Play("EquipPistol", weaponLayer, 0f);
 			}
 			else
 			{
-				m_animator.Play("EquipSmg", m_animator.GetLayerIndex("Weapon"), 0f);
+				m_animator.Play("EquipSmg", weaponLayer, 0f);
 			}
 			break;
 		case WeaponType.Shotgun:
 			if (((Gun)GetEquippableEquipped()).GetHoldTypeGun() == GunHoldType.OneHanded)
 			{
-				m_animator.Play("EquipPistol", m_animator.GetLayerIndex("Weapon"), 0f);
+				m_animator.Play("EquipPistol", weaponLayer, 0f);
 			}
 			else
 			{
-				m_animator.Play("EquipShotgun", m_animator.GetLayerIndex("Weapon"), 0f);
+				m_animator.Play("EquipShotgun", weaponLayer, 0f);
 			}
 			break;
 		case WeaponType.Rifle:
-			m_animator.Play("EquipShotgun", m_animator.GetLayerIndex("Weapon"), 0f);
+			m_animator.Play("EquipShotgun", weaponLayer, 0f);
 			break;
 		case WeaponType.Special:
-			m_animator.Play("EquipPistol", m_animator.GetLayerIndex("Weapon"), 0f);
+			m_animator.Play("EquipPistol", weaponLayer, 0f);
 			break;
 		case WeaponType.Usable:
-			m_animator.Play("EquipPistol", m_animator.GetLayerIndex("Weapon"), 0f);
+			m_animator.Play("EquipPistol", weaponLayer, 0f);
 			break;
 		}
 		m_isEquipping = true;
@@ -1162,6 +1280,12 @@ public class Player : Actor
 
 	public void TakeHit(NPC i_initiator)
 	{
+		TakeConfiguredHit(i_initiator, i_initiator.GetDamageAttackCurrentTotal(),
+			i_initiator.GetKnockbackXAttackCurrentTotal(), i_initiator.GetKnockbackYAttackCurrentTotal());
+	}
+
+	public void TakeConfiguredHit(NPC i_initiator, float i_damage, float i_knockbackX, float i_knockbackY)
+	{
 		if (!m_isCanBeAttacked || GetIsBeingRaped())
 		{
 			return;
@@ -1173,11 +1297,11 @@ public class Player : Actor
 		{
 			flag = true;
 		}
-		TakeKnockback(i_initiator);
-		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().Shake(i_initiator.GetDamageAttackCurrentTotal() / 50f, 0.25f);
-		TakeDamage(i_initiator.GetDamageAttackCurrentTotal());
-		DamageStrength(i_initiator.GetDamageAttackCurrentTotal() / 8f);
-		ManagerDB.AddDamageTaken(i_initiator, (int)i_initiator.GetDamageAttackCurrentTotal());
+		TakeKnockback(i_initiator, i_knockbackX, i_knockbackY);
+		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().Shake(i_damage / 50f, 0.25f);
+		TakeDamage(i_damage);
+		DamageStrength(i_damage / 8f);
+		ManagerDB.AddDamageTaken(i_initiator, (int)i_damage);
 		if (!flag && m_stateActorCurrent == StateActor.Ragdoll)
 		{
 			CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().AddStatusKO(i_initiator);
@@ -1191,7 +1315,7 @@ public class Player : Actor
 		{
 			PlayAudioSFX(i_initiator.GetAudioAttackHitAttackCurrent());
 		}
-		TryLoseRandomClothingPiece();
+		if (ExternalRuleProfileFactory.IsClothingDamageEnabled()) TryLoseRandomClothingPiece();
 		if (m_stateActorCurrent == StateActor.Ragdoll)
 		{
 			CommonReferences.Instance.GetManagerPostProcessing().PlayEffectRagdoll();
@@ -1205,15 +1329,12 @@ public class Player : Actor
 
 	public override void TakeDamage(float i_amount)
 	{
-		switch (ManagerDB.GetDifficulty())
-		{
-		case "Casual":
-			i_amount *= 0.75f;
-			break;
-		case "Hard":
-			i_amount *= 1.25f;
-			break;
-		}
+		StopSelfPleasure();
+		DifficultyDefinition difficulty = DifficultyRegistry.Current;
+		i_amount *= difficulty == null ? 1f : difficulty.PlayerDamageTakenMultiplier;
+		i_amount = ExternalRuleProfileFactory.ApplyPlayerDamageTaken(i_amount);
+		foreach (Clothing clothing in GetSkeletonPlayer().GetClothesEquipped())
+			i_amount *= clothing.GetModDamageTakenMultiplier();
 		CommonReferences.Instance.GetManagerHud().TakeDamage();
 		PlayAudioVoice(m_audiosVoiceGetHit);
 		GetSkeletonPlayer().GetManagerFacePlayer().TakeDamage();
@@ -1238,7 +1359,8 @@ public class Player : Actor
 			if (!GetIsBeingRaped())
 			{
 				Ragdoll(5f);
-				BecomeInvulnerableTakeHit();
+				if (ExternalRuleProfileFactory.AreSafeKnockoutsEnabled()) HandleSafeKnockout();
+				else BecomeInvulnerableTakeHit();
 			}
 		}
 		this.OnTakeDamage?.Invoke();
@@ -1246,16 +1368,21 @@ public class Player : Actor
 
 	public void TakeKnockback(NPC i_initiator)
 	{
+		TakeKnockback(i_initiator, i_initiator.GetKnockbackXAttackCurrentTotal(), i_initiator.GetKnockbackYAttackCurrentTotal());
+	}
+
+	private void TakeKnockback(NPC i_initiator, float i_knockbackX, float i_knockbackY)
+	{
 		Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
 		if (i_initiator.GetPos().x > base.transform.position.x)
 		{
-			velocity.x -= i_initiator.GetKnockbackXAttackCurrentTotal();
+			velocity.x -= i_knockbackX;
 		}
 		else
 		{
-			velocity.x += i_initiator.GetKnockbackXAttackCurrentTotal();
+			velocity.x += i_knockbackX;
 		}
-		velocity.y = i_initiator.GetKnockbackYAttackCurrentTotal();
+		velocity.y = i_knockbackY;
 		GetRigidbody2D().velocity = velocity;
 	}
 
@@ -1266,13 +1393,29 @@ public class Player : Actor
 		{
 			m_healthCurrent = 0f;
 			Ragdoll(12f);
-			BecomeInvulnerableTakeHit();
+			if (ExternalRuleProfileFactory.AreSafeKnockoutsEnabled()) HandleSafeKnockout();
+			else BecomeInvulnerableTakeHit();
 		}
+	}
+
+	private void HandleSafeKnockout()
+	{
+		DestroyAHeart();
+		m_healthCurrent = GetStat("HealthMax").GetValueTotal();
+		BecomeInvulnerableTakeHit();
+		if (m_numOfHeartsCurrent >= 1) return;
+		DisableRagdoll();
+		UnEquipEquippedWeapon();
+		CommonReferences.Instance.GetPlayerController().ResetInventory();
+		CommonReferences.Instance.GetManagerStages().OpenStage(CommonReferences.Instance.GetManagerStages().GetStageHub());
+		PlaceInBed(i_isDied: true);
+		CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().CreateAndAddStatus(
+			"Awoken", "You awoke from a strange dream...", StatusPlayerHudItemColor.Special, 20f);
 	}
 
 	private void TryLoseRandomClothingPiece()
 	{
-		if (Random.Range(0, 101) >= 60)
+		if (Random.value < ExternalRuleProfileFactory.GetClothingDamageChance(41f / 101f))
 		{
 			GetSkeletonPlayer().DropOrDestroyRandomClothingPiece();
 		}
@@ -1363,6 +1506,7 @@ public class Player : Actor
 		{
 			return;
 		}
+		StopSelfPleasure();
 		SetIsForceIgnoreInput(i_isForceIgnoreInput: true);
 		if ((bool)GetRaperCurrent())
 		{
@@ -1447,6 +1591,15 @@ public class Player : Actor
 			CommonReferences.Instance.GetPlayerController().RemovePickupAbleFromInventory(equippableEquipped);
 			ClearDroppedEquippable(equippableEquipped);
 		}
+	}
+
+	public void RestoreAHeart()
+	{
+		if (m_numOfHeartsCurrent >= m_numOfHeartsMax) return;
+		int restoredIndex = m_numOfHeartsCurrent;
+		m_numOfHeartsCurrent++;
+		if (CommonReferences.Instance != null && CommonReferences.Instance.GetManagerHud() != null)
+			CommonReferences.Instance.GetManagerHud().RestoreAHeart(restoredIndex);
 	}
 
 	public void DropEquippedEquippable(float i_powerDrop01)
@@ -1605,6 +1758,7 @@ public class Player : Actor
 
 	public void GainPleasure(float i_amount)
 	{
+		i_amount = ExternalRuleProfileFactory.ApplyPleasureGain(i_amount);
 		float num = i_amount / 100f * (m_libidoCurrent * 24f);
 		num /= 2f;
 		if (!(num < 0f))
@@ -1619,7 +1773,7 @@ public class Player : Actor
 		}
 	}
 
-	public void GainPleasureFlat(float i_amount)
+	public void GainPleasureFlat(float i_amount, bool i_destroyHeartOnOrgasm = true)
 	{
 		if (!(i_amount < 0f))
 		{
@@ -1628,7 +1782,7 @@ public class Player : Actor
 			if (m_pleasureCurrent >= m_pleasureMax)
 			{
 				m_pleasureCurrent = m_pleasureMax;
-				Orgasm();
+				Orgasm(i_destroyHeartOnOrgasm);
 			}
 		}
 	}
@@ -1643,9 +1797,9 @@ public class Player : Actor
 		}
 	}
 
-	public void Orgasm()
+	public void Orgasm(bool i_destroyHeart = true)
 	{
-		DestroyAHeart();
+		if (i_destroyHeart) DestroyAHeart();
 		PlayAudio(m_audiosCum);
 		CommonReferences.Instance.GetManagerHud().PlayerCum();
 		m_pleasureCurrent = 0f;
@@ -1654,7 +1808,7 @@ public class Player : Actor
 		PlayAudioSFX(m_audioOrgasm);
 		PlayAudioVoice(m_audiosVoiceOrgasm);
 		CommonReferences.Instance.GetManagerPostProcessing().PlayEffectOrgasm();
-		RemoveAllBuffs();
+		if (!ExternalRuleProfileFactory.ShouldRetainBuffsOnClimax()) RemoveAllBuffs();
 		if (this.OnOrgasm != null)
 		{
 			this.OnOrgasm();
@@ -1685,9 +1839,12 @@ public class Player : Actor
 
 	public void Spawn()
 	{
+		ApplyRuleProfileLimits(true);
 		Enable();
-		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().SetObjectFocused(base.gameObject);
-		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().SetSmoothLevel(SmoothLevel.Medium);
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
+		camera.ApplyRuleProfileZoom();
+		camera.SetObjectFocused(base.gameObject);
+		camera.SetSmoothLevel(SmoothLevel.Medium);
 		m_healthCurrent = GetStat("HealthMax").GetValueTotal();
 		SetIsFacingLeft(i_isFacingLeft: false);
 		m_isDead = false;
@@ -1700,25 +1857,137 @@ public class Player : Actor
 		m_libidoCurrent = 0f;
 		m_pleasureCurrent = 0f;
 		m_strengthCurrent = m_strengthMax;
-		m_numOfHeartsCurrent = m_numOfHeartsMax;
-		CommonReferences.Instance.GetManagerHud().Retry();
+		CommonReferences.Instance.GetManagerHud().RebuildHearts();
 		GetRigidbody2D().bodyType = RigidbodyType2D.Dynamic;
 		SetIsForceIgnoreInput(i_isForceIgnoreInput: false);
 		EquipEquippedClothes();
 		GetSkeletonPlayer().SetSkinColor(ManagerDB.GetSkinColorPlayer());
 		GetSkeletonPlayer().SetEyeColor(ManagerDB.GetEyeColorPlayer());
+		CoreAssetSlotBinder.BindAfterSceneObjectsStarted();
+	}
+
+	public void ApplyRuleProfileLimits(bool i_refillHearts)
+	{
+		if (m_numOfHeartsBase <= 0) m_numOfHeartsBase = m_numOfHeartsMax;
+		if (m_pleasureMaxBase <= 0f) m_pleasureMaxBase = m_pleasureMax;
+		if (m_libidoMaxBase <= 0f) m_libidoMaxBase = m_libidoMax;
+		if (m_healthMaxRuleBase <= 0f) m_healthMaxRuleBase = m_healthMax;
+		m_numOfHeartsMax = ExternalRuleProfileFactory.GetMaximumHearts(m_numOfHeartsBase);
+		m_numOfHeartsCurrent = i_refillHearts ? m_numOfHeartsMax : Mathf.Clamp(m_numOfHeartsCurrent, 0, m_numOfHeartsMax);
+		m_pleasureMax = ExternalRuleProfileFactory.ApplyPleasureMaximum(m_pleasureMaxBase);
+		m_libidoMax = ExternalRuleProfileFactory.ApplyLibidoMaximum(m_libidoMaxBase);
+		m_healthMax = m_healthMaxRuleBase * ExternalRuleProfileFactory.GetPlayerHealthMultiplier();
+		GetStat("HealthMax").SetValueBase(m_healthMax);
+		if (i_refillHearts)
+		{
+			m_healthCurrent = GetStat("HealthMax").GetValueTotal();
+			m_staminaCurrent = m_healthCurrent;
+		}
+		else
+		{
+			m_healthCurrent = Mathf.Min(m_healthCurrent, GetStat("HealthMax").GetValueTotal());
+			m_staminaCurrent = Mathf.Min(m_staminaCurrent, GetStat("HealthMax").GetValueTotal());
+		}
+		m_pleasureCurrent = Mathf.Min(m_pleasureCurrent, m_pleasureMax);
+		m_libidoCurrent = Mathf.Min(m_libidoCurrent, m_libidoMax);
 	}
 
 	private void EquipEquippedClothes()
 	{
-		foreach (int idsEquippedClothe in ManagerDB.GetIdsEquippedClothes())
+		foreach (Clothing clothing in ManagerDB.GetEquippedClothes()) GetSkeletonPlayer().EquipClothing(clothing);
+	}
+
+	public bool TryStartSelfPleasure()
+	{
+		if (m_isSelfPleasuring || !ExternalRuleProfileFactory.IsSelfPleasureEnabled() || m_isDead
+			|| m_statePlayerCurrent != StatePlayer.None || m_stateActorCurrent == StateActor.Ragdoll
+			|| !GetIsGrounded() || m_isReloading || m_isEquipping || m_isUsingUsable || m_isWakingUp
+			|| m_isCrouching || m_isExposing || m_isAttacking)
+			return false;
+		Stage stage = CommonReferences.Instance.GetManagerStages().GetStageCurrent();
+		if (stage == null || stage is StageHub || stage.GetManagerWave() == null || stage.GetManagerWave().GetStateWave() != StateWave.Wave)
+			return false;
+		RuntimeAnimatorController controller = Resources.Load<RuntimeAnimatorController>("Raper/RapeAnimator");
+		if (controller == null) return false;
+		StopMoving();
+		m_isSelfPleasuring = true;
+		m_animatorBeforeSelfPleasure = GetAnimator().runtimeAnimatorController;
+		m_poseBeforeSelfPleasure = GetSkeletonPlayer().CopyCurrentPose();
+		HideEquippedWeapon();
+		GetAnimator().runtimeAnimatorController = controller;
+		GetAnimator().Play("Sqoid8", 0, 0f);
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
+		camera.ZoomToFOV(camera.GetFOVOriginal() * 0.75f, 0.25f);
+		m_selfPleasureHudOwner = CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud();
+		m_selfPleasureHudItem = m_selfPleasureHudOwner.CreateAndAddStatus("Self pleasure",
+			"Press " + CommonReferences.Instance.GetManagerInput().GetPromptBindingName(InputButton.SelfPleasure) + " to stop", StatusPlayerHudItemColor.Lewd);
+		m_selfPleasureHudItem.SetPromptInput(InputButton.SelfPleasure);
+		m_coroutineSelfPleasure = StartCoroutine(CoroutineSelfPleasure());
+		return true;
+	}
+
+	private IEnumerator CoroutineSelfPleasure()
+	{
+		while (m_isSelfPleasuring)
 		{
-			GetSkeletonPlayer().EquipClothing(Library.Instance.Clothes.GetClothing(idsEquippedClothe));
+			if (m_isDead || m_statePlayerCurrent == StatePlayer.BeingRaped || m_stateActorCurrent == StateActor.Ragdoll)
+			{
+				m_coroutineSelfPleasure = null;
+				StopSelfPleasure();
+				yield break;
+			}
+			StopMoving();
+			float gain = ExternalRuleProfileFactory.GetSelfPleasurePerSecond() * Time.deltaTime;
+			bool willClimax = m_pleasureCurrent + gain >= m_pleasureMax;
+			GainPleasureFlat(gain, ExternalRuleProfileFactory.GetSelfPleasureHeartCost() > 0);
+			if (willClimax)
+			{
+				m_coroutineSelfPleasure = null;
+				StopSelfPleasure();
+				yield break;
+			}
+			yield return null;
 		}
+	}
+
+	public void StopSelfPleasure()
+	{
+		if (!m_isSelfPleasuring) return;
+		m_isSelfPleasuring = false;
+		if (m_coroutineSelfPleasure != null)
+		{
+			StopCoroutine(m_coroutineSelfPleasure);
+			m_coroutineSelfPleasure = null;
+		}
+		if (m_animatorBeforeSelfPleasure != null)
+		{
+			GetAnimator().runtimeAnimatorController = m_animatorBeforeSelfPleasure;
+			GetAnimator().Play("Idle", 0, 0f);
+		}
+		if (m_poseBeforeSelfPleasure != null && !m_isDead && m_statePlayerCurrent != StatePlayer.BeingRaped)
+			GetSkeletonPlayer().ApplyPose(m_poseBeforeSelfPleasure);
+		m_animatorBeforeSelfPleasure = null;
+		m_poseBeforeSelfPleasure = null;
+		if (!m_isDead && m_statePlayerCurrent != StatePlayer.BeingRaped) ShowEquippedWeapon();
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
+		camera.ZoomToFOV(camera.GetFOVOriginal(), 0.25f);
+		if (m_selfPleasureHudItem != null)
+		{
+			if (m_selfPleasureHudOwner != null) m_selfPleasureHudOwner.DestroyStatusItem(m_selfPleasureHudItem);
+			else Object.Destroy(m_selfPleasureHudItem.gameObject);
+		}
+		m_selfPleasureHudOwner = null;
+		m_selfPleasureHudItem = null;
+	}
+
+	public bool IsSelfPleasuring()
+	{
+		return m_isSelfPleasuring;
 	}
 
 	public void EnterStage()
 	{
+		StopSelfPleasure();
 		if (CommonReferences.Instance.GetManagerStages().GetStageCurrent() is StageHub)
 		{
 			if (CommonReferences.Instance.GetManagerScreens().GetScreenGame().GetIsFirstTimeSpawn())
@@ -1732,9 +2001,14 @@ public class Player : Actor
 		}
 		else
 		{
-			Gun gun = Object.Instantiate(Library.Instance.Guns.GetGun(SpawnGun), base.transform.parent);
-			PickUp(gun, i_isDuplicate: false);
-			EquipWeapon(gun);
+			Gun starter = ExternalRuleProfileFactory.ResolveStarterWeapon(Library.Instance.Guns.GetGun(SpawnGun));
+			if (starter != null)
+			{
+				Gun gun = Object.Instantiate(starter, base.transform.parent);
+				PickUp(gun, i_isDuplicate: false);
+				EquipWeapon(gun);
+			}
+			CoreAssetSlotBinder.BindAfterSceneObjectsStarted();
 		}
 	}
 
@@ -2451,8 +2725,14 @@ public class Player : Actor
 			return m_numOfHeartsCurrent;
 		}
 
+		public int GetNumOfHeartsMax()
+		{
+			return m_numOfHeartsMax;
+		}
+
 		public bool GetIsCanBeRaped()
 		{
+			if (!ExternalRuleProfileFactory.AreEnemyFinishersEnabled()) return false;
 			if (!m_isInvulnerable && m_statePlayerCurrent != StatePlayer.BeingRaped && m_statePlayerCurrent != StatePlayer.Labor)
 			{
 				return true;
@@ -2898,6 +3178,7 @@ public class Player : Actor
 
 		public void DamageStrength(float i_damage)
 		{
+			i_damage = ExternalRuleProfileFactory.ApplyStrengthDamage(i_damage, GetIsBeingRaped());
 			m_strengthCurrent -= i_damage;
 			if (m_strengthCurrent < 0f)
 			{

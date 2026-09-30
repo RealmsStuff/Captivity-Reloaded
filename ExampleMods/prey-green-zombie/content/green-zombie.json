@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "draco66electro.prey-green-zombie:enemy/green-zombie",
+  "displayName": "Prey Green Zombie",
+  "description": "A green zombie variant reconstructed from the legacy Prey Mod artwork.",
+  "extends": "core:enemy/zombie-1",
+  "spawn": {
+    "inheritTemplateSpawners": true
+  },
+  "stats": {
+    "healthMax": 125,
+    "speedMax": 3.5,
+    "bounty": 12
+  },
+  "behavior": {
+    "visionRange": 24,
+    "ignoreWave": false,
+    "modules": [
+      {
+        "type": "berserk",
+        "healthThreshold": 0.2,
+        "speedBonus": 0.75,
+        "damageMultiplierBonus": 0.2
+      }
+    ]
+  },
+  "animation": {
+    "speedMultiplier": 1.05
+  },
+  "attacks": [
+    {
+      "index": 0,
+      "damage": 9,
+      "cooldownSeconds": 1.1,
+      "initiateRange": 1.8,
+      "hitRange": 1.2
+    }
+  ],
+  "drops": {
+    "chance": 0.08,
+    "items": ["core:item/consumable/ammo-box"]
+  },
+  "visual": {
+    "type": "coreRigAtlas",
+    "atlas": "assets/enemies/green-zombie.png",
+    "pixelsPerUnit": 32,
+    "regions": {
+      "body/torso-lower": { "x": 0, "y": 96, "width": 32, "height": 32 },
+      "body/butt": { "x": 32, "y": 96, "width": 32, "height": 32 },
+      "body/hips": { "x": 64, "y": 96, "width": 32, "height": 32 },
+      "body/chest": { "x": 96, "y": 96, "width": 32, "height": 32 },
+      "body/neck": { "x": 0, "y": 64, "width": 32, "height": 32 },
+      "body/head": { "x": 32, "y": 64, "width": 32, "height": 32 },
+      "body/arm-upper": { "x": 64, "y": 64, "width": 32, "height": 32 },
+      "body/arm-lower": { "x": 96, "y": 64, "width": 32, "height": 32 },
+      "body/hand": { "x": 0, "y": 32, "width": 32, "height": 32 },
+      "body/leg-upper": { "x": 32, "y": 32, "width": 32, "height": 32 },
+      "body/leg-lower": { "x": 64, "y": 32, "width": 32, "height": 32 },
+      "body/foot-left": { "x": 96, "y": 32, "width": 32, "height": 32 },
+      "body/foot-right": { "x": 0, "y": 0, "width": 32, "height": 32 }
+    }
+  }
+}

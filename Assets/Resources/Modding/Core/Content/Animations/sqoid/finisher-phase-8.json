@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/sqoid/finisher-phase-8",
+  "enemy": "core:enemy/sqoid",
+  "displayName": "sqoid finisher-phase-8",
+  "durationSeconds": 0.2,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "sprite/hips",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.2260654,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 1.11764552E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.2260654,
+          "inTangent": -1.11764552E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 3.33547587E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 1.0,
+          "inTangent": -3.33547587E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.2260654,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 1.11764552E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.2260654,
+          "inTangent": -1.11764552E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 3.33547587E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 1.0,
+          "inTangent": -3.33547587E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.r",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.858009338,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 3.20852632E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.858009338,
+          "inTangent": -3.20852632E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.g",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.670136,
+          "inTangent": -1.81985138E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.0,
+          "inTangent": 1.81985138E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 13.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 11.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "sortingOrder",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 12.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/hips",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/background",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "sprite/brain",
+      "property": "color.b",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 0.067,
+          "inTangent": -3.65078449E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 0.0,
+          "inTangent": 3.65078449E-07,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 1.27,
+          "inTangent": -1.462102E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 1.0,
+          "inTangent": 1.462102E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/brain",
+      "property": "scale.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.1,
+          "value": 1.42,
+          "inTangent": 5.40018164E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.2,
+          "value": 1.0,
+          "inTangent": -5.40018164E-07,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 0.05,
+      "type": "cue",
+      "amount": 0.0,
+      "cue": "finisher.thrust"
+    },
+    {
+      "time": 0.15,
+      "type": "cue",
+      "amount": 0.0,
+      "cue": "finisher.thrust"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Rape8_2.anim",
+    "semanticName": "finisher-phase-8"
+  }
+}

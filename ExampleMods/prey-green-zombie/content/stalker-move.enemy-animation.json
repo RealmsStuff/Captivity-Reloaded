@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "draco66electro.prey-green-zombie:enemy-animation/stalker-move",
+  "enemy": "draco66electro.prey-green-zombie:enemy/original-green-stalker",
+  "displayName": "Green Stalker Move",
+  "durationSeconds": 0.45,
+  "frameRate": 60,
+  "loop": true,
+  "tracks": [
+    { "target": "bone/hips", "property": "position.y", "keys": [
+      { "time": 0, "value": 0, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 0.07, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 0, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/chest", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -4, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 4, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": -4, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/head", "property": "rotation.z", "keys": [
+      { "time": 0, "value": 4, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": -4, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 4, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/arm-left-upper", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -18, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 18, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": -18, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/arm-right-upper", "property": "rotation.z", "keys": [
+      { "time": 0, "value": 18, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": -18, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 18, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/leg-left-upper", "property": "rotation.z", "keys": [
+      { "time": 0, "value": 22, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": -22, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 22, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/leg-left-lower", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -12, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 18, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": -12, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/leg-right-upper", "property": "rotation.z", "keys": [
+      { "time": 0, "value": -22, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 22, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": -22, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "bone/leg-right-lower", "property": "rotation.z", "keys": [
+      { "time": 0, "value": 18, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": -12, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 18, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "sprite/chest", "property": "color.g", "keys": [
+      { "time": 0, "value": 1, "inTangent": null, "outTangent": null },
+      { "time": 0.225, "value": 0.35, "inTangent": null, "outTangent": null },
+      { "time": 0.45, "value": 1, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "sprite/chest", "property": "color.a", "keys": [
+      { "time": 0, "value": 1, "inTangent": null, "outTangent": null }
+    ] },
+    { "target": "sprite/chest", "property": "sortingOrder", "keys": [
+      { "time": 0, "value": 12, "inTangent": null, "outTangent": null }
+    ] }
+  ],
+  "objectTracks": [
+    { "target": "sprite/head", "property": "sprite", "keys": [
+      { "time": 0, "asset": null, "name": "head" }
+    ] }
+  ],
+  "events": [],
+  "effects": [],
+  "effectTriggers": []
+}

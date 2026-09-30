@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/jacky",
+  "legacyId": 20,
+  "displayName": "Jacky",
+  "stats": {
+    "healthMax": 15,
+    "speedAcceleration": 3,
+    "speedMax": 2.5,
+    "traction": 1,
+    "bounty": 50,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "climb": "core:enemy-animation/jacky/climb",
+    "finisher-phase-1": "core:enemy-animation/jacky/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/jacky/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/jacky/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/jacky/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/jacky/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/jacky/finisher-phase-6",
+    "finisher-phase-7": "core:enemy-animation/jacky/finisher-phase-7",
+    "idle": "core:enemy-animation/jacky/idle",
+    "jump": "core:enemy-animation/jacky/jump",
+    "move": "core:enemy-animation/jacky/move",
+    "scare": "core:enemy-animation/jacky/scare",
+    "stab-attack-primary": "core:enemy-animation/jacky/stab-attack-primary"
+  }
+}

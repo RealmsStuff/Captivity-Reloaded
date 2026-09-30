@@ -17,6 +17,12 @@ public class Platform : MonoBehaviour
 
 	private GameObject m_ledgeRight;
 
+	public void ConfigureModPlatform(bool i_climbableLeftLedge, bool i_climbableRightLedge)
+	{
+		m_isClimbableLeftLedge = i_climbableLeftLedge;
+		m_isClimbableRightLedge = i_climbableRightLedge;
+	}
+
 	public void CreateLedgesAndEdges()
 	{
 		CreateLedges();

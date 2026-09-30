@@ -4190,6 +4190,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 3
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &1749881500950661387
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4900,6 +4902,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_id: 6
+  m_isRuntimeTemplate: 0
   m_nameStage: Field-Day
   m_description: A random field where a house once stood. You've been here before.
     But now, you sense a presense unlike any before.
@@ -8618,6 +8621,8 @@ MonoBehaviour:
   m_interactablesToActivateAfterActivation: []
   m_weapon: {fileID: 0}
   m_weaponSize: 1
+  m_modCaseSprite: {fileID: 0}
+  m_modCaseBrokenSprite: {fileID: 0}
 --- !u!212 &1749881501428260251
 SpriteRenderer:
   m_ObjectHideFlags: 0

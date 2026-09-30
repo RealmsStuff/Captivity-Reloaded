@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/revolver-44",
+  "legacyName": "Revolver .44",
+  "displayName": "Revolver .44",
+  "description": "",
+  "stats": {
+    "damage": 13,
+    "ammoMax": 90,
+    "magazineSize": 6,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.02,
+    "recoil": 0.15,
+    "movementRecoil": 0.0,
+    "knockbackX": 2.0,
+    "knockbackY": 2.0,
+    "equipSeconds": 0.0,
+    "weight": 2,
+    "value": 2000,
+    "infiniteAmmo": false,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "OneHanded",
+    "reloadType": "Magazine"
+  }
+}

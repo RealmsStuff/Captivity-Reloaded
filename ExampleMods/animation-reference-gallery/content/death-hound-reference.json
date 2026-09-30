@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/death-hound",
+  "displayName": "Animation Reference - Death Hound",
+  "description": "Reference copy of the quadruped Death Hound animation family. It does not join normal spawners.",
+  "extends": "core:enemy/death-hound",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-charge-prepare": "example.animation-reference-gallery:enemy-animation/death-hound/attack-charge-prepare",
+    "attack-leap": "example.animation-reference-gallery:enemy-animation/death-hound/attack-leap",
+    "attack-primary": "example.animation-reference-gallery:enemy-animation/death-hound/attack-primary",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-3",
+    "finisher-phase-4": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-4",
+    "finisher-phase-5": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-5",
+    "finisher-phase-6": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-6",
+    "finisher-phase-7": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-7",
+    "finisher-phase-8": "example.animation-reference-gallery:enemy-animation/death-hound/finisher-phase-8",
+    "idle": "example.animation-reference-gallery:enemy-animation/death-hound/idle",
+    "move": "example.animation-reference-gallery:enemy-animation/death-hound/move"
+  }
+}

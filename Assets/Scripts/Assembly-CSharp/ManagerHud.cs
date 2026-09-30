@@ -143,22 +143,43 @@ public class ManagerHud : MonoBehaviour
 
 	public void BuildHearts()
 	{
+		foreach (HeartHud heart in m_heartsHud)
+		{
+			if (heart == null) continue;
+			heart.gameObject.SetActive(false);
+			Object.Destroy(heart.gameObject);
+		}
+		m_heartsHud.Clear();
 		m_heartHudDefault.SetActive(value: false);
 		m_distanceBetweenHearts = 4f;
-		for (int i = 0; i < m_player.GetNumOfHeartsCurrent(); i++)
+		for (int i = 0; i < m_player.GetNumOfHeartsMax(); i++)
 		{
 			GameObject gameObject = Object.Instantiate(m_heartHudDefault, m_heartHudDefault.transform.parent);
 			gameObject.SetActive(value: true);
 			Vector3 vector = gameObject.GetComponent<RectTransform>().anchoredPosition;
 			vector.x += (float)i * (gameObject.GetComponent<RectTransform>().sizeDelta.x + m_distanceBetweenHearts);
 			gameObject.GetComponent<RectTransform>().anchoredPosition = vector;
-			m_heartsHud.Add(gameObject.GetComponent<HeartHud>());
+			HeartHud heart = gameObject.GetComponent<HeartHud>();
+			m_heartsHud.Add(heart);
+			if (i < m_player.GetNumOfHeartsCurrent()) heart.Live();
+			else heart.Kill();
 		}
+	}
+
+	public void RebuildHearts()
+	{
+		m_player = CommonReferences.Instance.GetPlayer();
+		if (m_player != null) BuildHearts();
 	}
 
 	public void DestroyAHeart()
 	{
 		m_heartsHud[m_player.GetNumOfHeartsCurrent() - 1].Kill();
+	}
+
+	public void RestoreAHeart(int i_index)
+	{
+		if (i_index >= 0 && i_index < m_heartsHud.Count) m_heartsHud[i_index].Live();
 	}
 
 	public Sprite GetImageHeartDead()

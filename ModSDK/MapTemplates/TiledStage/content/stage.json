@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "example.tiled-starter-kit:stage/starter-arena",
+  "displayName": "Tiled Starter Arena",
+  "extends": "core:stage/mod-template",
+  "description": "A wide editable arena with rendered tiles, props, collision, and spawn points authored in Tiled.",
+  "layout": {
+    "type": "tiledJson",
+    "path": "levels/starter-map.json",
+    "pixelsPerUnit": 32,
+    "hideInheritedVisuals": true
+  },
+  "camera": {
+    "bounds": { "minX": -128, "minY": 0, "maxX": 128, "maxY": 96 }
+  },
+  "waves": { "firstWaveEnemyCount": 3 },
+  "spawners": [
+    {
+      "id": "west-ground",
+      "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/zombie-2"],
+      "selectionWeight": 1,
+      "minimumWave": 0,
+      "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25,
+      "initialDelaySeconds": 1,
+      "initialDelayJitterSeconds": 0.25,
+      "spawnOutOfSight": true
+    },
+    {
+      "id": "east-ground",
+      "position": { "x": 0, "y": 0 },
+      "enemies": ["core:enemy/zombie-1", "core:enemy/death-hound"],
+      "selectionWeight": 1,
+      "minimumWave": 0,
+      "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25,
+      "initialDelaySeconds": 1,
+      "initialDelayJitterSeconds": 0.25,
+	  "spawnOutOfSight": true,
+	  "requiredOpenDoors": ["jacky-door"]
+    }
+  ]
+}

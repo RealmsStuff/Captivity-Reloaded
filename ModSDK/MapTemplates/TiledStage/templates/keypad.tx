@@ -1,0 +1,11 @@
+{
+  "type": "template",
+  "object": {
+    "class": "keypad", "id": 1, "name": "keypad", "point": true,
+    "properties": [
+      { "name": "code", "type": "string", "value": "1234" },
+      { "name": "targetDoors", "type": "string", "value": "standard-door" }
+    ],
+    "rotation": 0, "visible": true
+  }
+}

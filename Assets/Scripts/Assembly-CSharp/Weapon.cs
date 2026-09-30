@@ -50,11 +50,13 @@ public abstract class Weapon : PickUpable
 
 	public virtual bool Use(bool i_isAltFire)
 	{
-		if (this.OnUse != null)
-		{
-			this.OnUse();
-		}
+		NotifyUse();
 		return HandleUse(i_isAltFire);
+	}
+
+	protected void NotifyUse()
+	{
+		this.OnUse?.Invoke();
 	}
 
 	protected abstract bool HandleUse(bool i_isAltFire);
@@ -66,7 +68,7 @@ public abstract class Weapon : PickUpable
 
 	public float GetDurationEquip()
 	{
-		return m_durationEquip;
+		return ExternalRuleProfileFactory.ApplyWeaponEquipSeconds(this, m_durationEquip);
 	}
 
 	public Dictionary<SpriteRenderer, int> GetDicSpriteSortOriginal()
@@ -100,5 +102,11 @@ public abstract class Weapon : PickUpable
 	public bool IsVisible()
 	{
 		return m_isVisible;
+	}
+
+	public void ConfigureModWeaponBase(float? i_equipSeconds, bool? i_marketable)
+	{
+		if (i_equipSeconds.HasValue) m_durationEquip = i_equipSeconds.Value;
+		if (i_marketable.HasValue) m_isMarketable = i_marketable.Value;
 	}
 }

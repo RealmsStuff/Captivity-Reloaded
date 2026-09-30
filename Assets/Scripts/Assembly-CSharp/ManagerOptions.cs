@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,19 +78,33 @@ public class ManagerOptions : MonoBehaviour
 
 	private float m_aimAssistOriginal;
 
+	public Transform GetOptionsInnerTemplate()
+	{
+		return m_innerOptions == null ? null : m_innerOptions.transform;
+	}
+
 	[SerializeField]
 	private Dropdown m_dropDownDifficulty;
+
+	private readonly List<string> m_difficultyIds = new List<string>();
 
 	[SerializeField]
 	private Toggle m_toggleGunFlash;
 
+	private Toggle m_toggleMobileDPad;
+
+	private bool m_mobileDPadOriginal;
+
 	private Dropdown m_dropDownDisplayMode;
 
 	private Dropdown m_dropDownResolution;
+	private Dropdown m_dropDownGameMode;
 
 	private Text m_lblDisplayMode;
 
 	private Text m_lblResolution;
+	private Text m_lblGameMode;
+	private readonly List<string> m_gameModeIds = new List<string>();
 
 	private List<GameDisplayResolution> m_displayResolutions = new List<GameDisplayResolution>();
 
@@ -148,7 +163,7 @@ public class ManagerOptions : MonoBehaviour
 			inputBox.gameObject.SetActive(value: true);
 			m_inputBoxes.Add(inputBox);
 			InputBox inputBox2 = UnityEngine.Object.Instantiate(m_inputBoxDefault, m_controllerInputParent);
-			inputBox2.InitializeDisplay(inputButtons[i].GetName(), CommonReferences.Instance.GetManagerInput().GetControllerBindingName(inputButtons[i].GetInputButton()));
+			inputBox2.InitializeControllerDisplay(inputButtons[i].GetName(), CommonReferences.Instance.GetManagerInput().GetControllerBindingName(inputButtons[i].GetInputButton()), inputButtons[i].GetInputButton());
 			inputBox2.gameObject.SetActive(value: true);
 			m_controllerInputBoxes.Add(inputBox2);
 		}
@@ -232,15 +247,15 @@ public class ManagerOptions : MonoBehaviour
 	{
 		m_dropDownDifficulty.options.Clear();
 		List<string> list = new List<string>();
+		m_difficultyIds.Clear();
 		int value = 0;
-		for (int i = 0; i < Enum.GetValues(typeof(Difficulty)).Length; i++)
+		DifficultyDefinition current = DifficultyRegistry.Current;
+		for (int i = 0; i < DifficultyRegistry.Definitions.Count; i++)
 		{
-			string text = Enum.GetNames(typeof(Difficulty))[i];
-			list.Add(text);
-			if (text == PlayerPrefs.GetString("Difficulty"))
-			{
-				value = i;
-			}
+			DifficultyDefinition definition = DifficultyRegistry.Definitions[i];
+			list.Add(definition.DisplayName);
+			m_difficultyIds.Add(definition.Id.ToString());
+			if (current != null && definition.Id == current.Id) value = i;
 		}
 		m_dropDownDifficulty.AddOptions(list);
 		m_dropDownDifficulty.value = value;
@@ -274,6 +289,26 @@ public class ManagerOptions : MonoBehaviour
 		m_dropDownDisplayMode.RefreshShownValue();
 		m_dropDownResolution.RefreshShownValue();
 		UpdateResolutionAvailability(m_dropDownDisplayMode.value);
+		BuildGameModeOptions();
+	}
+
+	private void BuildGameModeOptions()
+	{
+		m_dropDownGameMode.options.Clear();
+		m_gameModeIds.Clear();
+		List<string> names = new List<string> { "Standard" };
+		m_gameModeIds.Add(string.Empty);
+		int selected = 0;
+		for (int i = 0; i < RuleProfileRegistry.Definitions.Count; i++)
+		{
+			RuleProfileDefinition profile = RuleProfileRegistry.Definitions[i];
+			names.Add(profile.DisplayName);
+			m_gameModeIds.Add(profile.Id.ToString());
+			if (profile.Id.ToString() == RuleProfileRegistry.CurrentId) selected = i + 1;
+		}
+		m_dropDownGameMode.AddOptions(names);
+		m_dropDownGameMode.value = selected;
+		m_dropDownGameMode.RefreshShownValue();
 	}
 
 	private void CreateAimAssistControl()
@@ -293,7 +328,7 @@ public class ManagerOptions : MonoBehaviour
 		{
 			if (componentsInChildren[i].text == "Hitsound")
 			{
-				componentsInChildren[i].text = "Controller aim assist";
+				componentsInChildren[i].text = "Aim assist (pad/touch)";
 			}
 			else
 			{
@@ -316,6 +351,9 @@ public class ManagerOptions : MonoBehaviour
 		m_dropDownResolution = UnityEngine.Object.Instantiate(m_dropDownDifficulty, parent);
 		m_dropDownResolution.gameObject.name = "dropDown_resolution";
 		m_dropDownResolution.onValueChanged = new Dropdown.DropdownEvent();
+		m_dropDownGameMode = UnityEngine.Object.Instantiate(m_dropDownDifficulty, parent);
+		m_dropDownGameMode.gameObject.name = "dropDown_gameMode";
+		m_dropDownGameMode.onValueChanged = new Dropdown.DropdownEvent();
 		Text component = parent.Find("lbl_difficulty").GetComponent<Text>();
 		m_lblDisplayMode = UnityEngine.Object.Instantiate(component, parent);
 		m_lblDisplayMode.gameObject.name = "lbl_displayMode";
@@ -323,8 +361,12 @@ public class ManagerOptions : MonoBehaviour
 		m_lblResolution = UnityEngine.Object.Instantiate(component, parent);
 		m_lblResolution.gameObject.name = "lbl_resolution";
 		m_lblResolution.text = "Resolution";
+		m_lblGameMode = UnityEngine.Object.Instantiate(component, parent);
+		m_lblGameMode.gameObject.name = "lbl_gameMode";
+		m_lblGameMode.text = "Game mode";
 		ConfigureDropDownText(m_dropDownDisplayMode);
 		ConfigureDropDownText(m_dropDownResolution);
+		ConfigureDropDownText(m_dropDownGameMode);
 		Text component2 = m_toggleGunFlash.GetComponentInChildren<Text>(includeInactive: true);
 		if (component2 != null)
 		{
@@ -333,6 +375,21 @@ public class ManagerOptions : MonoBehaviour
 			component2.resizeTextMaxSize = component2.fontSize;
 		}
 		ConfigureOptionsLayout();
+	}
+
+	private void CreateMobileControlsOption()
+	{
+		if (m_toggleMobileDPad != null) return;
+		m_toggleMobileDPad = UnityEngine.Object.Instantiate(m_toggleGunFlash, m_toggleGunFlash.transform.parent);
+		m_toggleMobileDPad.gameObject.name = "toggle_mobileDPad";
+		m_toggleMobileDPad.onValueChanged = new Toggle.ToggleEvent();
+		Text label = m_toggleMobileDPad.GetComponentInChildren<Text>(includeInactive: true);
+		if (label != null)
+		{
+			label.text = "Mobile D-Pad movement";
+			label.resizeTextForBestFit = true;
+			label.resizeTextMinSize = 12;
+		}
 	}
 
 	private static void ConfigureDropDownText(Dropdown i_dropDown)
@@ -411,7 +468,11 @@ public class ManagerOptions : MonoBehaviour
 			ConfigureRect(m_dropDownResolution.GetComponent<RectTransform>(), new Vector2(465f, -112f), new Vector2(270f, 42f));
 			ConfigureRect(component, new Vector2(165f, -164f), new Vector2(270f, 32f));
 			ConfigureRect(m_dropDownDifficulty.GetComponent<RectTransform>(), new Vector2(165f, -204f), new Vector2(270f, 42f));
-			ConfigureRect(m_toggleGunFlash.GetComponent<RectTransform>(), new Vector2(465f, -204f), new Vector2(270f, 42f));
+			ConfigureRect(m_lblGameMode.rectTransform, new Vector2(465f, -164f), new Vector2(270f, 32f));
+			ConfigureRect(m_dropDownGameMode.GetComponent<RectTransform>(), new Vector2(465f, -204f), new Vector2(270f, 42f));
+			ConfigureRect(m_toggleGunFlash.GetComponent<RectTransform>(), new Vector2(165f, -270f), new Vector2(270f, 42f));
+			if (m_toggleMobileDPad != null)
+				ConfigureRect(m_toggleMobileDPad.GetComponent<RectTransform>(), new Vector2(465f, -270f), new Vector2(270f, 42f));
 		}
 		Vector2 size = m_optionsContainerRect.rect.size;
 		if (m_optionsContainerSize == size)
@@ -460,6 +521,9 @@ public class ManagerOptions : MonoBehaviour
 		}
 		CommonReferences.Instance.GetManagerInput().SetButtonsToSavedButtons();
 		CommonReferences.Instance.GetManagerInput().SetAimAssistStrength(m_aimAssistOriginal);
+		PlayerPrefs.SetInt("MobileUseDPad", m_mobileDPadOriginal ? 1 : 0);
+		PlayerPrefs.Save();
+		InputGlyphLibrary.RefreshMobileControls();
 		GetComponentInParent<ScreenTitle>().CloseOptions();
 		CommonReferences.Instance.GetManagerAudio().SetVolumesToSaved();
 	}
@@ -473,7 +537,26 @@ public class ManagerOptions : MonoBehaviour
 		PlayerPrefs.SetInt("VolumeSFX", (int)m_sliderSFX.value);
 		PlayerPrefs.SetInt("VolumeHitsound", (int)m_sliderHitsound.value);
 		PlayerPrefs.SetFloat("ControllerAimAssist", m_sliderAimAssist.value / 100f);
-		PlayerPrefs.SetString("Difficulty", m_dropDownDifficulty.options[m_dropDownDifficulty.value].text);
+		if (m_toggleMobileDPad != null) PlayerPrefs.SetInt("MobileUseDPad", m_toggleMobileDPad.isOn ? 1 : 0);
+		InputGlyphLibrary.RefreshMobileControls();
+		if (m_dropDownDifficulty.value >= 0 && m_dropDownDifficulty.value < m_difficultyIds.Count)
+			DifficultyRegistry.SetCurrent(m_difficultyIds[m_dropDownDifficulty.value]);
+		if (m_dropDownGameMode != null && m_dropDownGameMode.value >= 0 && m_dropDownGameMode.value < m_gameModeIds.Count)
+		{
+			RuleProfileRegistry.SetCurrent(m_gameModeIds[m_dropDownGameMode.value]);
+			ExternalRuleProfileController profileController = UnityEngine.Object.FindObjectOfType<ExternalRuleProfileController>();
+			if (profileController != null) profileController.RefreshSelectedProfile();
+			if (CommonReferences.Instance != null && CommonReferences.Instance.GetPlayer() != null)
+			{
+				if (profileController == null) CommonReferences.Instance.GetPlayer().ApplyRuleProfileLimits(false);
+				if (CommonReferences.Instance.GetManagerHud() != null) CommonReferences.Instance.GetManagerHud().RebuildHearts();
+			}
+			if (CommonReferences.Instance != null && CommonReferences.Instance.GetManagerCamerasXGame() != null)
+			{
+				CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
+				if (camera != null) camera.ApplyRuleProfileZoom();
+			}
+		}
 		if (m_toggleGunFlash.isOn)
 		{
 			PlayerPrefs.SetInt("IsReduceGunFlash", 1);
@@ -505,8 +588,11 @@ public class ManagerOptions : MonoBehaviour
 		m_sliderSFX.value = PlayerPrefs.GetInt("VolumeSFX");
 		m_sliderHitsound.value = PlayerPrefs.GetInt("VolumeHitsound");
 		CreateAimAssistControl();
+		CreateMobileControlsOption();
 		m_aimAssistOriginal = PlayerPrefs.HasKey("ControllerAimAssist") ? PlayerPrefs.GetFloat("ControllerAimAssist") : 0.35f;
 		m_sliderAimAssist.value = m_aimAssistOriginal * 100f;
+		m_mobileDPadOriginal = PlayerPrefs.GetInt("MobileUseDPad", 0) == 1;
+		m_toggleMobileDPad.isOn = m_mobileDPadOriginal;
 		BuildInputBoxes();
 		BuildDropDownDifficulty();
 		BuildToggleReduceGunFlash();

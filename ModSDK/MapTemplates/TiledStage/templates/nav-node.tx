@@ -1,0 +1,12 @@
+{
+  "type": "template",
+  "object": {
+    "class": "nav-node", "name": "nav-node", "point": true, "rotation": 0, "visible": true,
+    "properties": [
+      { "name": "fly", "type": "bool", "value": false },
+      { "name": "connectionType", "type": "string", "value": "move" },
+      { "name": "bidirectional", "type": "bool", "value": false },
+      { "name": "links", "type": "string", "value": "" }
+    ]
+  }
+}

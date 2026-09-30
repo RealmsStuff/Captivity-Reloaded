@@ -1,0 +1,753 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/zombie-grabber/move",
+  "enemy": "core:enemy/zombie-grabber",
+  "displayName": "zombie-grabber move",
+  "durationSeconds": 2.0,
+  "frameRate": 60.0,
+  "loop": true,
+  "tracks": [
+    {
+      "target": "bone/leg-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -42.969,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 4.116,
+          "inTangent": 200.663437,
+          "outTangent": 200.6635
+        },
+        {
+          "time": 0.383333325,
+          "value": 33.9520035,
+          "inTangent": 3.84052546E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 23.0080013,
+          "inTangent": -115.284042,
+          "outTangent": -115.284012
+        },
+        {
+          "time": 0.6333333,
+          "value": 5.131,
+          "inTangent": -183.90004,
+          "outTangent": -183.900009
+        },
+        {
+          "time": 0.75,
+          "value": -22.967001,
+          "inTangent": -131.181839,
+          "outTangent": -131.181824
+        },
+        {
+          "time": 1.0,
+          "value": -42.969,
+          "inTangent": -1.52587891E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": 4.116,
+          "inTangent": 200.663437,
+          "outTangent": 200.6635
+        },
+        {
+          "time": 1.38333333,
+          "value": 33.9520035,
+          "inTangent": 3.84052546E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 23.0080013,
+          "inTangent": -115.284042,
+          "outTangent": -115.284012
+        },
+        {
+          "time": 1.63333333,
+          "value": 5.131,
+          "inTangent": -183.90004,
+          "outTangent": -183.900009
+        },
+        {
+          "time": 1.75,
+          "value": -22.967001,
+          "inTangent": -131.181839,
+          "outTangent": -131.181824
+        },
+        {
+          "time": 2.0,
+          "value": -42.969,
+          "inTangent": -1.52587891E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -26.9840012,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -76.0320053,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -31.4210014,
+          "inTangent": 149.777985,
+          "outTangent": 149.778015
+        },
+        {
+          "time": 0.75,
+          "value": -1.143,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": -26.9840012,
+          "inTangent": -149.778,
+          "outTangent": -149.778015
+        },
+        {
+          "time": 1.25,
+          "value": -76.0320053,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": -31.4210014,
+          "inTangent": 149.777985,
+          "outTangent": 149.778015
+        },
+        {
+          "time": 1.75,
+          "value": -1.143,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -26.9840012,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-left",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 34.5430031,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -37.402,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -15.706,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6333333,
+          "value": -19.5640011,
+          "inTangent": -5.823405E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 0.37,
+          "inTangent": 147.56456,
+          "outTangent": 147.56456
+        },
+        {
+          "time": 1.0,
+          "value": 34.5430031,
+          "inTangent": -3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": -37.402,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": -15.706,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.63333333,
+          "value": -19.5640011,
+          "inTangent": -5.823405E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.75,
+          "value": 0.37,
+          "inTangent": 147.56456,
+          "outTangent": 147.56456
+        },
+        {
+          "time": 2.0,
+          "value": 34.5430031,
+          "inTangent": -3.05175781E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 19.707,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -17.3240013,
+          "inTangent": -124.240005,
+          "outTangent": -124.240005
+        },
+        {
+          "time": 0.5,
+          "value": -42.413002,
+          "inTangent": 3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 6.52300024,
+          "inTangent": 105.471924,
+          "outTangent": 105.472031
+        },
+        {
+          "time": 1.0,
+          "value": 19.707,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": -17.3240013,
+          "inTangent": -124.240005,
+          "outTangent": -124.240005
+        },
+        {
+          "time": 1.5,
+          "value": -42.413002,
+          "inTangent": 3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.75,
+          "value": 6.52300024,
+          "inTangent": 105.471924,
+          "outTangent": 105.472031
+        },
+        {
+          "time": 2.0,
+          "value": 19.707,
+          "inTangent": 1.52587891E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/leg-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -44.8780022,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -7.15800047,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -37.696003,
+          "inTangent": -147.314,
+          "outTangent": -147.314
+        },
+        {
+          "time": 0.75,
+          "value": -80.815,
+          "inTangent": 3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": -44.8780022,
+          "inTangent": 147.314026,
+          "outTangent": 147.314
+        },
+        {
+          "time": 1.25,
+          "value": -7.15800047,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": -37.696003,
+          "inTangent": -147.314,
+          "outTangent": -147.314
+        },
+        {
+          "time": 1.75,
+          "value": -80.815,
+          "inTangent": 3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -44.8780022,
+          "inTangent": 3.05175781E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/foot-right",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -1.60600007,
+          "inTangent": -9.536743E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.383333325,
+          "value": 28.693,
+          "inTangent": -4.89400663E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 21.7330017,
+          "inTangent": -75.92726,
+          "outTangent": -75.92726
+        },
+        {
+          "time": 0.75,
+          "value": -32.339,
+          "inTangent": -7.62939453E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": -3.05175781E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": -1.60600007,
+          "inTangent": -9.536743E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.38333333,
+          "value": 28.693,
+          "inTangent": -4.89400663E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 21.7330017,
+          "inTangent": -75.92726,
+          "outTangent": -75.92726
+        },
+        {
+          "time": 1.75,
+          "value": -32.339,
+          "inTangent": -7.62939453E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 0.0,
+          "inTangent": -3.05175781E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -11.1320009,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": -34.999,
+          "inTangent": 7.62939453E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -11.1320009,
+          "inTangent": -7.62939453E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 82.373,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 109.685005,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 82.373,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -13.994,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 15.8780012,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -13.994,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 48.145,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 21.4110012,
+          "inTangent": 3.81469727E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 48.145,
+          "inTangent": -3.81469727E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 24.753,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 24.753,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 19.107,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 19.107,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 16.572,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 16.572,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 44.845,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 44.845,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/spine",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -26.9830017,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -26.9830017,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/penis",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -82.83501,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -82.83501,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.x",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.75,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hips",
+      "property": "position.y",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -0.228,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -0.021,
+          "inTangent": -1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": -0.247,
+          "inTangent": 1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.75,
+          "value": -0.012,
+          "inTangent": -1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.0,
+          "value": -0.228,
+          "inTangent": 1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.25,
+          "value": -0.021,
+          "inTangent": -1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.5,
+          "value": -0.247,
+          "inTangent": 1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 1.75,
+          "value": -0.012,
+          "inTangent": -1.1920929E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 2.0,
+          "value": -0.228,
+          "inTangent": 1.1920929E-07,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Walk_3.anim",
+    "semanticName": "move"
+  }
+}

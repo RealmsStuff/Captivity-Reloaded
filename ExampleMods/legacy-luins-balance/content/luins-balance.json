@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "legacy.luins-balance:rule/luins-balance",
+  "displayName": "Luin's Balance",
+  "description": "Harder long-run balance with escalating waves, fragile clothing, and revised consumables.",
+  "modules": [
+    {
+      "type": "economyRules",
+      "ammoDropLifetimeSeconds": 20,
+      "ammoDropChance": 0.26,
+      "ammoDropChancePerWave": -0.01,
+      "ammoDropChanceMinimum": 0.05,
+      "itemValueOffsets": {
+        "core:item/weapon/snub-revolver-32": -330,
+        "core:item/weapon/muger-p08": -315,
+        "core:item/usable/psycho": 1350,
+        "core:item/usable/double-trigger": 750,
+        "core:item/usable/b-prec": 400,
+        "core:item/usable/anaphrodisiac": -150,
+        "core:item/weapon/usi": 100
+      },
+      "weaponAmmoCapacityOffsets": {
+        "core:item/weapon/snub-revolver-32": 30,
+        "core:item/weapon/qlock-17-s": -45,
+        "core:item/weapon/usi": -32,
+        "core:item/weapon/np-40": 56,
+        "core:item/weapon/muger-p08": 24,
+        "core:item/weapon/mg32": 50,
+        "core:item/weapon/lk-235": 50
+      }
+    },
+    {
+      "type": "weaponTuning",
+      "pistolEquipSeconds": 0.35,
+      "pistolReloadSeconds": 0.95,
+      "smgOneHandedEquipSeconds": 0.5,
+      "smgOneHandedReloadSeconds": 1.45,
+      "smgTwoHandedEquipSeconds": 0.8,
+      "smgTwoHandedReloadSeconds": 1.95,
+      "shotgunOneHandedEquipSeconds": 0.4,
+      "shotgunOneHandedReloadSeconds": 2.3,
+      "shotgunTwoHandedEquipSeconds": 1.05,
+      "shotgunTwoHandedReloadSeconds": 2.75,
+      "rifleEquipSeconds": 1.25,
+      "rifleReloadSeconds": 2.4,
+      "singleBarrelReloadSeconds": 1.25,
+      "minimumShotDelaySeconds": 0.04
+    },
+    {
+      "type": "spawnModifiers",
+      "waveSpawnMultiplier": 1.0,
+      "spawnDelayMultiplier": 0.85,
+      "initialSpawnDelayMultiplier": 0.85,
+      "enemySpeedVarianceMin": -0.9,
+      "enemySpeedVarianceMax": 1.0,
+      "enemyHealthVarianceMin": -0.65,
+      "enemyHealthVarianceMax": 1.0,
+      "enemyWaveHealthGrowthRandomBase": 1.12,
+      "enemySpeedGrowthAfterWave": 20,
+      "enemySpeedGrowthPerWave": 0.1,
+      "zombieChaseChancePercent": 20,
+      "zombieFallChancePercent": 5,
+      "zombieChaseCheckSeconds": 8,
+      "zombieChaseDurationMin": 6,
+      "zombieChaseDurationMax": 16,
+      "zombieChaseSpeedMaxBonus": 3.5,
+      "deathHoundRetrySeconds": 6,
+      "deathHoundPrepareSeconds": 2.05,
+      "deathHoundRoamSpeedBonus": 3.5,
+      "deathHoundChargeSpeedBonus": 4.5,
+      "deathHoundChargeSeconds": 9,
+      "deathHoundLeapXMultiplier": 1.12,
+      "deathHoundLandCheckDelay": 0.05,
+      "deathHoundPrepareInnerDivisor": 3.8,
+      "deathHoundLeapDistanceDivisor": 1.2,
+      "deathHoundHitDistance": 1.5,
+      "flyChargeAccelBonus": 14,
+      "flyChargeSpeedBonus": 20,
+      "flyRechargeDelayMultiplier": 1.5,
+      "mindBreakTargetMultiplier": 0.5,
+      "hypnosisProgressMultiplier": 2
+    },
+    {
+      "type": "playerRules",
+      "clothingDamageEnabled": true,
+      "clothingDamageChance": 0.8,
+      "strengthDamageWhileRestrainedMultiplier": 1.0,
+      "strengthDamageFreeMultiplier": 1.0
+    },
+    {
+      "type": "consumableOverride",
+      "item": "aspirin",
+      "healthRestore": 40,
+      "libidoReduction": 20,
+      "pleasureReduction": 20,
+      "effectDurationSeconds": 40
+    },
+    {
+      "type": "consumableOverride",
+      "item": "anaphrodisiac",
+      "libidoReduction": 50,
+      "pleasureReduction": 50,
+      "effectDurationSeconds": 30
+    },
+    {
+      "type": "consumableOverride",
+      "item": "buffout",
+      "strengthRestoreMultiplier": 1.5
+    }
+  ]
+}

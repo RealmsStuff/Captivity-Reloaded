@@ -24,4 +24,11 @@ public class LibraryUsables : MonoBehaviour
 		int index = Random.Range(0, m_usables.Count);
 		return m_usables[index];
 	}
+
+	public void AddRuntimeUsable(Usable i_usable)
+	{
+		if (i_usable == null || m_usables.Contains(i_usable.gameObject)) return;
+		i_usable.gameObject.SetActive(false);
+		m_usables.Add(i_usable.gameObject);
+	}
 }

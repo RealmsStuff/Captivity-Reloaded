@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "type": "stage",
+  "id": "draco66electro.prey-green-zombie:stage/original-enemy-lab",
+  "displayName": "Original Enemy Lab",
+  "extends": "core:stage/field-day",
+  "description": "A visible Tiled navigation and finisher test for the fully original Green Stalker.",
+  "layout": { "type": "tiledJson", "path": "levels/original-enemy-lab.json", "pixelsPerUnit": 32, "hideInheritedVisuals": true },
+  "camera": { "bounds": { "minX": -32, "minY": 0, "maxX": 32, "maxY": 24 } },
+  "waves": { "firstWaveEnemyCount": 3 },
+  "spawners": [
+    {
+      "id": "west-stalker", "position": { "x": 0, "y": 0 },
+      "enemies": ["draco66electro.prey-green-zombie:enemy/original-green-stalker"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25, "initialDelaySeconds": 0.5,
+      "initialDelayJitterSeconds": 0.25, "spawnOutOfSight": false
+    },
+    {
+      "id": "east-stalker", "position": { "x": 0, "y": 0 },
+      "enemies": ["draco66electro.prey-green-zombie:enemy/original-green-stalker"],
+      "selectionWeight": 1, "minimumWave": 0, "delaySeconds": 1.5,
+      "delayJitterSeconds": 0.25, "initialDelaySeconds": 0.5,
+      "initialDelayJitterSeconds": 0.25, "spawnOutOfSight": false
+    }
+  ]
+}

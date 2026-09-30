@@ -99,6 +99,11 @@ public class NavNode : MonoBehaviour
 		return m_platformConnected;
 	}
 
+	public void SetPlatform(Platform i_platform)
+	{
+		m_platformConnected = i_platform;
+	}
+
 	private void OnDrawGizmos()
 	{
 		if (m_isDrawNode)

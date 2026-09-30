@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1, "type": "weapon",
+  "id": "example.weapon-behavior-showcase:item/weapon/charged-pistol",
+  "displayName": "Charged Pistol", "description": "Hold fire and release to scale the shot from 0.5x to 3x damage.",
+  "extends": "core:item/weapon/pistol",
+  "stats": { "damage": 6, "ammoMax": 60, "magazineSize": 10, "value": 25, "marketable": true, "semiAutomatic": true },
+  "behavior": {
+    "tracerColor": "#FFCC33FF",
+    "ammunition": {
+      "type": "incendiary", "damageMultiplier": 0.9, "damageOverTime": 2.0,
+      "effectDurationSeconds": 3.0, "tickIntervalSeconds": 0.5
+    },
+    "charge": {
+      "seconds": 1.25, "minimumDamageMultiplier": 0.5, "maximumDamageMultiplier": 3.0,
+      "chargingText": "CHARGING PISTOL", "readyText": "PISTOL FULLY CHARGED",
+      "chargingColor": "#FFAA33FF", "readyColor": "#55FF77FF", "tintStrength": 0.65
+    },
+    "animations": { "fireSpeedMultiplier": 1.2, "clips": { "fire": { "frames": [
+      { "durationSeconds": 0.06, "sprites": { "slide": "assets/weapon/magazine.png" } },
+      { "durationSeconds": 0.08, "sprites": { "slide": "assets/weapon/slide.png" } }
+    ] } } }
+  },
+  "visual": { "type": "coreWeaponSprites", "pixelsPerUnit": 32, "sprites": {
+    "body": "assets/weapon/body.png", "base": "assets/weapon/base.png", "slide": "assets/weapon/slide.png"
+  } }
+}

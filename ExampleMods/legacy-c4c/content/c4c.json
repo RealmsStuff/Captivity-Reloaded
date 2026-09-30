@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "legacy.c4c:rule/c4c",
+  "displayName": "C4C",
+  "description": "Five hearts, longer arousal progression, retained buffs, repeat vendors, and the legacy drug rebalance.",
+  "modules": [
+    {
+      "type": "economyRules",
+      "repeatConsumablePurchases": true,
+      "ammoDropChance": 0.08,
+      "ammoDropLifetimeSeconds": 60,
+      "vendorsAlwaysAvailable": true
+    },
+    {
+      "type": "playerRules",
+      "maximumHearts": 5,
+      "libidoMaximumMultiplier": 5.0,
+      "pleasureGainMultiplier": 0.8333333,
+      "rapeLibidoGainMultiplier": 2.5,
+      "voluntaryExposeSkipsEscape": true,
+      "retainBuffsOnClimax": true,
+      "strengthDamageWhileRestrainedMultiplier": 0.6666667,
+      "strengthDamageFreeMultiplier": 1.5,
+      "clothingDamageEnabled": true,
+      "clothingDamageChance": 0.41
+    },
+    {
+      "type": "spawnModifiers",
+      "legacyShackAberrants": true,
+      "legacyShackTankLimit": 1,
+      "legacyShackTankDelaySeconds": 30,
+      "legacyShackBoomerLimit": 3,
+      "legacyShackBoomerDelaySeconds": 30,
+      "legacyShackPinkHoundLimit": 1,
+      "legacyShackPinkHoundDelaySeconds": 30,
+      "legacyShackBoomerExplodes": false
+    },
+    {
+      "type": "consumableOverride",
+      "item": "aspirin",
+      "healthRestore": 50,
+      "libidoReduction": 50,
+      "pleasureReduction": 50,
+      "effectDurationSeconds": 100
+    },
+    {
+      "type": "consumableOverride",
+      "item": "morphine",
+      "healthRestore": 100,
+      "restoreHeart": true
+    },
+    {
+      "type": "consumableOverride",
+      "item": "anaphrodisiac",
+      "libidoReduction": 150,
+      "pleasureReduction": 150,
+      "effectDurationSeconds": 30
+    },
+    {
+      "type": "consumableOverride",
+      "item": "buffout",
+      "strengthRestoreMultiplier": 2.0
+    },
+    {
+      "type": "consumableOverride",
+      "item": "psycho",
+      "effectDurationSeconds": 99999
+    },
+    {
+      "type": "consumableOverride",
+      "item": "second-wind",
+      "healthRestore": 50
+    },
+    {
+      "type": "consumableOverride",
+      "item": "siid-21",
+      "effectDurationSeconds": 10,
+      "invulnerabilitySeconds": 10,
+      "gunDamageBonus": 1,
+      "accelerationBonus": 5,
+      "sprintBonus": 5,
+      "dashBonus": 15
+    },
+    {
+      "type": "eventReward",
+      "trigger": "playerInfusion",
+      "moneyReward": 100
+    },
+    {
+      "type": "eventReward",
+      "trigger": "playerImplantation",
+      "moneyReward": 100
+    }
+  ]
+}

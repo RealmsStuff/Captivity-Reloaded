@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Threading.Tasks;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -43,6 +44,7 @@ public static class ManagerDB
 		public List<ChallengeData> challenges = new List<ChallengeData>();
 		public List<StageData> stages = new List<StageData>();
 		public List<InputData> inputs = new List<InputData>();
+		public List<ContentStateData> contentStates = new List<ContentStateData>();
 	}
 
 	[System.Serializable]
@@ -105,6 +107,14 @@ public static class ManagerDB
 		public string keyCode;
 	}
 
+	[System.Serializable]
+	public class ContentStateData
+	{
+		public string contentId;
+		public string category;
+		public string stateJson;
+	}
+
 	private static WebDatabaseState state = new WebDatabaseState();
 
 	private static void LoadWebState()
@@ -114,6 +124,7 @@ public static class ManagerDB
 		{
 			string json = PlayerPrefs.GetString("WebSaveData");
 			state = JsonUtility.FromJson<WebDatabaseState>(json);
+			if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
 		}
 		else
 		{
@@ -127,6 +138,7 @@ public static class ManagerDB
 			{
 				string json = File.ReadAllText(path);
 				state = JsonUtility.FromJson<WebDatabaseState>(json);
+				if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
 			}
 			catch (Exception e)
 			{
@@ -357,11 +369,17 @@ public static class ManagerDB
         m_pathToSaveFile = System.IO.Path.Combine(UnityEngine.Application.persistentDataPath, "xGameDB.db");
         m_pathToSaveFileUri = "URI=file:" + m_pathToSaveFile;
         CheckForSaveFile();
+		EnsureContentStateSchema();
         await Task.Yield();
 #endif
     }
 
 #if !UNITY_WEBGL && !UNITY_ANDROID
+	private static void EnsureContentStateSchema()
+	{
+		ExecuteNonQuery("CREATE TABLE IF NOT EXISTS tbl_contentState (contentId TEXT NOT NULL, category TEXT NOT NULL, stateJson TEXT NOT NULL DEFAULT '{}', PRIMARY KEY (contentId, category));");
+	}
+
     private static void OpenCon()
     {
         m_con = new SqliteConnection(m_pathToSaveFileUri);
@@ -960,6 +978,18 @@ public static class ManagerDB
 
     private static async Task AddClothingIfNotExists(Clothing i_clothing)
     {
+		if (TryGetExternalClothingId(i_clothing, out ContentId contentId))
+		{
+			if (!TryGetClothingContentState(contentId, out _))
+			{
+				bool unlocked = false;
+				foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+					if (definition.Id == contentId) unlocked = definition.UnlockedByDefault;
+				SaveClothingContentState(contentId, new ClothingContentState { Unlocked = unlocked });
+			}
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		GetWebClothing(i_clothing.GetId());
 		SaveWebState();
@@ -1008,6 +1038,23 @@ public static class ManagerDB
 #endif
     }
 
+	public static List<Clothing> GetUnlockedClothes()
+	{
+		List<Clothing> result = new List<Clothing>();
+		foreach (int id in GetIdsUnlockedClothes())
+		{
+			Clothing clothing = Library.Instance.Clothes.GetClothing(id);
+			if (clothing != null) result.Add(clothing);
+		}
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved) || !saved.Unlocked) continue;
+			if (ModLoaderRuntime.Registry.TryGet(definition.Id, out ContentRegistration registration) && registration.RuntimeAsset is Clothing clothing)
+				result.Add(clothing);
+		}
+		return result;
+	}
+
     public static void EquipClothes(List<Clothing> i_clothes)
     {
 #if UNITY_WEBGL || UNITY_ANDROID
@@ -1017,6 +1064,7 @@ public static class ManagerDB
 		}
 		foreach (var ec in i_clothes)
 		{
+			if (TryGetExternalClothingId(ec, out _)) continue;
 			var c = GetWebClothing(ec.GetId());
 			c.isEquipped = 1;
 		}
@@ -1025,9 +1073,11 @@ public static class ManagerDB
         ExecuteNonQuery("UPDATE tbl_clothing SET isEquipped = 0");
         foreach (Clothing i_clothe in i_clothes)
         {
+			if (TryGetExternalClothingId(i_clothe, out _)) continue;
             ExecuteNonQuery("UPDATE tbl_clothing SET isEquipped = 1 WHERE idClothing = " + i_clothe.GetId());
         }
 #endif
+		SaveExternalClothingEquipment(i_clothes);
     }
 
     public static List<int> GetIdsEquippedClothes()
@@ -1050,8 +1100,33 @@ public static class ManagerDB
 #endif
     }
 
+	public static List<Clothing> GetEquippedClothes()
+	{
+		List<Clothing> result = new List<Clothing>();
+		foreach (int id in GetIdsEquippedClothes())
+		{
+			Clothing clothing = Library.Instance.Clothes.GetClothing(id);
+			if (clothing != null) result.Add(clothing);
+		}
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved) || !saved.Unlocked || !saved.Equipped) continue;
+			if (ModLoaderRuntime.Registry.TryGet(definition.Id, out ContentRegistration registration) && registration.RuntimeAsset is Clothing clothing)
+				result.Add(clothing);
+		}
+		return result;
+	}
+
     public static async void UnlockClothing(Clothing i_clothing)
     {
+		if (TryGetExternalClothingId(i_clothing, out ContentId contentId))
+		{
+			if (!TryGetClothingContentState(contentId, out ClothingContentState saved)) saved = new ClothingContentState();
+			saved.Unlocked = true;
+			SaveClothingContentState(contentId, saved);
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		var c = GetWebClothing(i_clothing.GetId());
 		c.isUnlocked = 1;
@@ -1074,7 +1149,52 @@ public static class ManagerDB
 #else
         await ExecuteNonQueryAsync("UPDATE tbl_clothing SET isUnlocked = 1");
 #endif
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved)) saved = new ClothingContentState();
+			saved.Unlocked = true;
+			SaveClothingContentState(definition.Id, saved);
+		}
     }
+
+	private static bool TryGetExternalClothingId(Clothing i_clothing, out ContentId o_contentId)
+	{
+		o_contentId = default;
+		return RuntimeContentIdentity.TryResolve(i_clothing, out o_contentId, out ContentCategory category) &&
+			category == ContentCategory.Clothing && o_contentId.Namespace != "core";
+	}
+
+	private static bool TryGetClothingContentState(ContentId i_id, out ClothingContentState o_state)
+	{
+		foreach (SavedContentState saved in GetSavedContentStates())
+		{
+			if (saved.Category == ContentCategory.Clothing && saved.ContentId == i_id)
+				return ClothingContentState.TryParse(saved.StateJson, out o_state);
+		}
+		o_state = null;
+		return false;
+	}
+
+	private static void SaveClothingContentState(ContentId i_id, ClothingContentState i_state)
+	{
+		SaveContentState(new SavedContentState(i_id, ContentCategory.Clothing, i_state.ToJson()));
+	}
+
+	private static void SaveExternalClothingEquipment(List<Clothing> i_clothes)
+	{
+		HashSet<ContentId> selected = new HashSet<ContentId>();
+		foreach (Clothing clothing in i_clothes)
+			if (TryGetExternalClothingId(clothing, out ContentId id)) selected.Add(id);
+
+		foreach (ClothingDefinition definition in ModLoaderRuntime.ClothingDefinitions)
+		{
+			if (!TryGetClothingContentState(definition.Id, out ClothingContentState saved))
+				saved = new ClothingContentState { Unlocked = definition.UnlockedByDefault };
+			saved.Equipped = selected.Contains(definition.Id);
+			if (saved.Equipped) saved.Unlocked = true;
+			SaveClothingContentState(definition.Id, saved);
+		}
+	}
 
     public static async void SetSkinColor(SkinColor i_skinColor)
     {
@@ -1093,6 +1213,15 @@ public static class ManagerDB
             case SkinColor.Black:
                 num = 3;
                 break;
+			case SkinColor.Olive:
+				num = 4;
+				break;
+			case SkinColor.Brown:
+				num = 5;
+				break;
+			case SkinColor.Deep:
+				num = 6;
+				break;
         }
 #if UNITY_WEBGL || UNITY_ANDROID
 		state.skinColor = num;
@@ -1130,6 +1259,15 @@ public static class ManagerDB
             case 3:
                 result = SkinColor.Black;
                 break;
+			case 4:
+				result = SkinColor.Olive;
+				break;
+			case 5:
+				result = SkinColor.Brown;
+				break;
+			case 6:
+				result = SkinColor.Deep;
+				break;
         }
         return result;
     }
@@ -1312,6 +1450,13 @@ public static class ManagerDB
 
     private static void AddStageIfNotExists(Stage i_stage)
     {
+		if (i_stage == null || i_stage.GetIsRuntimeTemplate()) return;
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+		{
+			if (!TryGetStageContentState(contentId, out _))
+				SaveStageContentState(contentId, new StageContentState());
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		if (!IsStageExists(i_stage))
 		{
@@ -1366,6 +1511,8 @@ public static class ManagerDB
 
     public static int GetHighscore(Stage i_stage)
     {
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+			return TryGetStageContentState(contentId, out StageContentState saved) ? saved.Highscore : 0;
 #if UNITY_WEBGL || UNITY_ANDROID
 		var s = GetWebStage(i_stage.GetId());
 		return s.highscore;
@@ -1382,6 +1529,12 @@ public static class ManagerDB
 
     public static async void SetHighscore(Stage i_stage, int i_highScoreNew)
     {
+		if (TryGetExternalStageId(i_stage, out ContentId contentId))
+		{
+			SaveStageContentState(contentId, new StageContentState { Highscore = Math.Max(0, i_highScoreNew) });
+			await Task.Yield();
+			return;
+		}
 #if UNITY_WEBGL || UNITY_ANDROID
 		var s = GetWebStage(i_stage.GetId());
 		s.highscore = i_highScoreNew;
@@ -1391,6 +1544,29 @@ public static class ManagerDB
         await ExecuteNonQueryAsync("UPDATE tbl_stage SET highscore = " + i_highScoreNew + " WHERE idStage = " + i_stage.GetId());
 #endif
     }
+
+	private static bool TryGetExternalStageId(Stage i_stage, out ContentId o_contentId)
+	{
+		o_contentId = default;
+		return RuntimeContentIdentity.TryResolve(i_stage, out o_contentId, out ContentCategory category) &&
+			category == ContentCategory.Stage && o_contentId.Namespace != "core";
+	}
+
+	private static bool TryGetStageContentState(ContentId i_id, out StageContentState o_state)
+	{
+		foreach (SavedContentState saved in GetSavedContentStates())
+		{
+			if (saved.Category == ContentCategory.Stage && saved.ContentId == i_id)
+				return StageContentState.TryParse(saved.StateJson, out o_state);
+		}
+		o_state = null;
+		return false;
+	}
+
+	private static void SaveStageContentState(ContentId i_id, StageContentState i_state)
+	{
+		SaveContentState(new SavedContentState(i_id, ContentCategory.Stage, i_state.ToJson()));
+	}
 
     public static bool IsFirstTimeStart()
     {
@@ -1467,7 +1643,7 @@ public static class ManagerDB
             array[i] = UnityEngine.Random.Range(0, 9);
         }
         string text = array[0].ToString() + array[1] + array[2] + array[3];
-        ExecuteNonQuery("DELETE FROM tbl_interaction;\r\n        DELETE FROM tbl_interactionRelationship;\r\n        DELETE FROM tbl_npc;\r\n        DELETE FROM tbl_relationship;\r\n        DELETE FROM tbl_birth;\r\n        DELETE FROM tbl_clothing;\r\n        DELETE FROM tbl_challenge;\r\n        DELETE FROM tbl_stage;\r\n        DELETE FROM tbl_player;\r\n        INSERT INTO tbl_player (idPlayer, isFirstTimeStart, codeKeypad) VALUES (1, 1, " + text + ");");
+		ExecuteNonQuery("DELETE FROM tbl_interaction;\r\n        DELETE FROM tbl_interactionRelationship;\r\n        DELETE FROM tbl_npc;\r\n        DELETE FROM tbl_relationship;\r\n        DELETE FROM tbl_birth;\r\n        DELETE FROM tbl_clothing;\r\n        DELETE FROM tbl_challenge;\r\n        DELETE FROM tbl_stage;\r\n        DELETE FROM tbl_contentState;\r\n        DELETE FROM tbl_player;\r\n        INSERT INTO tbl_player (idPlayer, isFirstTimeStart, codeKeypad) VALUES (1, 1, " + text + ");");
 #endif
         ResetVolumes();
         SetDifficulty(Difficulty.Normal);
@@ -1486,7 +1662,7 @@ public static class ManagerDB
 
     public static void SetDifficulty(Difficulty i_difficulty)
     {
-        PlayerPrefs.SetString("Difficulty", i_difficulty.ToString());
+		DifficultyRegistry.SetCurrent("core:difficulty/" + i_difficulty.ToString().ToLowerInvariant());
     }
 
     public static void SetIsReduceGunFlash(bool i_isReduce)
@@ -1577,6 +1753,7 @@ public static class ManagerDB
 		{
 			list.Add(new InputButtonXGame(inp.nameKey, inp.keyCode));
 		}
+		AppendMissingDefaultInputs(list);
 		return list;
 #else
         DbDataReader dbDataReader = ExecuteReader("SELECT * FROM tbl_input");
@@ -1585,9 +1762,35 @@ public static class ManagerDB
         {
             list.Add(new InputButtonXGame((string)dbDataReader["nameKey"], (string)dbDataReader["keyCode"]));
         }
+		AppendMissingDefaultInputs(list);
         return list;
 #endif
     }
+
+	private static void AppendMissingDefaultInputs(List<InputButtonXGame> io_inputs)
+	{
+		if (CommonReferences.Instance == null || CommonReferences.Instance.GetManagerInput() == null) return;
+#if UNITY_WEBGL || UNITY_ANDROID
+		bool changed = false;
+#endif
+		foreach (InputButtonXGame defaultButton in CommonReferences.Instance.GetManagerInput().GetButtonsDefault())
+		{
+			bool found = false;
+			foreach (InputButtonXGame input in io_inputs)
+				if (input.GetInputButton() == defaultButton.GetInputButton()) { found = true; break; }
+			if (found) continue;
+			io_inputs.Add(defaultButton);
+#if UNITY_WEBGL || UNITY_ANDROID
+			changed = true;
+			state.inputs.Add(new InputData { nameKey = defaultButton.GetName(), keyCode = defaultButton.GetKeyCode().ToString() });
+#else
+			ExecuteNonQuery("INSERT INTO tbl_input VALUES ('" + defaultButton.GetName() + "', '" + defaultButton.GetKeyCode() + "')");
+#endif
+		}
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (changed) SaveWebState();
+#endif
+	}
 
     public static void SetInputButton(string i_nameButton, KeyCode i_keyCodeToSet)
     {
@@ -1605,6 +1808,61 @@ public static class ManagerDB
         ExecuteNonQuery("UPDATE tbl_input SET keyCode = '" + i_keyCodeToSet.ToString() + "' WHERE nameKey = '" + i_nameButton + "'");
 #endif
     }
+
+	public static void SaveContentState(SavedContentState i_state)
+	{
+		if (i_state == null) throw new ArgumentNullException(nameof(i_state));
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (state.contentStates == null) state.contentStates = new List<ContentStateData>();
+		ContentStateData stored = null;
+		foreach (ContentStateData candidate in state.contentStates)
+		{
+			if (candidate.contentId == i_state.ContentId.ToString() && candidate.category == i_state.Category.ToString())
+			{
+				stored = candidate;
+				break;
+			}
+		}
+		if (stored == null)
+		{
+			stored = new ContentStateData();
+			state.contentStates.Add(stored);
+		}
+		stored.contentId = i_state.ContentId.ToString();
+		stored.category = i_state.Category.ToString();
+		stored.stateJson = i_state.StateJson;
+		SaveWebState();
+#else
+		if (m_con.State != ConnectionState.Open) OpenCon();
+		using (SqliteCommand command = m_con.CreateCommand())
+		{
+			command.CommandText = "INSERT OR REPLACE INTO tbl_contentState (contentId, category, stateJson) VALUES (@contentId, @category, @stateJson);";
+			command.Parameters.AddWithValue("@contentId", i_state.ContentId.ToString());
+			command.Parameters.AddWithValue("@category", i_state.Category.ToString());
+			command.Parameters.AddWithValue("@stateJson", i_state.StateJson);
+			command.ExecuteNonQuery();
+		}
+#endif
+	}
+
+	public static List<SavedContentState> GetSavedContentStates()
+	{
+		List<SavedContentState> result = new List<SavedContentState>();
+#if UNITY_WEBGL || UNITY_ANDROID
+		if (state.contentStates == null) return result;
+		foreach (ContentStateData stored in state.contentStates)
+		{
+			if (SavedContentState.TryCreate(stored.contentId, stored.category, stored.stateJson, out SavedContentState parsed)) result.Add(parsed);
+		}
+#else
+		DbDataReader reader = ExecuteReader("SELECT contentId, category, stateJson FROM tbl_contentState ORDER BY contentId, category");
+		while (reader.Read())
+		{
+			if (SavedContentState.TryCreate(reader["contentId"].ToString(), reader["category"].ToString(), reader["stateJson"].ToString(), out SavedContentState parsed)) result.Add(parsed);
+		}
+#endif
+		return result;
+	}
 
 #if !UNITY_WEBGL && !UNITY_ANDROID
     private static void CreateSaveFile()

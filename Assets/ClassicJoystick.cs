@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ClassicJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
@@ -13,6 +14,44 @@ public class ClassicJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     [SerializeField] private bool isLeftJoystick = true;
 
     private Vector2 inputVector;
+
+	private void Start()
+	{
+		RefreshKenneyStyle();
+		if (!isLeftJoystick || transform.parent == null || transform.parent.Find("Right Aim Joystick") != null) return;
+		GameObject aimObject = Instantiate(gameObject, transform.parent);
+		aimObject.name = "Right Aim Joystick";
+		ClassicJoystick aimJoystick = aimObject.GetComponent<ClassicJoystick>();
+		aimJoystick.isLeftJoystick = false;
+		RectTransform aimRect = aimObject.GetComponent<RectTransform>();
+		if (aimRect != null) aimRect.anchoredPosition = new Vector2(380f, -211f);
+	}
+
+	public void RefreshKenneyStyle()
+	{
+		InputGlyphLibrary.ApplyMobileLayout(transform as RectTransform, isLeftJoystick ? "Left Joystick Background" : "Right Aim Joystick");
+		if (background != null)
+		{
+			Image backgroundImage = background.GetComponent<Image>();
+			if (backgroundImage != null)
+			{
+				backgroundImage.sprite = isLeftJoystick && playerController != null && playerController.GetUseMobileDPad()
+					? InputGlyphLibrary.GetMobileControlSprite("dpad")
+					: InputGlyphLibrary.GetMobileControlSprite("joystick_circle_pad_a");
+				backgroundImage.preserveAspect = true;
+			}
+		}
+		if (handle != null)
+		{
+			Image handleImage = handle.GetComponent<Image>();
+			if (handleImage != null)
+			{
+				handleImage.sprite = InputGlyphLibrary.GetMobileControlSprite("joystick_circle_nub_a");
+				handleImage.preserveAspect = true;
+				handleImage.enabled = !(isLeftJoystick && playerController != null && playerController.GetUseMobileDPad());
+			}
+		}
+	}
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -28,6 +67,10 @@ public class ClassicJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
             inputVector = new Vector2(position.x, position.y);
             inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
+			if (isLeftJoystick && playerController != null && playerController.GetUseMobileDPad())
+			{
+				inputVector = SnapToDPad(inputVector);
+			}
 
             // Update the physical position of the Joystick knob
             handle.anchoredPosition = new Vector2(
@@ -57,6 +100,15 @@ public class ClassicJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     {
         if (playerController == null) return;
 
-        playerController.SetLeftJoystick(direction);
+		if (isLeftJoystick) playerController.SetLeftJoystick(direction);
+		else playerController.SetRightJoystick(direction);
     }
+
+	private static Vector2 SnapToDPad(Vector2 i_direction)
+	{
+		if (i_direction.sqrMagnitude < 0.04f) return Vector2.zero;
+		return Mathf.Abs(i_direction.x) >= Mathf.Abs(i_direction.y)
+			? new Vector2(Mathf.Sign(i_direction.x), 0f)
+			: new Vector2(0f, Mathf.Sign(i_direction.y));
+	}
 }

@@ -4,11 +4,13 @@ using UnityEngine.UI;
 
 public class HubMainMenu : MonoBehaviour
 {
+	private const float DesignFrameWidth = 1872f;
+
+	private const float DesignFrameHeight = 1032f;
+
+	private const float DesignFrameMargin = 48f;
+
 	private const float TopBarHeight = 132.6006f;
-
-	private const float TabWidth = 354f;
-
-	private const float TabStep = 351f;
 
 	private const float ExitButtonWidth = 150f;
 
@@ -39,66 +41,85 @@ public class HubMainMenu : MonoBehaviour
 	[SerializeField]
 	private Sprite m_sprBtnOpen;
 
+	private Vector2 m_lastParentSize = new Vector2(-1f, -1f);
+
 	private void Awake()
 	{
 		NormalizeTopBarLayout();
 		m_parent.SetActive(value: false);
 	}
 
+	private void OnRectTransformDimensionsChange()
+	{
+		if (m_btnLocations != null) NormalizeTopBarLayout();
+	}
+
 	private void NormalizeTopBarLayout()
 	{
-		RectTransform rectTransform = m_btnLocations.transform.parent as RectTransform;
-		Vector2 anchorMin = rectTransform.anchorMin;
-		Vector2 anchorMax = rectTransform.anchorMax;
-		anchorMin.y = 1f;
-		anchorMax.y = 1f;
-		rectTransform.anchorMin = anchorMin;
-		rectTransform.anchorMax = anchorMax;
-		Vector2 anchoredPosition = rectTransform.anchoredPosition;
-		anchoredPosition.y = (0f - TopBarHeight) * (1f - rectTransform.pivot.y);
-		rectTransform.anchoredPosition = anchoredPosition;
-		Vector2 sizeDelta = rectTransform.sizeDelta;
-		sizeDelta.y = TopBarHeight;
-		rectTransform.sizeDelta = sizeDelta;
-		SetFixedWidthFromLeft(m_btnLocations.transform as RectTransform, 0f, TabWidth);
-		SetFixedWidthFromLeft(m_btnShop.transform as RectTransform, TabStep, TabWidth);
-		SetFixedWidthFromLeft(m_btnDiary.transform as RectTransform, TabStep * 2f, TabWidth);
-		RectTransform rectTransform2 = rectTransform.Find("BtnExit") as RectTransform;
-		if (rectTransform2 != null)
+		RectTransform topBar = m_btnLocations.transform.parent as RectTransform;
+		if (topBar == null) return;
+		RectTransform outerBox = topBar.parent as RectTransform;
+		RectTransform parent = m_parent == null ? null : m_parent.transform as RectTransform;
+		if (outerBox == null || parent == null) return;
+
+		float availableWidth = Mathf.Max(1f, parent.rect.width - DesignFrameMargin);
+		float availableHeight = Mathf.Max(1f, parent.rect.height - DesignFrameMargin);
+		float frameScale = Mathf.Min(1f, availableWidth / DesignFrameWidth, availableHeight / DesignFrameHeight);
+		outerBox.anchorMin = new Vector2(0.5f, 0.5f);
+		outerBox.anchorMax = new Vector2(0.5f, 0.5f);
+		outerBox.pivot = new Vector2(0.5f, 0.5f);
+		outerBox.anchoredPosition = Vector2.zero;
+		outerBox.sizeDelta = new Vector2(DesignFrameWidth, DesignFrameHeight);
+		outerBox.localScale = new Vector3(frameScale, frameScale, 1f);
+		m_lastParentSize = parent.rect.size;
+
+		topBar.anchorMin = new Vector2(0f, 1f);
+		topBar.anchorMax = new Vector2(1f, 1f);
+		topBar.pivot = new Vector2(0.5f, 0.5f);
+		topBar.anchoredPosition = new Vector2(0f, -TopBarHeight * 0.5f);
+		topBar.sizeDelta = new Vector2(0f, TopBarHeight);
+		RectTransform managerMenus = outerBox.Find("ManagerMenus") as RectTransform;
+		if (managerMenus != null)
 		{
-			Vector2 anchorMin2 = rectTransform2.anchorMin;
-			Vector2 anchorMax2 = rectTransform2.anchorMax;
-			anchorMin2.x = 1f;
-			anchorMax2.x = 1f;
-			rectTransform2.anchorMin = anchorMin2;
-			rectTransform2.anchorMax = anchorMax2;
-			Vector2 anchoredPosition2 = rectTransform2.anchoredPosition;
-			anchoredPosition2.x = (0f - ExitButtonWidth) * (1f - rectTransform2.pivot.x);
-			rectTransform2.anchoredPosition = anchoredPosition2;
-			Vector2 sizeDelta2 = rectTransform2.sizeDelta;
-			sizeDelta2.x = ExitButtonWidth;
-			rectTransform2.sizeDelta = sizeDelta2;
+			managerMenus.anchorMin = Vector2.zero;
+			managerMenus.anchorMax = Vector2.one;
+			managerMenus.offsetMin = Vector2.zero;
+			managerMenus.offsetMax = new Vector2(0f, -TopBarHeight);
+		}
+
+		if (topBar.rect.width <= ExitButtonWidth) return;
+		float tabWidth = (topBar.rect.width - ExitButtonWidth) / 3f;
+		SetFixedWidthFromLeft(m_btnLocations.transform as RectTransform, 0f, tabWidth);
+		SetFixedWidthFromLeft(m_btnShop.transform as RectTransform, tabWidth, tabWidth);
+		SetFixedWidthFromLeft(m_btnDiary.transform as RectTransform, tabWidth * 2f, tabWidth);
+		RectTransform exit = topBar.Find("BtnExit") as RectTransform;
+		if (exit != null)
+		{
+			exit.anchorMin = new Vector2(1f, exit.anchorMin.y);
+			exit.anchorMax = new Vector2(1f, exit.anchorMax.y);
+			exit.pivot = new Vector2(1f, exit.pivot.y);
+			exit.anchoredPosition = new Vector2(0f, exit.anchoredPosition.y);
+			exit.sizeDelta = new Vector2(ExitButtonWidth, exit.sizeDelta.y);
 		}
 	}
 
-	private static void SetFixedWidthFromLeft(RectTransform i_rectTransform, float i_left, float i_width)
+	private static void SetFixedWidthFromLeft(RectTransform i_rect, float i_left, float i_width)
 	{
-		Vector2 anchorMin = i_rectTransform.anchorMin;
-		Vector2 anchorMax = i_rectTransform.anchorMax;
-		anchorMin.x = 0f;
-		anchorMax.x = 0f;
-		i_rectTransform.anchorMin = anchorMin;
-		i_rectTransform.anchorMax = anchorMax;
-		Vector2 anchoredPosition = i_rectTransform.anchoredPosition;
-		anchoredPosition.x = i_left + i_width * i_rectTransform.pivot.x;
-		i_rectTransform.anchoredPosition = anchoredPosition;
-		Vector2 sizeDelta = i_rectTransform.sizeDelta;
-		sizeDelta.x = i_width;
-		i_rectTransform.sizeDelta = sizeDelta;
+		if (i_rect == null) return;
+		i_rect.anchorMin = new Vector2(0f, i_rect.anchorMin.y);
+		i_rect.anchorMax = new Vector2(0f, i_rect.anchorMax.y);
+		i_rect.pivot = new Vector2(0f, i_rect.pivot.y);
+		i_rect.anchoredPosition = new Vector2(i_left, i_rect.anchoredPosition.y);
+		i_rect.sizeDelta = new Vector2(i_width, i_rect.sizeDelta.y);
 	}
 
 	private void Update()
 	{
+		RectTransform parent = m_parent == null ? null : m_parent.transform as RectTransform;
+		if (parent != null && parent.rect.size != m_lastParentSize)
+		{
+			NormalizeTopBarLayout();
+		}
 		if (IsOpen() && Input.GetKeyDown(KeyCode.Escape))
 		{
 			BtnClose();
@@ -113,6 +134,8 @@ public class HubMainMenu : MonoBehaviour
 	public void Open()
 	{
 		m_parent.SetActive(value: true);
+		Canvas.ForceUpdateCanvases();
+		NormalizeTopBarLayout();
 		StartCoroutine(CoroutineAnimateOverlayFadeOut());
 		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_audioStart);
 	}

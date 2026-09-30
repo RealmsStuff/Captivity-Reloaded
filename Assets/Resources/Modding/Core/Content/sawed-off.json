@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/sawed-off",
+  "legacyName": "Sawed-Off",
+  "displayName": "Sawed-Off",
+  "description": "",
+  "stats": {
+    "damage": 7,
+    "ammoMax": 32,
+    "magazineSize": 2,
+    "bulletsPerShot": 9,
+    "penetration": 1,
+    "rangeMultiplier": 0.5,
+    "fireIntervalSeconds": 0.02,
+    "recoil": 0.5,
+    "movementRecoil": 0.0,
+    "knockbackX": 3.0,
+    "knockbackY": 4.0,
+    "equipSeconds": 0.0,
+    "weight": 3,
+    "value": 2000,
+    "infiniteAmmo": false,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "OneHanded",
+    "reloadType": "SingleBarrel"
+  }
+}

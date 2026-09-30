@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/jacky/stab-attack-primary",
+  "enemy": "core:enemy/jacky",
+  "displayName": "jacky stab-attack-primary",
+  "durationSeconds": 0.5833333,
+  "frameRate": 60.0,
+  "loop": false,
+  "tracks": [
+    {
+      "target": "bone/spine",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -1.66100013,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.0833333358,
+          "value": 41.4730034,
+          "inTangent": -9.255552E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 15.7820005,
+          "inTangent": -530.256042,
+          "outTangent": -530.2561
+        },
+        {
+          "time": 0.25,
+          "value": -46.9030037,
+          "inTangent": -108.960388,
+          "outTangent": -108.960014
+        },
+        {
+          "time": 0.333333343,
+          "value": -51.443,
+          "inTangent": 2.73451121E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.45,
+          "value": -32.839,
+          "inTangent": 199.128,
+          "outTangent": 199.128036
+        },
+        {
+          "time": 0.5833333,
+          "value": -1.66100013,
+          "inTangent": -8.069629E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/chest",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": -44.7670021,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.0833333358,
+          "value": -61.484,
+          "inTangent": 3.58707839E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -61.4380035,
+          "inTangent": 1.103943,
+          "outTangent": 1.103943
+        },
+        {
+          "time": 0.25,
+          "value": -46.532,
+          "inTangent": 2.9220837E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": -55.6870041,
+          "inTangent": -102.78,
+          "outTangent": -102.780022
+        },
+        {
+          "time": 0.45,
+          "value": -67.0880051,
+          "inTangent": 2.17480083E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": -44.7670021,
+          "inTangent": -5.23456038E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 26.512001,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.0833333358,
+          "value": -35.125,
+          "inTangent": -0.0001932622,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -10.2970009,
+          "inTangent": 595.8719,
+          "outTangent": 595.872
+        },
+        {
+          "time": 0.25,
+          "value": 131.565,
+          "inTangent": 584.9987,
+          "outTangent": 585.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 155.94,
+          "inTangent": -3.92199181E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.45,
+          "value": 112.555008,
+          "inTangent": -517.712158,
+          "outTangent": -517.7121
+        },
+        {
+          "time": 0.5833333,
+          "value": 26.512001,
+          "inTangent": -0.000261028879,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0833333358,
+          "value": 47.8750038,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 20.052,
+          "inTangent": -119.75988,
+          "outTangent": -119.76001
+        },
+        {
+          "time": 0.25,
+          "value": 15.062,
+          "inTangent": -82.58997,
+          "outTangent": -82.59
+        },
+        {
+          "time": 0.333333343,
+          "value": 6.287,
+          "inTangent": 2.51078418E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": 47.8750038,
+          "inTangent": -3.08603148E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0833333358,
+          "value": 32.573,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 4.66500044,
+          "inTangent": -3.23194838,
+          "outTangent": -3.23199344
+        },
+        {
+          "time": 0.333333343,
+          "value": 4.4630003,
+          "inTangent": -6.993378E-08,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": 32.573,
+          "inTangent": -1.1129343E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-right",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0833333358,
+          "value": -4.872,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 13.185,
+          "inTangent": 0.0001240143,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -54.8410034,
+          "inTangent": -0.000291935954,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": -42.212,
+          "inTangent": 149.907028,
+          "outTangent": 149.907013
+        },
+        {
+          "time": 0.5833333,
+          "value": -4.872,
+          "inTangent": 7.109E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0833333358,
+          "value": 38.5090027,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 36.908,
+          "inTangent": 4.22741869E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 36.908,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": 38.5090027,
+          "inTangent": -2.09521545E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/head",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0833333358,
+          "value": -34.95,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 17.323,
+          "inTangent": -0.000134718983,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 17.323,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": -34.95,
+          "inTangent": 0.000125103878,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-left-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 26.3970013,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5833333,
+          "value": 26.3970013,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 0.25,
+      "type": "attackHit"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/Stab.anim",
+    "semanticName": "stab-attack-primary"
+  }
+}

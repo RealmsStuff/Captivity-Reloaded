@@ -1,0 +1,15 @@
+{
+  "type": "template",
+  "tileset": { "firstgid": 1, "source": "../tilesets/preview-healing-station.tsj" },
+  "object": {
+    "class": "machine", "gid": 1, "height": 108, "id": 1, "name": "healing-station", "rotation": 0, "visible": true, "width": 64,
+    "properties": [
+      { "name": "trigger", "type": "string", "value": "use" },
+      { "name": "price", "type": "int", "value": 50 },
+      { "name": "restoreHealth", "type": "float", "value": 25 },
+      { "name": "message", "type": "string", "value": "Health restored." },
+      { "name": "visualArt", "type": "string", "value": "fer-intensive-care-machine" },
+      { "name": "visualScale", "type": "float", "value": 1 }
+    ]
+  }
+}

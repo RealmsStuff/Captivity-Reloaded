@@ -38,6 +38,8 @@ public class BodyPartPlayer : BodyPart
 
 	public void SetSkinColor(SkinColor i_skinColor)
 	{
+		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+		renderer.color = Color.white;
 		switch (i_skinColor)
 		{
 		case SkinColor.Pale:
@@ -50,9 +52,65 @@ public class BodyPartPlayer : BodyPart
 			GetComponent<SpriteRenderer>().sprite = m_sprTan;
 			break;
 		case SkinColor.Black:
-			GetComponent<SpriteRenderer>().sprite = m_sprBlack;
+			renderer.sprite = m_sprBlack;
+			break;
+		case SkinColor.Olive:
+			renderer.sprite = m_sprTan != null ? m_sprTan : m_sprWhite;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
+			break;
+		case SkinColor.Brown:
+			renderer.sprite = m_sprTan != null ? m_sprTan : m_sprWhite;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
+			break;
+		case SkinColor.Deep:
+			renderer.sprite = m_sprBlack != null ? m_sprBlack : m_sprTan;
+			renderer.color = SkinTonePalette.GetRendererTint(i_skinColor);
 			break;
 		}
+	}
+
+	public Sprite GetSkinSprite(SkinColor i_skinColor)
+	{
+		switch (i_skinColor)
+		{
+		case SkinColor.Pale:
+			return m_sprPale;
+		case SkinColor.White:
+			return m_sprWhite;
+		case SkinColor.Tan:
+			return m_sprTan;
+		case SkinColor.Black:
+			return m_sprBlack;
+		case SkinColor.Olive:
+		case SkinColor.Brown:
+			return m_sprTan != null ? m_sprTan : m_sprWhite;
+		case SkinColor.Deep:
+			return m_sprBlack != null ? m_sprBlack : m_sprTan;
+		default:
+			return null;
+		}
+	}
+
+	public void SetSkinSprite(SkinColor i_skinColor, Sprite i_sprite)
+	{
+		Sprite previous = GetSkinSprite(i_skinColor);
+		switch (i_skinColor)
+		{
+		case SkinColor.Pale:
+			m_sprPale = i_sprite;
+			break;
+		case SkinColor.White:
+			m_sprWhite = i_sprite;
+			break;
+		case SkinColor.Tan:
+			m_sprTan = i_sprite;
+			break;
+		case SkinColor.Black:
+			m_sprBlack = i_sprite;
+			break;
+		}
+		if (GetComponent<SpriteRenderer>().sprite == previous)
+			GetComponent<SpriteRenderer>().sprite = i_sprite;
 	}
 
 	public override void Explode()

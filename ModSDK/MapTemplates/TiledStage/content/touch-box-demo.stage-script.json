@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "type": "stageScript",
+  "id": "example.tiled-starter-kit:stage-script/touch-box-demo",
+  "stage": "example.tiled-starter-kit:stage/starter-arena",
+  "machines": [
+    {
+      "id": "secret-machine",
+      "objectId": "paid-secret-button",
+      "initialState": "off",
+      "states": [
+        {
+          "id": "off",
+          "actions": [
+            { "type": "stop-audio", "objectId": "secret-machine-hum" },
+            { "type": "set-light", "objectId": "flickering-light", "state": "off" }
+          ]
+        },
+        {
+          "id": "active",
+          "actions": [
+            { "type": "play-audio", "objectId": "secret-machine-hum" },
+            { "type": "repeat", "amount": 3, "actions": [
+              { "type": "set-light", "objectId": "flickering-light", "state": "toggle" },
+              { "type": "wait", "seconds": 0.15 }
+            ] },
+            { "type": "set-light", "objectId": "flickering-light", "state": "on" }
+          ]
+        }
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "id": "enter-demo-box",
+      "trigger": "player-enter",
+      "objectId": "script-volume-demo",
+      "actions": [{ "type": "notify", "message": "Entered the scripted touch box." }]
+    },
+    {
+      "id": "exit-demo-box",
+      "trigger": "player-exit",
+      "objectId": "script-volume-demo",
+      "actions": [{ "type": "notify", "message": "Exited the scripted touch box." }]
+    },
+    {
+      "id": "activate-secret-machine",
+      "trigger": "interaction",
+      "signal": "paid-secret-button",
+      "once": true,
+      "actions": [{ "type": "set-machine-state", "objectId": "secret-machine", "state": "active" }]
+    },
+    {
+      "id": "secret-machine-active",
+      "trigger": "machine-state",
+      "objectId": "secret-machine",
+      "state": "active",
+      "once": true,
+      "actions": [{ "type": "notify", "message": "The reusable machine entered its active state." }]
+    }
+  ]
+}

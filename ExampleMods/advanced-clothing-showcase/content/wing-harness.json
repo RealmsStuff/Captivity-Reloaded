@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.advanced-clothing-showcase:clothing/wing-harness",
+  "displayName": "Swaying Wing Harness",
+  "description": "A fully data-defined back attachment with bounded sway physics. Loading Shaded Girl selects the larger body-variant artwork.",
+  "unlockedByDefault": true,
+  "category": "Other",
+  "incompatibleCategories": ["Other"],
+  "visual": {
+    "type": "originalClothingSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "icon": "assets/wing.png",
+      "piece/back": "assets/wing.png"
+    },
+    "attachments": {
+      "piece/back": {
+        "bone": "Spine",
+        "attachToBone": true,
+        "pivotX": 0.8814383,
+        "pivotY": 0.16605523,
+        "sortingOffset": -3,
+        "droppable": true,
+        "physics": {
+          "mode": "sway",
+          "spring": 45,
+          "damping": 9,
+          "gravity": 0.2,
+          "motionInfluence": 0.8,
+          "maxAngle": 25
+        }
+      }
+    },
+    "bodyVariants": {
+      "dudleytheschemer.shaded-girl": {
+        "piece/back": "assets/wing-shaded-girl.png"
+      }
+    }
+  }
+}

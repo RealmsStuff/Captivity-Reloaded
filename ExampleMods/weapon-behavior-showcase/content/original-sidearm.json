@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "type": "weapon",
+  "id": "example.weapon-behavior-showcase:item/weapon/original-sidearm",
+  "displayName": "Original Sidearm",
+  "description": "A layered weapon built entirely from JSON and PNG data without a Core gun prefab.",
+  "stats": {
+    "damage": 5,
+    "ammoMax": 60,
+    "magazineSize": 10,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1,
+    "fireIntervalSeconds": 0.2,
+    "recoil": 0.08,
+    "movementRecoil": 0.04,
+    "knockbackX": 1,
+    "knockbackY": 0,
+    "reloadSeconds": 1,
+    "equipSeconds": 0.4,
+    "weight": 1,
+    "value": 25,
+    "infiniteAmmo": false,
+    "semiAutomatic": true,
+    "marketable": true,
+    "holdType": "OneHanded",
+    "reloadType": "Magazine",
+    "weaponType": "Pistol"
+  },
+  "behavior": {
+    "tracerColor": "#FF66CCFF",
+    "tracerThickness": 2,
+    "tracerFrames": 3,
+    "playShootSound": false,
+    "showMuzzleFlash": false,
+    "ammunition": { "type": "fmj", "damageMultiplier": 0.9, "penetrationBonus": 2, "weakpointMultiplier": 0.85 },
+    "alternateFire": { "mode": "hitscan", "damageMultiplier": 0.75, "ammoCost": 1, "cooldownSeconds": 0.45, "burstCount": 3, "burstIntervalSeconds": 0.08, "recoilMultiplier": 0.45 },
+    "animations": {
+      "clips": {
+        "fire": {
+          "frames": [
+            { "durationSeconds": 0.05, "sprites": { "slide": "assets/weapon/magazine.png" } },
+            { "durationSeconds": 0.08, "sprites": { "slide": "assets/weapon/slide.png" } }
+          ]
+        },
+        "alternate": {
+          "frames": [
+            { "durationSeconds": 0.04, "sprites": { "slide": "assets/weapon/magazine.png" } },
+            { "durationSeconds": 0.05, "sprites": { "slide": "assets/weapon/slide.png" } }
+          ]
+        }
+      }
+    }
+  },
+  "visual": {
+    "type": "originalWeaponSprites",
+    "pixelsPerUnit": 32,
+    "pivotX": 0.3125,
+    "pivotY": 0.5,
+    "muzzleOffsetX": 0.47,
+    "muzzleOffsetY": 0.09,
+    "colliderWidth": 0.8,
+    "colliderHeight": 0.3,
+    "sprites": {
+      "body": "assets/weapon/body.png",
+      "base": "assets/weapon/base.png",
+      "magazine": "assets/weapon/magazine.png",
+      "slide": "assets/weapon/slide.png"
+    },
+    "parts": {
+      "body": { "pivotX": 0.3125, "pivotY": 0.5, "sortingOrder": 0 },
+      "base": { "pivotX": 0.3125, "pivotY": 0.5, "sortingOrder": 1 },
+      "magazine": { "pivotX": 0.3125, "pivotY": 0.5, "sortingOrder": 2 },
+      "slide": { "pivotX": 0.3125, "pivotY": 0.5, "sortingOrder": 3 }
+    }
+  }
+}

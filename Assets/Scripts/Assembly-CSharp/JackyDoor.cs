@@ -3,10 +3,17 @@ using UnityEngine;
 
 public class JackyDoor : Door
 {
+	private bool m_useBuiltInCurse = true;
+
+	public void SetUseBuiltInCurse(bool i_useBuiltInCurse)
+	{
+		m_useBuiltInCurse = i_useBuiltInCurse;
+	}
+
 	public override void Open()
 	{
 		base.Open();
-		if (!CommonReferences.Instance.GetPlayer().IsStatusEffectAppliedAlready("Jacky Curse"))
+		if (m_useBuiltInCurse && !CommonReferences.Instance.GetPlayer().IsStatusEffectAppliedAlready("Jacky Curse"))
 		{
 			StartCoroutine(CoroutineApplyJackyCurse());
 		}

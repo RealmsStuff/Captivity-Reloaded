@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "type": "ruleProfile",
+  "id": "legacy.overpower:rule/overpower",
+  "displayName": "Overpower",
+  "description": "Standalone C4C-derived profile with the legacy Overpower combat additions.",
+  "modules": [
+    {
+      "type": "economyRules",
+      "repeatConsumablePurchases": true,
+      "bountyMultiplier": 1.25,
+      "ammoDropLifetimeSeconds": 60,
+      "vendorsAlwaysAvailable": true
+    },
+    {
+      "type": "playerRules",
+      "maximumHearts": 5,
+      "libidoMaximumMultiplier": 5.0,
+      "retainBuffsOnClimax": true,
+      "strengthDamageWhileRestrainedMultiplier": 0.6666667,
+      "strengthDamageFreeMultiplier": 1.5,
+      "clothingDamageEnabled": true,
+      "clothingDamageChance": 0.41,
+      "forceAutomaticWeapons": true,
+      "autoReloadOnEmpty": true,
+      "weaponRangeMultiplier": 2.0666667,
+      "cameraZoomMultiplier": 1.4
+    },
+    {
+      "type": "eventReward",
+      "trigger": "enemyKilled",
+      "healthReward": 2,
+      "strengthReward": 2,
+      "pleasureReductionReward": 2,
+      "libidoReductionReward": 2
+	  ,"perCompletedExperimentMultiplier": 0.075
+    },
+    {
+      "type": "eventReward",
+      "trigger": "playerClimax",
+      "healthReward": 10,
+      "strengthReward": 10
+    },
+    {
+      "type": "eventReward",
+      "trigger": "playerBirth",
+      "healthReward": 10,
+      "strengthReward": 10
+    },
+    {
+      "type": "experimentScaling",
+      "speedPerExperimentPercent": 1.6666667,
+      "dashPerExperimentPercent": 1.3888889,
+      "gunDamagePerExperimentPercent": 8,
+      "healthPerExperimentPercent": 2,
+      "knockbackPerExperimentPercent": 10
+    },
+    {
+      "type": "consumableOverride",
+      "item": "aspirin",
+      "healthRestore": 50,
+      "libidoReduction": 50,
+      "pleasureReduction": 50,
+      "effectDurationSeconds": 100
+    },
+    {
+      "type": "consumableOverride",
+      "item": "morphine",
+      "healthRestore": 100,
+      "pleasureReduction": 25,
+      "restoreHeart": true
+    },
+    {
+      "type": "consumableOverride",
+      "item": "anaphrodisiac",
+      "libidoReduction": 150,
+      "pleasureReduction": 150,
+      "effectDurationSeconds": 30
+    },
+    {
+      "type": "consumableOverride",
+      "item": "buffout",
+      "strengthRestoreMultiplier": 2.0
+    },
+    {
+      "type": "consumableOverride",
+      "item": "second-wind",
+      "healthRestore": 50
+    },
+    {
+      "type": "consumableOverride",
+      "item": "siid-21",
+      "effectDurationSeconds": 10,
+      "invulnerabilitySeconds": 10,
+      "gunDamageBonus": 1,
+      "accelerationBonus": 5,
+      "sprintBonus": 5,
+      "dashBonus": 15
+    }
+  ]
+}

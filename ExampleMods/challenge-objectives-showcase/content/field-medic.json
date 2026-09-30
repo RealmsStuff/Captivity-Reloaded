@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "type": "challenge",
+  "id": "example.challenge-showcase:challenge/field-medic",
+  "displayName": "Field Medic",
+  "description": "Use 5 Aspirin items.",
+  "objective": "useItemCount",
+  "count": 5,
+  "items": ["core:item/usable/aspirin"],
+  "rewards": ["core:clothing/dark-purple-top"]
+}

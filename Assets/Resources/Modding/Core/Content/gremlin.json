@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/gremlin",
+  "legacyId": 12,
+  "displayName": "Gremlin",
+  "stats": {
+    "healthMax": 5,
+    "speedAcceleration": 4,
+    "speedMax": 8,
+    "traction": 1,
+    "bounty": 35,
+    "healthIncreasePerWave": 2
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-primary": "core:enemy-animation/gremlin/attack-primary",
+    "attack-syringe": "core:enemy-animation/gremlin/attack-syringe",
+    "await": "core:enemy-animation/gremlin/await",
+    "climb": "core:enemy-animation/gremlin/climb",
+    "finisher-phase-1": "core:enemy-animation/gremlin/finisher-phase-1",
+    "finisher-phase-10": "core:enemy-animation/gremlin/finisher-phase-10",
+    "finisher-phase-11": "core:enemy-animation/gremlin/finisher-phase-11",
+    "finisher-phase-2": "core:enemy-animation/gremlin/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/gremlin/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/gremlin/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/gremlin/finisher-phase-5",
+    "finisher-phase-6": "core:enemy-animation/gremlin/finisher-phase-6",
+    "finisher-phase-7": "core:enemy-animation/gremlin/finisher-phase-7",
+    "finisher-phase-8": "core:enemy-animation/gremlin/finisher-phase-8",
+    "finisher-phase-9": "core:enemy-animation/gremlin/finisher-phase-9",
+    "get-up": "core:enemy-animation/gremlin/get-up",
+    "idle": "core:enemy-animation/gremlin/idle",
+    "jump": "core:enemy-animation/gremlin/jump",
+    "move": "core:enemy-animation/gremlin/move"
+  }
+}

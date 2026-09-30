@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "mousai.femboy-refitted-shirt",
+  "displayName": "Femboy Clothing Refit",
+  "version": "1.4.0",
+  "modApiVersion": 1,
+  "authors": ["Mousai"],
+  "description": "A faithful data-only conversion of the legacy Femboy edition's custom body and refitted Core clothing.",
+  "dependencies": [
+    {
+      "id": "core",
+      "version": ">=0.1.0"
+    }
+  ],
+  "loadAfter": ["dudleytheschemer.shaded-girl"],
+  "conflicts": ["example.advanced-clothing-showcase"],
+  "overrides": [
+    "core:player/body/torso-lower/pale",
+    "core:player/body/torso-lower/white",
+    "core:player/body/torso-lower/tan",
+    "core:player/body/torso-lower/black",
+    "core:player/body/chest/pale",
+    "core:player/body/chest/white",
+    "core:player/body/chest/tan",
+    "core:player/body/chest/black",
+    "core:player/body/neck/pale",
+    "core:player/body/neck/white",
+    "core:player/body/neck/tan",
+    "core:player/body/neck/black",
+    "core:player/body/butt/pale",
+    "core:player/body/butt/white",
+    "core:player/body/butt/tan",
+    "core:player/body/butt/black",
+    "core:sprite/butt-5/image",
+    "core:sprite/torso-lower-0/image"
+  ],
+  "priority": 20,
+  "contentRoots": ["content"]
+}

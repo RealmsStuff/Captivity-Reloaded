@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "example.default-shirt-template:patch/default-shirt-in-place",
+  "target": "core:clothing/shirt-default",
+  "replacements": {
+    "icon": "source-parts/icon.png",
+    "piece/shirt-chest": "source-parts/shirt-chest.png",
+    "piece/shirt-spine": "source-parts/shirt-spine.png"
+  }
+}

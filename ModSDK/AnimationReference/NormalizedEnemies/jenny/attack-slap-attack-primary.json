@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyAnimation",
+  "id": "core:enemy-animation/jenny/attack-slap-attack-primary",
+  "enemy": "core:enemy/jenny",
+  "displayName": "jenny attack-slap-attack-primary",
+  "durationSeconds": 0.9166667,
+  "frameRate": 60.0,
+  "loop": false,
+  "tracks": [
+    {
+      "target": "bone/arm-right-upper",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -84.76501,
+          "inTangent": 0.000416463823,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": 1.37850189,
+          "inTangent": 1134.57043,
+          "outTangent": 1134.57
+        },
+        {
+          "time": 0.333333343,
+          "value": 104.33,
+          "inTangent": 195.047623,
+          "outTangent": 195.04808
+        },
+        {
+          "time": 0.5833333,
+          "value": 120.584007,
+          "inTangent": 7.629395E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": 117.919006,
+          "inTangent": -31.9800014,
+          "outTangent": -31.9800072
+        },
+        {
+          "time": 0.9166667,
+          "value": 0.0,
+          "inTangent": -2.670288E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/arm-right-lower",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 20.738,
+          "inTangent": 5.91307544E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -10.557,
+          "inTangent": 2.84568123E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.416666657,
+          "value": 68.11,
+          "inTangent": 0.000168801082,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": 48.0500031,
+          "inTangent": -3.64306516E-06,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.8333333,
+          "value": 72.86,
+          "inTangent": 5.0185623E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.9166667,
+          "value": 0.0,
+          "inTangent": -0.00010272074,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/neck",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": -19.2860012,
+          "inTangent": -6.068858E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": 26.8850021,
+          "inTangent": 0.000113224312,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.9166667,
+          "value": 0.0,
+          "inTangent": -2.199358E-05,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/spine",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.166666672,
+          "value": 17.509,
+          "inTangent": -5.94752237E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.333333343,
+          "value": -64.675,
+          "inTangent": -0.000237346976,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.9166667,
+          "value": 0.0,
+          "inTangent": -2.42781357E-06,
+          "outTangent": 0.0
+        }
+      ]
+    },
+    {
+      "target": "bone/hand-right",
+      "property": "rotation.z",
+      "keys": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.25,
+          "value": -16.9210014,
+          "inTangent": -13.0679779,
+          "outTangent": -13.0679808
+        },
+        {
+          "time": 0.333333343,
+          "value": -18.01,
+          "inTangent": 8.27145357E-07,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.5,
+          "value": 40.844,
+          "inTangent": -3.64734042E-05,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.6666667,
+          "value": 40.844,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        },
+        {
+          "time": 0.9166667,
+          "value": 0.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ]
+    }
+  ],
+  "objectTracks": [],
+  "events": [
+    {
+      "time": 0.333333343,
+      "type": "attackHit"
+    }
+  ],
+  "effects": [],
+  "effectTriggers": [],
+  "warnings": [],
+  "source": {
+    "unityClip": "Assets/AnimationClip/AttackDefaultJenny.anim",
+    "semanticName": "attack-slap-attack-primary"
+  }
+}

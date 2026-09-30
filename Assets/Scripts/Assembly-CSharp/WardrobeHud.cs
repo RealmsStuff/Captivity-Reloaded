@@ -39,9 +39,17 @@ public class WardrobeHud : MonoBehaviour
 
 	private List<GameObject> m_tabMenus = new List<GameObject>();
 
+	private Dictionary<GameObject, RectTransform> m_tabContents = new Dictionary<GameObject, RectTransform>();
+
 	private List<ClothingHudItem> m_clothingItems = new List<ClothingHudItem>();
 
 	private List<ClothingHudItem> m_clothingItemsSelected = new List<ClothingHudItem>();
+
+	private List<UnityEngine.UI.Button> m_generatedSkinButtons = new List<UnityEngine.UI.Button>();
+
+	private RectTransform m_skinToneViewport;
+
+	private RectTransform m_skinToneContent;
 
 	private SkinColor m_skinColorSelected;
 
@@ -80,6 +88,7 @@ public class WardrobeHud : MonoBehaviour
 		ConfigureHeader();
 		ConfigureTabRow();
 		ConfigureActionButtons();
+		ConfigureExtendedSkinButtons();
 		for (int i = 0; i < names.Length; i++)
 		{
 			string text = names[i];
@@ -93,6 +102,7 @@ public class WardrobeHud : MonoBehaviour
 			GameObject gameObject2 = UnityEngine.Object.Instantiate(m_tabMenuDefault, m_tabMenuDefault.transform.parent);
 			gameObject2.name = "tabMenu" + text;
 			m_tabMenus.Add(gameObject2);
+			ConfigureTabScrollView(gameObject2);
 			gameObject2.SetActive(value: false);
 		}
 		RetrieveAllClothes();
@@ -299,10 +309,7 @@ public class WardrobeHud : MonoBehaviour
 
 	private void RetrieveAllClothes()
 	{
-		foreach (int idsUnlockedClothe in ManagerDB.GetIdsUnlockedClothes())
-		{
-			m_clothes.Add(Library.Instance.Clothes.GetClothing(idsUnlockedClothe));
-		}
+		m_clothes.AddRange(ManagerDB.GetUnlockedClothes());
 	}
 
 	private void CreateClothingItems()
@@ -312,11 +319,86 @@ public class WardrobeHud : MonoBehaviour
 			ClothingHudItem clothingHudItem = UnityEngine.Object.Instantiate(m_clothingItemDefault, m_clothingItemDefault.transform);
 			clothingHudItem.SetClothing(item);
 			string i_categoryName = item.GetCatergoryClothing().ToString();
-			clothingHudItem.transform.SetParent(GetTabMenu(i_categoryName).transform);
+			GameObject tabMenu = GetTabMenu(i_categoryName);
+			clothingHudItem.transform.SetParent(m_tabContents.TryGetValue(tabMenu, out RectTransform content) ? content : tabMenu.transform, false);
 			m_clothingItems.Add(clothingHudItem);
 			WireClothingButton(clothingHudItem);
 			clothingHudItem.gameObject.SetActive(value: true);
 		}
+		Canvas.ForceUpdateCanvases();
+		foreach (RectTransform content in m_tabContents.Values) LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+	}
+
+	private void ConfigureTabScrollView(GameObject i_tabMenu)
+	{
+		RectTransform viewport = i_tabMenu.transform as RectTransform;
+		if (viewport == null) return;
+		GridLayoutGroup source = i_tabMenu.GetComponent<GridLayoutGroup>();
+		GameObject contentObject = new GameObject("WardrobeScrollContent", typeof(RectTransform), typeof(GridLayoutGroup), typeof(ContentSizeFitter));
+		RectTransform content = contentObject.GetComponent<RectTransform>();
+		content.SetParent(viewport, false);
+		content.anchorMin = new Vector2(0f, 1f);
+		content.anchorMax = new Vector2(1f, 1f);
+		content.pivot = new Vector2(0.5f, 1f);
+		content.anchoredPosition = Vector2.zero;
+		content.sizeDelta = new Vector2(-22f, 0f);
+		GridLayoutGroup grid = contentObject.GetComponent<GridLayoutGroup>();
+		if (source != null)
+		{
+			grid.padding = source.padding;
+			grid.cellSize = source.cellSize;
+			grid.spacing = source.spacing;
+			grid.childAlignment = source.childAlignment;
+			grid.startAxis = source.startAxis;
+			grid.startCorner = source.startCorner;
+			source.enabled = false;
+		}
+		grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+		float usableWidth = Mathf.Max(1f, viewport.rect.width - grid.padding.horizontal - 22f);
+		grid.constraintCount = Mathf.Max(1, Mathf.FloorToInt((usableWidth + grid.spacing.x) / (grid.cellSize.x + grid.spacing.x)));
+		ContentSizeFitter fitter = contentObject.GetComponent<ContentSizeFitter>();
+		fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+		fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+		ScrollRect scroll = i_tabMenu.GetComponent<ScrollRect>() ?? i_tabMenu.AddComponent<ScrollRect>();
+		scroll.content = content;
+		scroll.viewport = viewport;
+		scroll.horizontal = false;
+		scroll.vertical = true;
+		scroll.movementType = ScrollRect.MovementType.Clamped;
+		scroll.scrollSensitivity = 36f;
+		scroll.verticalScrollbar = CreateVerticalScrollbar(viewport, "WardrobeScrollbar");
+		scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+		m_tabContents[i_tabMenu] = content;
+	}
+
+	private static Scrollbar CreateVerticalScrollbar(RectTransform i_parent, string i_name)
+	{
+		GameObject barObject = new GameObject(i_name, typeof(RectTransform), typeof(Image), typeof(Scrollbar));
+		RectTransform bar = barObject.GetComponent<RectTransform>();
+		bar.SetParent(i_parent, false);
+		bar.anchorMin = new Vector2(1f, 0f);
+		bar.anchorMax = new Vector2(1f, 1f);
+		bar.pivot = new Vector2(1f, 0.5f);
+		bar.anchoredPosition = new Vector2(-3f, 0f);
+		bar.sizeDelta = new Vector2(14f, -6f);
+		Image background = barObject.GetComponent<Image>();
+		background.color = new Color(0.08f, 0.02f, 0.02f, 0.8f);
+		GameObject handleObject = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+		RectTransform handle = handleObject.GetComponent<RectTransform>();
+		handle.SetParent(bar, false);
+		handle.anchorMin = Vector2.zero;
+		handle.anchorMax = Vector2.one;
+		handle.offsetMin = new Vector2(2f, 2f);
+		handle.offsetMax = new Vector2(-2f, -2f);
+		Image handleImage = handleObject.GetComponent<Image>();
+		handleImage.color = new Color(0.75f, 0.05f, 0.05f, 1f);
+		Scrollbar scrollbar = barObject.GetComponent<Scrollbar>();
+		scrollbar.handleRect = handle;
+		scrollbar.targetGraphic = handleImage;
+		scrollbar.direction = Scrollbar.Direction.BottomToTop;
+		scrollbar.navigation = new Navigation { mode = Navigation.Mode.None };
+		bar.SetAsLastSibling();
+		return scrollbar;
 	}
 
 	private void WireClothingButton(ClothingHudItem i_clothingItem)
@@ -338,6 +420,9 @@ public class WardrobeHud : MonoBehaviour
 		StageHub stageHub = (StageHub)CommonReferences.Instance.GetManagerStages().GetStageCurrent();
 		m_skeletonShowcase = UnityEngine.Object.Instantiate(CommonReferences.Instance.GetPlayer().GetSkeletonPlayer(), stageHub.GetParentPlayerShowcaseWardrobe());
 		m_skeletonShowcase.transform.localPosition = Vector3.zero;
+		// Rebind runtime-generated attachment variants immediately. Unity clones the
+		// component but not its generated sprite dictionary with the showcase rig.
+		ExternalPlayerAttachmentFactory.Schedule();
 		m_skeletonShowcase.UpdateClothesEquippedAlready();
 		m_skeletonShowcase.RemoveAllClothing();
 		m_skinColorSelected = CommonReferences.Instance.GetPlayer().GetSkeletonPlayer().GetSkinColor();
@@ -487,6 +572,7 @@ public class WardrobeHud : MonoBehaviour
 			UnityEngine.Object.Destroy(tabMenu);
 		}
 		m_tabMenus.Clear();
+		m_tabContents.Clear();
 		foreach (ClothingHudItem clothingItem in m_clothingItems)
 		{
 			UnityEngine.Object.Destroy(clothingItem.gameObject);
@@ -502,6 +588,112 @@ public class WardrobeHud : MonoBehaviour
 			m_showcaseMaterial = null;
 		}
 		m_clothingItemsSelected.Clear();
+		foreach (UnityEngine.UI.Button button in m_generatedSkinButtons)
+			if (button != null) UnityEngine.Object.Destroy(button.gameObject);
+		m_generatedSkinButtons.Clear();
+	}
+
+	private void ConfigureExtendedSkinButtons()
+	{
+		Dictionary<string, UnityEngine.UI.Button> existing = new Dictionary<string, UnityEngine.UI.Button>(StringComparer.Ordinal);
+		foreach (Text label in m_parent.GetComponentsInChildren<Text>(includeInactive: true))
+		{
+			if (label.text != "Pale" && label.text != "White" && label.text != "Tan" && label.text != "Black") continue;
+			UnityEngine.UI.Button button = label.GetComponentInParent<UnityEngine.UI.Button>();
+			if (button != null) existing[label.text] = button;
+		}
+		if (!existing.TryGetValue("Pale", out UnityEngine.UI.Button template)) return;
+		if (m_skinToneViewport == null)
+		{
+			m_skinToneViewport = template.transform.parent as RectTransform;
+			if (m_skinToneViewport == null) return;
+			Image viewportImage = m_skinToneViewport.GetComponent<Image>();
+			if (viewportImage == null)
+			{
+				viewportImage = m_skinToneViewport.gameObject.AddComponent<Image>();
+				viewportImage.color = new Color(0f, 0f, 0f, 0f);
+				viewportImage.raycastTarget = true;
+			}
+			RectMask2D mask = m_skinToneViewport.GetComponent<RectMask2D>();
+			if (mask == null) mask = m_skinToneViewport.gameObject.AddComponent<RectMask2D>();
+			GameObject contentObject = new GameObject("SkinToneScrollContent", typeof(RectTransform));
+			m_skinToneContent = contentObject.GetComponent<RectTransform>();
+			m_skinToneContent.SetParent(m_skinToneViewport, false);
+			m_skinToneContent.anchorMin = new Vector2(0f, 0.5f);
+			m_skinToneContent.anchorMax = new Vector2(0f, 0.5f);
+			m_skinToneContent.pivot = new Vector2(0f, 0.5f);
+			m_skinToneContent.anchoredPosition = Vector2.zero;
+			ScrollRect scroll = m_skinToneViewport.GetComponent<ScrollRect>() ?? m_skinToneViewport.gameObject.AddComponent<ScrollRect>();
+			scroll.viewport = m_skinToneViewport;
+			scroll.content = m_skinToneContent;
+			scroll.horizontal = true;
+			scroll.vertical = false;
+			scroll.movementType = ScrollRect.MovementType.Clamped;
+			scroll.scrollSensitivity = 32f;
+			scroll.horizontalScrollbar = CreateHorizontalScrollbar(m_skinToneViewport, "SkinToneScrollbar");
+			scroll.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+		}
+		foreach (UnityEngine.UI.Button button in existing.Values)
+			button.transform.SetParent(m_skinToneContent, false);
+		string[] addedNames = { "Olive", "Brown", "Deep" };
+		foreach (string name in addedNames)
+		{
+			UnityEngine.UI.Button button = UnityEngine.Object.Instantiate(template, m_skinToneContent);
+			button.name = "btn_skin" + name;
+			Text label = button.GetComponentInChildren<Text>(true);
+			label.text = name;
+			button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+			button.onClick.AddListener(delegate { SetSkinColor(label); });
+			button.gameObject.SetActive(true);
+			m_generatedSkinButtons.Add(button);
+			existing[name] = button;
+		}
+
+		string[] order = { "Pale", "White", "Tan", "Black", "Olive", "Brown", "Deep" };
+		const float cellWidth = 74.5f;
+		m_skinToneContent.sizeDelta = new Vector2(cellWidth * order.Length, Mathf.Max(54f, m_skinToneViewport.rect.height - 12f));
+		for (int index = 0; index < order.Length; index++)
+		{
+			if (!existing.TryGetValue(order[index], out UnityEngine.UI.Button button)) continue;
+			RectTransform rect = button.transform as RectTransform;
+			rect.anchorMin = new Vector2(0f, 0.5f);
+			rect.anchorMax = new Vector2(0f, 0.5f);
+			rect.pivot = new Vector2(0.5f, 0.5f);
+			rect.anchoredPosition = new Vector2(cellWidth * (index + 0.5f), 5f);
+			rect.sizeDelta = new Vector2(cellWidth, Mathf.Max(48f, m_skinToneContent.sizeDelta.y - 10f));
+			Text label = button.GetComponentInChildren<Text>(true);
+			if (label != null) { label.resizeTextForBestFit = true; label.resizeTextMinSize = 10; label.resizeTextMaxSize = 18; }
+		}
+	}
+
+	private static Scrollbar CreateHorizontalScrollbar(RectTransform i_parent, string i_name)
+	{
+		GameObject barObject = new GameObject(i_name, typeof(RectTransform), typeof(Image), typeof(Scrollbar));
+		RectTransform bar = barObject.GetComponent<RectTransform>();
+		bar.SetParent(i_parent, false);
+		bar.anchorMin = new Vector2(0f, 0f);
+		bar.anchorMax = new Vector2(1f, 0f);
+		bar.pivot = new Vector2(0.5f, 0f);
+		bar.anchoredPosition = new Vector2(0f, 1f);
+		bar.sizeDelta = new Vector2(-4f, 9f);
+		Image background = barObject.GetComponent<Image>();
+		background.color = new Color(0.08f, 0.02f, 0.02f, 0.8f);
+		GameObject handleObject = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+		RectTransform handle = handleObject.GetComponent<RectTransform>();
+		handle.SetParent(bar, false);
+		handle.anchorMin = Vector2.zero;
+		handle.anchorMax = Vector2.one;
+		handle.offsetMin = new Vector2(2f, 2f);
+		handle.offsetMax = new Vector2(-2f, -2f);
+		Image handleImage = handleObject.GetComponent<Image>();
+		handleImage.color = new Color(0.75f, 0.05f, 0.05f, 1f);
+		Scrollbar scrollbar = barObject.GetComponent<Scrollbar>();
+		scrollbar.handleRect = handle;
+		scrollbar.targetGraphic = handleImage;
+		scrollbar.direction = Scrollbar.Direction.LeftToRight;
+		scrollbar.navigation = new Navigation { mode = Navigation.Mode.None };
+		bar.SetAsLastSibling();
+		return scrollbar;
 	}
 
 	public void AcceptAndClose()
@@ -560,6 +752,18 @@ public class WardrobeHud : MonoBehaviour
 		case "Black":
 			m_skeletonShowcase.SetSkinColor(SkinColor.Black);
 			m_skinColorSelected = SkinColor.Black;
+			break;
+		case "Olive":
+			m_skeletonShowcase.SetSkinColor(SkinColor.Olive);
+			m_skinColorSelected = SkinColor.Olive;
+			break;
+		case "Brown":
+			m_skeletonShowcase.SetSkinColor(SkinColor.Brown);
+			m_skinColorSelected = SkinColor.Brown;
+			break;
+		case "Deep":
+			m_skeletonShowcase.SetSkinColor(SkinColor.Deep);
+			m_skinColorSelected = SkinColor.Deep;
 			break;
 		}
 	}

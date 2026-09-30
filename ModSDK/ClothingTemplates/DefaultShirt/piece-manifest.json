@@ -1,0 +1,11 @@
+{
+  "template": "core:clothing/shirt-default",
+  "canvas": { "width": 96, "height": 32 },
+  "cell": { "width": 32, "height": 32 },
+  "coordinates": "libresprite-top-left",
+  "parts": [
+    { "slot": "piece/shirt-spine", "source": "Assets/Texture2D/DefaultShirtSpine.png", "column": 0, "row": 0 },
+    { "slot": "piece/shirt-chest", "source": "Assets/Texture2D/DefaultShirtChest.png", "column": 1, "row": 0 },
+    { "slot": "icon", "source": "Assets/Texture2D/DefaultShirtChest.png", "column": 2, "row": 0 }
+  ]
+}

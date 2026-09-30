@@ -1,1 +1,52 @@
-/Library
+# Unity-generated state
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/UserSettings/
+/MemoryCaptures/
+/Recordings/
+
+# Player and package output
+/[Bb]uild/
+/[Bb]uilds/
+/TestResults/
+/*.capmod
+/Assets/InitTestScene*.unity
+/Assets/InitTestScene*.unity.meta
+
+# Locally installed mods and recoverable installer state
+/Mods/
+/.mod-backups/
+/.mod-install-state/
+/.mod-modified/
+/.mod-removed/
+/SaveBackups/
+/ModTestSets/
+
+# Generated external-animation working copies
+/DragonBonesExports/
+/DragonBonesExports-before-pivot-fix/
+
+# IDE-generated project files
+/.vs/
+/*.csproj
+/*.sln
+/*.suo
+/*.user
+/*.userprefs
+/*.pidb
+/*.booproj
+/*.svd
+/*.pdb
+/*.mdb
+/*.opendb
+/*.VC.db
+/UpgradeLog*.htm
+/debug.log
+
+# Tool build output
+/Tools/**/bin/
+/Tools/**/obj/
+**/__pycache__/
+*.py[cod]

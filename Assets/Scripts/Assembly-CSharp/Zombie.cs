@@ -43,11 +43,11 @@ public class Zombie : Walker
 	private IEnumerator CoroutineChase()
 	{
 		m_isChasing = true;
-		float seconds = Random.Range(4, 12);
+		float seconds = Random.Range(ExternalRuleProfileFactory.ZombieChaseDurationMin(4f), ExternalRuleProfileFactory.ZombieChaseDurationMax(12f));
 		List<StatModifier> l_modifiers = new List<StatModifier>
 		{
 			AddStatModifier("SpeedAccel", 3f),
-			AddStatModifier("SpeedMax", 3f)
+			AddStatModifier("SpeedMax", ExternalRuleProfileFactory.ZombieChaseSpeedMax(3f))
 		};
 		yield return new WaitForSeconds(seconds);
 		m_isChasing = false;

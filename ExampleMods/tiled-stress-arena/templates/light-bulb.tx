@@ -1,0 +1,14 @@
+{
+  "type": "template",
+  "object": {
+    "class": "light-bulb",
+    "name": "light",
+    "point": true,
+    "rotation": 0,
+    "visible": true,
+    "properties": [
+      { "name": "initiallyOn", "type": "bool", "value": true },
+      { "name": "flicker", "type": "float", "value": 0.15 }
+    ]
+  }
+}

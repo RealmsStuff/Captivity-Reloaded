@@ -112,6 +112,8 @@ public abstract class RaperGame : Raper
 	public override void BeginRape()
 	{
 		base.BeginRape();
+		if (m_isRaping && m_wasPlayerExposingAtBeginRape && ExternalRuleProfileFactory.ShouldVoluntaryExposeSkipEscape())
+			m_timeToEscape = 0f;
 		SetStartAudioRaperGame();
 		CommonReferences.Instance.GetManagerAudio().PlayAudioSFX(m_audioStartRaperGame);
 	}

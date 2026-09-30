@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemy",
+  "id": "core:enemy/fly",
+  "legacyId": 7,
+  "displayName": "Fly",
+  "stats": {
+    "healthMax": 1,
+    "speedAcceleration": 10,
+    "speedMax": 30,
+    "traction": 0,
+    "bounty": 35,
+    "healthIncreasePerWave": 1
+  },
+  "behavior": {
+    "visionRange": 20,
+    "ignoreWave": false
+  },
+  "animationReferences": {
+    "attack-charge": "core:enemy-animation/fly/attack-charge",
+    "attack-charge-prepare": "core:enemy-animation/fly/attack-charge-prepare",
+    "finisher-phase-1": "core:enemy-animation/fly/finisher-phase-1",
+    "finisher-phase-2": "core:enemy-animation/fly/finisher-phase-2",
+    "finisher-phase-3": "core:enemy-animation/fly/finisher-phase-3",
+    "finisher-phase-4": "core:enemy-animation/fly/finisher-phase-4",
+    "finisher-phase-5": "core:enemy-animation/fly/finisher-phase-5",
+    "wings-active": "core:enemy-animation/fly/wings-active"
+  }
+}

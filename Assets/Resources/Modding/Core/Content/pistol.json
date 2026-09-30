@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "type": "coreWeapon",
+  "id": "core:item/weapon/pistol",
+  "legacyName": "Pistol",
+  "displayName": "Pistol",
+  "description": "",
+  "stats": {
+    "damage": 2,
+    "ammoMax": 396,
+    "magazineSize": 12,
+    "bulletsPerShot": 1,
+    "penetration": 0,
+    "rangeMultiplier": 1.0,
+    "fireIntervalSeconds": 0.1,
+    "recoil": 0.175,
+    "movementRecoil": 0.0,
+    "knockbackX": 0.0,
+    "knockbackY": 0.0,
+    "weight": 0,
+    "value": 100,
+    "infiniteAmmo": true,
+    "semiAutomatic": true,
+    "marketable": false,
+    "holdType": "OneHanded",
+    "reloadType": "Magazine"
+  }
+}

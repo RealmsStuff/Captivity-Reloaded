@@ -1,2 +1,8 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Unity and Tiled own the formatting of these serialized files. Their writers
+# emit significant-looking trailing spaces that should not fail diff checks.
+*.meta whitespace=-trailing-space
+*.prefab whitespace=-trailing-space
+*.unity whitespace=-trailing-space
+*.asset whitespace=-trailing-space
+ExampleMods/**/levels/*.json whitespace=-trailing-space
+ModSDK/MapTemplates/**/levels/*.json whitespace=-trailing-space

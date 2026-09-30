@@ -20,7 +20,7 @@ public class XAIZombie : XAIWalker
 	{
 		if (m_zombie.GetStateActorCurrent() != StateActor.Ragdoll && !m_zombie.IsDead())
 		{
-			int num = 1;
+			int num = ExternalRuleProfileFactory.ZombieFallChance(1);
 			if (Random.Range(1, 101) > 100 - num)
 			{
 				m_zombie.Fall();
@@ -30,14 +30,14 @@ public class XAIZombie : XAIWalker
 
 	private IEnumerator CoroutineTryChase()
 	{
-		int l_chanceOfChase = 15;
+		int l_chanceOfChase = ExternalRuleProfileFactory.ZombieChaseChance(15);
 		while (true)
 		{
 			if (!m_zombie.IsChasing() && Random.Range(1, 101) > 100 - l_chanceOfChase)
 			{
 				m_zombie.Chase();
 			}
-			yield return new WaitForSeconds(10f);
+			yield return new WaitForSeconds(ExternalRuleProfileFactory.ZombieChaseCheck(10f));
 		}
 	}
 

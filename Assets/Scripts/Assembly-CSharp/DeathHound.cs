@@ -60,6 +60,12 @@ public class DeathHound : Walker
 
 	public void TryCharge()
 	{
+		if (ExternalRuleProfileFactory.TryGetDeathHoundRoamSpeed(out float roamSpeed))
+		{
+			RemoveStatModifier(m_modifiersCharge);
+			m_modifiersCharge.Clear();
+			m_modifiersCharge.Add(AddStatModifier("SpeedMax", roamSpeed));
+		}
 		if (m_isCanCharge)
 		{
 			int num = 35;
@@ -77,7 +83,7 @@ public class DeathHound : Walker
 	private IEnumerator CoroutineWaitBeforeTryChargeAgain()
 	{
 		m_isCanCharge = false;
-		yield return new WaitForSeconds(5f);
+		yield return new WaitForSeconds(ExternalRuleProfileFactory.DeathHoundRetry(5f));
 		m_isCanCharge = true;
 	}
 
@@ -100,7 +106,7 @@ public class DeathHound : Walker
 		m_isPreparingCharge = true;
 		PlayAudioSFX(m_audioPrepareCharge);
 		m_animator.Play("ChargePrepare");
-		yield return new WaitForSeconds(2.5f);
+		yield return new WaitForSeconds(ExternalRuleProfileFactory.DeathHoundPrepare(2.5f));
 		m_isPreparingCharge = false;
 		Charge();
 		m_isThinking = true;
@@ -108,17 +114,21 @@ public class DeathHound : Walker
 
 	private void Charge()
 	{
+		LegacyShackAberrant aberrant = GetComponent<LegacyShackAberrant>();
+		bool pinkHound = aberrant != null && aberrant.Type == LegacyShackAberrantType.PinkHound;
 		m_isCharging = true;
 		m_isCanCharge = false;
-		m_modifiersCharge.Add(AddStatModifier("SpeedAccel", 2f));
-		m_modifiersCharge.Add(AddStatModifier("SpeedMax", 2f));
+		m_modifiersCharge.Add(AddStatModifier("SpeedAccel", pinkHound ? 5f : 2f));
+		m_modifiersCharge.Add(AddStatModifier("SpeedMax", pinkHound ? 9f : ExternalRuleProfileFactory.DeathHoundChargeSpeed(2f)));
 		GetSkeletonActor().StartFlashingLeapAttack();
 		StartCoroutine(CoroutineWaitForChargeEnd());
 	}
 
 	private IEnumerator CoroutineWaitForChargeEnd()
 	{
-		yield return new WaitForSeconds(10f);
+		LegacyShackAberrant aberrant = GetComponent<LegacyShackAberrant>();
+		bool pinkHound = aberrant != null && aberrant.Type == LegacyShackAberrantType.PinkHound;
+		yield return new WaitForSeconds(pinkHound ? 15f : ExternalRuleProfileFactory.DeathHoundChargeTime(10f));
 		RemoveStatModifier(m_modifiersCharge);
 		m_modifiersCharge.Clear();
 		m_isCharging = false;
@@ -138,11 +148,11 @@ public class DeathHound : Walker
 		Vector2 zero = Vector2.zero;
 		if (GetIsFacingLeft())
 		{
-			zero.x = 0f - m_powerXLeap;
+			zero.x = (0f - m_powerXLeap) * ExternalRuleProfileFactory.DeathHoundLeapX(1f);
 		}
 		else
 		{
-			zero.x = m_powerXLeap;
+			zero.x = m_powerXLeap * ExternalRuleProfileFactory.DeathHoundLeapX(1f);
 		}
 		zero.y = m_powerYLeap;
 		SetVelocity(zero);
@@ -152,7 +162,7 @@ public class DeathHound : Walker
 
 	private IEnumerator CoroutineWaitForLandAfterLeap()
 	{
-		yield return new WaitForSeconds(0.15f);
+		yield return new WaitForSeconds(ExternalRuleProfileFactory.DeathHoundLandDelay(0.15f));
 		bool l_isLanded = false;
 		while (!l_isLanded)
 		{
@@ -222,7 +232,7 @@ public class DeathHound : Walker
 
 	public bool GetIsCloseEnoughToPrepareCharge()
 	{
-		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= m_distancePrepareCharge && Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) >= m_distancePrepareCharge / 2f)
+		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= m_distancePrepareCharge && Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) >= m_distancePrepareCharge / ExternalRuleProfileFactory.DeathHoundInnerDivisor(2f))
 		{
 			return true;
 		}
@@ -231,7 +241,7 @@ public class DeathHound : Walker
 
 	public bool GetIsCloseEnoughToLeap()
 	{
-		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= m_distanceLeap)
+		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= m_distanceLeap / ExternalRuleProfileFactory.DeathHoundLeapDivisor(1f))
 		{
 			return true;
 		}
@@ -240,7 +250,7 @@ public class DeathHound : Walker
 
 	public bool GetIsCloseEnoughToHit()
 	{
-		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= 2f)
+		if (Vector2.Distance(GetPos(), CommonReferences.Instance.GetPlayer().GetPos()) <= ExternalRuleProfileFactory.DeathHoundHitDistance(2f))
 		{
 			return true;
 		}

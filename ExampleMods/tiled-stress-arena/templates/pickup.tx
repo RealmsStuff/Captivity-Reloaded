@@ -1,0 +1,10 @@
+{
+  "type": "template",
+  "object": {
+    "class": "pickup", "name": "pickup", "point": true, "rotation": 0, "visible": true,
+    "properties": [
+      { "name": "item", "type": "string", "value": "core:item/weapon/revolver-44" },
+      { "name": "amount", "type": "int", "value": 1 }
+    ]
+  }
+}

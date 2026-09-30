@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "example.animation-reference-gallery:enemy/fly",
+  "displayName": "Animation Reference - Fly",
+  "description": "Reference copy of the small flying Fly animation family. It does not join normal spawners.",
+  "extends": "core:enemy/fly",
+  "spawn": { "inheritTemplateSpawners": false },
+  "animationRefs": {
+    "attack-charge": "example.animation-reference-gallery:enemy-animation/fly/attack-charge",
+    "attack-charge-prepare": "example.animation-reference-gallery:enemy-animation/fly/attack-charge-prepare",
+    "finisher-phase-1": "example.animation-reference-gallery:enemy-animation/fly/finisher-phase-1",
+    "finisher-phase-2": "example.animation-reference-gallery:enemy-animation/fly/finisher-phase-2",
+    "finisher-phase-3": "example.animation-reference-gallery:enemy-animation/fly/finisher-phase-3",
+    "finisher-phase-4": "example.animation-reference-gallery:enemy-animation/fly/finisher-phase-4",
+    "finisher-phase-5": "example.animation-reference-gallery:enemy-animation/fly/finisher-phase-5",
+    "wings-active": "example.animation-reference-gallery:enemy-animation/fly/wings-active"
+  }
+}

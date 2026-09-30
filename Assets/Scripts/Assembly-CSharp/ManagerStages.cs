@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ManagerStages : MonoBehaviour
 {
+	public event System.Action<Stage> OnRuntimeStageAdded;
+
 	[SerializeField]
 	private int m_numStageStart;
 
@@ -25,7 +27,7 @@ public class ManagerStages : MonoBehaviour
 		Stage[] componentsInChildren = GetComponentsInChildren<Stage>(includeInactive: true);
 		foreach (Stage item in componentsInChildren)
 		{
-			m_stages.Add(item);
+			if (!item.GetIsRuntimeTemplate()) m_stages.Add(item);
 		}
 		m_stageHub = GetComponentInChildren<StageHub>(includeInactive: true);
 		DisableAllStages();
@@ -94,6 +96,11 @@ public class ManagerStages : MonoBehaviour
 		CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().CenterCamera();
 		CommonReferences.Instance.GetManagerHud().ClosePauseMenu();
 		CommonReferences.Instance.GetPlayerController().ResetInventory();
+		if (!(stage is StageHub))
+		{
+			int startingMoney = ExternalRuleProfileFactory.GetStartingMoney();
+			if (startingMoney > 0) CommonReferences.Instance.GetPlayerController().GainMoney(startingMoney);
+		}
 		CommonReferences.Instance.GetPlayer().PlaceFeetOnPos(i_stageToOpen.GetWaypointStart().GetPos());
 		CommonReferences.Instance.GetPlayer().EnterStage();
 		CommonReferences.Instance.GetPlayer().Spawn();
@@ -130,6 +137,7 @@ public class ManagerStages : MonoBehaviour
 			return i_stage;
 		}
 		Stage stage = Object.Instantiate(i_stage, base.transform);
+		ExternalStageFactory.RestoreRuntimeStageClone(i_stage, stage);
 		m_stagesDuplicants.Add(stage);
 		return stage;
 	}
@@ -177,5 +185,14 @@ public class ManagerStages : MonoBehaviour
 	public int GetMaxNumberOfNpcsOfSameTypeOnStageAtGivenMoment()
 	{
 		return m_maxNumOfNpcsOfSameType;
+	}
+
+	public void AddRuntimeStage(Stage i_stage)
+	{
+		if (i_stage == null || i_stage.GetIsRuntimeTemplate() || m_stages.Contains(i_stage)) return;
+		i_stage.gameObject.SetActive(false);
+		m_stages.Add(i_stage);
+		ManagerDB.AddStages(new List<Stage> { i_stage });
+		OnRuntimeStageAdded?.Invoke(i_stage);
 	}
 }

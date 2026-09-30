@@ -1,0 +1,691 @@
+{
+  "schemaVersion": 1,
+  "type": "enemyRigReference",
+  "id": "core:enemy-rig/hunter",
+  "enemy": "core:enemy/hunter",
+  "prefab": "Assets/Actors/Npcs/npc_hunter.prefab",
+  "controller": "Assets/AnimatorController/SkeletonHunter.controller",
+  "sampleRoot": "SkeletonHunter",
+  "bones": [
+    {
+      "name": "root",
+      "unityPath": "",
+      "unityPaths": [
+        ""
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": []
+    },
+    {
+      "name": "hips",
+      "parent": "root",
+      "unityPath": "hips",
+      "unityPaths": [
+        "hips",
+        "hips/bp_hip"
+      ],
+      "defaultTransform": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/bp_hip",
+          "name": "Hip_1",
+          "asset": "Assets/Sprite/Hip_1.asset",
+          "pivotX": 0.251874149,
+          "pivotY": 0.315739542,
+          "width": 24.89713,
+          "height": 16.8809719,
+          "sortingLayer": "Actor",
+          "sortingOrder": 10
+        }
+      ]
+    },
+    {
+      "name": "balls",
+      "parent": "hips",
+      "unityPath": "hips/balls",
+      "unityPaths": [
+        "hips/balls",
+        "hips/balls/bp_balls"
+      ],
+      "defaultTransform": {
+        "x": 0.042,
+        "y": -0.026,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/balls/bp_balls",
+          "name": "Balls",
+          "asset": "Assets/Sprite/Balls.asset",
+          "pivotX": 0.506873965,
+          "pivotY": 0.7868527,
+          "width": 10.9141846,
+          "height": 15.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 0
+        }
+      ]
+    },
+    {
+      "name": "chest",
+      "parent": "hips",
+      "unityPath": "hips/chest",
+      "unityPaths": [
+        "hips/chest",
+        "hips/chest/bp_chest"
+      ],
+      "defaultTransform": {
+        "x": 0.401,
+        "y": 0.152,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/bp_chest",
+          "name": "Chest_9",
+          "asset": "Assets/Sprite/Chest_9.asset",
+          "pivotX": 0.127256259,
+          "pivotY": 0.513123155,
+          "width": 24.9109669,
+          "height": 15.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "leg-left-upper",
+      "parent": "hips",
+      "unityPath": "hips/legUpperL",
+      "unityPaths": [
+        "hips/legUpperL",
+        "hips/legUpperL/bp_legUpperL"
+      ],
+      "defaultTransform": {
+        "x": -0.008,
+        "y": -0.082,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperL/bp_legUpperL",
+          "name": "LegUpper_9",
+          "asset": "Assets/Sprite/LegUpper_9.asset",
+          "pivotX": 0.159957558,
+          "pivotY": 0.5050454,
+          "width": 31.84776,
+          "height": 11.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": -17
+        }
+      ]
+    },
+    {
+      "name": "leg-right-upper",
+      "parent": "hips",
+      "unityPath": "hips/legUpperR",
+      "unityPaths": [
+        "hips/legUpperR",
+        "hips/legUpperR/bp_legUpperR"
+      ],
+      "defaultTransform": {
+        "x": -0.008,
+        "y": -0.082,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperR/bp_legUpperR",
+          "name": "LegUpper_9",
+          "asset": "Assets/Sprite/LegUpper_9.asset",
+          "pivotX": 0.159957558,
+          "pivotY": 0.5050454,
+          "width": 31.84776,
+          "height": 11.8971291,
+          "sortingLayer": "Actor",
+          "sortingOrder": 15
+        }
+      ]
+    },
+    {
+      "name": "penis",
+      "parent": "hips",
+      "unityPath": "hips/penis",
+      "unityPaths": [
+        "hips/penis",
+        "hips/penis/bp_penis"
+      ],
+      "defaultTransform": {
+        "x": 0.11800015,
+        "y": -0.074,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/penis/bp_penis",
+          "name": "Penis_7",
+          "asset": "Assets/Sprite/Penis_7.asset",
+          "pivotX": 0.4092519,
+          "pivotY": 0.839039445,
+          "width": 9.876175,
+          "height": 23.92388,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "arm-left-upper",
+      "parent": "chest",
+      "unityPath": "hips/chest/armUpperL",
+      "unityPaths": [
+        "hips/chest/armUpperL",
+        "hips/chest/armUpperL/bp_armUpperL"
+      ],
+      "defaultTransform": {
+        "x": 0.571,
+        "y": -0.048,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperL/bp_armUpperL",
+          "name": "ArmUpper_2",
+          "asset": "Assets/Sprite/ArmUpper_2.asset",
+          "pivotX": 0.695994,
+          "pivotY": 0.751940966,
+          "width": 17.84776,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -14
+        }
+      ]
+    },
+    {
+      "name": "arm-right-upper",
+      "parent": "chest",
+      "unityPath": "hips/chest/armUpperR",
+      "unityPaths": [
+        "hips/chest/armUpperR",
+        "hips/chest/armUpperR/bp_armUpperR"
+      ],
+      "defaultTransform": {
+        "x": 0.571,
+        "y": -0.048,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperR/bp_armUpperR",
+          "name": "ArmUpper_2",
+          "asset": "Assets/Sprite/ArmUpper_2.asset",
+          "pivotX": 0.695994,
+          "pivotY": 0.751940966,
+          "width": 17.84776,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 12
+        }
+      ]
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "unityPath": "hips/chest/neck",
+      "unityPaths": [
+        "hips/chest/neck",
+        "hips/chest/neck/bp_neck"
+      ],
+      "defaultTransform": {
+        "x": 0.547,
+        "y": -0.033,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/neck/bp_neck",
+          "name": "Neck_10",
+          "asset": "Assets/Sprite/Neck_10.asset",
+          "pivotX": 0.1851053,
+          "pivotY": 0.487788141,
+          "width": 13.8477592,
+          "height": 7.84775925,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "leg-left-lower",
+      "parent": "leg-left-upper",
+      "unityPath": "hips/legUpperL/legLowerL",
+      "unityPaths": [
+        "hips/legUpperL/legLowerL",
+        "hips/legUpperL/legLowerL/bp_legLowerR"
+      ],
+      "defaultTransform": {
+        "x": 0.761,
+        "y": 0.013,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperL/legLowerL/bp_legLowerR",
+          "name": "LegLower_1",
+          "asset": "Assets/Sprite/LegLower_1.asset",
+          "pivotX": 0.825884163,
+          "pivotY": 0.74813,
+          "width": 31.9637146,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -16
+        }
+      ]
+    },
+    {
+      "name": "leg-right-lower",
+      "parent": "leg-right-upper",
+      "unityPath": "hips/legUpperR/legLowerR",
+      "unityPaths": [
+        "hips/legUpperR/legLowerR",
+        "hips/legUpperR/legLowerR/bp_legLowerR"
+      ],
+      "defaultTransform": {
+        "x": 0.761,
+        "y": 0.013,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperR/legLowerR/bp_legLowerR",
+          "name": "LegLower_1",
+          "asset": "Assets/Sprite/LegLower_1.asset",
+          "pivotX": 0.825884163,
+          "pivotY": 0.74813,
+          "width": 31.9637146,
+          "height": 21.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 16
+        }
+      ]
+    },
+    {
+      "name": "arm-left-lower",
+      "parent": "arm-left-upper",
+      "unityPath": "hips/chest/armUpperL/armLowerL",
+      "unityPaths": [
+        "hips/chest/armUpperL/armLowerL",
+        "hips/chest/armUpperL/armLowerL/bp_armLowerL"
+      ],
+      "defaultTransform": {
+        "x": -0.313,
+        "y": -0.438,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperL/armLowerL/bp_armLowerL",
+          "name": "ArmLower_11",
+          "asset": "Assets/Sprite/ArmLower_11.asset",
+          "pivotX": 0.209282011,
+          "pivotY": 0.8050192,
+          "width": 20.8586,
+          "height": 22.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -13
+        }
+      ]
+    },
+    {
+      "name": "arm-right-lower",
+      "parent": "arm-right-upper",
+      "unityPath": "hips/chest/armUpperR/armLowerR",
+      "unityPaths": [
+        "hips/chest/armUpperR/armLowerR",
+        "hips/chest/armUpperR/armLowerR/bp_armLowerR"
+      ],
+      "defaultTransform": {
+        "x": -0.313,
+        "y": -0.438,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperR/armLowerR/bp_armLowerR",
+          "name": "ArmLower_11",
+          "asset": "Assets/Sprite/ArmLower_11.asset",
+          "pivotX": 0.209282011,
+          "pivotY": 0.8050192,
+          "width": 20.8586,
+          "height": 22.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 13
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "unityPath": "hips/chest/neck/head",
+      "unityPaths": [
+        "hips/chest/neck/head",
+        "hips/chest/neck/head/bp_head"
+      ],
+      "defaultTransform": {
+        "x": 0.21,
+        "y": 0.0,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/neck/head/bp_head",
+          "name": "Head_2",
+          "asset": "Assets/Sprite/Head_2.asset",
+          "pivotX": 0.195611283,
+          "pivotY": 0.554848552,
+          "width": 17.9464989,
+          "height": 20.89713,
+          "sortingLayer": "Actor",
+          "sortingOrder": 11
+        }
+      ]
+    },
+    {
+      "name": "foot-left",
+      "parent": "leg-left-lower",
+      "unityPath": "hips/legUpperL/legLowerL/footL",
+      "unityPaths": [
+        "hips/legUpperL/legLowerL/footL",
+        "hips/legUpperL/legLowerL/footL/bp_footL"
+      ],
+      "defaultTransform": {
+        "x": -0.75,
+        "y": -0.389,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperL/legLowerL/footL/bp_footL",
+          "name": "Foot_12",
+          "asset": "Assets/Sprite/Foot_12.asset",
+          "pivotX": 0.418230563,
+          "pivotY": 0.8112773,
+          "width": 19.84776,
+          "height": 18.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": -15
+        }
+      ]
+    },
+    {
+      "name": "foot-right",
+      "parent": "leg-right-lower",
+      "unityPath": "hips/legUpperR/legLowerR/footR",
+      "unityPaths": [
+        "hips/legUpperR/legLowerR/footR",
+        "hips/legUpperR/legLowerR/footR/bp_footR"
+      ],
+      "defaultTransform": {
+        "x": -0.75,
+        "y": -0.389,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/legUpperR/legLowerR/footR/bp_footR",
+          "name": "Foot_12",
+          "asset": "Assets/Sprite/Foot_12.asset",
+          "pivotX": 0.418230563,
+          "pivotY": 0.8112773,
+          "width": 19.84776,
+          "height": 18.84776,
+          "sortingLayer": "Actor",
+          "sortingOrder": 17
+        }
+      ]
+    },
+    {
+      "name": "hand-left",
+      "parent": "arm-left-lower",
+      "unityPath": "hips/chest/armUpperL/armLowerL/handL",
+      "unityPaths": [
+        "hips/chest/armUpperL/armLowerL/handL",
+        "hips/chest/armUpperL/armLowerL/handL/bp_handL"
+      ],
+      "defaultTransform": {
+        "x": 0.405,
+        "y": -0.49,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperL/armLowerL/handL/bp_handL",
+          "name": "Hand_12",
+          "asset": "Assets/Sprite/Hand_12.asset",
+          "pivotX": 0.1464678,
+          "pivotY": 0.3785326,
+          "width": 22.84776,
+          "height": 9.914185,
+          "sortingLayer": "Actor",
+          "sortingOrder": -12
+        }
+      ]
+    },
+    {
+      "name": "hand-right",
+      "parent": "arm-right-lower",
+      "unityPath": "hips/chest/armUpperR/armLowerR/handR",
+      "unityPaths": [
+        "hips/chest/armUpperR/armLowerR/handR",
+        "hips/chest/armUpperR/armLowerR/handR/bp_handR"
+      ],
+      "defaultTransform": {
+        "x": 0.405,
+        "y": -0.49,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/armUpperR/armLowerR/handR/bp_handR",
+          "name": "Hand_12",
+          "asset": "Assets/Sprite/Hand_12.asset",
+          "pivotX": 0.1464678,
+          "pivotY": 0.3785326,
+          "width": 22.84776,
+          "height": 9.914185,
+          "sortingLayer": "Actor",
+          "sortingOrder": 14
+        }
+      ]
+    },
+    {
+      "name": "antenna-l",
+      "parent": "head",
+      "unityPath": "hips/chest/neck/head/antennaL",
+      "unityPaths": [
+        "hips/chest/neck/head/antennaL",
+        "hips/chest/neck/head/antennaL/bp_antennaL"
+      ],
+      "defaultTransform": {
+        "x": 0.124,
+        "y": 0.159,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/neck/head/antennaL/bp_antennaL",
+          "name": "AntennaL",
+          "asset": "Assets/Sprite/AntennaL.asset",
+          "pivotX": 0.233957544,
+          "pivotY": 0.2741073,
+          "width": 14.8477592,
+          "height": 12.8477592,
+          "sortingLayer": "Actor",
+          "sortingOrder": 9
+        }
+      ]
+    },
+    {
+      "name": "antenna-r",
+      "parent": "head",
+      "unityPath": "hips/chest/neck/head/antennaR",
+      "unityPaths": [
+        "hips/chest/neck/head/antennaR",
+        "hips/chest/neck/head/antennaR/bp_antennaR"
+      ],
+      "defaultTransform": {
+        "x": 0.063,
+        "y": 0.179,
+        "z": 0.0,
+        "rotationX": 0.0,
+        "rotationY": 0.0,
+        "rotationZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+      },
+      "sprites": [
+        {
+          "unityPath": "hips/chest/neck/head/antennaR/bp_antennaR",
+          "name": "AntennaR",
+          "asset": "Assets/Sprite/AntennaR.asset",
+          "pivotX": 0.1679913,
+          "pivotY": 0.222901672,
+          "width": 20.89713,
+          "height": 18.9109669,
+          "sortingLayer": "Actor",
+          "sortingOrder": 10
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

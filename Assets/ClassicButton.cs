@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ClassicButton : MonoBehaviour, IPointerDownHandler
+public class ClassicButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    // Added "Struggle" to the enum
-    public enum MobileButtonType { Jump, Interact, Escape, Reload, Dash, Struggle, Wave, NextWeapon, NextMedicine }
+    // Expose intentionally occupies the old Struggle serialized slot.
+    public enum MobileButtonType { Jump, Interact, Escape, Reload, Dash, Expose, Wave, NextWeapon, NextMedicine, SelfPleasure }
 
 	private static bool s_cycleButtonsCreated;
 
@@ -23,11 +23,42 @@ public class ClassicButton : MonoBehaviour, IPointerDownHandler
 
 	private void Start()
 	{
+		RefreshKenneyStyle();
 		if (buttonType == MobileButtonType.Reload && !s_cycleButtonsCreated)
 		{
 			s_cycleButtonsCreated = true;
-			CreateCycleButton(MobileButtonType.NextWeapon, "Next Weapon", new Vector2(394f, -142f));
-			CreateCycleButton(MobileButtonType.NextMedicine, "Next Medicine", new Vector2(394f, -314f));
+			CreateCycleButton(MobileButtonType.NextWeapon, "Next Weapon", new Vector2(394f, 220f));
+			CreateCycleButton(MobileButtonType.NextMedicine, "Next Medicine", new Vector2(612f, 220f));
+			if (ExternalRuleProfileFactory.IsSelfPleasureEnabled())
+				CreateCycleButton(MobileButtonType.SelfPleasure, "Pleasure", new Vector2(830f, 220f));
+		}
+	}
+
+	public void RefreshKenneyStyle()
+	{
+		InputGlyphLibrary.ApplyMobileLayout(transform as RectTransform, buttonType.ToString());
+		bool showBackground = InputGlyphLibrary.ShouldShowMobileButtonBackground(buttonType);
+		Image background = GetComponent<Image>();
+		if (background != null)
+		{
+			background.sprite = showBackground ? InputGlyphLibrary.GetMobileControlSprite("button_circle") : null;
+			background.type = Image.Type.Simple;
+			background.preserveAspect = showBackground;
+			background.color = showBackground ? Color.white : new Color(1f, 1f, 1f, 0f);
+		}
+		Image icon = InputGlyphLibrary.GetOrCreateImage(transform, "KenneyActionIcon");
+		icon.sprite = InputGlyphLibrary.GetMobileIcon(buttonType);
+		RectTransform iconRect = icon.rectTransform;
+		iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+		iconRect.pivot = new Vector2(0.5f, 0.5f);
+		iconRect.anchoredPosition = Vector2.zero;
+		float iconSize = showBackground ? 92f : 112f;
+		iconRect.sizeDelta = new Vector2(iconSize, iconSize);
+		iconRect.localScale = buttonType == MobileButtonType.Dash ? new Vector3(-1f, 1f, 1f) : Vector3.one;
+		Text label = GetComponentInChildren<Text>(true);
+		if (label != null)
+		{
+			label.enabled = false;
 		}
 	}
 
@@ -45,14 +76,15 @@ public class ClassicButton : MonoBehaviour, IPointerDownHandler
 		if (componentInChildren != null)
 		{
 			componentInChildren.text = i_label;
-			componentInChildren.resizeTextForBestFit = true;
-			componentInChildren.resizeTextMinSize = 12;
-			componentInChildren.resizeTextMaxSize = 28;
+			componentInChildren.enabled = false;
 		}
 	}
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
+	public void OnPointerDown(PointerEventData eventData)
+	{
+		Image background = GetComponent<Image>();
+		if (background != null && InputGlyphLibrary.ShouldShowMobileButtonBackground(buttonType))
+			background.color = new Color(1f, 0.72f, 0.16f, 1f);
         if (playerController == null) return;
 
         switch (buttonType)
@@ -72,8 +104,8 @@ public class ClassicButton : MonoBehaviour, IPointerDownHandler
             case MobileButtonType.Dash:
                 playerController.TriggerMobileDash();
                 break;
-            case MobileButtonType.Struggle:
-                playerController.TriggerMobileStruggle();
+			case MobileButtonType.Expose:
+				playerController.TriggerMobileExpose();
                 break;
             case MobileButtonType.Wave:
                 playerController.TriggerMobileWave();
@@ -84,6 +116,16 @@ public class ClassicButton : MonoBehaviour, IPointerDownHandler
 			case MobileButtonType.NextMedicine:
 				playerController.TriggerMobileNextMedicine();
 				break;
+			case MobileButtonType.SelfPleasure:
+				playerController.TriggerMobileSelfPleasure();
+				break;
         }
     }
+
+	public void OnPointerUp(PointerEventData eventData)
+	{
+		Image background = GetComponent<Image>();
+		if (background != null && InputGlyphLibrary.ShouldShowMobileButtonBackground(buttonType)) background.color = Color.white;
+		if (playerController != null && buttonType == MobileButtonType.Expose) playerController.ReleaseMobileExpose();
+	}
 }
