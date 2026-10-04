@@ -33,16 +33,22 @@ namespace CaptivityReloaded.Editor.Modding
 		[MenuItem("Captivity Reloaded/Modding/Export Representative Core Enemy Animations")]
 		public static void ExportRepresentativeSet()
 		{
-			ExportSet(false);
+			ExportSet(false, true);
 		}
 
 		[MenuItem("Captivity Reloaded/Modding/Export All Core Enemy Animations")]
 		public static void ExportCompleteSet()
 		{
-			ExportSet(true);
+			ExportSet(true, true);
 		}
 
-		private static void ExportSet(bool i_includeAllSemanticClips)
+		/// <summary>Refreshes every normalized Core enemy rig and animation without opening a completion dialog.</summary>
+		public static int ExportCompleteSetForAuthoring()
+		{
+			return ExportSet(true, false);
+		}
+
+		private static int ExportSet(bool i_includeAllSemanticClips, bool i_showDialog)
 		{
 			CoreAnimationCatalogExporter.Export();
 			CoreAnimationCatalogExporter.CatalogDocument catalog = CoreAnimationCatalogExporter.BuildCatalog();
@@ -76,7 +82,8 @@ namespace CaptivityReloaded.Editor.Modding
 			AssetDatabase.Refresh();
 			string scope = i_includeAllSemanticClips ? "complete" : "representative";
 			Debug.Log("[Modding] Exported " + written + " " + scope + " normalized Core enemy animations to " + OutputRoot + " and packaged Core content.");
-			EditorUtility.DisplayDialog("Normalized enemy export", "Exported " + written + " " + scope + " Core enemy animations.", "OK");
+			if (i_showDialog) EditorUtility.DisplayDialog("Normalized enemy export", "Exported " + written + " " + scope + " Core enemy animations.", "OK");
+			return written;
 		}
 
 		public static void ExportSelected(string i_enemyId, string i_semanticName, AnimationClip i_clip)
