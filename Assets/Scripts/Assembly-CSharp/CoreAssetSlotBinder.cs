@@ -183,6 +183,13 @@ public static class CoreAssetSlotBinder
 	{
 		if (i_enemy == null || i_ownerId.Namespace != "core" ||
 			!i_ownerId.Path.StartsWith("enemy/", StringComparison.Ordinal)) return;
+		if (CoreEnemyAssetSlotCatalog.TryGet(i_ownerId.ToString(), out CoreEnemyAssetSlotEnemy catalogEnemy))
+		{
+			RegisterCatalogEnemySlots(i_enemy, i_ownerId, catalogEnemy);
+			return;
+		}
+
+		// Compatibility fallback for development projects whose generated catalog has not yet been refreshed.
 		foreach (KeyValuePair<string, string[]> part in CoreEnemyPartNames)
 		{
 			List<SpriteRenderer> renderers = new List<SpriteRenderer>();
@@ -193,20 +200,76 @@ public static class CoreAssetSlotBinder
 				if (renderer != null && renderer.sprite != null) renderers.Add(renderer);
 			}
 			if (renderers.Count == 0) continue;
-			ContentId slotId = ContentId.Parse(i_ownerId + "/" + part.Key);
-			Sprite baseline = renderers[0].sprite;
-			Action<UnityEngine.Object> apply = asset =>
-			{
-				Sprite replacement = (Sprite)asset;
-				foreach (SpriteRenderer renderer in renderers)
-					if (renderer != null) renderer.sprite = replacement;
-			};
-			if (ModLoaderRuntime.AssetSlots.TryGet(slotId, out AssetSlotRegistration existing))
-				existing.AddBinding(apply);
-			else
-				ModLoaderRuntime.AssetSlots.Register(new AssetSlotRegistration(slotId, i_ownerId, "core",
-					"Core enemy rig part " + part.Key, baseline, typeof(Sprite), apply), ModLoaderRuntime.LastReport);
+			RegisterCoreEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + part.Key), i_ownerId, renderers,
+				"Core enemy compatibility part " + part.Key);
 		}
+	}
+
+	private static void RegisterCatalogEnemySlots(NPC i_enemy, ContentId i_ownerId, CoreEnemyAssetSlotEnemy i_catalogEnemy)
+	{
+		Dictionary<string, List<SpriteRenderer>> canonicalRenderers = new Dictionary<string, List<SpriteRenderer>>(StringComparer.Ordinal);
+		foreach (CoreEnemyAssetSlotRecord record in i_catalogEnemy.Slots)
+		{
+			Transform target = FindEnemyPath(i_enemy.transform, record.RendererPath);
+			SpriteRenderer renderer = target == null ? null : target.GetComponent<SpriteRenderer>();
+			if (renderer == null || renderer.sprite == null)
+			{
+				ModLoaderRuntime.LastReport?.Add(ValidationSeverity.Error, "asset-slot.enemy-renderer",
+					"Core enemy renderer was not found for public slot " + i_ownerId + "/" + record.Slot + ": " + record.RendererPath,
+					i_catalogEnemy.SourceRig);
+				continue;
+			}
+			List<SpriteRenderer> renderers = new List<SpriteRenderer> { renderer };
+			canonicalRenderers[record.Slot] = renderers;
+			RegisterCoreEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + record.Slot), i_ownerId, renderers,
+				"Core enemy rig bone " + record.Bone);
+		}
+
+		foreach (CoreEnemyAssetSlotAlias alias in i_catalogEnemy.LegacyAliases)
+		{
+			List<SpriteRenderer> renderers = new List<SpriteRenderer>();
+			foreach (string target in alias.Targets)
+				if (canonicalRenderers.TryGetValue(target, out List<SpriteRenderer> targetRenderers))
+					foreach (SpriteRenderer renderer in targetRenderers)
+						if (!renderers.Contains(renderer)) renderers.Add(renderer);
+			if (renderers.Count > 0)
+				RegisterCoreEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + alias.Slot), i_ownerId, renderers,
+					"Core enemy legacy slot alias " + alias.Slot);
+		}
+	}
+
+	private static Transform FindEnemyPath(Transform i_root, string i_path)
+	{
+		if (i_root == null || string.IsNullOrEmpty(i_path)) return null;
+		Transform target = i_root.Find(i_path);
+		if (target != null) return target;
+		string prefix = i_root.name + "/";
+		return i_path.StartsWith(prefix, StringComparison.Ordinal) ? i_root.Find(i_path.Substring(prefix.Length)) : null;
+	}
+
+	private static void RegisterCoreEnemySpriteSlot(ContentId i_slotId, ContentId i_ownerId,
+		List<SpriteRenderer> i_renderers, string i_source)
+	{
+		if (i_renderers == null || i_renderers.Count == 0 || i_renderers[0] == null || i_renderers[0].sprite == null) return;
+		Sprite registrationBaseline;
+		AssetSlotRegistration existing;
+		if (ModLoaderRuntime.AssetSlots.TryGet(i_slotId, out existing)) registrationBaseline = existing.BaselineAsset as Sprite;
+		else registrationBaseline = i_renderers[0].sprite;
+		if (registrationBaseline == null) return;
+
+		Dictionary<SpriteRenderer, Sprite> baselines = new Dictionary<SpriteRenderer, Sprite>();
+		foreach (SpriteRenderer renderer in i_renderers)
+			if (renderer != null && renderer.sprite != null && !baselines.ContainsKey(renderer)) baselines.Add(renderer, renderer.sprite);
+		Action<UnityEngine.Object> apply = asset =>
+		{
+			Sprite replacement = (Sprite)asset;
+			bool restore = replacement == registrationBaseline;
+			foreach (KeyValuePair<SpriteRenderer, Sprite> binding in baselines)
+				if (binding.Key != null) binding.Key.sprite = restore ? binding.Value : replacement;
+		};
+		if (existing != null) existing.AddBinding(apply);
+		else ModLoaderRuntime.AssetSlots.Register(new AssetSlotRegistration(i_slotId, i_ownerId, "core",
+			i_source, registrationBaseline, typeof(Sprite), apply), ModLoaderRuntime.LastReport);
 	}
 
 	private static void RegisterCoreClothingSpriteSlot(ContentId i_slotId, ContentId i_ownerId, Sprite i_baseline,
