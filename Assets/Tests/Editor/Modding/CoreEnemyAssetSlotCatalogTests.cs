@@ -96,6 +96,64 @@ namespace CaptivityReloaded.Modding.Tests
 					i_slot.Bone.IndexOf("penis", StringComparison.Ordinal) >= 0 || i_slot.Bone == "balls"))
 					Assert.That(enemySlots.Contains(anatomy.Slot), Is.True, enemy.Id + " " + anatomy.Bone);
 			}
+
+			CoreEnemyAssetSlotRecord fearHead = catalog.Enemies.Single(i_enemy => i_enemy.Id == "core:enemy/jacky")
+				.Slots.Single(i_slot => i_slot.Slot == "body/head/variant/head-fear");
+			Assert.That(fearHead.AnimatedSpriteName, Is.EqualTo("HeadFear"));
+			Assert.That(fearHead.SourceAnimation, Does.EndWith("jacky/scare.json"));
+		}
+
+		[Test]
+		public void RuntimeBinding_ReplacesEnemyScopedAnimationOnlySprite()
+		{
+			PropertyInfo slotsProperty = typeof(ModLoaderRuntime).GetProperty("AssetSlots", BindingFlags.Static | BindingFlags.Public);
+			PropertyInfo reportProperty = typeof(ModLoaderRuntime).GetProperty("LastReport", BindingFlags.Static | BindingFlags.Public);
+			AssetSlotRegistry previousSlots = ModLoaderRuntime.AssetSlots;
+			ValidationReport previousReport = ModLoaderRuntime.LastReport;
+			GameObject jackyObject = null;
+			Texture2D texture = null;
+			Sprite replacement = null;
+			Type binder = Type.GetType("CoreAssetSlotBinder, Assembly-CSharp");
+			MethodInfo reset = binder?.GetMethod("ResetRuntimeState", BindingFlags.Static | BindingFlags.NonPublic);
+			try
+			{
+				reset?.Invoke(null, null);
+				slotsProperty.SetValue(null, new AssetSlotRegistry());
+				reportProperty.SetValue(null, new ValidationReport());
+				Type npcType = Type.GetType("NPC, Assembly-CSharp");
+				MethodInfo register = binder.GetMethod("RegisterCoreEnemySlots", BindingFlags.Static | BindingFlags.NonPublic);
+				MethodInfo applyAnimated = binder.GetMethod("ApplyAnimatedNamedSpriteReplacements", BindingFlags.Static | BindingFlags.NonPublic);
+				Sprite fearBaseline = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprite/HeadFear.asset");
+				jackyObject = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Actors/Npcs/npc_jacky.prefab"));
+				register.Invoke(null, new object[] { jackyObject.GetComponent(npcType), ContentId.Parse("core:enemy/jacky") });
+
+				ContentId slotId = ContentId.Parse("core:enemy/jacky/body/head/variant/head-fear");
+				Assert.That(ModLoaderRuntime.AssetSlots.TryGet(slotId, out AssetSlotRegistration slot), Is.True);
+				Assert.That(slot.BaselineAsset, Is.SameAs(fearBaseline));
+				CoreEnemyAssetSlotRecord record = CoreEnemyAssetSlotCatalog.Document.Enemies.Single(i_enemy => i_enemy.Id == "core:enemy/jacky")
+					.Slots.Single(i_slot => i_slot.Slot == "body/head/variant/head-fear");
+				SpriteRenderer renderer = jackyObject.transform.Find(record.RendererPath).GetComponent<SpriteRenderer>();
+				texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+				replacement = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(.5f, .5f), fearBaseline.pixelsPerUnit);
+				ModLoaderRuntime.AssetSlots.Resolve(new[]
+				{
+					new AssetPatchRequest(ContentId.Parse("test.enemy-slots:patch/fear-head"), slotId,
+						"test.enemy-slots", "test", replacement, true)
+				}, ModLoaderRuntime.LastReport);
+				renderer.sprite = fearBaseline;
+				applyAnimated.Invoke(null, null);
+				Assert.That(renderer.sprite, Is.SameAs(replacement));
+				Assert.That(ModLoaderRuntime.LastReport.IsValid, Is.True);
+			}
+			finally
+			{
+				reset?.Invoke(null, null);
+				slotsProperty.SetValue(null, previousSlots);
+				reportProperty.SetValue(null, previousReport);
+				if (jackyObject != null) UnityEngine.Object.DestroyImmediate(jackyObject);
+				if (replacement != null) UnityEngine.Object.DestroyImmediate(replacement);
+				if (texture != null) UnityEngine.Object.DestroyImmediate(texture);
+			}
 		}
 
 		[Test]

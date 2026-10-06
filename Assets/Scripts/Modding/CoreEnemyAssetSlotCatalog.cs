@@ -29,6 +29,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("bone")] public string Bone { get; set; }
 		[JsonProperty("rendererPath")] public string RendererPath { get; set; }
 		[JsonProperty("spriteName")] public string SpriteName { get; set; }
+		[JsonProperty("animatedSpriteName")] public string AnimatedSpriteName { get; set; }
+		[JsonProperty("sourceAnimation")] public string SourceAnimation { get; set; }
 	}
 
 	[Serializable]

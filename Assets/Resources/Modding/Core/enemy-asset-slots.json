@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "type": "coreEnemyAssetSlotCatalog",
   "enemyCount": 21,
-  "slotCount": 416,
+  "slotCount": 417,
   "enemies": [
     {
       "id": "core:enemy/abby",
@@ -1365,6 +1365,14 @@
           "bone": "head",
           "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
           "spriteName": "Head_19"
+        },
+        {
+          "slot": "body/head/variant/head-fear",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "HeadFear",
+          "animatedSpriteName": "HeadFear",
+          "sourceAnimation": "ModSDK/AnimationReference/NormalizedEnemies/jacky/scare.json"
         },
         {
           "slot": "body/arm-right-lower",

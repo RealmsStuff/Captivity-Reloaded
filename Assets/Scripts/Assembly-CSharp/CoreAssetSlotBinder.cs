@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -73,6 +74,15 @@ public static class CoreAssetSlotBinder
 	private static readonly HashSet<SpriteRenderer> NamedSpriteRenderers = new HashSet<SpriteRenderer>();
 	private static readonly Dictionary<string, Sprite> NamedSpriteReplacements =
 		new Dictionary<string, Sprite>(StringComparer.Ordinal);
+	private sealed class EnemyAnimatedSpriteBinding
+	{
+		public SpriteRenderer Renderer;
+		public string OriginalName;
+		public Sprite Baseline;
+		public Sprite Replacement;
+	}
+	private static readonly List<EnemyAnimatedSpriteBinding> EnemyAnimatedSpriteBindings =
+		new List<EnemyAnimatedSpriteBinding>();
 	private static readonly string[] LegacyVisualSpriteNames =
 	{
 		"Foot", "ArmLower_2", "Blush", "LegUpper_1", "Head2", "Head3", "Head1",
@@ -93,6 +103,7 @@ public static class CoreAssetSlotBinder
 		BoundNamedSlotCallbacks.Clear();
 		NamedSpriteRenderers.Clear();
 		NamedSpriteReplacements.Clear();
+		EnemyAnimatedSpriteBindings.Clear();
 	}
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -219,6 +230,12 @@ public static class CoreAssetSlotBinder
 					i_catalogEnemy.SourceRig);
 				continue;
 			}
+			if (!string.IsNullOrEmpty(record.AnimatedSpriteName))
+			{
+				RegisterAnimatedEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + record.Slot), i_ownerId,
+					renderer, record.AnimatedSpriteName, "Core enemy animated rig sprite " + record.AnimatedSpriteName);
+				continue;
+			}
 			List<SpriteRenderer> renderers = new List<SpriteRenderer> { renderer };
 			canonicalRenderers[record.Slot] = renderers;
 			RegisterCoreEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + record.Slot), i_ownerId, renderers,
@@ -236,6 +253,39 @@ public static class CoreAssetSlotBinder
 				RegisterCoreEnemySpriteSlot(ContentId.Parse(i_ownerId + "/" + alias.Slot), i_ownerId, renderers,
 					"Core enemy legacy slot alias " + alias.Slot);
 		}
+	}
+
+	private static void RegisterAnimatedEnemySpriteSlot(ContentId i_slotId, ContentId i_ownerId,
+		SpriteRenderer i_renderer, string i_spriteName, string i_source)
+	{
+		Sprite baseline = Resources.FindObjectsOfTypeAll<Sprite>()
+			.FirstOrDefault(i_sprite => i_sprite != null && i_sprite.name == i_spriteName);
+		if (baseline == null)
+		{
+			ModLoaderRuntime.LastReport?.Add(ValidationSeverity.Error, "asset-slot.enemy-animation-sprite",
+				"Core enemy animation sprite was not loaded for public slot " + i_slotId + ": " + i_spriteName, i_source);
+			return;
+		}
+
+		EnemyAnimatedSpriteBinding binding = new EnemyAnimatedSpriteBinding
+		{
+			Renderer = i_renderer,
+			OriginalName = i_spriteName,
+			Baseline = baseline,
+			Replacement = baseline
+		};
+		EnemyAnimatedSpriteBindings.Add(binding);
+		Action<UnityEngine.Object> apply = asset =>
+		{
+			Sprite previous = binding.Replacement;
+			binding.Replacement = (Sprite)asset;
+			if (binding.Renderer != null && binding.Renderer.sprite != null &&
+				(binding.Renderer.sprite == previous || binding.Renderer.sprite.name == binding.OriginalName))
+				binding.Renderer.sprite = binding.Replacement;
+		};
+		if (ModLoaderRuntime.AssetSlots.TryGet(i_slotId, out AssetSlotRegistration existing)) existing.AddBinding(apply);
+		else ModLoaderRuntime.AssetSlots.Register(new AssetSlotRegistration(i_slotId, i_ownerId, "core",
+			i_source, baseline, typeof(Sprite), apply), ModLoaderRuntime.LastReport);
 	}
 
 	private static Transform FindEnemyPath(Transform i_root, string i_path)
@@ -540,11 +590,21 @@ public static class CoreAssetSlotBinder
 
 	internal static void ApplyAnimatedNamedSpriteReplacements()
 	{
-		if (NamedSpriteReplacements.Count == 0) return;
-		NamedSpriteRenderers.RemoveWhere(renderer => renderer == null);
-		foreach (SpriteRenderer renderer in NamedSpriteRenderers)
-			if (renderer.sprite != null && NamedSpriteReplacements.TryGetValue(renderer.sprite.name, out Sprite replacement))
-				renderer.sprite = replacement;
+		if (NamedSpriteReplacements.Count > 0)
+		{
+			NamedSpriteRenderers.RemoveWhere(renderer => renderer == null);
+			foreach (SpriteRenderer renderer in NamedSpriteRenderers)
+				if (renderer.sprite != null && NamedSpriteReplacements.TryGetValue(renderer.sprite.name, out Sprite replacement))
+					renderer.sprite = replacement;
+		}
+		for (int index = EnemyAnimatedSpriteBindings.Count - 1; index >= 0; index--)
+		{
+			EnemyAnimatedSpriteBinding binding = EnemyAnimatedSpriteBindings[index];
+			if (binding.Renderer == null) { EnemyAnimatedSpriteBindings.RemoveAt(index); continue; }
+			if (binding.Replacement != binding.Baseline && binding.Renderer.sprite != null &&
+				binding.Renderer.sprite.name == binding.OriginalName)
+				binding.Renderer.sprite = binding.Replacement;
+		}
 	}
 
 	private static void ResolveNewlyAvailablePatches()

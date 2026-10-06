@@ -2,7 +2,7 @@
 
 This page is generated from the same normalized rig metadata used by the runtime. Do not edit it by hand. Run **Captivity Reloaded > Modding > Refresh Core Enemy Asset Slot Catalog** after changing a Core rig.
 
-The catalog currently publishes 416 enemy-specific sprite slots across 21 Core enemies. Target the enemy ID in an `assetPatch` and use the relative slot shown below. Enemy-specific multipart anatomy slots are preferred over the older global `core:enemy-anatomy` aliases.
+The catalog currently publishes 417 enemy-specific sprite slots across 21 Core enemies. Target the enemy ID in an `assetPatch` and use the relative slot shown below. Enemy-specific multipart anatomy slots are preferred over the older global `core:enemy-anatomy` aliases. A `/variant/` slot replaces artwork assigned only by an animation.
 
 ## `core:enemy/abby`
 
@@ -275,6 +275,7 @@ Compatibility aliases:
 | `body/breast-bg` | `breast-bg` | `BreastBg` |
 | `body/arm-left-lower` | `arm-left-lower` | `ArmLower_10` |
 | `body/head` | `head` | `Head_19` |
+| `body/head/variant/head-fear` | `head` | `HeadFear` (animation variant) |
 | `body/arm-right-lower` | `arm-right-lower` | `ArmLower_10` |
 | `body/hand-left` | `hand-left` | `Hand_19` |
 | `body/hand-right` | `hand-right` | `Hand_19` |

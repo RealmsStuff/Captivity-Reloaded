@@ -62,6 +62,7 @@ namespace CaptivityReloaded.Editor.Modding
 					throw new InvalidDataException("Normalized rig has an invalid Core enemy ID: " + rigPath);
 				JArray slots = new JArray();
 				HashSet<string> slotNames = new HashSet<string>(StringComparer.Ordinal);
+				Dictionary<string, JObject> slotsByBone = new Dictionary<string, JObject>(StringComparer.Ordinal);
 				foreach (JObject bone in ((JArray)rig["bones"] ?? new JArray()).OfType<JObject>())
 				{
 					string boneName = (string)bone["name"];
@@ -74,14 +75,49 @@ namespace CaptivityReloaded.Editor.Modding
 						throw new InvalidDataException(enemyId + " contains a sprite renderer without a semantic bone or hierarchy path.");
 					string suffix = "body/" + (s_canonicalNames.TryGetValue(boneName, out string canonical) ? canonical : boneName);
 					if (!slotNames.Add(suffix)) throw new InvalidDataException(enemyId + " maps more than one renderer to " + suffix + ".");
-					slots.Add(new JObject
+					JObject slot = new JObject
 					{
 						["slot"] = suffix,
 						["bone"] = boneName,
 						["rendererPath"] = rendererPath,
 						["spriteName"] = (string)sprite["name"]
-					});
+					};
+					slots.Add(slot);
+					slotsByBone[boneName] = slot;
 					slotCount++;
+				}
+
+				string enemyDirectory = FilePath.GetDirectoryName(rigPath);
+				foreach (string animationPath in Directory.GetFiles(enemyDirectory, "*.json", SearchOption.TopDirectoryOnly)
+					.Where(i_path => !string.Equals(FilePath.GetFileName(i_path), "rig.json", StringComparison.OrdinalIgnoreCase))
+					.OrderBy(i_path => i_path, StringComparer.Ordinal))
+				{
+					JObject animation = JObject.Parse(File.ReadAllText(animationPath));
+					foreach (JObject track in ((JArray)animation["objectTracks"] ?? new JArray()).OfType<JObject>())
+					{
+						string target = (string)track["target"];
+						if (string.IsNullOrEmpty(target) || !target.StartsWith("sprite/", StringComparison.Ordinal)) continue;
+						string boneName = target.Substring("sprite/".Length);
+						if (!slotsByBone.TryGetValue(boneName, out JObject baseSlot))
+							throw new InvalidDataException(animationPath + " targets a sprite bone that is absent from its rig: " + boneName);
+						foreach (JObject key in ((JArray)track["keys"] ?? new JArray()).OfType<JObject>())
+						{
+							string spriteName = (string)key["name"];
+							if (string.IsNullOrEmpty(spriteName) || spriteName == (string)baseSlot["spriteName"]) continue;
+							string suffix = (string)baseSlot["slot"] + "/variant/" + Slug(spriteName);
+							if (!slotNames.Add(suffix)) continue;
+							slots.Add(new JObject
+							{
+								["slot"] = suffix,
+								["bone"] = boneName,
+								["rendererPath"] = baseSlot["rendererPath"],
+								["spriteName"] = spriteName,
+								["animatedSpriteName"] = spriteName,
+								["sourceAnimation"] = ForwardSlash(animationPath.Substring(root.TrimEnd(FilePath.DirectorySeparatorChar, FilePath.AltDirectorySeparatorChar).Length).TrimStart(FilePath.DirectorySeparatorChar, FilePath.AltDirectorySeparatorChar))
+							});
+							slotCount++;
+						}
+					}
 				}
 
 				JArray aliases = new JArray();
@@ -126,9 +162,10 @@ namespace CaptivityReloaded.Editor.Modding
 			{
 				string id = (string)enemy["id"];
 				text.AppendLine("## `" + id + "`").AppendLine();
-				text.AppendLine("| Relative slot | Rig bone | Core sprite |").AppendLine("| --- | --- | --- |");
+				text.AppendLine("| Relative slot | Rig bone | Core sprite | Usage |").AppendLine("| --- | --- | --- | --- |");
 				foreach (JObject slot in ((JArray)enemy["slots"]).OfType<JObject>())
-					text.AppendLine("| `" + slot["slot"] + "` | `" + slot["bone"] + "` | `" + (slot["spriteName"] ?? "") + "` |");
+					text.AppendLine("| `" + slot["slot"] + "` | `" + slot["bone"] + "` | `" + (slot["spriteName"] ?? "") + "` | " +
+						(slot["animatedSpriteName"] == null ? "Default" : "Animation variant") + " |");
 				JArray aliases = (JArray)enemy["legacyAliases"];
 				if (aliases.Count > 0)
 				{
@@ -158,6 +195,21 @@ namespace CaptivityReloaded.Editor.Modding
 			if (string.IsNullOrEmpty(i_parent)) return i_child ?? string.Empty;
 			if (string.IsNullOrEmpty(i_child)) return i_parent;
 			return i_parent.TrimEnd('/') + "/" + i_child.TrimStart('/');
+		}
+
+		private static string Slug(string i_value)
+		{
+			StringBuilder slug = new StringBuilder();
+			foreach (char character in i_value ?? string.Empty)
+			{
+				if (char.IsLetterOrDigit(character))
+				{
+					if (char.IsUpper(character) && slug.Length > 0 && slug[slug.Length - 1] != '-') slug.Append('-');
+					slug.Append(char.ToLowerInvariant(character));
+				}
+				else if (slug.Length > 0 && slug[slug.Length - 1] != '-') slug.Append('-');
+			}
+			return slug.ToString().Trim('-');
 		}
 	}
 }
