@@ -1367,14 +1367,6 @@
           "spriteName": "Head_19"
         },
         {
-          "slot": "body/head/variant/head-fear",
-          "bone": "head",
-          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
-          "spriteName": "HeadFear",
-          "animatedSpriteName": "HeadFear",
-          "sourceAnimation": "ModSDK/AnimationReference/NormalizedEnemies/jacky/scare.json"
-        },
-        {
           "slot": "body/arm-right-lower",
           "bone": "arm-right-lower",
           "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
@@ -1397,6 +1389,14 @@
           "bone": "knife",
           "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/knife",
           "spriteName": "knife"
+        },
+        {
+          "slot": "body/head/variant/head-fear",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "HeadFear",
+          "animatedSpriteName": "HeadFear",
+          "sourceAnimation": "ModSDK/AnimationReference/NormalizedEnemies/jacky/scare.json"
         }
       ],
       "legacyAliases": [

@@ -157,7 +157,7 @@ namespace CaptivityReloaded.Editor.Modding
 			StringBuilder text = new StringBuilder();
 			text.AppendLine("# Core enemy asset slots").AppendLine();
 			text.AppendLine("This page is generated from the same normalized rig metadata used by the runtime. Do not edit it by hand. Run **Captivity Reloaded > Modding > Refresh Core Enemy Asset Slot Catalog** after changing a Core rig.").AppendLine();
-			text.AppendLine("The catalog currently publishes " + i_slotCount + " enemy-specific sprite slots across " + i_enemies.Count + " Core enemies. Target the enemy ID in an `assetPatch` and use the relative slot shown below. Enemy-specific multipart anatomy slots are preferred over the older global `core:enemy-anatomy` aliases.").AppendLine();
+			text.AppendLine("The catalog currently publishes " + i_slotCount + " enemy-specific sprite slots across " + i_enemies.Count + " Core enemies. Target the enemy ID in an `assetPatch` and use the relative slot shown below. Enemy-specific multipart anatomy slots are preferred over the older global `core:enemy-anatomy` aliases. A `/variant/` slot replaces artwork assigned only by an animation.").AppendLine();
 			foreach (JObject enemy in i_enemies.OfType<JObject>())
 			{
 				string id = (string)enemy["id"];
