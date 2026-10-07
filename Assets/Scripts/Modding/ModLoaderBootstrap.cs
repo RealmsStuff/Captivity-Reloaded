@@ -223,7 +223,7 @@ namespace CaptivityReloaded.Modding
 				io_report.Add(ValidationSeverity.Error, "enemy.player-animation-ref-missing", "Unknown normalized player animation: " + i_reference, i_source);
 				return;
 			}
-			i_assign(animation.CreateFinisherClip());
+			i_assign(animation.CreateFinisherClip(io_report));
 		}
 
 		private static void ResolveEnemyAnimationReferences(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)

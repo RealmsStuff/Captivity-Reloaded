@@ -69,6 +69,7 @@ namespace CaptivityReloaded.Editor.Modding
 		[SerializeField] private float m_finisherFailurePleasure = 5f;
 		[SerializeField] private float m_finisherFailureLibido = 2f;
 		[SerializeField] private float m_finisherFailureRagdoll = 1f;
+		[SerializeField] private bool m_preserveExistingAdditionalPhases = true;
 		private readonly List<FinisherEnemyClip> m_finisherEnemyClips = new List<FinisherEnemyClip>();
 		private readonly List<FinisherPlayerClip> m_finisherPlayerClips = new List<FinisherPlayerClip>();
 		private string m_finisherEnemyPath;
@@ -234,6 +235,8 @@ namespace CaptivityReloaded.Editor.Modding
 			}
 
 			m_finisherUsePhases = EditorGUILayout.ToggleLeft("Use two independently configured phases", m_finisherUsePhases);
+			m_preserveExistingAdditionalPhases = EditorGUILayout.ToggleLeft("Preserve existing phases after the two shown here", m_preserveExistingAdditionalPhases);
+			EditorGUILayout.HelpBox("Existing phase timing is loaded when clips are discovered. Keeping this enabled prevents a two-phase edit from deleting phase 3 and later. Disable it explicitly to replace the complete phase list.", MessageType.None);
 			EditorGUILayout.Space(4f);
 			if (m_finisherUsePhases)
 			{
@@ -321,9 +324,56 @@ namespace CaptivityReloaded.Editor.Modding
 				int draftPlayer = m_finisherPlayerClips.FindIndex(i_clip => i_clip.Id.EndsWith("/paired-draft", StringComparison.Ordinal)); if (draftPlayer >= 0) m_finisherPlayerClipIndex = m_finisherPlayerClipIndex2 = draftPlayer;
 				m_finisherDuration = m_finisherEnemyClips[ClampEnemyIndex(m_finisherEnemyClipIndex)].Duration;
 				m_finisherDuration2 = m_finisherEnemyClips[ClampEnemyIndex(m_finisherEnemyClipIndex2)].Duration;
-				m_statusType = MessageType.Info; m_status = "Found " + m_finisherEnemyClips.Count + " connected enemy clips and " + m_finisherPlayerClips.Count + " player clips.";
+				int loadedPhases = LoadExistingFinisher(enemyEntry.Value);
+				m_statusType = MessageType.Info; m_status = "Found " + m_finisherEnemyClips.Count + " connected enemy clips and " + m_finisherPlayerClips.Count + " player clips."
+					+ (loadedPhases > 0 ? " Loaded " + loadedPhases + " existing finisher phase" + (loadedPhases == 1 ? "." : "s.") : string.Empty);
 			}
 			catch (Exception exception) { m_statusType = MessageType.Error; m_status = exception.Message; }
+		}
+
+		private int LoadExistingFinisher(JObject i_enemy)
+		{
+			JObject finisher = (i_enemy["behavior"]?["modules"] as JArray)?.OfType<JObject>()
+				.FirstOrDefault(i_module => (string)i_module["type"] == "downedFinisher");
+			if (finisher == null) return 0;
+			m_finisherTriggerRange = (float?)finisher["triggerRange"] ?? m_finisherTriggerRange;
+			m_finisherStartDelay = (float?)finisher["startDelaySeconds"] ?? m_finisherStartDelay;
+			m_finisherMeterMax = (float?)finisher["meterMax"] ?? m_finisherMeterMax;
+			m_finisherInputPower = (float?)finisher["inputPower"] ?? m_finisherInputPower;
+			m_finisherDecay = (float?)finisher["decayPerSecond"] ?? m_finisherDecay;
+			m_finisherCooldown = (float?)finisher["cooldownSeconds"] ?? m_finisherCooldown;
+			JArray phases = finisher["phases"] as JArray;
+			if (phases == null || phases.Count == 0)
+			{
+				m_finisherUsePhases = false;
+				LoadFinisherPhase(finisher, false);
+				return 0;
+			}
+			m_finisherUsePhases = true;
+			LoadFinisherPhase(phases.OfType<JObject>().ElementAtOrDefault(0), false);
+			LoadFinisherPhase(phases.OfType<JObject>().ElementAtOrDefault(1), true);
+			return phases.Count;
+		}
+
+		private void LoadFinisherPhase(JObject i_phase, bool i_second)
+		{
+			if (i_phase == null) return;
+			int enemy = m_finisherEnemyClips.FindIndex(i_clip => i_clip.Semantic == (string)i_phase["animation"]);
+			int player = m_finisherPlayerClips.FindIndex(i_clip => i_clip.Id == (string)i_phase["playerAnimationRef"]);
+			if (i_second)
+			{
+				m_finisherPhase2 = (string)i_phase["id"] ?? m_finisherPhase2;
+				m_finisherDuration2 = (float?)i_phase["durationSeconds"] ?? m_finisherDuration2;
+				if (enemy >= 0) m_finisherEnemyClipIndex2 = enemy;
+				if (player >= 0) m_finisherPlayerClipIndex2 = player;
+			}
+			else
+			{
+				m_finisherPhase1 = (string)i_phase["id"] ?? m_finisherPhase1;
+				m_finisherDuration = (float?)i_phase["durationSeconds"] ?? m_finisherDuration;
+				if (enemy >= 0) m_finisherEnemyClipIndex = enemy;
+				if (player >= 0) m_finisherPlayerClipIndex = player;
+			}
 		}
 
 		private void ConfigureFinisher()
@@ -334,7 +384,11 @@ namespace CaptivityReloaded.Editor.Modding
 				string root = ProjectPath(m_modFolder), packId = (string)JObject.Parse(File.ReadAllText(FilePath.Combine(root, "manifest.json")))["id"];
 				JObject enemy = JObject.Parse(File.ReadAllText(m_finisherEnemyPath)); JObject behavior = enemy["behavior"] as JObject ?? new JObject(); enemy["behavior"] = behavior;
 				JArray modules = behavior["modules"] as JArray ?? new JArray(); behavior["modules"] = modules;
-				foreach (JObject existing in modules.OfType<JObject>().Where(i_module => (string)i_module["type"] == "downedFinisher").ToList()) existing.Remove();
+				List<JObject> existingFinishers = modules.OfType<JObject>().Where(i_module => (string)i_module["type"] == "downedFinisher").ToList();
+				JArray existingPhases = existingFinishers.FirstOrDefault()?["phases"] as JArray;
+				if (!m_finisherUsePhases && m_preserveExistingAdditionalPhases && (existingPhases?.Count ?? 0) > 0)
+					throw new InvalidOperationException("This enemy already has a phased finisher. Keep phased editing enabled, or explicitly disable phase preservation before replacing the complete phase list.");
+				foreach (JObject existing in existingFinishers) existing.Remove();
 				JObject finisher = new JObject { ["type"] = "downedFinisher", ["triggerRange"] = m_finisherTriggerRange, ["startDelaySeconds"] = m_finisherStartDelay,
 					["meterMax"] = m_finisherMeterMax, ["inputPower"] = m_finisherInputPower, ["decayPerSecond"] = m_finisherDecay, ["cooldownSeconds"] = m_finisherCooldown,
 					["successOutcome"] = new JObject { ["healthRecovery"] = m_finisherSuccessRecovery, ["enemyStunSeconds"] = m_finisherSuccessStun },
@@ -344,8 +398,11 @@ namespace CaptivityReloaded.Editor.Modding
 				{
 					string phase1 = SemanticSlug(m_finisherPhase1), phase2 = SemanticSlug(m_finisherPhase2);
 					if (string.IsNullOrEmpty(phase1) || string.IsNullOrEmpty(phase2) || phase1 == phase2) throw new InvalidDataException("Two-phase finishers need two different semantic phase IDs.");
-					finisher["phases"] = new JArray(BuildFinisherPhase(phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration),
+					JArray phases = new JArray(BuildFinisherPhase(phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration),
 						BuildFinisherPhase(phase2, m_finisherEnemyClipIndex2, m_finisherPlayerClipIndex2, m_finisherDuration2));
+					if (m_preserveExistingAdditionalPhases && existingPhases != null)
+						foreach (JToken phase in existingPhases.Skip(2)) phases.Add(phase.DeepClone());
+					finisher["phases"] = phases;
 				}
 				else
 				{

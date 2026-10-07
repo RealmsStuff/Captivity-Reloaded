@@ -337,7 +337,14 @@ namespace CaptivityReloaded.Editor.Modding
 			HashSet<string> animationNames = new HashSet<string>(((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>().Select(i_animation => (string)i_animation["name"]), StringComparer.Ordinal);
 			foreach (JProperty source in sources.Properties().Where(i_property => !animationNames.Contains(i_property.Name))) io_report.Add(ValidationSeverity.Error, "dragonbones.clip-missing", "Required animation was removed or renamed: " + source.Name, i_source);
 			foreach (string extra in animationNames.Where(i_name => i_name != null && sources[i_name] == null)) io_report.Add(ValidationSeverity.Warning, "dragonbones.clip-unmapped", "Animation is not recorded in the sidecar and will not be imported: " + extra, i_source);
-			foreach (JObject animation in ((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>())
+			List<JObject> animations = ((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>().ToList();
+			if (animations.Any(i_animation => i_animation.Descendants().OfType<JProperty>().Any(i_property => i_property.Name == "curve" || i_property.Name == "tweenEasing")))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.interpolation-approximation", "DragonBones curve and tweenEasing values are not imported by runtime v1. Imported keys use the normalized animation interpolation rules and may not match the edited motion exactly.", i_source);
+			if (animations.Any(i_animation => i_animation.Descendants().OfType<JProperty>().Any(i_property => i_property.Name == "clockwise" && (int?)i_property.Value != 0)))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.rotation-direction", "DragonBones clockwise rotation directives are not preserved by runtime v1. Review rotations that cross 180 degrees after import.", i_source);
+			if (animations.Any(i_animation => i_animation["zOrder"] != null))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.z-order-ignored", "DragonBones zOrder timelines are not imported by runtime v1. Keep draw-order changes in normalized sortingOrder tracks and review the paired preview.", i_source);
+			foreach (JObject animation in animations)
 			{
 				if (((int?)animation["duration"] ?? 0) < 1) io_report.Add(ValidationSeverity.Error, "dragonbones.clip-duration", "Animation has no positive frame duration: " + (string)animation["name"], i_source);
 				foreach (JObject timeline in ((JArray)animation["bone"] ?? new JArray()).OfType<JObject>())

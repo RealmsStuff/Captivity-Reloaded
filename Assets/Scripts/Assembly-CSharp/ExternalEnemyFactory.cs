@@ -5,6 +5,7 @@ using System.Linq;
 using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 public static class ExternalEnemyFactory
 {
@@ -1077,6 +1078,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private readonly Dictionary<string, BodyPartPlayer> m_playerBodyParts = new Dictionary<string, BodyPartPlayer>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Sprite> m_playerBaseSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Sprite> m_runtimeSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+	private readonly List<FinisherRendererSnapshot> m_rendererSnapshots = new List<FinisherRendererSnapshot>();
+	private readonly List<FinisherSortingGroupSnapshot> m_sortingGroupSnapshots = new List<FinisherSortingGroupSnapshot>();
 	private Animator m_playerSkeletonAnimator;
 	private bool m_playerAnimatorWasEnabled;
 	private Rigidbody2D m_playerBody;
@@ -1200,6 +1203,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_player.HideEquippedWeapon();
 		if (m_player.GetStateActorCurrent() == StateActor.Ragdoll) m_player.DisableRagdoll();
 		AlignPlayerToFinisherFloor();
+		AlignEnemyToPlayerForFinisher();
 		m_player.SetIsExposing(false);
 		m_player.SetIsCrouching(false);
 		m_player.SetStateActor(StateActor.Idle);
@@ -1210,9 +1214,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		// state directly. Raising Player.OnBeingRaped here would make legacy
 		// challenge listeners dereference a nonexistent Raper.
 		m_player.SetStatePlayer(StatePlayer.BeingRaped);
-		m_player.SetIsInvulnerable(true, true);
+		m_player.SetIsInvulnerable(true, false);
 		SetActorCollisionIgnored(true);
 		LockActorPhysics();
+		BeginPairedSorting();
 		BeginPlayerAnimation();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(true);
 		PlayCurrentPhase();
@@ -1243,6 +1248,15 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_player.PlaceFeetOnPos(new Vector2(m_player.GetPos().x, hit.point.y));
 			return;
 		}
+	}
+
+	private void AlignEnemyToPlayerForFinisher()
+	{
+		if (m_player == null || m_npc == null) return;
+		// Match the pair preview: both actor roots share an X coordinate and both
+		// reported feet sit on the same floor line before their local pose tracks run.
+		// Composite rigs can then use one authored coordinate frame consistently.
+		m_npc.PlaceFeetOnPos(m_player.GetPosFeet());
 	}
 
 	private void UpdateFinisher()
@@ -1314,6 +1328,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		ManagerHudRapeGames hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames();
 		if (hud != null) hud.HideHudSmasher();
 		EndPlayerAnimation();
+		EndPairedSorting();
 		SeparateActorsForRelease();
 		UnlockActorPhysics();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1380,6 +1395,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		if (m_isActive && CommonReferences.Instance != null && m_player != null) EndFinisher(false, false);
 		if (!m_actorPhysicsLocked) return;
 		EndPlayerAnimation();
+		EndPairedSorting();
 		UnlockActorPhysics();
 		if (CommonReferences.Instance != null && CommonReferences.Instance.GetPlayerController() != null)
 			CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1498,6 +1514,32 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			}
 		}
 		m_isIgnoringActorCollision = i_ignore;
+	}
+
+	private void BeginPairedSorting()
+	{
+		EndPairedSorting();
+		CapturePairedSorting(m_player == null ? null : m_player.gameObject);
+		CapturePairedSorting(m_npc == null ? null : m_npc.gameObject);
+		foreach (FinisherRendererSnapshot snapshot in m_rendererSnapshots) snapshot.UseLayer("Player");
+		foreach (FinisherSortingGroupSnapshot snapshot in m_sortingGroupSnapshots) snapshot.UseLayer("Player");
+	}
+
+	private void CapturePairedSorting(GameObject i_root)
+	{
+		if (i_root == null) return;
+		foreach (SpriteRenderer renderer in i_root.GetComponentsInChildren<SpriteRenderer>(true))
+			if (renderer != null) m_rendererSnapshots.Add(new FinisherRendererSnapshot(renderer));
+		foreach (SortingGroup group in i_root.GetComponentsInChildren<SortingGroup>(true))
+			if (group != null) m_sortingGroupSnapshots.Add(new FinisherSortingGroupSnapshot(group));
+	}
+
+	private void EndPairedSorting()
+	{
+		foreach (FinisherRendererSnapshot snapshot in m_rendererSnapshots) snapshot.Restore();
+		foreach (FinisherSortingGroupSnapshot snapshot in m_sortingGroupSnapshots) snapshot.Restore();
+		m_rendererSnapshots.Clear();
+		m_sortingGroupSnapshots.Clear();
 	}
 
 	private void SeparateActorsForRelease()
@@ -1755,6 +1797,50 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 				else renderer.sortingOrder = m_playerBaseSorting[pair.Key];
 				renderer.sprite = m_playerBaseSprites[pair.Key];
 			}
+		}
+	}
+
+	private sealed class FinisherRendererSnapshot
+	{
+		private readonly SpriteRenderer m_renderer;
+		private readonly string m_layer;
+		private readonly int m_order;
+
+		public FinisherRendererSnapshot(SpriteRenderer i_renderer)
+		{
+			m_renderer = i_renderer;
+			m_layer = i_renderer.sortingLayerName;
+			m_order = i_renderer.sortingOrder;
+		}
+
+		public void UseLayer(string i_layer) { if (m_renderer != null) m_renderer.sortingLayerName = i_layer; }
+		public void Restore()
+		{
+			if (m_renderer == null) return;
+			m_renderer.sortingLayerName = m_layer;
+			m_renderer.sortingOrder = m_order;
+		}
+	}
+
+	private sealed class FinisherSortingGroupSnapshot
+	{
+		private readonly SortingGroup m_group;
+		private readonly string m_layer;
+		private readonly int m_order;
+
+		public FinisherSortingGroupSnapshot(SortingGroup i_group)
+		{
+			m_group = i_group;
+			m_layer = i_group.sortingLayerName;
+			m_order = i_group.sortingOrder;
+		}
+
+		public void UseLayer(string i_layer) { if (m_group != null) m_group.sortingLayerName = i_layer; }
+		public void Restore()
+		{
+			if (m_group == null) return;
+			m_group.sortingLayerName = m_layer;
+			m_group.sortingOrder = m_order;
 		}
 	}
 
