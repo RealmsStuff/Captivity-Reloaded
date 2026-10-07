@@ -71,7 +71,7 @@ Published behavior modules currently include regeneration, low-health berserk, l
 
 ### Downed-player finisher QTE
 
-Fully original enemies may add one experimental `downedFinisher` behavior module. When the enemy is within `triggerRange` of a ragdolled player, or a player voluntarily exposing themself with the normal `Expose` binding (`S` by default), it starts Captivity's existing alternating-input struggle meter. Keyboard, controller, mobile struggle, and hold-to-auto-escape inputs use the same paths as Core QTEs.
+Fully original enemies may add one experimental `downedFinisher` behavior module. When the enemy is within `triggerRange` of a ragdolled player, or a player voluntarily exposing themself with the normal `Expose` binding (`S` by default), it starts Captivity's struggle meter. Keyboard, controller, and mobile use the same bounded QTE implementation.
 
 ```json
 {
@@ -81,6 +81,7 @@ Fully original enemies may add one experimental `downedFinisher` behavior module
   "durationSeconds": 8,
   "meterMax": 100,
   "inputPower": 14,
+  "inputPattern": "adaptive",
   "decayPerSecond": 2,
   "failureDamage": 20,
   "successRecoveryHealth": 8,
@@ -107,9 +108,40 @@ Fully original enemies may add one experimental `downedFinisher` behavior module
 
 Reaching `meterMax` releases the player, optionally restores health, and can ragdoll the enemy for `successStunSeconds`. Running out of time releases the player, applies `failureDamage`, and briefly knocks the player down. `animation` references an enemy procedural clip. Optional `playerAnimation` uses the same bounded, interpolated frame format for the published player bones and restores the player's previous pose afterward. Normalized player-animation references also support sprite, color, sorting, and particle presentation tracks.
 
+`inputPattern` selects the struggle interaction and defaults to `adaptive` for compatibility:
+
+- `adaptive` preserves the original behavior: alternating directions on keyboard, right-stick rotation on controller, and aim-stick rotation or Jump taps on mobile. Keyboard players may hold Jump for slower automatic progress.
+- `alternate` requires discrete left/right inputs. Controller and mobile sticks must return to neutral between directions.
+- `rotate` requires aim-stick rotation on controller/mobile and uses alternating directions as its keyboard fallback.
+- `tap` requires repeated presses of the normal Jump action and displays that device's Jump glyph.
+
 For a reusable curve-based animation, put a `playerAnimation` document in a content root and replace the inline object with `"playerAnimationRef": "your.pack:player-animation/example"`. Normalized position, rotation, and scale tracks are sampled through their authored linear or Hermite curves and converted into the same safe finisher player. A reference may be used on the top-level finisher or an individual phase. Missing IDs invalidate the pack, and an entry cannot define both `playerAnimation` and `playerAnimationRef`. Runtime v1 accepts the `core:player-rig/alex` rig. See `ExampleMods/prey-green-zombie/content/stalker-restraint.player-animation.json`.
 
-For an ordered finisher, replace the single presentation with 2–8 `phases`. Each phase requires a unique `id`, its own `durationSeconds`, and an enemy `animation`; it may also provide a separate `playerAnimation`, `inputPower`, and `decayPerSecond`. The struggle meter persists between phases. Phase animations restart at each transition, and enemy/player events use time relative to that phase. Reaching `meterMax` succeeds immediately; reaching the end of the last phase fails. Combined phase duration is capped at 300 seconds.
+For an ordered finisher, replace the single presentation with 2–8 `phases`. Each phase requires a unique `id`, its own `durationSeconds`, and an enemy `animation`; it may also provide a separate `playerAnimation`, `inputPattern`, `inputPower`, and `decayPerSecond`. The struggle meter persists between phases, while the prompt and input gesture may change. Phase animations restart at each transition, and enemy/player events use time relative to that phase. Reaching `meterMax` succeeds immediately; reaching the end of the last phase fails. Combined phase duration is capped at 300 seconds.
+
+### Independent NPC participants
+
+A phased `downedFinisher` may reserve up to three real secondary original-enemy instances. Each entry in `participants` defines a stable slot ID, the required enemy content ID, its join policy, ranges, pair offset, facing, and optional fallback animation. Phase-specific animations are selected through `participantAnimations` on each phase.
+
+```json
+"participants": [
+  {
+    "id": "assistant",
+    "enemy": "your.pack:enemy/assistant",
+    "joinPolicy": "phaseBoundary",
+    "joinRange": 3,
+    "approachRange": 9,
+    "offsetX": 1.25,
+    "offsetY": 0,
+    "facing": "left",
+    "animation": "assist-idle"
+  }
+]
+```
+
+`startOnly` slots are checked when the interaction begins and may be marked `required`. `phaseBoundary` slots are optional: matching unreserved enemies inside `approachRange` approach the active interaction, and enemies inside `joinRange` enter at the next phase boundary. They never jump into the middle of a phase. Runtime v1 limits participants to `originalSkeletonAtlas` enemies because each participant needs the modular animation controller.
+
+While participating, each NPC has its AI, attacks, physics, collisions, animation, facing, position, and sorting state controlled by the QTE session. That state is restored on success, failure, cancellation, component disable, or participant removal. The owner and every secondary NPC are reserved so two active interactions cannot claim the same instance.
 
 Optional `successOutcome` and `failureOutcome` objects replace the legacy fixed outcome fields. They may independently combine `healthDamage`, `strengthDamage`, `pleasure`, `libido`, `healthRecovery`, `enemyStunSeconds`, and `playerRagdollSeconds`. When an outcome object is omitted, the existing `successRecoveryHealth`, `successStunSeconds`, or `failureDamage` behavior remains in effect. The Green Stalker example demonstrates two phases with distinct animation/event rates and different success/failure effects.
 

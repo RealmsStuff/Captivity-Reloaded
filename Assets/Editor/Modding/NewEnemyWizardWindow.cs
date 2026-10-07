@@ -52,6 +52,8 @@ namespace CaptivityReloaded.Editor.Modding
 		[SerializeField] private int m_finisherPlayerClipIndex;
 		[SerializeField] private int m_finisherEnemyClipIndex2;
 		[SerializeField] private int m_finisherPlayerClipIndex2;
+		[SerializeField] private int m_finisherInputPattern;
+		[SerializeField] private int m_finisherInputPattern2;
 		[SerializeField] private string m_finisherPhase1 = "restraint";
 		[SerializeField] private string m_finisherPhase2 = "intense";
 		[SerializeField] private float m_finisherDuration = 4f;
@@ -70,12 +72,14 @@ namespace CaptivityReloaded.Editor.Modding
 		[SerializeField] private float m_finisherFailureLibido = 2f;
 		[SerializeField] private float m_finisherFailureRagdoll = 1f;
 		[SerializeField] private bool m_preserveExistingAdditionalPhases = true;
+		[SerializeField] private List<FinisherParticipantDraft> m_finisherParticipants = new List<FinisherParticipantDraft>();
 		private readonly List<FinisherEnemyClip> m_finisherEnemyClips = new List<FinisherEnemyClip>();
 		private readonly List<FinisherPlayerClip> m_finisherPlayerClips = new List<FinisherPlayerClip>();
 		private string m_finisherEnemyPath;
 		private Vector2 m_scroll;
 		private string m_status;
 		private MessageType m_statusType;
+		private static readonly string[] FinisherInputPatterns = { "adaptive", "alternate", "rotate", "tap" };
 
 		[MenuItem("Captivity Reloaded/Modding/Create Original Enemy...")]
 		public static void Open()
@@ -240,15 +244,17 @@ namespace CaptivityReloaded.Editor.Modding
 			EditorGUILayout.Space(4f);
 			if (m_finisherUsePhases)
 			{
-				DrawFinisherPhase("Phase 1", ref m_finisherPhase1, ref m_finisherEnemyClipIndex, ref m_finisherPlayerClipIndex, ref m_finisherDuration);
-				DrawFinisherPhase("Phase 2", ref m_finisherPhase2, ref m_finisherEnemyClipIndex2, ref m_finisherPlayerClipIndex2, ref m_finisherDuration2);
+				DrawFinisherPhase("Phase 1", ref m_finisherPhase1, ref m_finisherEnemyClipIndex, ref m_finisherPlayerClipIndex, ref m_finisherDuration, ref m_finisherInputPattern);
+				DrawFinisherPhase("Phase 2", ref m_finisherPhase2, ref m_finisherEnemyClipIndex2, ref m_finisherPlayerClipIndex2, ref m_finisherDuration2, ref m_finisherInputPattern2);
 			}
 			else
 			{
 				m_finisherEnemyClipIndex = EditorGUILayout.Popup("Enemy animation", ClampEnemyIndex(m_finisherEnemyClipIndex), EnemyClipLabels());
 				m_finisherPlayerClipIndex = EditorGUILayout.Popup("Player animation", ClampPlayerIndex(m_finisherPlayerClipIndex), PlayerClipLabels());
 				m_finisherDuration = EditorGUILayout.FloatField("Interaction duration", m_finisherDuration);
+				m_finisherInputPattern = EditorGUILayout.Popup("QTE pattern", Mathf.Clamp(m_finisherInputPattern, 0, FinisherInputPatterns.Length - 1), FinisherInputPatterns);
 			}
+			DrawFinisherParticipants();
 
 			EditorGUILayout.Space(5f); EditorGUILayout.LabelField("Struggle", EditorStyles.boldLabel);
 			m_finisherTriggerRange = EditorGUILayout.FloatField("Trigger range", m_finisherTriggerRange);
@@ -271,12 +277,50 @@ namespace CaptivityReloaded.Editor.Modding
 			}
 		}
 
-		private void DrawFinisherPhase(string i_label, ref string io_id, ref int io_enemy, ref int io_player, ref float io_duration)
+		private void DrawFinisherPhase(string i_label, ref string io_id, ref int io_enemy, ref int io_player, ref float io_duration, ref int io_pattern)
 		{
 			EditorGUILayout.LabelField(i_label, EditorStyles.boldLabel); io_id = EditorGUILayout.TextField("Phase ID", io_id);
 			io_enemy = EditorGUILayout.Popup("Enemy animation", ClampEnemyIndex(io_enemy), EnemyClipLabels());
 			io_player = EditorGUILayout.Popup("Player animation", ClampPlayerIndex(io_player), PlayerClipLabels());
 			io_duration = EditorGUILayout.FloatField("Duration", io_duration);
+			io_pattern = EditorGUILayout.Popup("QTE pattern", Mathf.Clamp(io_pattern, 0, FinisherInputPatterns.Length - 1), FinisherInputPatterns);
+		}
+
+		private void DrawFinisherParticipants()
+		{
+			EditorGUILayout.Space(6f);
+			EditorGUILayout.LabelField("Independent NPC participants", EditorStyles.boldLabel);
+			EditorGUILayout.HelpBox("Secondary original enemies can be present at the start or approach an open slot and join at a phase boundary. Runtime v1 supports up to three.", MessageType.None);
+			EditorGUILayout.HelpBox("Open Pair previews the owner and player only. Spawn the configured participant enemy IDs in the generated test stage to verify live joining, offsets, and restoration.", MessageType.Info);
+			for (int index = 0; index < m_finisherParticipants.Count; index++)
+			{
+				FinisherParticipantDraft participant = m_finisherParticipants[index];
+				using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+				{
+					using (new EditorGUILayout.HorizontalScope())
+					{
+						EditorGUILayout.LabelField("Participant " + (index + 1), EditorStyles.boldLabel);
+						if (GUILayout.Button("Remove", GUILayout.Width(70f))) { m_finisherParticipants.RemoveAt(index--); continue; }
+					}
+					participant.Id = EditorGUILayout.TextField("Slot ID", participant.Id);
+					participant.Enemy = EditorGUILayout.TextField("Enemy content ID", participant.Enemy);
+					participant.JoinPolicy = EditorGUILayout.Popup("Join policy", Mathf.Clamp(participant.JoinPolicy, 0, 1), new[] { "phaseBoundary", "startOnly" });
+					using (new EditorGUI.DisabledScope(participant.JoinPolicy == 0)) participant.Required = EditorGUILayout.Toggle("Required", participant.Required);
+					if (participant.JoinPolicy == 0) participant.Required = false;
+					participant.JoinRange = EditorGUILayout.FloatField("Join range", participant.JoinRange);
+					participant.ApproachRange = EditorGUILayout.FloatField("Approach range", participant.ApproachRange);
+					participant.Offset = EditorGUILayout.Vector2Field("Pair offset", participant.Offset);
+					participant.Facing = EditorGUILayout.Popup("Facing", Mathf.Clamp(participant.Facing, 0, 2), new[] { "preserve", "left", "right" });
+					participant.Animation = EditorGUILayout.TextField("Fallback animation", participant.Animation);
+					if (m_finisherUsePhases)
+					{
+						participant.Phase1Animation = EditorGUILayout.TextField("Phase 1 animation", participant.Phase1Animation);
+						participant.Phase2Animation = EditorGUILayout.TextField("Phase 2 animation", participant.Phase2Animation);
+					}
+				}
+			}
+			using (new EditorGUI.DisabledScope(m_finisherParticipants.Count >= 3))
+				if (GUILayout.Button("Add participant")) m_finisherParticipants.Add(new FinisherParticipantDraft());
 		}
 
 		private string[] EnemyClipLabels() { return m_finisherEnemyClips.Select(i_clip => i_clip.Semantic + " — " + i_clip.DisplayName).ToArray(); }
@@ -333,6 +377,7 @@ namespace CaptivityReloaded.Editor.Modding
 
 		private int LoadExistingFinisher(JObject i_enemy)
 		{
+			m_finisherParticipants.Clear();
 			JObject finisher = (i_enemy["behavior"]?["modules"] as JArray)?.OfType<JObject>()
 				.FirstOrDefault(i_module => (string)i_module["type"] == "downedFinisher");
 			if (finisher == null) return 0;
@@ -343,6 +388,7 @@ namespace CaptivityReloaded.Editor.Modding
 			m_finisherDecay = (float?)finisher["decayPerSecond"] ?? m_finisherDecay;
 			m_finisherCooldown = (float?)finisher["cooldownSeconds"] ?? m_finisherCooldown;
 			JArray phases = finisher["phases"] as JArray;
+			LoadFinisherParticipants(finisher, phases);
 			if (phases == null || phases.Count == 0)
 			{
 				m_finisherUsePhases = false;
@@ -353,6 +399,30 @@ namespace CaptivityReloaded.Editor.Modding
 			LoadFinisherPhase(phases.OfType<JObject>().ElementAtOrDefault(0), false);
 			LoadFinisherPhase(phases.OfType<JObject>().ElementAtOrDefault(1), true);
 			return phases.Count;
+		}
+
+		private void LoadFinisherParticipants(JObject i_finisher, JArray i_phases)
+		{
+			m_finisherParticipants.Clear();
+			JObject phase1Animations = i_phases?.OfType<JObject>().ElementAtOrDefault(0)?["participantAnimations"] as JObject;
+			JObject phase2Animations = i_phases?.OfType<JObject>().ElementAtOrDefault(1)?["participantAnimations"] as JObject;
+			foreach (JObject participant in (i_finisher["participants"] as JArray)?.OfType<JObject>() ?? Enumerable.Empty<JObject>())
+			{
+				string id = (string)participant["id"] ?? "assistant";
+				m_finisherParticipants.Add(new FinisherParticipantDraft
+				{
+					Id = id, Enemy = (string)participant["enemy"] ?? string.Empty,
+					JoinPolicy = (string)participant["joinPolicy"] == "startOnly" ? 1 : 0,
+					Required = (bool?)participant["required"] ?? false,
+					JoinRange = (float?)participant["joinRange"] ?? 3f,
+					ApproachRange = (float?)participant["approachRange"] ?? 9f,
+					Offset = new Vector2((float?)participant["offsetX"] ?? 0f, (float?)participant["offsetY"] ?? 0f),
+					Facing = (string)participant["facing"] == "left" ? 1 : (string)participant["facing"] == "right" ? 2 : 0,
+					Animation = (string)participant["animation"] ?? "idle",
+					Phase1Animation = (string)phase1Animations?[id] ?? string.Empty,
+					Phase2Animation = (string)phase2Animations?[id] ?? string.Empty
+				});
+			}
 		}
 
 		private void LoadFinisherPhase(JObject i_phase, bool i_second)
@@ -394,12 +464,15 @@ namespace CaptivityReloaded.Editor.Modding
 					["successOutcome"] = new JObject { ["healthRecovery"] = m_finisherSuccessRecovery, ["enemyStunSeconds"] = m_finisherSuccessStun },
 					["failureOutcome"] = new JObject { ["healthDamage"] = m_finisherFailureHealth, ["strengthDamage"] = m_finisherFailureStrength,
 						["pleasure"] = m_finisherFailurePleasure, ["libido"] = m_finisherFailureLibido, ["playerRagdollSeconds"] = m_finisherFailureRagdoll } };
+				if (!m_finisherUsePhases && m_finisherParticipants.Any(i_participant => i_participant.JoinPolicy == 0))
+					throw new InvalidDataException("phaseBoundary participants require a phased finisher. Choose startOnly or enable phases.");
+				if (m_finisherParticipants.Count > 0) finisher["participants"] = BuildFinisherParticipants();
 				if (m_finisherUsePhases)
 				{
 					string phase1 = SemanticSlug(m_finisherPhase1), phase2 = SemanticSlug(m_finisherPhase2);
 					if (string.IsNullOrEmpty(phase1) || string.IsNullOrEmpty(phase2) || phase1 == phase2) throw new InvalidDataException("Two-phase finishers need two different semantic phase IDs.");
-					JArray phases = new JArray(BuildFinisherPhase(phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration),
-						BuildFinisherPhase(phase2, m_finisherEnemyClipIndex2, m_finisherPlayerClipIndex2, m_finisherDuration2));
+					JArray phases = new JArray(BuildFinisherPhase(phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration, m_finisherInputPattern, false),
+						BuildFinisherPhase(phase2, m_finisherEnemyClipIndex2, m_finisherPlayerClipIndex2, m_finisherDuration2, m_finisherInputPattern2, true));
 					if (m_preserveExistingAdditionalPhases && existingPhases != null)
 						foreach (JToken phase in existingPhases.Skip(2)) phases.Add(phase.DeepClone());
 					finisher["phases"] = phases;
@@ -408,6 +481,7 @@ namespace CaptivityReloaded.Editor.Modding
 				{
 					FinisherEnemyClip enemyClip = m_finisherEnemyClips[ClampEnemyIndex(m_finisherEnemyClipIndex)]; FinisherPlayerClip playerClip = m_finisherPlayerClips[ClampPlayerIndex(m_finisherPlayerClipIndex)];
 					finisher["durationSeconds"] = m_finisherDuration; finisher["animation"] = enemyClip.Semantic; finisher["playerAnimationRef"] = playerClip.Id;
+					finisher["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(m_finisherInputPattern, 0, FinisherInputPatterns.Length - 1)];
 				}
 				modules.Add(finisher); string candidate = enemy.ToString(Formatting.Indented);
 				EnemyDefinitionLoadResult definitionValidation = EnemyDefinitionParser.Parse(candidate, packId, m_finisherEnemyPath);
@@ -434,11 +508,38 @@ namespace CaptivityReloaded.Editor.Modding
 			catch (Exception exception) { m_statusType = MessageType.Error; m_status = exception.Message; }
 		}
 
-		private JObject BuildFinisherPhase(string i_id, int i_enemyIndex, int i_playerIndex, float i_duration)
+		private JObject BuildFinisherPhase(string i_id, int i_enemyIndex, int i_playerIndex, float i_duration, int i_pattern, bool i_second)
 		{
 			FinisherEnemyClip enemy = m_finisherEnemyClips[ClampEnemyIndex(i_enemyIndex)]; FinisherPlayerClip player = m_finisherPlayerClips[ClampPlayerIndex(i_playerIndex)];
-			return new JObject { ["id"] = i_id, ["durationSeconds"] = i_duration, ["animation"] = enemy.Semantic, ["playerAnimationRef"] = player.Id,
+			JObject result = new JObject { ["id"] = i_id, ["durationSeconds"] = i_duration, ["animation"] = enemy.Semantic, ["playerAnimationRef"] = player.Id,
+				["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(i_pattern, 0, FinisherInputPatterns.Length - 1)],
 				["inputPower"] = m_finisherInputPower, ["decayPerSecond"] = m_finisherDecay };
+			JObject animations = new JObject();
+			foreach (FinisherParticipantDraft participant in m_finisherParticipants)
+			{
+				string animation = i_second ? participant.Phase2Animation : participant.Phase1Animation;
+				if (!string.IsNullOrWhiteSpace(animation)) animations[SemanticSlug(participant.Id)] = animation.Trim();
+			}
+			if (animations.Count > 0) result["participantAnimations"] = animations;
+			return result;
+		}
+
+		private JArray BuildFinisherParticipants()
+		{
+			JArray result = new JArray();
+			foreach (FinisherParticipantDraft participant in m_finisherParticipants)
+			{
+				string id = SemanticSlug(participant.Id);
+				if (string.IsNullOrEmpty(id)) throw new InvalidDataException("Every participant needs a semantic slot ID.");
+				JObject item = new JObject { ["id"] = id, ["enemy"] = participant.Enemy.Trim(),
+					["joinPolicy"] = participant.JoinPolicy == 1 ? "startOnly" : "phaseBoundary", ["required"] = participant.Required,
+					["joinRange"] = participant.JoinRange, ["approachRange"] = participant.ApproachRange,
+					["offsetX"] = participant.Offset.x, ["offsetY"] = participant.Offset.y,
+					["facing"] = participant.Facing == 1 ? "left" : participant.Facing == 2 ? "right" : "preserve" };
+				if (!string.IsNullOrWhiteSpace(participant.Animation)) item["animation"] = participant.Animation.Trim();
+				result.Add(item);
+			}
+			return result;
 		}
 
 		private void OpenFinisherPreview()
@@ -1265,5 +1366,20 @@ namespace CaptivityReloaded.Editor.Modding
 		}
 		private sealed class FinisherEnemyClip { public string Semantic; public string Id; public string DisplayName; public string Path; public float Duration; }
 		private sealed class FinisherPlayerClip { public string Id; public string DisplayName; public string Path; public float Duration; }
+		[Serializable]
+		private sealed class FinisherParticipantDraft
+		{
+			public string Id = "assistant";
+			public string Enemy = "yourname.my-mod:enemy/assistant";
+			public int JoinPolicy;
+			public bool Required;
+			public float JoinRange = 3f;
+			public float ApproachRange = 9f;
+			public Vector2 Offset = new Vector2(1.25f, 0f);
+			public int Facing;
+			public string Animation = "idle";
+			public string Phase1Animation = string.Empty;
+			public string Phase2Animation = string.Empty;
+		}
 	}
 }

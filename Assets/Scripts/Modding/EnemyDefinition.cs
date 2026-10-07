@@ -174,6 +174,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("startDelaySeconds")] public float? StartDelaySeconds { get; set; }
 		[JsonProperty("meterMax")] public float? MeterMax { get; set; }
 		[JsonProperty("inputPower")] public float? InputPower { get; set; }
+		[JsonProperty("inputPattern")] public string InputPattern { get; set; }
 		[JsonProperty("decayPerSecond")] public float? DecayPerSecond { get; set; }
 		[JsonProperty("failureDamage")] public float? FailureDamage { get; set; }
 		[JsonProperty("successRecoveryHealth")] public float? SuccessRecoveryHealth { get; set; }
@@ -183,6 +184,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("playerAnimation")] public EnemyAnimationClipDefinition PlayerAnimation { get; set; }
 		[JsonProperty("playerAnimationRef")] public string PlayerAnimationReference { get; set; }
 		[JsonProperty("phases")] public List<EnemyFinisherPhaseDefinition> Phases { get; set; } = new List<EnemyFinisherPhaseDefinition>();
+		[JsonProperty("participants")] public List<EnemyFinisherParticipantDefinition> Participants { get; set; } = new List<EnemyFinisherParticipantDefinition>();
 		[JsonProperty("successOutcome")] public EnemyFinisherOutcomeDefinition SuccessOutcome { get; set; }
 		[JsonProperty("failureOutcome")] public EnemyFinisherOutcomeDefinition FailureOutcome { get; set; }
 		[JsonProperty("statuses")] public Dictionary<string, EnemyFinisherStatusTextDefinition> Statuses { get; set; } = new Dictionary<string, EnemyFinisherStatusTextDefinition>();
@@ -204,7 +206,24 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("playerAnimation")] public EnemyAnimationClipDefinition PlayerAnimation { get; set; }
 		[JsonProperty("playerAnimationRef")] public string PlayerAnimationReference { get; set; }
 		[JsonProperty("inputPower")] public float? InputPower { get; set; }
+		[JsonProperty("inputPattern")] public string InputPattern { get; set; }
 		[JsonProperty("decayPerSecond")] public float? DecayPerSecond { get; set; }
+		[JsonProperty("participantAnimations")] public Dictionary<string, string> ParticipantAnimations { get; set; } = new Dictionary<string, string>();
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherParticipantDefinition
+	{
+		[JsonProperty("id", Required = Newtonsoft.Json.Required.Always)] public string Id { get; set; }
+		[JsonProperty("enemy", Required = Newtonsoft.Json.Required.Always)] public string Enemy { get; set; }
+		[JsonProperty("joinPolicy")] public string JoinPolicy { get; set; }
+		[JsonProperty("required")] public bool Required { get; set; }
+		[JsonProperty("joinRange")] public float? JoinRange { get; set; }
+		[JsonProperty("approachRange")] public float? ApproachRange { get; set; }
+		[JsonProperty("offsetX")] public float? OffsetX { get; set; }
+		[JsonProperty("offsetY")] public float? OffsetY { get; set; }
+		[JsonProperty("facing")] public string Facing { get; set; }
+		[JsonProperty("animation")] public string Animation { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -679,6 +698,7 @@ namespace CaptivityReloaded.Modding
 								io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-duration", "Each finisher phase durationSeconds must be 0.1..60.", i_source);
 							totalDuration += phase.DurationSeconds;
 							ValidateRange(phase.InputPower, 0.01f, 10000f, "finisher-phase-input-power", io_report, i_source);
+							ValidateFinisherInputPattern(phase.InputPattern, "finisher-phase-input-pattern", io_report, i_source);
 							ValidateRange(phase.DecayPerSecond, 0f, 10000f, "finisher-phase-decay", io_report, i_source);
 							ValidatePlayerFinisherAnimationSource(phase.PlayerAnimation, phase.PlayerAnimationReference, io_report, i_source);
 						}
@@ -688,6 +708,7 @@ namespace CaptivityReloaded.Modding
 					else ValidateRequiredRange(module.DurationSeconds, 1f, 60f, "finisher-duration", io_report, i_source);
 					ValidateRequiredRange(module.MeterMax, 1f, 10000f, "finisher-meter-max", io_report, i_source);
 					ValidateRequiredRange(module.InputPower, 0.01f, 10000f, "finisher-input-power", io_report, i_source);
+					ValidateFinisherInputPattern(module.InputPattern, "finisher-input-pattern", io_report, i_source);
 					ValidateRange(module.DecayPerSecond, 0f, 10000f, "finisher-decay", io_report, i_source);
 					ValidateRange(module.FailureDamage, 0f, 100000f, "finisher-failure-damage", io_report, i_source);
 					ValidateRange(module.SuccessRecoveryHealth, 0f, 100000f, "finisher-success-recovery", io_report, i_source);
@@ -699,12 +720,67 @@ namespace CaptivityReloaded.Modding
 					ValidateFinisherOutcome(module.SuccessOutcome, "success", io_report, i_source);
 					ValidateFinisherOutcome(module.FailureOutcome, "failure", io_report, i_source);
 					ValidateFinisherStatuses(module.Statuses, io_report, i_source);
+					ValidateFinisherParticipants(module, io_report, i_source);
 					break;
 				default:
 					io_report.Add(ValidationSeverity.Error, "enemy.behavior.module-type", "Unsupported behavior module: " + module.Type, i_source);
 					break;
 				}
 			}
+		}
+
+		private static void ValidateFinisherParticipants(EnemyBehaviorModuleDefinition i_module,
+			ValidationReport io_report, string i_source)
+		{
+			List<EnemyFinisherParticipantDefinition> participants = i_module.Participants ?? new List<EnemyFinisherParticipantDefinition>();
+			if (participants.Count > 3)
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participants", "downedFinisher supports at most 3 secondary NPC participants.", i_source);
+			HashSet<string> ids = new HashSet<string>(StringComparer.Ordinal);
+			foreach (EnemyFinisherParticipantDefinition participant in participants)
+			{
+				if (participant == null || !IsSemanticName(participant.Id) || participant.Id == "owner" || !ids.Add(participant.Id))
+				{
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-id", "Participant IDs must be unique semantic names and cannot be 'owner'.", i_source);
+					continue;
+				}
+				if (!ContentId.TryParse(participant.Enemy, out ContentId enemy) || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-enemy", "Each participant enemy must be an enemy content ID.", i_source);
+				string policy = string.IsNullOrEmpty(participant.JoinPolicy) ? "phaseBoundary" : participant.JoinPolicy;
+				if (policy != "startOnly" && policy != "phaseBoundary")
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-policy", "Participant joinPolicy must be startOnly or phaseBoundary.", i_source);
+				if (participant.Required && policy != "startOnly")
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-required", "Required participants must use joinPolicy startOnly.", i_source);
+				if (policy == "phaseBoundary" && (i_module.Phases == null || i_module.Phases.Count == 0))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-phases", "phaseBoundary participants require a phased finisher.", i_source);
+				ValidateRange(participant.JoinRange, 0.1f, 20f, "finisher-participant-join-range", io_report, i_source);
+				ValidateRange(participant.ApproachRange, 0.1f, 50f, "finisher-participant-approach-range", io_report, i_source);
+				if (participant.JoinRange.HasValue && participant.ApproachRange.HasValue && participant.ApproachRange.Value < participant.JoinRange.Value)
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-approach", "Participant approachRange cannot be smaller than joinRange.", i_source);
+				ValidateRange(participant.OffsetX, -20f, 20f, "finisher-participant-offset-x", io_report, i_source);
+				ValidateRange(participant.OffsetY, -20f, 20f, "finisher-participant-offset-y", io_report, i_source);
+				if (!string.IsNullOrEmpty(participant.Facing) && participant.Facing != "preserve" && participant.Facing != "left" && participant.Facing != "right")
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-facing", "Participant facing must be preserve, left, or right.", i_source);
+				if (!string.IsNullOrEmpty(participant.Animation) && !IsSemanticName(participant.Animation))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-animation", "Participant animation must be a semantic clip name.", i_source);
+			}
+
+			foreach (EnemyFinisherPhaseDefinition phase in i_module.Phases ?? new List<EnemyFinisherPhaseDefinition>())
+				foreach (KeyValuePair<string, string> animation in phase?.ParticipantAnimations ?? new Dictionary<string, string>())
+				{
+					if (!ids.Contains(animation.Key))
+						io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-animation-id", "participantAnimations references an unknown participant: " + animation.Key, i_source);
+					if (!IsSemanticName(animation.Value))
+						io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-animation-name", "Participant phase animations must be semantic clip names.", i_source);
+				}
+		}
+
+		private static void ValidateFinisherInputPattern(string i_pattern, string i_code,
+			ValidationReport io_report, string i_source)
+		{
+			if (string.IsNullOrEmpty(i_pattern)) return;
+			if (i_pattern != "adaptive" && i_pattern != "alternate" && i_pattern != "rotate" && i_pattern != "tap")
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior." + i_code,
+					"Finisher inputPattern must be adaptive, alternate, rotate, or tap.", i_source);
 		}
 
 		private static void ValidateFinisherStatuses(Dictionary<string, EnemyFinisherStatusTextDefinition> i_statuses,
