@@ -44,7 +44,9 @@ Standalone attack delivery types are:
 - `projectile`: launches an atlas-backed Rigidbody2D projectile toward the player's position at the firing moment. It requires `projectileRegion`, `projectileSpeed`, `projectileLifetimeSeconds`, and `projectileRadius`; `projectileGravityScale` defaults to zero. A non-zero gravity scale produces an aim-compensated ballistic arc. Projectiles are destroyed when they hit the player, a platform, or their lifetime expires.
 - `area`: applies an impact within `areaRadius` around a facing-relative `offsetX` and local `offsetY` from the enemy.
 - `grab`: starts that enemy's `downedFinisher` QTE on a target inside `hitRange`. Consequently, an enemy containing a grab must also define the finisher module.
-- `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
+- `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, `ragdollSeconds`, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
+
+An original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, and the knockdown counts as a KO in the status cards and diary. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target.
 
 ### Enemy animation events
 
