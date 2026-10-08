@@ -5,6 +5,7 @@ using System.Linq;
 using CaptivityReloaded.Modding;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 public static class ExternalEnemyFactory
 {
@@ -569,6 +570,11 @@ public sealed class ModularEnemy : Walker
 			StopMovingHorizontally();
 			return;
 		}
+		if (ModularEnemyFinisher.ShouldApproachActiveSession(this))
+		{
+			MoveToPlayer();
+			return;
+		}
 		ModularEnemyFinisher voluntaryFinisher = GetComponent<ModularEnemyFinisher>();
 		if ((player.GetStateActorCurrent() == StateActor.Ragdoll || player.IsExposing()) && voluntaryFinisher != null)
 		{
@@ -1056,6 +1062,8 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 
 public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 {
+	private static readonly HashSet<NPC> ReservedParticipants = new HashSet<NPC>();
+	private static ModularEnemyFinisher s_activeSession;
 	[SerializeField] private string m_enemyDefinitionId;
 	private NPC m_npc;
 	private EnemyBehaviorModuleDefinition m_definition;
@@ -1077,6 +1085,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private readonly Dictionary<string, BodyPartPlayer> m_playerBodyParts = new Dictionary<string, BodyPartPlayer>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Sprite> m_playerBaseSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Sprite> m_runtimeSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+	private readonly List<FinisherRendererSnapshot> m_rendererSnapshots = new List<FinisherRendererSnapshot>();
+	private readonly List<FinisherSortingGroupSnapshot> m_sortingGroupSnapshots = new List<FinisherSortingGroupSnapshot>();
+	private readonly List<ActiveFinisherParticipant> m_participants = new List<ActiveFinisherParticipant>();
+	private readonly List<FinisherColliderPair> m_participantCollisionPairs = new List<FinisherColliderPair>();
 	private Animator m_playerSkeletonAnimator;
 	private bool m_playerAnimatorWasEnabled;
 	private Rigidbody2D m_playerBody;
@@ -1097,6 +1109,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private StatusPlayerHud m_statusHud;
 	private StatusPlayerHudItem m_activeStatus;
 	private readonly StickCircleGesture m_circleGesture = new StickCircleGesture();
+	private bool m_directionInputReady = true;
 
 	public void Configure(string i_enemyDefinitionId)
 	{
@@ -1159,6 +1172,11 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	}
 
 	public bool GetIsActive() { return m_isActive; }
+	public static bool ShouldApproachActiveSession(NPC i_candidate)
+	{
+		return s_activeSession != null && s_activeSession.m_isActive
+			&& s_activeSession.HasOpenLateJoinSlotFor(i_candidate, true);
+	}
 
 	public bool TryBeginFromAttack(Player i_player)
 	{
@@ -1178,7 +1196,13 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_nextAllowed = Time.time + 1f;
 			return;
 		}
+		if (!TryReserveInitialParticipants())
+		{
+			m_nextAllowed = Time.time + 1f;
+			return;
+		}
 		m_isActive = true;
+		s_activeSession = this;
 		m_lastOutcome = "running";
 		m_statusHud = managerHud.GetStatusPlayerHud();
 		if (m_statusHud != null)
@@ -1192,6 +1216,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_phaseStartedAt = Time.time;
 		m_keyExpected = KeyCode.A;
 		m_circleGesture.Reset();
+		m_directionInputReady = true;
 		m_npc.StopMoving();
 		m_npc.SetIsCanAttack(false);
 		m_npc.SetIsThinking(false);
@@ -1200,6 +1225,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_player.HideEquippedWeapon();
 		if (m_player.GetStateActorCurrent() == StateActor.Ragdoll) m_player.DisableRagdoll();
 		AlignPlayerToFinisherFloor();
+		AlignEnemyToPlayerForFinisher();
 		m_player.SetIsExposing(false);
 		m_player.SetIsCrouching(false);
 		m_player.SetStateActor(StateActor.Idle);
@@ -1210,9 +1236,11 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		// state directly. Raising Player.OnBeingRaped here would make legacy
 		// challenge listeners dereference a nonexistent Raper.
 		m_player.SetStatePlayer(StatePlayer.BeingRaped);
-		m_player.SetIsInvulnerable(true, true);
+		m_player.SetIsInvulnerable(true, false);
 		SetActorCollisionIgnored(true);
 		LockActorPhysics();
+		BeginPairedSorting();
+		BeginReservedParticipantControl();
 		BeginPlayerAnimation();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(true);
 		PlayCurrentPhase();
@@ -1245,9 +1273,19 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 	}
 
+	private void AlignEnemyToPlayerForFinisher()
+	{
+		if (m_player == null || m_npc == null) return;
+		// Match the pair preview: both actor roots share an X coordinate and both
+		// reported feet sit on the same floor line before their local pose tracks run.
+		// Composite rigs can then use one authored coordinate frame consistently.
+		m_npc.PlaceFeetOnPos(m_player.GetPosFeet());
+	}
+
 	private void UpdateFinisher()
 	{
 		if (m_npc.IsDead() || m_player == null || m_player.IsDead()) { EndFinisher(false, false); return; }
+		if (!UpdateParticipantAvailability()) return;
 		ScreenGame screen = CommonReferences.Instance.GetManagerScreens().GetScreenGame();
 		if (screen != null && screen.IsPaused()) return;
 		MaintainActorPhysicsLock();
@@ -1256,14 +1294,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_meter = Mathf.Max(0f, m_meter - GetCurrentDecayPerSecond() * Time.deltaTime);
 		ManagerInput input = CommonReferences.Instance.GetManagerInput();
 		PlayerController controller = CommonReferences.Instance.GetPlayerController();
-		bool pressed = false;
-		if (controller.GetIsMobileControlsEnabled())
-			pressed = controller.GetIsMobileJumpPressed() || m_circleGesture.Update(controller.GetMobileAimInput());
-		else if (input.IsControllerLastUsed() && UnityEngine.InputSystem.Gamepad.current != null)
-			pressed = m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue());
-		else if (input.IsButton(InputButton.Jump)) m_meter += GetCurrentInputPower() * 0.2f * Time.deltaTime * 10f;
-		else if (m_keyExpected == KeyCode.A && input.IsButtonDown(InputButton.MoveLeft)) { m_keyExpected = KeyCode.D; pressed = true; }
-		else if (m_keyExpected == KeyCode.D && input.IsButtonDown(InputButton.MoveRight)) { m_keyExpected = KeyCode.A; pressed = true; }
+		bool pressed = UpdateQteInput(GetCurrentInputPattern(), input, controller);
 		if (pressed)
 		{
 			m_meter += GetCurrentInputPower();
@@ -1287,6 +1318,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 				EndFinisher(false, true);
 				return false;
 			}
+			TryJoinLateParticipants();
 			PlayCurrentPhase();
 		}
 		return m_isActive;
@@ -1298,10 +1330,16 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_playerAnimationEventCycle = 0;
 		m_nextPresentationTrigger = 0;
 		m_presentationTriggerCycle = 0;
+		m_keyExpected = KeyCode.A;
+		m_directionInputReady = true;
+		m_circleGesture.Reset();
 		ResetPlayerPose();
 		string animation = GetCurrentPhase()?.Animation ?? m_definition.Animation;
 		m_npc.GetComponent<ModularEnemyAnimationController>()?.Play(
 			string.IsNullOrEmpty(animation) ? "finisher" : animation, true);
+		foreach (ActiveFinisherParticipant participant in m_participants)
+			if (participant.Started && participant.Controller != null)
+				participant.Controller.Play(GetParticipantAnimation(participant.Definition), true);
 	}
 
 	private void EndFinisher(bool i_success, bool i_applyOutcome)
@@ -1314,6 +1352,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		ManagerHudRapeGames hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames();
 		if (hud != null) hud.HideHudSmasher();
 		EndPlayerAnimation();
+		EndParticipantControl();
+		EndPairedSorting();
 		SeparateActorsForRelease();
 		UnlockActorPhysics();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1351,6 +1391,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 		if (m_statusHud != null) m_statusHud.EndModularFinisherStatusContext();
 		m_statusHud = null;
+		ReleaseSessionReservations();
 	}
 
 	private void AddFailureStatuses()
@@ -1380,6 +1421,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		if (m_isActive && CommonReferences.Instance != null && m_player != null) EndFinisher(false, false);
 		if (!m_actorPhysicsLocked) return;
 		EndPlayerAnimation();
+		EndParticipantControl();
+		EndPairedSorting();
 		UnlockActorPhysics();
 		if (CommonReferences.Instance != null && CommonReferences.Instance.GetPlayerController() != null)
 			CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1395,6 +1438,82 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_npc.SetIsCanAttack(true);
 			m_npc.SetIsThinking(true);
 		}
+		ReleaseSessionReservations();
+	}
+
+	private bool UpdateQteInput(string i_pattern, ManagerInput i_input, PlayerController i_controller)
+	{
+		bool mobile = i_controller != null && i_controller.GetIsMobileControlsEnabled();
+		bool gamepad = !mobile && i_input != null && i_input.IsControllerLastUsed()
+			&& UnityEngine.InputSystem.Gamepad.current != null;
+		switch (i_pattern)
+		{
+		case "tap":
+			return mobile ? i_controller.GetIsMobileJumpPressed() : i_input.IsButtonDown(InputButton.Jump);
+		case "alternate":
+			return UpdateAlternateInput(i_input, i_controller, mobile, gamepad);
+		case "rotate":
+			if (mobile) return m_circleGesture.Update(i_controller.GetMobileAimInput());
+			if (gamepad) return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue());
+			return UpdateAlternateInput(i_input, i_controller, false, false);
+		default: // adaptive preserves the v1 input behavior.
+			if (mobile)
+				return i_controller.GetIsMobileJumpPressed() || m_circleGesture.Update(i_controller.GetMobileAimInput());
+			if (gamepad)
+				return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue());
+			if (i_input.IsButton(InputButton.Jump))
+			{
+				m_meter += GetCurrentInputPower() * 0.2f * Time.deltaTime * 10f;
+				return false;
+			}
+			return UpdateAlternateInput(i_input, i_controller, false, false);
+		}
+	}
+
+	private bool UpdateAlternateInput(ManagerInput i_input, PlayerController i_controller, bool i_mobile, bool i_gamepad)
+	{
+		if (!i_mobile && !i_gamepad)
+		{
+			if (m_keyExpected == KeyCode.A && i_input.IsButtonDown(InputButton.MoveLeft))
+			{
+				m_keyExpected = KeyCode.D;
+				return true;
+			}
+			if (m_keyExpected == KeyCode.D && i_input.IsButtonDown(InputButton.MoveRight))
+			{
+				m_keyExpected = KeyCode.A;
+				return true;
+			}
+			return false;
+		}
+
+		float horizontal;
+		if (i_mobile) horizontal = i_controller.GetMobileMovementInput().x;
+		else
+		{
+			UnityEngine.InputSystem.Gamepad pad = UnityEngine.InputSystem.Gamepad.current;
+			float dpad = pad.dpad.ReadValue().x;
+			horizontal = Mathf.Abs(dpad) > 0.25f ? dpad : pad.leftStick.ReadValue().x;
+		}
+		if (Mathf.Abs(horizontal) < 0.25f)
+		{
+			m_directionInputReady = true;
+			return false;
+		}
+		if (!m_directionInputReady) return false;
+		if (m_keyExpected == KeyCode.A && horizontal <= -0.6f)
+		{
+			m_keyExpected = KeyCode.D;
+			m_directionInputReady = false;
+			return true;
+		}
+		if (m_keyExpected == KeyCode.D && horizontal >= 0.6f)
+		{
+			m_keyExpected = KeyCode.A;
+			m_directionInputReady = false;
+			return true;
+		}
+		return false;
 	}
 
 	public float GetMeterCurrent() { return m_meter; }
@@ -1404,6 +1523,12 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	public string GetEnemyAnimationName() { return GetCurrentPhase()?.Animation ?? m_definition?.Animation ?? "none"; }
 	public string GetPlayerAnimationReference() { return GetCurrentPhase()?.PlayerAnimationReference ?? m_definition?.PlayerAnimationReference ?? "inline/none"; }
 	public string GetLastOutcome() { return m_lastOutcome; }
+	public int GetParticipantCount() { return m_participants.Count(i_participant => i_participant.Started && i_participant.Npc != null); }
+	public int GetOpenParticipantSlotCount()
+	{
+		return (m_definition?.Participants ?? new List<EnemyFinisherParticipantDefinition>())
+			.Count(i_definition => !HasParticipant(i_definition.Id));
+	}
 	public void CancelForTest() { if (m_isActive) EndFinisher(false, false); }
 	public float GetTimeLeft() { return Mathf.Max(0f, GetTimeMax() - (Time.time - m_startedAt)); }
 	public float GetTimeMax()
@@ -1416,14 +1541,213 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	public KeyCode GetKeyCodeToPress() { return m_keyExpected; }
 	public bool UsesCircularInput()
 	{
+		string pattern = GetCurrentInputPattern();
+		if (pattern == "tap") return true;
+		if (pattern == "alternate") return false;
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
 			|| CommonReferences.Instance.GetManagerInput().IsControllerLastUsed();
 	}
 	public string GetInputPrompt()
 	{
+		string pattern = GetCurrentInputPattern();
+		if (pattern == "tap") return "Tap Jump";
+		if (pattern == "rotate") return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
+			? "Rotate aim stick" : "Rotate right stick";
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
-			? "Rotate aim stick or tap Jump"
-			: "Rotate right stick";
+			? "Rotate aim stick or tap Jump" : "Rotate right stick";
+	}
+	public Sprite GetInputGlyph()
+	{
+		return GetCurrentInputPattern() == "tap"
+			? InputGlyphLibrary.GetPromptSprite(InputButton.Jump)
+			: InputGlyphLibrary.GetStruggleSprite();
+	}
+	public bool AllowsHoldInput() { return GetCurrentInputPattern() == "adaptive"; }
+
+	private bool TryReserveInitialParticipants()
+	{
+		CleanupDestroyedReservations();
+		m_participants.Clear();
+		if ((s_activeSession != null && s_activeSession != this) || m_npc == null || ReservedParticipants.Contains(m_npc)) return false;
+		ReservedParticipants.Add(m_npc);
+		foreach (EnemyFinisherParticipantDefinition definition in m_definition?.Participants ?? new List<EnemyFinisherParticipantDefinition>())
+		{
+			NPC candidate = FindParticipantCandidate(definition, GetJoinRange(definition));
+			if (candidate == null)
+			{
+				if (!definition.Required) continue;
+				ReleaseSessionReservations();
+				return false;
+			}
+			ReservedParticipants.Add(candidate);
+			m_participants.Add(new ActiveFinisherParticipant(definition, candidate));
+		}
+		return true;
+	}
+
+	private void TryJoinLateParticipants()
+	{
+		foreach (EnemyFinisherParticipantDefinition definition in m_definition?.Participants ?? new List<EnemyFinisherParticipantDefinition>())
+		{
+			if (GetJoinPolicy(definition) != "phaseBoundary" || HasParticipant(definition.Id)) continue;
+			NPC candidate = FindParticipantCandidate(definition, GetJoinRange(definition));
+			if (candidate == null) continue;
+			ReservedParticipants.Add(candidate);
+			ActiveFinisherParticipant participant = new ActiveFinisherParticipant(definition, candidate);
+			m_participants.Add(participant);
+			BeginParticipantControl(participant);
+		}
+	}
+
+	private bool UpdateParticipantAvailability()
+	{
+		for (int index = m_participants.Count - 1; index >= 0; index--)
+		{
+			ActiveFinisherParticipant participant = m_participants[index];
+			if (participant.Npc != null && !participant.Npc.IsDead()) continue;
+			if (participant.Npc != null) ReservedParticipants.Remove(participant.Npc);
+			m_participants.RemoveAt(index);
+			if (!participant.Definition.Required) continue;
+			EndFinisher(false, false);
+			return false;
+		}
+		return true;
+	}
+
+	private bool HasOpenLateJoinSlotFor(NPC i_candidate, bool i_useApproachRange)
+	{
+		if (i_candidate == null || ReservedParticipants.Contains(i_candidate)) return false;
+		foreach (EnemyFinisherParticipantDefinition definition in m_definition?.Participants ?? new List<EnemyFinisherParticipantDefinition>())
+		{
+			if (GetJoinPolicy(definition) != "phaseBoundary" || HasParticipant(definition.Id) || !MatchesParticipant(i_candidate, definition)) continue;
+			float range = i_useApproachRange ? GetApproachRange(definition) : GetJoinRange(definition);
+			if (Vector2.Distance(i_candidate.GetPosFeet(), m_player.GetPosFeet()) <= range) return true;
+		}
+		return false;
+	}
+
+	private NPC FindParticipantCandidate(EnemyFinisherParticipantDefinition i_definition, float i_range)
+	{
+		if (CommonReferences.Instance == null || m_player == null) return null;
+		Stage stage = CommonReferences.Instance.GetManagerStages()?.GetStageCurrent();
+		if (stage == null) return null;
+		NPC best = null;
+		float bestDistance = float.PositiveInfinity;
+		foreach (NPC candidate in stage.GetAllNPCs())
+		{
+			if (!MatchesParticipant(candidate, i_definition)) continue;
+			float distance = Vector2.Distance(candidate.GetPosFeet(), m_player.GetPosFeet());
+			if (distance > i_range || distance >= bestDistance) continue;
+			best = candidate;
+			bestDistance = distance;
+		}
+		return best;
+	}
+
+	private bool MatchesParticipant(NPC i_candidate, EnemyFinisherParticipantDefinition i_definition)
+	{
+		if (i_candidate == null || i_candidate == m_npc || !i_candidate.gameObject.activeInHierarchy
+			|| i_candidate.IsDead() || i_candidate.GetIsAttacking() || ReservedParticipants.Contains(i_candidate)
+			|| i_candidate.GetComponent<ModularEnemyAnimationController>() == null) return false;
+		return RuntimeContentIdentity.TryResolve(i_candidate, out ContentId id, out ContentCategory category)
+			&& category == ContentCategory.Enemy && id.ToString() == i_definition.Enemy;
+	}
+
+	private bool HasParticipant(string i_id)
+	{
+		return m_participants.Exists(i_participant => i_participant.Definition != null && i_participant.Definition.Id == i_id);
+	}
+
+	private static string GetJoinPolicy(EnemyFinisherParticipantDefinition i_definition)
+	{
+		return string.IsNullOrEmpty(i_definition?.JoinPolicy) ? "phaseBoundary" : i_definition.JoinPolicy;
+	}
+
+	private float GetJoinRange(EnemyFinisherParticipantDefinition i_definition)
+	{
+		return i_definition?.JoinRange ?? m_definition?.TriggerRange ?? 1.5f;
+	}
+
+	private float GetApproachRange(EnemyFinisherParticipantDefinition i_definition)
+	{
+		return i_definition?.ApproachRange ?? Mathf.Min(50f, Mathf.Max(8f, GetJoinRange(i_definition) * 3f));
+	}
+
+	private void BeginReservedParticipantControl()
+	{
+		foreach (ActiveFinisherParticipant participant in m_participants) BeginParticipantControl(participant);
+	}
+
+	private void BeginParticipantControl(ActiveFinisherParticipant i_participant)
+	{
+		if (i_participant == null || i_participant.Started || i_participant.Npc == null) return;
+		NPC npc = i_participant.Npc;
+		npc.StopMoving();
+		npc.SetIsCanAttack(false);
+		npc.SetIsThinking(false);
+		npc.SetIsInvulnerable(true, false);
+		Vector2 anchor = m_player.GetPosFeet();
+		npc.PlaceFeetOnPos(anchor + new Vector2(i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
+		if (i_participant.Definition.Facing == "left") npc.SetIsFacingLeft(true);
+		else if (i_participant.Definition.Facing == "right") npc.SetIsFacingLeft(false);
+		if (i_participant.Body != null)
+		{
+			i_participant.Body.velocity = Vector2.zero;
+			i_participant.Body.angularVelocity = 0f;
+			i_participant.Body.bodyType = RigidbodyType2D.Kinematic;
+			i_participant.LockedPosition = i_participant.Body.position;
+		}
+		IgnoreParticipantCollisions(npc);
+		PromotePairedSorting(npc.gameObject);
+		i_participant.Started = true;
+	}
+
+	private void IgnoreParticipantCollisions(NPC i_npc)
+	{
+		IgnoreParticipantCollisionPair(i_npc, m_player);
+		IgnoreParticipantCollisionPair(i_npc, m_npc);
+		foreach (ActiveFinisherParticipant other in m_participants)
+			if (other.Started && other.Npc != null && other.Npc != i_npc) IgnoreParticipantCollisionPair(i_npc, other.Npc);
+	}
+
+	private void IgnoreParticipantCollisionPair(Actor i_left, Actor i_right)
+	{
+		if (i_left == null || i_right == null) return;
+		foreach (Collider2D left in i_left.GetAllColliders())
+			foreach (Collider2D right in i_right.GetAllColliders())
+			{
+				if (left == null || right == null) continue;
+				Physics2D.IgnoreCollision(left, right, true);
+				m_participantCollisionPairs.Add(new FinisherColliderPair(left, right));
+			}
+	}
+
+	private string GetParticipantAnimation(EnemyFinisherParticipantDefinition i_definition)
+	{
+		EnemyFinisherPhaseDefinition phase = GetCurrentPhase();
+		if (phase?.ParticipantAnimations != null && phase.ParticipantAnimations.TryGetValue(i_definition.Id, out string animation)) return animation;
+		return string.IsNullOrEmpty(i_definition.Animation) ? "idle" : i_definition.Animation;
+	}
+
+	private void EndParticipantControl()
+	{
+		foreach (FinisherColliderPair pair in m_participantCollisionPairs) pair.Restore();
+		m_participantCollisionPairs.Clear();
+		foreach (ActiveFinisherParticipant participant in m_participants) participant.Restore();
+	}
+
+	private void ReleaseSessionReservations()
+	{
+		if (m_npc != null) ReservedParticipants.Remove(m_npc);
+		foreach (ActiveFinisherParticipant participant in m_participants)
+			if (participant.Npc != null) ReservedParticipants.Remove(participant.Npc);
+		m_participants.Clear();
+		if (s_activeSession == this) s_activeSession = null;
+	}
+
+	private static void CleanupDestroyedReservations()
+	{
+		ReservedParticipants.RemoveWhere(i_npc => i_npc == null);
 	}
 
 	private void LockActorPhysics()
@@ -1466,6 +1790,15 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_enemyBody.velocity = Vector2.zero;
 			m_enemyBody.angularVelocity = 0f;
 		}
+		foreach (ActiveFinisherParticipant participant in m_participants)
+		{
+			if (!participant.Started || participant.Body == null) continue;
+			participant.Body.position = participant.LockedPosition;
+			participant.Body.transform.position = new Vector3(participant.LockedPosition.x, participant.LockedPosition.y,
+				participant.Body.transform.position.z);
+			participant.Body.velocity = Vector2.zero;
+			participant.Body.angularVelocity = 0f;
+		}
 	}
 
 	private void UnlockActorPhysics()
@@ -1498,6 +1831,39 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			}
 		}
 		m_isIgnoringActorCollision = i_ignore;
+	}
+
+	private void BeginPairedSorting()
+	{
+		EndPairedSorting();
+		PromotePairedSorting(m_player == null ? null : m_player.gameObject);
+		PromotePairedSorting(m_npc == null ? null : m_npc.gameObject);
+	}
+
+	private void PromotePairedSorting(GameObject i_root)
+	{
+		int rendererStart = m_rendererSnapshots.Count;
+		int groupStart = m_sortingGroupSnapshots.Count;
+		CapturePairedSorting(i_root);
+		for (int index = rendererStart; index < m_rendererSnapshots.Count; index++) m_rendererSnapshots[index].UseLayer("Player");
+		for (int index = groupStart; index < m_sortingGroupSnapshots.Count; index++) m_sortingGroupSnapshots[index].UseLayer("Player");
+	}
+
+	private void CapturePairedSorting(GameObject i_root)
+	{
+		if (i_root == null) return;
+		foreach (SpriteRenderer renderer in i_root.GetComponentsInChildren<SpriteRenderer>(true))
+			if (renderer != null) m_rendererSnapshots.Add(new FinisherRendererSnapshot(renderer));
+		foreach (SortingGroup group in i_root.GetComponentsInChildren<SortingGroup>(true))
+			if (group != null) m_sortingGroupSnapshots.Add(new FinisherSortingGroupSnapshot(group));
+	}
+
+	private void EndPairedSorting()
+	{
+		foreach (FinisherRendererSnapshot snapshot in m_rendererSnapshots) snapshot.Restore();
+		foreach (FinisherSortingGroupSnapshot snapshot in m_sortingGroupSnapshots) snapshot.Restore();
+		m_rendererSnapshots.Clear();
+		m_sortingGroupSnapshots.Clear();
 	}
 
 	private void SeparateActorsForRelease()
@@ -1758,6 +2124,116 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 	}
 
+	private sealed class ActiveFinisherParticipant
+	{
+		public readonly EnemyFinisherParticipantDefinition Definition;
+		public readonly NPC Npc;
+		public readonly ModularEnemyAnimationController Controller;
+		public readonly Rigidbody2D Body;
+		public Vector2 LockedPosition;
+		public bool Started;
+		private readonly bool m_wasThinking;
+		private readonly bool m_couldAttack;
+		private readonly bool m_wasInvulnerable;
+		private readonly bool m_wasFacingLeft;
+		private readonly RigidbodyType2D m_bodyType;
+		private readonly Vector2 m_position;
+		private readonly Vector2 m_velocity;
+		private readonly float m_angularVelocity;
+		private readonly string m_animation;
+
+		public ActiveFinisherParticipant(EnemyFinisherParticipantDefinition i_definition, NPC i_npc)
+		{
+			Definition = i_definition;
+			Npc = i_npc;
+			Controller = i_npc == null ? null : i_npc.GetComponent<ModularEnemyAnimationController>();
+			Body = i_npc == null ? null : i_npc.GetRigidbody2D();
+			m_wasThinking = i_npc != null && i_npc.GetIsThinking();
+			m_couldAttack = i_npc != null && i_npc.GetIsCanAttack();
+			m_wasInvulnerable = i_npc != null && i_npc.GetIsInvulnerable();
+			m_wasFacingLeft = i_npc != null && i_npc.GetIsFacingLeft();
+			m_position = Body == null ? Vector2.zero : Body.position;
+			m_velocity = Body == null ? Vector2.zero : Body.velocity;
+			m_angularVelocity = Body == null ? 0f : Body.angularVelocity;
+			m_bodyType = Body == null ? RigidbodyType2D.Dynamic : Body.bodyType;
+			m_animation = Controller == null ? null : Controller.GetCurrentClipName();
+		}
+
+		public void Restore()
+		{
+			if (!Started || Npc == null) return;
+			if (Body != null)
+			{
+				Body.position = m_position;
+				Body.transform.position = new Vector3(m_position.x, m_position.y, Body.transform.position.z);
+				Body.bodyType = m_bodyType;
+				Body.velocity = m_velocity;
+				Body.angularVelocity = m_angularVelocity;
+			}
+			Npc.SetIsFacingLeft(m_wasFacingLeft);
+			Npc.SetIsInvulnerable(m_wasInvulnerable, false);
+			if (!Npc.IsDead())
+			{
+				Npc.SetIsCanAttack(m_couldAttack);
+				Npc.SetIsThinking(m_wasThinking);
+			}
+			if (Controller != null) Controller.Play(string.IsNullOrEmpty(m_animation) ? "idle" : m_animation, true);
+			Started = false;
+		}
+	}
+
+	private sealed class FinisherColliderPair
+	{
+		private readonly Collider2D m_left;
+		private readonly Collider2D m_right;
+		public FinisherColliderPair(Collider2D i_left, Collider2D i_right) { m_left = i_left; m_right = i_right; }
+		public void Restore() { if (m_left != null && m_right != null) Physics2D.IgnoreCollision(m_left, m_right, false); }
+	}
+
+	private sealed class FinisherRendererSnapshot
+	{
+		private readonly SpriteRenderer m_renderer;
+		private readonly string m_layer;
+		private readonly int m_order;
+
+		public FinisherRendererSnapshot(SpriteRenderer i_renderer)
+		{
+			m_renderer = i_renderer;
+			m_layer = i_renderer.sortingLayerName;
+			m_order = i_renderer.sortingOrder;
+		}
+
+		public void UseLayer(string i_layer) { if (m_renderer != null) m_renderer.sortingLayerName = i_layer; }
+		public void Restore()
+		{
+			if (m_renderer == null) return;
+			m_renderer.sortingLayerName = m_layer;
+			m_renderer.sortingOrder = m_order;
+		}
+	}
+
+	private sealed class FinisherSortingGroupSnapshot
+	{
+		private readonly SortingGroup m_group;
+		private readonly string m_layer;
+		private readonly int m_order;
+
+		public FinisherSortingGroupSnapshot(SortingGroup i_group)
+		{
+			m_group = i_group;
+			m_layer = i_group.sortingLayerName;
+			m_order = i_group.sortingOrder;
+		}
+
+		public void UseLayer(string i_layer) { if (m_group != null) m_group.sortingLayerName = i_layer; }
+		public void Restore()
+		{
+			if (m_group == null) return;
+			m_group.sortingLayerName = m_layer;
+			m_group.sortingOrder = m_order;
+		}
+	}
+
 	private bool HasPhases()
 	{
 		return m_definition?.Phases != null && m_definition.Phases.Count > 0;
@@ -1785,6 +2261,12 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private float GetCurrentInputPower()
 	{
 		return GetCurrentPhase()?.InputPower ?? m_definition?.InputPower ?? 1f;
+	}
+
+	private string GetCurrentInputPattern()
+	{
+		string pattern = GetCurrentPhase()?.InputPattern ?? m_definition?.InputPattern;
+		return string.IsNullOrEmpty(pattern) ? "adaptive" : pattern;
 	}
 
 	private float GetCurrentDecayPerSecond()
@@ -1890,6 +2372,7 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private int m_effectTriggerCycle;
 
 	public void Configure(string i_definitionId) { m_definitionId = i_definitionId; Resolve(); }
+	public string GetCurrentClipName() { return m_clipName; }
 
 	private void OnEnable() { Resolve(); CacheBones(); Play("idle", true); }
 

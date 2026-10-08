@@ -362,7 +362,7 @@ namespace CaptivityReloaded.Modding
 			}
 		}
 
-		public EnemyAnimationClipDefinition CreateFinisherClip()
+		public EnemyAnimationClipDefinition CreateFinisherClip(ValidationReport io_report = null)
 		{
 			List<NormalizedNumericTrack> runtimeTracks = Tracks.Where(IsRuntimeTrack).ToList();
 			SortedSet<float> times = new SortedSet<float> { 0f, DurationSeconds };
@@ -372,6 +372,9 @@ namespace CaptivityReloaded.Modding
 				foreach (NormalizedObjectKey key in track.Keys ?? new List<NormalizedObjectKey>()) times.Add(key.Time);
 			if (times.Count > 256)
 			{
+				int sourceTimeCount = times.Count;
+				io_report?.Add(ValidationSeverity.Warning, "player-animation.sample-limit",
+					"Animation " + Id + " has " + sourceTimeCount + " distinct key times. Runtime v1 approximates it with 256 uniform samples; duration is preserved but rapid changes may lose fidelity.", Source);
 				times.Clear();
 				for (int index = 0; index < 256; index++) times.Add(DurationSeconds * index / 255f);
 			}

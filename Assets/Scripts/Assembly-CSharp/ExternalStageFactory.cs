@@ -3670,6 +3670,7 @@ public sealed class ModFinisherTestHarness : MonoBehaviour
 				GUILayout.Label("Phase " + (finisher.GetPhaseIndex() + 1) + ": " + finisher.GetPhaseId());
 				GUILayout.Label("Enemy clip: " + finisher.GetEnemyAnimationName());
 				GUILayout.Label("Player clip: " + finisher.GetPlayerAnimationReference());
+				GUILayout.Label("NPC participants: " + finisher.GetParticipantCount() + " joined, " + finisher.GetOpenParticipantSlotCount() + " open");
 				GUILayout.Label("Escape: " + finisher.GetMeterCurrent().ToString("0.0") + " / " + finisher.GetMeterMax().ToString("0.0")
 					+ "   Time: " + finisher.GetTimeLeft().ToString("0.0") + "s");
 			}

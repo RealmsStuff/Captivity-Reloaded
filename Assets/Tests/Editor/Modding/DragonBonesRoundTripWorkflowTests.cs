@@ -94,6 +94,33 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That((float)xTrack["keys"][0]["value"], Is.EqualTo(.25f).Within(.0001f));
 		}
 
+		[Test]
+		public void CoreEnemyBatchExport_ProducesProjectForEveryCatalogEnemy()
+		{
+			Type bridge = FindEditorType("CaptivityReloaded.Editor.Modding.DragonBonesAnimationBridge");
+			string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+			string output = Path.Combine(m_root, "all-core-enemies");
+			object result = Invoke(bridge, "ExportAllCoreEnemies", projectRoot, output, 32f, 1);
+
+			JObject catalog = JObject.Parse(File.ReadAllText(Path.Combine(projectRoot, "ModSDK", "AnimationReference", "core-animation-catalog.json")));
+			int expected = ((JArray)catalog["enemies"]).Count;
+			Assert.That((int)result.GetType().GetProperty("EnemyCount").GetValue(result), Is.EqualTo(expected));
+			Assert.That((int)result.GetType().GetProperty("AnimationCount").GetValue(result), Is.GreaterThan(expected));
+			Assert.That((int)result.GetType().GetProperty("ImageCount").GetValue(result), Is.GreaterThan(0));
+
+			string indexPath = (string)result.GetType().GetProperty("IndexPath").GetValue(result);
+			Assert.That(File.Exists(indexPath), Is.True);
+			JObject index = JObject.Parse(File.ReadAllText(indexPath));
+			Assert.That((string)index["type"], Is.EqualTo("captivityDragonBonesCoreEnemyExportIndex"));
+			Assert.That((int)index["enemyCount"], Is.EqualTo(expected));
+			foreach (JObject enemy in ((JArray)index["enemies"]).OfType<JObject>())
+			{
+				string directory = Path.Combine(output, (string)enemy["directory"]);
+				Assert.That(File.Exists(Path.Combine(output, ((string)enemy["skeleton"]).Replace('/', Path.DirectorySeparatorChar))), Is.True, (string)enemy["enemy"]);
+				Assert.That(File.Exists(Path.Combine(directory, "captivity-roundtrip.json")), Is.True, (string)enemy["enemy"]);
+			}
+		}
+
 		private void WriteEnemy()
 		{
 			JObject enemy = new JObject { ["schemaVersion"] = 1, ["type"] = "enemy", ["id"] = "example.roundtrip-test:enemy/test-enemy", ["displayName"] = "Test Enemy",

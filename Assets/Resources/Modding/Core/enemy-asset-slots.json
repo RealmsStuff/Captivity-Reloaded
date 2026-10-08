@@ -1,0 +1,3178 @@
+{
+  "schemaVersion": 1,
+  "type": "coreEnemyAssetSlotCatalog",
+  "enemyCount": 21,
+  "slotCount": 417,
+  "enemies": [
+    {
+      "id": "core:enemy/abby",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/abby/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/bp_hips",
+          "spriteName": "Hips_1"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/butt/bp_butt",
+          "spriteName": "Butt_12"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_17"
+        },
+        {
+          "slot": "body/penis-rod",
+          "bone": "penis-rod",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/bp_penisRod",
+          "spriteName": "PenisRod_0"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_17"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/bp_spine",
+          "spriteName": "Spine_5"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLowerBroken"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_0"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_4"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_12"
+        },
+        {
+          "slot": "body/l-foot-base",
+          "bone": "l-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase",
+          "spriteName": "FootBase_1"
+        },
+        {
+          "slot": "body/penis-end",
+          "bone": "penis-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd",
+          "spriteName": "PenisEnd_0"
+        },
+        {
+          "slot": "body/r-foot-base",
+          "bone": "r-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase",
+          "spriteName": "FootBase_1"
+        },
+        {
+          "slot": "body/breast",
+          "bone": "breast",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/breast/bp_breast",
+          "spriteName": "Breast"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_16"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_4"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_16"
+        },
+        {
+          "slot": "body/l-foot-end",
+          "bone": "l-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd",
+          "spriteName": "FootEnd_1"
+        },
+        {
+          "slot": "body/r-foot-end",
+          "bone": "r-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd",
+          "spriteName": "FootEnd_1"
+        },
+        {
+          "slot": "body/breast-bg",
+          "bone": "breast-bg",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "spriteName": "BreastBg_0"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_8"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_17"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLowerBloody"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_18"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "HandBroken"
+        },
+        {
+          "slot": "body/l-ear",
+          "bone": "l-ear",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head/lEar",
+          "spriteName": "EarBroken"
+        },
+        {
+          "slot": "body/r-ear",
+          "bone": "r-ear",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head/rEar",
+          "spriteName": "Ear"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/death-hound",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/death-hound/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/bp_hips",
+          "spriteName": "TorsoLower_2"
+        },
+        {
+          "slot": "body/l-leg-back-upper",
+          "bone": "l-leg-back-upper",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/lLegBackUpper/bp_lLegBackUpper",
+          "spriteName": "LegBackUpper"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/penis/bp_penis",
+          "spriteName": "Penis_2"
+        },
+        {
+          "slot": "body/r-leg-back-upper",
+          "bone": "r-leg-back-upper",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/rLegBackUpper/bp_rLegBackUpper",
+          "spriteName": "LegBackUpper"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/bp_spine",
+          "spriteName": "TorsoUpper"
+        },
+        {
+          "slot": "body/tail",
+          "bone": "tail",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/tail/bp_tail",
+          "spriteName": "Tail"
+        },
+        {
+          "slot": "body/l-leg-back-middle",
+          "bone": "l-leg-back-middle",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/bp_lLegBackMiddle",
+          "spriteName": "LegBackMiddle"
+        },
+        {
+          "slot": "body/r-leg-back-middle",
+          "bone": "r-leg-back-middle",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/bp_rLegBackMiddle",
+          "spriteName": "LegBackMiddle"
+        },
+        {
+          "slot": "body/l-leg-front-upper",
+          "bone": "l-leg-front-upper",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/lLegFrontUpper/bp_lLegFrontUpper",
+          "spriteName": "LegFrontUpper_0"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/neck/bp_neck",
+          "spriteName": "Neck_3"
+        },
+        {
+          "slot": "body/r-leg-front-upper",
+          "bone": "r-leg-front-upper",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/rLegFrontUpper/bp_rLegFrontUpper",
+          "spriteName": "LegFrontUpper_0"
+        },
+        {
+          "slot": "body/l-leg-back-lower",
+          "bone": "l-leg-back-lower",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/bp_lLegBackLower",
+          "spriteName": "LegBackLower"
+        },
+        {
+          "slot": "body/r-leg-back-lower",
+          "bone": "r-leg-back-lower",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/bp_rLegBackLower",
+          "spriteName": "LegBackLower"
+        },
+        {
+          "slot": "body/l-leg-front-lower",
+          "bone": "l-leg-front-lower",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/bp_lLegFrontLower",
+          "spriteName": "LegFrontLower"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/neck/head/bp_head",
+          "spriteName": "Head_9"
+        },
+        {
+          "slot": "body/r-leg-front-lower",
+          "bone": "r-leg-front-lower",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/bp_rLegFrontLower",
+          "spriteName": "LegFrontLower"
+        },
+        {
+          "slot": "body/l-foot-back",
+          "bone": "l-foot-back",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack/bp_lFootBack",
+          "spriteName": "FootBack"
+        },
+        {
+          "slot": "body/r-foot-back",
+          "bone": "r-foot-back",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack/bp_rFootBack",
+          "spriteName": "FootBack"
+        },
+        {
+          "slot": "body/l-foot-front",
+          "bone": "l-foot-front",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront/bp_lFootFront",
+          "spriteName": "FootFront"
+        },
+        {
+          "slot": "body/jaw",
+          "bone": "jaw",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/neck/head/jaw/bp_jaw",
+          "spriteName": "Jaw"
+        },
+        {
+          "slot": "body/r-foot-front",
+          "bone": "r-foot-front",
+          "rendererPath": "SkeletonDeathHound/SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront/bp_rFootFront",
+          "spriteName": "FootFront"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/fly",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/fly/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/bp_hips",
+          "spriteName": "Hips_4"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/bp_chest",
+          "spriteName": "Chest_20"
+        },
+        {
+          "slot": "body/leg-back-upper",
+          "bone": "leg-back-upper",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/legBackUpper/bp_legBackUpper",
+          "spriteName": "LegUpper_11"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_4"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/head/bp_head",
+          "spriteName": "Head_20"
+        },
+        {
+          "slot": "body/leg-front-upper",
+          "bone": "leg-front-upper",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legFrontUpper/bp_legFrontUpper",
+          "spriteName": "LegUpper_11"
+        },
+        {
+          "slot": "body/leg-mid-upper",
+          "bone": "leg-mid-upper",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legMidUpper/bp_legMidUpper",
+          "spriteName": "LegUpper_11"
+        },
+        {
+          "slot": "body/wing",
+          "bone": "wing",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/wing/bp_wing",
+          "spriteName": "Wing"
+        },
+        {
+          "slot": "body/leg-back-mid",
+          "bone": "leg-back-mid",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/legBackUpper/legBackMid/bp_legBackMid",
+          "spriteName": "LegMid"
+        },
+        {
+          "slot": "body/penis-mid",
+          "bone": "penis-mid",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/penisBase/penisMid/bp_penisMid",
+          "spriteName": "PenisMid"
+        },
+        {
+          "slot": "body/leg-front-mid",
+          "bone": "leg-front-mid",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legFrontUpper/legFrontMid/bp_legFrontMid",
+          "spriteName": "LegMid"
+        },
+        {
+          "slot": "body/leg-mid-mid",
+          "bone": "leg-mid-mid",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legMidUpper/legMidMid/bp_legMidMid",
+          "spriteName": "LegMid"
+        },
+        {
+          "slot": "body/leg-back-lower",
+          "bone": "leg-back-lower",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/legBackUpper/legBackMid/legBackLower/bp_legBackLower",
+          "spriteName": "LegLower_5"
+        },
+        {
+          "slot": "body/penis-tip",
+          "bone": "penis-tip",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/penisBase/penisMid/penisTip/bp_penisTip",
+          "spriteName": "PenisTip_2"
+        },
+        {
+          "slot": "body/leg-front-lower",
+          "bone": "leg-front-lower",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legFrontUpper/legFrontMid/legFrontLower/bp_legFrontLower",
+          "spriteName": "LegLower_5"
+        },
+        {
+          "slot": "body/leg-mid-lower",
+          "bone": "leg-mid-lower",
+          "rendererPath": "SkeletonFly/SkeletonFly/hips/chest/legMidUpper/legMidMid/legMidLower/bp_legMidLower",
+          "spriteName": "LegLower_5"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/goblin-marksman",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/goblin-marksman/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/bp_hips",
+          "spriteName": "Hips"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/penis/bp_penis",
+          "spriteName": "Penis"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/bp_spine",
+          "spriteName": "Spine_4"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_6"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_6"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_21"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_2"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_2"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_15"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_13"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_15"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_6"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_7"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_6"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_10"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_10"
+        },
+        {
+          "slot": "body/l-weapon",
+          "bone": "l-weapon",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "spriteName": "Knife_0"
+        },
+        {
+          "slot": "body/r-weapon",
+          "bone": "r-weapon",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "spriteName": "Blowgun"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/goblin-trapper",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/goblin-trapper/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/bp_hips",
+          "spriteName": "Hips_2"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_20"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/penis/bp_penis",
+          "spriteName": "Penis_3"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_20"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/bp_spine",
+          "spriteName": "Spine"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_7"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_7"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_18"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_7"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_7"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_11"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_1"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_11"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_7"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_12"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_7"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_1"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_1"
+        },
+        {
+          "slot": "body/l-weapon",
+          "bone": "l-weapon",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "spriteName": "Club"
+        },
+        {
+          "slot": "body/r-weapon",
+          "bone": "r-weapon",
+          "rendererPath": "SkeletonGoblin/SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "spriteName": "Trap"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/gremlin",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/gremlin/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/bp_hips",
+          "spriteName": "Hips_8"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_0"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/penis/bp_penis",
+          "spriteName": "Penis_4"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_0"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/bp_spine",
+          "spriteName": "Spine_6"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_17"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_17"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_17"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_10"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_10"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_3"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_15"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_3"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_5"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_14"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_5"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_13"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_13"
+        },
+        {
+          "slot": "body/l-weapon",
+          "bone": "l-weapon",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "spriteName": "Syringe"
+        },
+        {
+          "slot": "body/r-weapon",
+          "bone": "r-weapon",
+          "rendererPath": "SkeletonGoblinMinor/SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "spriteName": "Stick"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/head-humper",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/head-humper/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/bp_hips",
+          "spriteName": "Hips_5"
+        },
+        {
+          "slot": "body/l-leg-back-base",
+          "bone": "l-leg-back-base",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/lLegBackBase/bp_lLegBackBase",
+          "spriteName": "LegBackBase"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/penisBase/bp_penisBase",
+          "spriteName": "Penis_6"
+        },
+        {
+          "slot": "body/r-leg-back-base",
+          "bone": "r-leg-back-base",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/rLegBackBase/bp_rLegBackBase",
+          "spriteName": "LegBackBase"
+        },
+        {
+          "slot": "body/sack",
+          "bone": "sack",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/sack/bp_sack",
+          "spriteName": "Sack"
+        },
+        {
+          "slot": "body/torso-front",
+          "bone": "torso-front",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/bp_torsoFront",
+          "spriteName": "TorsoFront"
+        },
+        {
+          "slot": "body/torso-back",
+          "bone": "torso-back",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/bp_hips/bp_torsoBack",
+          "spriteName": "TorsoBack"
+        },
+        {
+          "slot": "body/l-leg-back-mid",
+          "bone": "l-leg-back-mid",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/bp_lLegBackMid",
+          "spriteName": "LegBackMid"
+        },
+        {
+          "slot": "body/penis1",
+          "bone": "penis1",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/penisBase/penis1/bp_penis1",
+          "spriteName": "Penis_6"
+        },
+        {
+          "slot": "body/r-leg-back-mid",
+          "bone": "r-leg-back-mid",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/bp_rLegBackMid",
+          "spriteName": "LegBackMid"
+        },
+        {
+          "slot": "body/l-leg-front-base",
+          "bone": "l-leg-front-base",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/bp_lLegFrontBase",
+          "spriteName": "LegFrontBase"
+        },
+        {
+          "slot": "body/r-leg-front-base",
+          "bone": "r-leg-front-base",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/bp_rLegFrontBase",
+          "spriteName": "LegFrontBase"
+        },
+        {
+          "slot": "body/l-leg-back-lower",
+          "bone": "l-leg-back-lower",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower/bp_lLegBackLower",
+          "spriteName": "LegBackLower_0"
+        },
+        {
+          "slot": "body/penis2",
+          "bone": "penis2",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/penisBase/penis1/penis2/bp_penis2",
+          "spriteName": "Penis_6"
+        },
+        {
+          "slot": "body/r-leg-back-lower",
+          "bone": "r-leg-back-lower",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower/bp_rLegBackLower",
+          "spriteName": "LegBackLower_0"
+        },
+        {
+          "slot": "body/l-leg-front-mid",
+          "bone": "l-leg-front-mid",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/bp_lLegFrontMid",
+          "spriteName": "LegFrontMid"
+        },
+        {
+          "slot": "body/r-leg-front-mid",
+          "bone": "r-leg-front-mid",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/bp_rLegFrontMid",
+          "spriteName": "LegFrontMid"
+        },
+        {
+          "slot": "body/penis3",
+          "bone": "penis3",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/bp_penis3",
+          "spriteName": "Penis_6"
+        },
+        {
+          "slot": "body/l-leg-front-lower",
+          "bone": "l-leg-front-lower",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower/bp_lLegFrontLower",
+          "spriteName": "LegFrontLower_0"
+        },
+        {
+          "slot": "body/r-leg-front-lower",
+          "bone": "r-leg-front-lower",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower/bp_rLegFrontLower",
+          "spriteName": "LegFrontLower_0"
+        },
+        {
+          "slot": "body/penis-tip",
+          "bone": "penis-tip",
+          "rendererPath": "SkeletonHeadHumper/SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip/bp_penisTip",
+          "spriteName": "Penis_6"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/hunter",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/hunter/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonHunter/hips/bp_hip",
+          "spriteName": "Hip_1"
+        },
+        {
+          "slot": "body/balls",
+          "bone": "balls",
+          "rendererPath": "SkeletonHunter/hips/balls/bp_balls",
+          "spriteName": "Balls"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonHunter/hips/chest/bp_chest",
+          "spriteName": "Chest_9"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonHunter/hips/legUpperL/bp_legUpperL",
+          "spriteName": "LegUpper_9"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonHunter/hips/legUpperR/bp_legUpperR",
+          "spriteName": "LegUpper_9"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonHunter/hips/penis/bp_penis",
+          "spriteName": "Penis_7"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperL/bp_armUpperL",
+          "spriteName": "ArmUpper_2"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperR/bp_armUpperR",
+          "spriteName": "ArmUpper_2"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonHunter/hips/chest/neck/bp_neck",
+          "spriteName": "Neck_10"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonHunter/hips/legUpperL/legLowerL/bp_legLowerR",
+          "spriteName": "LegLower_1"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonHunter/hips/legUpperR/legLowerR/bp_legLowerR",
+          "spriteName": "LegLower_1"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperL/armLowerL/bp_armLowerL",
+          "spriteName": "ArmLower_11"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperR/armLowerR/bp_armLowerR",
+          "spriteName": "ArmLower_11"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonHunter/hips/chest/neck/head/bp_head",
+          "spriteName": "Head_2"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonHunter/hips/legUpperL/legLowerL/footL/bp_footL",
+          "spriteName": "Foot_12"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonHunter/hips/legUpperR/legLowerR/footR/bp_footR",
+          "spriteName": "Foot_12"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperL/armLowerL/handL/bp_handL",
+          "spriteName": "Hand_12"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonHunter/hips/chest/armUpperR/armLowerR/handR/bp_handR",
+          "spriteName": "Hand_12"
+        },
+        {
+          "slot": "body/antenna-l",
+          "bone": "antenna-l",
+          "rendererPath": "SkeletonHunter/hips/chest/neck/head/antennaL/bp_antennaL",
+          "spriteName": "AntennaL"
+        },
+        {
+          "slot": "body/antenna-r",
+          "bone": "antenna-r",
+          "rendererPath": "SkeletonHunter/hips/chest/neck/head/antennaR/bp_antennaR",
+          "spriteName": "AntennaR"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/jacky",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/jacky/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/bp_hips",
+          "spriteName": "Hips_7"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/butt/bp_butt",
+          "spriteName": "Butt_7"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_5"
+        },
+        {
+          "slot": "body/penis-rod",
+          "bone": "penis-rod",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/bp_penisRod",
+          "spriteName": "PenisRod"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_5"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/bp_spine",
+          "spriteName": "Spine_0"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_10"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_3"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_10"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_16"
+        },
+        {
+          "slot": "body/l-foot-base",
+          "bone": "l-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase",
+          "spriteName": "FootBase_2"
+        },
+        {
+          "slot": "body/penis-end",
+          "bone": "penis-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd",
+          "spriteName": "PenisEnd_1"
+        },
+        {
+          "slot": "body/r-foot-base",
+          "bone": "r-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase",
+          "spriteName": "FootBase_2"
+        },
+        {
+          "slot": "body/breast",
+          "bone": "breast",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/breast/bp_breast",
+          "spriteName": "Breast_1"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_10"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_11"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_10"
+        },
+        {
+          "slot": "body/l-foot-end",
+          "bone": "l-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd",
+          "spriteName": "FootEnd_2"
+        },
+        {
+          "slot": "body/r-foot-end",
+          "bone": "r-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd",
+          "spriteName": "FootEnd_2"
+        },
+        {
+          "slot": "body/breast-bg",
+          "bone": "breast-bg",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "spriteName": "BreastBg"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_10"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_19"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_10"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_19"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_19"
+        },
+        {
+          "slot": "body/knife",
+          "bone": "knife",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/knife",
+          "spriteName": "knife"
+        },
+        {
+          "slot": "body/head/variant/head-fear",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "HeadFear",
+          "animatedSpriteName": "HeadFear",
+          "sourceAnimation": "ModSDK/AnimationReference/NormalizedEnemies/jacky/scare.json"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/jenny",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/jenny/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/bp_hips",
+          "spriteName": "Hips_1"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/butt/bp_butt",
+          "spriteName": "Butt_6"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_4"
+        },
+        {
+          "slot": "body/penis-rod",
+          "bone": "penis-rod",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/bp_penisRod",
+          "spriteName": "PenisRod_0"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_4"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/bp_spine",
+          "spriteName": "Spine_9"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_3"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_2"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_3"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_11"
+        },
+        {
+          "slot": "body/l-foot-base",
+          "bone": "l-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase",
+          "spriteName": "FootBase_0"
+        },
+        {
+          "slot": "body/penis-end",
+          "bone": "penis-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd",
+          "spriteName": "PenisEnd"
+        },
+        {
+          "slot": "body/r-foot-base",
+          "bone": "r-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase",
+          "spriteName": "FootBase_0"
+        },
+        {
+          "slot": "body/breast",
+          "bone": "breast",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/breast/bp_breast",
+          "spriteName": "Breast_2"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_17"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_4"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_17"
+        },
+        {
+          "slot": "body/l-foot-end",
+          "bone": "l-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd",
+          "spriteName": "FootEnd"
+        },
+        {
+          "slot": "body/r-foot-end",
+          "bone": "r-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd",
+          "spriteName": "FootEnd"
+        },
+        {
+          "slot": "body/breast-bg",
+          "bone": "breast-bg",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "spriteName": "BreastBg_0"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_1"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_18"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_1"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_4"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_4"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/litigant",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/litigant/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/bp_hips",
+          "spriteName": "Hips_6"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_16"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/bp_penisBase",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_16"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/bp_spine",
+          "spriteName": "Spine_8"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_16"
+        },
+        {
+          "slot": "body/penis1",
+          "bone": "penis1",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/bp_penis1",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_16"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_19"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_9"
+        },
+        {
+          "slot": "body/penis2",
+          "bone": "penis2",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/bp_penis2",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_9"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_6"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_12"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_6"
+        },
+        {
+          "slot": "body/l-toe",
+          "bone": "l-toe",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot/lToe/bp_lToe",
+          "spriteName": "Toe"
+        },
+        {
+          "slot": "body/penis3",
+          "bone": "penis3",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/bp_penis3",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/r-toe",
+          "bone": "r-toe",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot/rToe/bp_rToe",
+          "spriteName": "Toe"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_17"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_6"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_17"
+        },
+        {
+          "slot": "body/penis4",
+          "bone": "penis4",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/bp_penis4",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/l-hand-base",
+          "bone": "l-hand-base",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase/bp_lHandBase",
+          "spriteName": "HandBase"
+        },
+        {
+          "slot": "body/r-hand-base",
+          "bone": "r-hand-base",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase/bp_rHandBase",
+          "spriteName": "HandBase"
+        },
+        {
+          "slot": "body/penis5",
+          "bone": "penis5",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/bp_penis5",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/l-hand-end",
+          "bone": "l-hand-end",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase/lHandEnd/bp_lHandEnd",
+          "spriteName": "HandEnd"
+        },
+        {
+          "slot": "body/r-hand-end",
+          "bone": "r-hand-end",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase/rHandEnd/bp_rHandEnd",
+          "spriteName": "HandEnd"
+        },
+        {
+          "slot": "body/penis6",
+          "bone": "penis6",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6/bp_penis6",
+          "spriteName": "PenisMiddle"
+        },
+        {
+          "slot": "body/penis-tip",
+          "bone": "penis-tip",
+          "rendererPath": "SkeletonLitigant/SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6/penisTip/bp_penisTip",
+          "spriteName": "PenisTip_0"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/maggot",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/maggot/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonMaggot/SkeletonMaggot/hips/bp_hips",
+          "spriteName": "Mid"
+        },
+        {
+          "slot": "body/back",
+          "bone": "back",
+          "rendererPath": "SkeletonMaggot/SkeletonMaggot/hips/back/bp_back",
+          "spriteName": "Back"
+        },
+        {
+          "slot": "body/front",
+          "bone": "front",
+          "rendererPath": "SkeletonMaggot/SkeletonMaggot/hips/front/bp_front",
+          "spriteName": "Front"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/musca",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/musca/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/bp_hips",
+          "spriteName": "Hips_10"
+        },
+        {
+          "slot": "body/arm-bottom-upper",
+          "bone": "arm-bottom-upper",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/armBottomUpper/bp_armBottomUpper",
+          "spriteName": "ArmUpper_8"
+        },
+        {
+          "slot": "body/balls",
+          "bone": "balls",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/balls/bp_balls",
+          "spriteName": "Balls_0"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_1"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/bp_spine",
+          "spriteName": "Spine_1"
+        },
+        {
+          "slot": "body/arm-bottom-lower",
+          "bone": "arm-bottom-lower",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/armBottomUpper/armBottomLower/bp_armBottomLower",
+          "spriteName": "ArmLower_14"
+        },
+        {
+          "slot": "body/penis-mid",
+          "bone": "penis-mid",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/penisBase/penisMid/bp_penisMid",
+          "spriteName": "PenisMid_1"
+        },
+        {
+          "slot": "body/arm-mid-upper",
+          "bone": "arm-mid-upper",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/armMidUpper/bp_armMidUpper",
+          "spriteName": "ArmUpper_8"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_3"
+        },
+        {
+          "slot": "body/hand-bottom",
+          "bone": "hand-bottom",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/armBottomUpper/armBottomLower/handBottom/bp_handBottom",
+          "spriteName": "Hand_3"
+        },
+        {
+          "slot": "body/penis-tip",
+          "bone": "penis-tip",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/penisBase/penisMid/penisTip/bp_penisTip",
+          "spriteName": "PenisTip"
+        },
+        {
+          "slot": "body/arm-mid-lower",
+          "bone": "arm-mid-lower",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/armMidUpper/armMidLower/bp_armMidLower",
+          "spriteName": "ArmLower_14"
+        },
+        {
+          "slot": "body/arm-top-upper",
+          "bone": "arm-top-upper",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/armTopUpper/bp_armTopUpper",
+          "spriteName": "ArmUpper_8"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_16"
+        },
+        {
+          "slot": "body/wings",
+          "bone": "wings",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/wings/bp_wings",
+          "spriteName": "Wing_0"
+        },
+        {
+          "slot": "body/hand-mid",
+          "bone": "hand-mid",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/armMidUpper/armMidLower/handMid/bp_handMid",
+          "spriteName": "Hand_3"
+        },
+        {
+          "slot": "body/arm-top-lower",
+          "bone": "arm-top-lower",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower/bp_armTopLower",
+          "spriteName": "ArmLower_14"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_15"
+        },
+        {
+          "slot": "body/hand-top",
+          "bone": "hand-top",
+          "rendererPath": "SkeletonMusca/SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower/handTop/bp_handTop",
+          "spriteName": "Hand_3"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/orc",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/orc/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/bp_hips",
+          "spriteName": "Hips_3"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/butt/bp_butt",
+          "spriteName": "Butt_10"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_18"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/penisBase/bp_penisBase",
+          "spriteName": "PenisBase"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_18"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/bp_spine",
+          "spriteName": "Spine_7"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_9"
+        },
+        {
+          "slot": "body/penis-mid",
+          "bone": "penis-mid",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/penisBase/penisMid/bp_penisMid",
+          "spriteName": "PenisMid_0"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_9"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_6"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_0"
+        },
+        {
+          "slot": "body/penis-tip",
+          "bone": "penis-tip",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/penisBase/penisMid/penisTip/bp_penisTip",
+          "spriteName": "PenisTip_1"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_0"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_13"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_9"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_13"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_13"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_21"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_13"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_15"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_15"
+        },
+        {
+          "slot": "body/shield",
+          "bone": "shield",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_shield",
+          "spriteName": "Shield"
+        },
+        {
+          "slot": "body/machete",
+          "bone": "machete",
+          "rendererPath": "SkeletonOrc/SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand/machete",
+          "spriteName": "Machete"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/spider-mother",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/spider-mother/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/bp_hips",
+          "spriteName": "Hips_9"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/butt/bp_butt",
+          "spriteName": "Butt_13"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/bp_chest",
+          "spriteName": "Chest_10"
+        },
+        {
+          "slot": "body/l-leg-front-base",
+          "bone": "l-leg-front-base",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/lLegFrontBase/bp_lLegFrontBase",
+          "spriteName": "LegFrontBase_0"
+        },
+        {
+          "slot": "body/r-leg-front-base",
+          "bone": "r-leg-front-base",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/rLegFrontBase/bp_rLegFrontBase",
+          "spriteName": "LegFrontBase_0"
+        },
+        {
+          "slot": "body/l-leg-back-base",
+          "bone": "l-leg-back-base",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/butt/lLegBackBase/bp_lLegBackBase",
+          "spriteName": "LegBackBase_0"
+        },
+        {
+          "slot": "body/r-leg-back-base",
+          "bone": "r-leg-back-base",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/butt/rLegBackBase/bp_rLegBackBase",
+          "spriteName": "LegBackBase_0"
+        },
+        {
+          "slot": "body/breast",
+          "bone": "breast",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/breast/bp_breast",
+          "spriteName": "Breast_0"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/neck/bp_neck",
+          "spriteName": "Neck_6"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper"
+        },
+        {
+          "slot": "body/l-leg-front-upper",
+          "bone": "l-leg-front-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/lLegFrontBase/lLegFrontUpper/bp_lLegFrontUpper",
+          "spriteName": "LegFrontUpper"
+        },
+        {
+          "slot": "body/r-leg-front-upper",
+          "bone": "r-leg-front-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/rLegFrontBase/rLegFrontUpper/bp_rLegFrontUpper",
+          "spriteName": "LegFrontUpper"
+        },
+        {
+          "slot": "body/l-leg-back-upper",
+          "bone": "l-leg-back-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/butt/lLegBackBase/lLegBackUpper/bp_lLegBackUpper",
+          "spriteName": "LegBackUpper_0"
+        },
+        {
+          "slot": "body/r-leg-back-upper",
+          "bone": "r-leg-back-upper",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/butt/rLegBackBase/rLegBackUpper/bp_rLegBackUpper",
+          "spriteName": "LegBackUpper_0"
+        },
+        {
+          "slot": "body/chest-inner",
+          "bone": "chest-inner",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/bp_chest/bp_chestInner",
+          "spriteName": "ChestInner"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_12"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/neck/head/bp_head",
+          "spriteName": "Head_13"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_12"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_14"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonHumperMother/SkeletonHumperMother/hips/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_14"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/sqoid",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/sqoid/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonSqoid/SkeletonSqoid/hips/bp_hips",
+          "spriteName": "hips_0"
+        },
+        {
+          "slot": "body/background",
+          "bone": "background",
+          "rendererPath": "SkeletonSqoid/SkeletonSqoid/hips/bp_hips/bg",
+          "spriteName": "bg"
+        },
+        {
+          "slot": "body/brain",
+          "bone": "brain",
+          "rendererPath": "SkeletonSqoid/SkeletonSqoid/hips/bp_hips/brain",
+          "spriteName": "brain"
+        }
+      ],
+      "legacyAliases": []
+    },
+    {
+      "id": "core:enemy/sunny",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/sunny/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/bp_hips",
+          "spriteName": "Hips_1"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/butt/bp_butt",
+          "spriteName": "Butt_8"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_12"
+        },
+        {
+          "slot": "body/penis-rod",
+          "bone": "penis-rod",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/bp_penisRod",
+          "spriteName": "PenisRod_0"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpperBloody"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/bp_spine",
+          "spriteName": "Spine_2"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_13"
+        },
+        {
+          "slot": "body/penis-base",
+          "bone": "penis-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase",
+          "spriteName": "PenisBase_5"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLowerBloody_0"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_4"
+        },
+        {
+          "slot": "body/l-foot-base",
+          "bone": "l-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase",
+          "spriteName": "ShoeBase"
+        },
+        {
+          "slot": "body/penis-end",
+          "bone": "penis-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd",
+          "spriteName": "PenisEnd_3"
+        },
+        {
+          "slot": "body/r-foot-base",
+          "bone": "r-foot-base",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase",
+          "spriteName": "FootBase"
+        },
+        {
+          "slot": "body/skirt",
+          "bone": "skirt",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/bp_spine/skirt",
+          "spriteName": "Skirt"
+        },
+        {
+          "slot": "body/breast",
+          "bone": "breast",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/breast/bp_breast",
+          "spriteName": "Breast_3"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_5"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_4"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_5"
+        },
+        {
+          "slot": "body/l-foot-end",
+          "bone": "l-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd",
+          "spriteName": "ShoeEnd"
+        },
+        {
+          "slot": "body/r-foot-end",
+          "bone": "r-foot-end",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd",
+          "spriteName": "FootEnd_0"
+        },
+        {
+          "slot": "body/breast-bg",
+          "bone": "breast-bg",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "spriteName": "BreastBg_0"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_19"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_11"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_19"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_8"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonAndroid/SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_8"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-1",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/zombie-1/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/bp_hips",
+          "spriteName": "Hip"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/butt/bp_butt",
+          "spriteName": "Butt"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_19"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/penis/bp_penis",
+          "spriteName": "penis_0"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_19"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/bp_spine",
+          "spriteName": "TorsoLower_5"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_2"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_2"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/bp_chest",
+          "spriteName": "Chest"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_11"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot2"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_1"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_18"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_1"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_21"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_21"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_6"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_6"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-2",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/zombie-2/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/bp_hips",
+          "spriteName": "Hip_6"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/butt/bp_butt",
+          "spriteName": "Butt_2"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_8"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/penis/bp_penis",
+          "spriteName": "penis_1"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_8"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/bp_spine",
+          "spriteName": "TorsoLower_3"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_19"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_19"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_14"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_4"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_4"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_19"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_14"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_19"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_3"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_3"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_3"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_5"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_5"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-3",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/zombie-3/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/bp_hips",
+          "spriteName": "Hip 1"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/butt/bp_butt",
+          "spriteName": "Butt"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_19 1"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/penis/bp_penis",
+          "spriteName": "penis_0 1"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_19 1"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/bp_spine",
+          "spriteName": "TorsoLower_5 1"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_2 1"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_2 1"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/bp_chest",
+          "spriteName": "Chest 1"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_11 1"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_11 1"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_1 1"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_18 1"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_1 1"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_21 1"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_21 1"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_6 1"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_6 1"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-grabber",
+      "sourceRig": "ModSDK/AnimationReference/NormalizedEnemies/zombie-grabber/rig.json",
+      "slots": [
+        {
+          "slot": "body/hips",
+          "bone": "hips",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/bp_hips",
+          "spriteName": "Hip_8"
+        },
+        {
+          "slot": "body/butt",
+          "bone": "butt",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/butt/bp_butt",
+          "spriteName": "Butt_9"
+        },
+        {
+          "slot": "body/leg-left-upper",
+          "bone": "leg-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/bp_lLegUpper",
+          "spriteName": "LegUpper_10"
+        },
+        {
+          "slot": "body/penis",
+          "bone": "penis",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/penis/bp_penis",
+          "spriteName": "penis_5"
+        },
+        {
+          "slot": "body/leg-right-upper",
+          "bone": "leg-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/bp_rLegUpper",
+          "spriteName": "LegUpper_10"
+        },
+        {
+          "slot": "body/torso-lower",
+          "bone": "spine",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/bp_spine",
+          "spriteName": "TorsoLower_4"
+        },
+        {
+          "slot": "body/leg-left-lower",
+          "bone": "leg-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower",
+          "spriteName": "LegLower_12"
+        },
+        {
+          "slot": "body/leg-right-lower",
+          "bone": "leg-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower",
+          "spriteName": "LegLower_12"
+        },
+        {
+          "slot": "body/chest",
+          "bone": "chest",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/bp_chest",
+          "spriteName": "Chest_1"
+        },
+        {
+          "slot": "body/foot-left",
+          "bone": "foot-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot",
+          "spriteName": "Foot_3"
+        },
+        {
+          "slot": "body/foot-right",
+          "bone": "foot-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot",
+          "spriteName": "Foot_3"
+        },
+        {
+          "slot": "body/arm-left-upper",
+          "bone": "arm-left-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper",
+          "spriteName": "ArmUpper_4"
+        },
+        {
+          "slot": "body/neck",
+          "bone": "neck",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/bp_neck",
+          "spriteName": "Neck_17"
+        },
+        {
+          "slot": "body/arm-right-upper",
+          "bone": "arm-right-upper",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper",
+          "spriteName": "ArmUpper_4"
+        },
+        {
+          "slot": "body/arm-left-lower",
+          "bone": "arm-left-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower",
+          "spriteName": "ArmLower_18"
+        },
+        {
+          "slot": "body/head",
+          "bone": "head",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/neck/head/bp_head",
+          "spriteName": "Head_4"
+        },
+        {
+          "slot": "body/arm-right-lower",
+          "bone": "arm-right-lower",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower",
+          "spriteName": "ArmLower_18"
+        },
+        {
+          "slot": "body/hand-left",
+          "bone": "hand-left",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand",
+          "spriteName": "Hand_17"
+        },
+        {
+          "slot": "body/hand-right",
+          "bone": "hand-right",
+          "rendererPath": "SkeletonZombie/SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand",
+          "spriteName": "Hand_17"
+        }
+      ],
+      "legacyAliases": [
+        {
+          "slot": "body/arm-upper",
+          "targets": [
+            "body/arm-left-upper",
+            "body/arm-right-upper"
+          ]
+        },
+        {
+          "slot": "body/arm-lower",
+          "targets": [
+            "body/arm-left-lower",
+            "body/arm-right-lower"
+          ]
+        },
+        {
+          "slot": "body/hand",
+          "targets": [
+            "body/hand-left",
+            "body/hand-right"
+          ]
+        },
+        {
+          "slot": "body/leg-upper",
+          "targets": [
+            "body/leg-left-upper",
+            "body/leg-right-upper"
+          ]
+        },
+        {
+          "slot": "body/leg-lower",
+          "targets": [
+            "body/leg-left-lower",
+            "body/leg-right-lower"
+          ]
+        }
+      ]
+    }
+  ]
+}

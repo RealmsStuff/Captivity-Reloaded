@@ -120,11 +120,13 @@
       "type": { "const": "downedFinisher" }, "triggerRange": { "type": "number", "minimum": 0.1, "maximum": 20 },
       "startDelaySeconds": { "type": "number", "minimum": 0, "maximum": 10 }, "durationSeconds": { "type": "number", "minimum": 1, "maximum": 60 },
       "meterMax": { "type": "number", "minimum": 1, "maximum": 10000 }, "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
+      "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
       "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 }, "failureDamage": { "type": "number", "minimum": 0, "maximum": 100000 },
       "successRecoveryHealth": { "type": "number", "minimum": 0, "maximum": 100000 }, "successStunSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
       "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "animation": { "$ref": "#/$defs/name" },
       "playerAnimation": { "$ref": "#/$defs/playerClip" }, "playerAnimationRef": { "$ref": "#/$defs/playerAnimationId" },
       "phases": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "$ref": "#/$defs/finisherPhase" } },
+      "participants": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/finisherParticipant" } },
       "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
       "statuses": { "$ref": "#/$defs/finisherStatuses" }
     } },
@@ -144,7 +146,16 @@
       "id": { "$ref": "#/$defs/name" }, "durationSeconds": { "type": "number", "minimum": 0.1, "maximum": 60 },
       "animation": { "$ref": "#/$defs/name" }, "playerAnimation": { "$ref": "#/$defs/playerClip" }, "playerAnimationRef": { "$ref": "#/$defs/playerAnimationId" },
       "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
-      "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 }
+      "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
+      "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 },
+      "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 }
+    } },
+    "finisherParticipant": { "type": "object", "additionalProperties": false, "required": ["id", "enemy"], "properties": {
+      "id": { "$ref": "#/$defs/name" }, "enemy": { "$ref": "#/$defs/enemyId" },
+      "joinPolicy": { "enum": ["startOnly", "phaseBoundary"] }, "required": { "type": "boolean" },
+      "joinRange": { "type": "number", "minimum": 0.1, "maximum": 20 }, "approachRange": { "type": "number", "minimum": 0.1, "maximum": 50 },
+      "offsetX": { "type": "number", "minimum": -20, "maximum": 20 }, "offsetY": { "type": "number", "minimum": -20, "maximum": 20 },
+      "facing": { "enum": ["preserve", "left", "right"] }, "animation": { "$ref": "#/$defs/name" }
     } },
     "finisherOutcome": { "type": "object", "additionalProperties": false, "minProperties": 1, "properties": {
       "healthDamage": { "type": "number", "minimum": 0, "maximum": 100000 },

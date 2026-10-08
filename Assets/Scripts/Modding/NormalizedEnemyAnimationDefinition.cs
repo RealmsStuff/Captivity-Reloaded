@@ -91,6 +91,9 @@ namespace CaptivityReloaded.Modding
 				foreach (NormalizedObjectKey key in track?.Keys ?? new List<NormalizedObjectKey>()) times.Add(key.Time);
 			if (times.Count > 256)
 			{
+				int sourceTimeCount = times.Count;
+				io_report.Add(ValidationSeverity.Warning, "enemy-animation.sample-limit",
+					"Animation " + Id + " has " + sourceTimeCount + " distinct key times. Runtime v1 approximates it with 256 uniform samples; duration is preserved but rapid changes may lose fidelity.", Source);
 				times.Clear();
 				for (int index = 0; index < 256; index++) times.Add(m_document.DurationSeconds * index / 255f);
 			}

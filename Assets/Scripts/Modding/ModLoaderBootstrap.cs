@@ -151,6 +151,7 @@ namespace CaptivityReloaded.Modding
 			ValidateCoreEnemyAnimationReferences(coreContent.CoreEnemies, report);
 			ResolvePlayerAnimationReferences(content.Enemies, report);
 			ResolveEnemyAnimationReferences(content.Enemies, report);
+			ValidateFinisherParticipantReferences(content.Enemies, report);
 			RegisterExternalClothing(content.Clothing, report);
 			RegisterExternalWeapons(content.Weapons, report);
 			RegisterExternalUsables(content.Usables, report);
@@ -223,7 +224,7 @@ namespace CaptivityReloaded.Modding
 				io_report.Add(ValidationSeverity.Error, "enemy.player-animation-ref-missing", "Unknown normalized player animation: " + i_reference, i_source);
 				return;
 			}
-			i_assign(animation.CreateFinisherClip());
+			i_assign(animation.CreateFinisherClip(io_report));
 		}
 
 		private static void ResolveEnemyAnimationReferences(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)
@@ -256,6 +257,42 @@ namespace CaptivityReloaded.Modding
 					if (io_report.Issues.Count == issueCount) enemy.Animation.Clips.Add(pair.Key, clip);
 				}
 			}
+		}
+
+		private static void ValidateFinisherParticipantReferences(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)
+		{
+			Dictionary<string, EnemyDefinition> definitions = new Dictionary<string, EnemyDefinition>(System.StringComparer.Ordinal);
+			foreach (EnemyDefinition enemy in i_enemies ?? new EnemyDefinition[0]) definitions[enemy.Id.ToString()] = enemy;
+			foreach (EnemyDefinition owner in definitions.Values)
+				foreach (EnemyBehaviorModuleDefinition module in owner.Behavior?.Modules ?? new List<EnemyBehaviorModuleDefinition>())
+				{
+					if (module == null || module.Type != "downedFinisher") continue;
+					foreach (EnemyFinisherParticipantDefinition participant in module.Participants ?? new List<EnemyFinisherParticipantDefinition>())
+					{
+						if (participant == null || !definitions.TryGetValue(participant.Enemy ?? string.Empty, out EnemyDefinition target))
+						{
+							io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-missing",
+								"Finisher participant references an unavailable original enemy: " + (participant?.Enemy ?? "<null>"), owner.Source);
+							continue;
+						}
+						if (target.Visual?.Type != "originalSkeletonAtlas")
+							io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-original",
+								"Finisher participants currently require an originalSkeletonAtlas enemy: " + participant.Enemy, owner.Source);
+						ValidateParticipantAnimation(target, participant.Animation, participant.Id, owner.Source, io_report);
+						foreach (EnemyFinisherPhaseDefinition phase in module.Phases ?? new List<EnemyFinisherPhaseDefinition>())
+							if (phase?.ParticipantAnimations != null && phase.ParticipantAnimations.TryGetValue(participant.Id, out string animation))
+								ValidateParticipantAnimation(target, animation, participant.Id + "/" + phase.Id, owner.Source, io_report);
+					}
+				}
+		}
+
+		private static void ValidateParticipantAnimation(EnemyDefinition i_target, string i_animation, string i_context,
+			string i_source, ValidationReport io_report)
+		{
+			if (string.IsNullOrEmpty(i_animation)) return;
+			if (i_target.Animation?.Clips == null || !i_target.Animation.Clips.ContainsKey(i_animation))
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-participant-animation-missing",
+					"Participant " + i_context + " references unknown animation '" + i_animation + "' on " + i_target.Id + ".", i_source);
 		}
 
 		private static void ValidateCoreEnemyAnimationReferences(IEnumerable<CoreEnemyDefinition> i_enemies, ValidationReport io_report)

@@ -20,6 +20,15 @@ namespace CaptivityReloaded.Editor.Modding
 		public List<string> TargetFiles { get; } = new List<string>();
 	}
 
+	public sealed class DragonBonesBatchExportResult
+	{
+		public int EnemyCount { get; internal set; }
+		public int AnimationCount { get; internal set; }
+		public int ImageCount { get; internal set; }
+		public string OutputDirectory { get; internal set; }
+		public string IndexPath { get; internal set; }
+	}
+
 	public sealed class DragonBonesAnimationBridgeWindow : EditorWindow
 	{
 		[SerializeField] private int m_tab;
@@ -85,6 +94,19 @@ namespace CaptivityReloaded.Editor.Modding
 			{
 				try { DragonBonesAnimationBridge.ExportPairedReferenceGallery(m_pixelsPerUnit, m_imageScale); m_status = "Exported all six synchronized enemy + player DragonBones projects."; AssetDatabase.Refresh(); }
 				catch (Exception exception) { m_status = "Paired batch export failed: " + exception.Message; }
+			}
+			if (GUILayout.Button("Export Every Core Enemy to DragonBones", GUILayout.Height(28f)))
+			{
+				try
+				{
+					int normalized = NormalizedCoreEnemyAnimationExporter.ExportCompleteSetForAuthoring();
+					string output = FilePath.Combine(ProjectRoot(), "DragonBonesExports", "core-enemies");
+					DragonBonesBatchExportResult result = DragonBonesAnimationBridge.ExportAllCoreEnemies(ProjectRoot(), output, m_pixelsPerUnit, m_imageScale);
+					m_status = "Exported " + result.EnemyCount + " Core enemies, " + result.AnimationCount + " animations, and "
+						+ result.ImageCount + " images after refreshing " + normalized + " normalized animations. Output: DragonBonesExports/core-enemies.";
+					AssetDatabase.Refresh();
+				}
+				catch (Exception exception) { m_status = "All-enemy export failed: " + exception.Message; }
 			}
 			EditorGUILayout.Space(3f);
 			DrawPath("Rig reference", ref m_rigPath, false, "json");
@@ -315,7 +337,14 @@ namespace CaptivityReloaded.Editor.Modding
 			HashSet<string> animationNames = new HashSet<string>(((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>().Select(i_animation => (string)i_animation["name"]), StringComparer.Ordinal);
 			foreach (JProperty source in sources.Properties().Where(i_property => !animationNames.Contains(i_property.Name))) io_report.Add(ValidationSeverity.Error, "dragonbones.clip-missing", "Required animation was removed or renamed: " + source.Name, i_source);
 			foreach (string extra in animationNames.Where(i_name => i_name != null && sources[i_name] == null)) io_report.Add(ValidationSeverity.Warning, "dragonbones.clip-unmapped", "Animation is not recorded in the sidecar and will not be imported: " + extra, i_source);
-			foreach (JObject animation in ((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>())
+			List<JObject> animations = ((JArray)i_armature["animation"] ?? new JArray()).OfType<JObject>().ToList();
+			if (animations.Any(i_animation => i_animation.Descendants().OfType<JProperty>().Any(i_property => i_property.Name == "curve" || i_property.Name == "tweenEasing")))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.interpolation-approximation", "DragonBones curve and tweenEasing values are not imported by runtime v1. Imported keys use the normalized animation interpolation rules and may not match the edited motion exactly.", i_source);
+			if (animations.Any(i_animation => i_animation.Descendants().OfType<JProperty>().Any(i_property => i_property.Name == "clockwise" && (int?)i_property.Value != 0)))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.rotation-direction", "DragonBones clockwise rotation directives are not preserved by runtime v1. Review rotations that cross 180 degrees after import.", i_source);
+			if (animations.Any(i_animation => i_animation["zOrder"] != null))
+				io_report.Add(ValidationSeverity.Warning, "dragonbones.z-order-ignored", "DragonBones zOrder timelines are not imported by runtime v1. Keep draw-order changes in normalized sortingOrder tracks and review the paired preview.", i_source);
+			foreach (JObject animation in animations)
 			{
 				if (((int?)animation["duration"] ?? 0) < 1) io_report.Add(ValidationSeverity.Error, "dragonbones.clip-duration", "Animation has no positive frame duration: " + (string)animation["name"], i_source);
 				foreach (JObject timeline in ((JArray)animation["bone"] ?? new JArray()).OfType<JObject>())
@@ -592,6 +621,83 @@ namespace CaptivityReloaded.Editor.Modding
 			string root = FilePath.GetFullPath(FilePath.Combine(Application.dataPath, ".."));
 			JObject catalog = JObject.Parse(File.ReadAllText(FilePath.Combine(root, "ModSDK", "AnimationReference", "core-animation-catalog.json")));
 			foreach (string family in s_referenceFamilies) ExportPairedFamily(root, family, catalog, i_pixelsPerUnit, i_imageScale);
+		}
+
+		[MenuItem("Captivity Reloaded/Modding/Export Every Core Enemy to DragonBones")]
+		public static void ExportAllCoreEnemiesMenu()
+		{
+			int normalized = NormalizedCoreEnemyAnimationExporter.ExportCompleteSetForAuthoring();
+			string root = FilePath.GetFullPath(FilePath.Combine(Application.dataPath, ".."));
+			DragonBonesBatchExportResult result = ExportAllCoreEnemies(root, FilePath.Combine(root, "DragonBonesExports", "core-enemies"), 32f, 4);
+			AssetDatabase.Refresh();
+			Debug.Log("[Modding] Exported " + result.EnemyCount + " Core enemies, " + result.AnimationCount + " animations, and "
+				+ result.ImageCount + " images to " + result.OutputDirectory + " after refreshing " + normalized + " normalized animations.");
+			EditorUtility.DisplayDialog("DragonBones Core enemy export",
+				"Exported " + result.EnemyCount + " enemies, " + result.AnimationCount + " animations, and " + result.ImageCount
+				+ " images.\n\n" + result.OutputDirectory, "OK");
+		}
+
+		/// <summary>Exports one DragonBones 5.5 authoring project for every enemy in the Core animation catalog.</summary>
+		public static DragonBonesBatchExportResult ExportAllCoreEnemies(string i_projectRoot, string i_outputDirectory,
+			float i_pixelsPerUnit = 32f, int i_imageScale = 4)
+		{
+			string root = FilePath.GetFullPath(i_projectRoot ?? string.Empty);
+			string output = FilePath.GetFullPath(i_outputDirectory ?? string.Empty);
+			if (!Directory.Exists(root)) throw new DirectoryNotFoundException("Project root was not found: " + root);
+			if (!Finite(i_pixelsPerUnit) || i_pixelsPerUnit <= 0f || i_pixelsPerUnit > 4096f) throw new InvalidDataException("Pixels per unit must be greater than zero and at most 4096.");
+			if (i_imageScale < 1 || i_imageScale > 8) throw new InvalidDataException("Pixel preview scale must be from 1 through 8.");
+
+			string catalogPath = FilePath.Combine(root, "ModSDK", "AnimationReference", "core-animation-catalog.json");
+			if (!File.Exists(catalogPath)) throw new FileNotFoundException("Core animation catalog was not found. Refresh the normalized Core enemy export first.", catalogPath);
+			JArray catalogEnemies = (JArray)JObject.Parse(File.ReadAllText(catalogPath))["enemies"] ?? new JArray();
+			if (catalogEnemies.Count == 0) throw new InvalidDataException("The Core animation catalog contains no enemies.");
+
+			Directory.CreateDirectory(output);
+			DragonBonesBatchExportResult result = new DragonBonesBatchExportResult { OutputDirectory = output };
+			JArray indexEntries = new JArray();
+			HashSet<string> slugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (JObject enemy in catalogEnemies.OfType<JObject>().OrderBy(i_enemy => (string)i_enemy["id"], StringComparer.Ordinal))
+			{
+				string id = (string)enemy["id"];
+				if (string.IsNullOrWhiteSpace(id)) throw new InvalidDataException("A Core animation catalog entry has no enemy ID.");
+				string slug = Slug(id.StartsWith("core:enemy/", StringComparison.Ordinal) ? id.Substring("core:enemy/".Length) : id);
+				if (!slugs.Add(slug)) throw new InvalidDataException("More than one Core enemy maps to the DragonBones directory " + slug + ".");
+				string source = FilePath.Combine(root, "ModSDK", "AnimationReference", "NormalizedEnemies", slug);
+				string rig = FilePath.Combine(source, "rig.json");
+				if (!File.Exists(rig)) throw new FileNotFoundException("Normalized rig is missing for " + id + ". Refresh the normalized Core enemy export first.", rig);
+				string enemyOutput = FilePath.Combine(output, slug);
+				Export(rig, source, enemyOutput, i_pixelsPerUnit, i_imageScale);
+				string skeleton = FilePath.Combine(enemyOutput, LastArmatureName + "_ske.json");
+				string sidecar = FilePath.Combine(enemyOutput, "captivity-roundtrip.json");
+				if (!File.Exists(skeleton) || !File.Exists(sidecar)) throw new InvalidDataException("DragonBones export did not produce the required files for " + id + ".");
+				result.EnemyCount++;
+				result.AnimationCount += LastAnimationCount;
+				result.ImageCount += LastImageCount;
+				indexEntries.Add(new JObject
+				{
+					["enemy"] = id,
+					["directory"] = slug,
+					["armature"] = LastArmatureName,
+					["skeleton"] = slug + "/" + FilePath.GetFileName(skeleton),
+					["sidecar"] = slug + "/captivity-roundtrip.json",
+					["animationCount"] = LastAnimationCount,
+					["imageCount"] = LastImageCount
+				});
+			}
+
+			if (result.EnemyCount != catalogEnemies.Count) throw new InvalidDataException("Not every Core catalog enemy was exported.");
+			JObject index = new JObject
+			{
+				["schemaVersion"] = 1,
+				["type"] = "captivityDragonBonesCoreEnemyExportIndex",
+				["enemyCount"] = result.EnemyCount,
+				["animationCount"] = result.AnimationCount,
+				["imageCount"] = result.ImageCount,
+				["enemies"] = indexEntries
+			};
+			result.IndexPath = FilePath.Combine(output, "core-enemy-export-index.json");
+			File.WriteAllText(result.IndexPath, index.ToString(Formatting.Indented));
+			return result;
 		}
 
 		public static void Export(string i_rigPath, string i_animationDirectory, string i_outputDirectory, float i_pixelsPerUnit, int i_imageScale = 4)
