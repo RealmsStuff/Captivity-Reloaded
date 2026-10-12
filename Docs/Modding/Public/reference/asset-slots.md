@@ -548,11 +548,11 @@ Paired limbs intentionally share semantic slots except for left and right feet. 
 | `core:sprite/arm-upper-18/image` | legacy-presentation | Placed/background sprite ArmUpper_18 | runtime baseline required |
 | `core:sprite/arm-upper-20/image` | legacy-presentation | Placed/background sprite ArmUpper_20 | runtime baseline required |
 | `core:sprite/blush/image` | legacy-presentation | Placed/background sprite Blush | runtime baseline required |
-| `core:sprite/butt/image` | named-core-sprite | Core sprite Butt | runtime baseline required |
 | `core:sprite/butt-15/image` | legacy-presentation | Placed/background sprite Butt_15 | runtime baseline required |
 | `core:sprite/butt-2/image` | named-core-sprite | Core sprite Butt_2 | runtime baseline required |
 | `core:sprite/butt-5/image` | named-core-sprite | Core sprite Butt_5 | runtime baseline required |
 | `core:sprite/butt-6/image` | named-core-sprite | Core sprite Butt_6 | runtime baseline required |
+| `core:sprite/butt/image` | named-core-sprite | Core sprite Butt | runtime baseline required |
 | `core:sprite/chest-5/image` | named-core-sprite | Core sprite Chest_5 | runtime baseline required |
 | `core:sprite/chest-7/image` | named-core-sprite | Core sprite Chest_7 | runtime baseline required |
 | `core:sprite/eyelid/image` | legacy-presentation | Placed/background sprite Eyelid | runtime baseline required |
@@ -560,11 +560,11 @@ Paired limbs intentionally share semantic slots except for left and right feet. 
 | `core:sprite/foot/image` | legacy-presentation | Placed/background sprite Foot | runtime baseline required |
 | `core:sprite/hand-16/image` | legacy-presentation | Placed/background sprite Hand_16 | runtime baseline required |
 | `core:sprite/hand-2/image` | legacy-presentation | Placed/background sprite Hand_2 | runtime baseline required |
+| `core:sprite/head-8/image` | legacy-presentation | Placed/background sprite Head_8 | runtime baseline required |
 | `core:sprite/head1/image` | legacy-presentation | Placed/background sprite Head1 | runtime baseline required |
 | `core:sprite/head2/image` | legacy-presentation | Placed/background sprite Head2 | runtime baseline required |
 | `core:sprite/head3/image` | legacy-presentation | Placed/background sprite Head3 | runtime baseline required |
 | `core:sprite/head4/image` | legacy-presentation | Placed/background sprite Head4 | runtime baseline required |
-| `core:sprite/head-8/image` | legacy-presentation | Placed/background sprite Head_8 | runtime baseline required |
 | `core:sprite/hip-3/image` | legacy-presentation | Placed/background sprite Hip_3 | runtime baseline required |
 | `core:sprite/hip-5/image` | legacy-presentation | Placed/background sprite Hip_5 | runtime baseline required |
 | `core:sprite/lady-statue/image` | legacy-presentation | Placed/background sprite LadyStatue | runtime baseline required |
@@ -606,6 +606,9 @@ Paired limbs intentionally share semantic slots except for left and right feet. 
 | `core:stage-art/fer/effects/blood-wall-1` | named-core-sprite | Core sprite BloodSplashesWall1 | runtime baseline required |
 | `core:stage-art/fer/effects/blood-wall-2` | named-core-sprite | Core sprite BloodSplashesWall2 | runtime baseline required |
 | `core:stage-art/fer/effects/blood-wall-3` | named-core-sprite | Core sprite BloodSplashesWall3 | runtime baseline required |
+| `core:weapon-effects/muzzle-flashes/1` | weapon-effect | Core muzzle flash 1 | registered when used by a shipped gun |
+| `core:weapon-effects/muzzle-flashes/2` | weapon-effect | Core muzzle flash 2 | registered when used by a shipped gun |
+| `core:weapon-effects/muzzle-flashes/3` | weapon-effect | Core muzzle flash 3 | registered when used by a shipped gun |
 | `core:weapon/css446/base` | weapon | CSS446 base renderer | registered when the shipped base renderer exists |
 | `core:weapon/css446/body` | weapon | CSS446 inventory/body sprite | registered when the shipped icon exists |
 | `core:weapon/halman-785/base` | weapon | Halman 785 base renderer | registered when the shipped base renderer exists |
@@ -651,9 +654,6 @@ Paired limbs intentionally share semantic slots except for left and right feet. 
 | `core:weapon/tenelli-so3/body` | weapon | Tenelli SO3 inventory/body sprite | registered when the shipped icon exists |
 | `core:weapon/usi/base` | weapon | Usi base renderer | registered when the shipped base renderer exists |
 | `core:weapon/usi/body` | weapon | Usi inventory/body sprite | registered when the shipped icon exists |
-| `core:weapon-effects/muzzle-flashes/1` | weapon-effect | Core muzzle flash 1 | registered when used by a shipped gun |
-| `core:weapon-effects/muzzle-flashes/2` | weapon-effect | Core muzzle flash 2 | registered when used by a shipped gun |
-| `core:weapon-effects/muzzle-flashes/3` | weapon-effect | Core muzzle flash 3 | registered when used by a shipped gun |
 
 ## Using a slot
 

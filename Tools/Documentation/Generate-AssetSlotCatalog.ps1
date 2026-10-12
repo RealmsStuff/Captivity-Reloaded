@@ -14,6 +14,11 @@ function Add-Slot([string]$Id, [string]$Family, [string]$Meaning, [string]$Avail
 	$slots.Add([pscustomobject]@{ Id=$Id; Family=$Family; Meaning=$Meaning; Availability=$Availability })
 }
 
+function Get-OrdinalSortKey([string]$Value) {
+	if ($null -eq $Value) { return '' }
+	return [BitConverter]::ToString([Text.Encoding]::UTF8.GetBytes($Value)).Replace('-', '')
+}
+
 function Slug([string]$Name) {
 	$result = New-Object System.Text.StringBuilder
 	for ($index=0; $index -lt $Name.Length; $index++) {
@@ -32,7 +37,8 @@ foreach ($match in [regex]::Matches($binder, 'ContentId\s+(?<name>\w+)\s*=\s*Con
 
 # Player body and face slots.
 $partBlock = [regex]::Match($binder, '(?s)PlayerPartNames\s*=.*?\{(?<body>.*?)\n\s*\};').Groups['body'].Value
-$parts = @([regex]::Matches($partBlock, '\{\s*"[^"]+"\s*,\s*"(?<part>[^"]+)"\s*\}') | ForEach-Object {$_.Groups['part'].Value} | Sort-Object -Unique)
+$parts = @([regex]::Matches($partBlock, '\{\s*"[^"]+"\s*,\s*"(?<part>[^"]+)"\s*\}') |
+	ForEach-Object {$_.Groups['part'].Value} | Sort-Object @{ Expression = { Get-OrdinalSortKey ([string]$_) } } -Unique)
 $skinBlock = [regex]::Match($binder, 'SkinColors\s*=\s*\{(?<body>[^}]+)\}').Groups['body'].Value
 $skins = @([regex]::Matches($skinBlock, 'SkinColor\.(?<skin>\w+)') | ForEach-Object {$_.Groups['skin'].Value.ToLowerInvariant()})
 foreach ($part in $parts) { foreach ($skin in $skins) {
@@ -68,7 +74,8 @@ foreach ($entry in $clothing.entries) {
 
 # Enemy semantic family. These are patterns because varied legacy rigs do not all contain every part.
 $enemyPartBlock = [regex]::Match($binder, '(?s)CoreEnemyPartNames\s*=.*?\{(?<body>.*?)\n\s*\};').Groups['body'].Value
-$enemyParts = @([regex]::Matches($enemyPartBlock, '\{\s*"(?<part>body/[^"]+)"') | ForEach-Object {$_.Groups['part'].Value} | Sort-Object -Unique)
+$enemyParts = @([regex]::Matches($enemyPartBlock, '\{\s*"(?<part>body/[^"]+)"') |
+	ForEach-Object {$_.Groups['part'].Value} | Sort-Object @{ Expression = { Get-OrdinalSortKey ([string]$_) } } -Unique)
 
 # Direct named bindings resolve owner constants and suffixes.
 foreach ($match in [regex]::Matches($binder, 'BindNamedCoreSpriteSlot\("(?<sprite>[^"]+)",\s*(?<owner>\w+),\s*"(?<suffix>[^"]+)"\)')) {
@@ -86,7 +93,7 @@ foreach ($match in [regex]::Matches($legacyBlock, '"(?<name>[^"]+)"')) {
 # Fixed usable-vendor slot.
 Add-Slot 'core:map-art/usable-vendor/sprite' 'map-art' 'Usable vendor world artwork' 'registered when the Core template or a Tiled vendor is available'
 
-$slots = @($slots | Sort-Object Id -Unique)
+$slots = @($slots | Sort-Object @{ Expression = { Get-OrdinalSortKey $_.Id } } -Unique)
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add('# Public asset-slot catalog')
 $lines.Add('')

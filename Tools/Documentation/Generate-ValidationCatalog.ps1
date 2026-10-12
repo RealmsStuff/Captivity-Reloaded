@@ -23,6 +23,7 @@ foreach ($root in $roots) {
 				Severity = $match.Groups['severity'].Value
 				Message = $match.Groups['message'].Value.Replace('\"', '"')
 				Source = $file.FullName.Substring($ProjectRoot.Length + 1).Replace('\', '/')
+				Offset = $match.Index
 			})
 		}
 	}
@@ -31,6 +32,11 @@ foreach ($root in $roots) {
 function Escape-Cell([string]$Value) {
 	if ($null -eq $Value) { return '' }
 	return $Value.Replace('|', '\|').Replace("`r", ' ').Replace("`n", ' ')
+}
+
+function Get-OrdinalSortKey([string]$Value) {
+	if ($null -eq $Value) { return '' }
+	return [BitConverter]::ToString([Text.Encoding]::UTF8.GetBytes($Value)).Replace('-', '')
 }
 
 $lines = New-Object System.Collections.Generic.List[string]
@@ -47,15 +53,15 @@ $lines.Add('- **Warning:** content may load with a fallback or requires author a
 $lines.Add('- **Info:** state or platform information that does not itself invalidate content.')
 
 $unique = @($records | Group-Object Code | ForEach-Object {
-	$first = $_.Group | Sort-Object Source | Select-Object -First 1
+	$first = $_.Group | Sort-Object @{ Expression = { Get-OrdinalSortKey $_.Source } }, Offset | Select-Object -First 1
 	[pscustomobject]@{
 		Code = $_.Name
 		Category = ($_.Name -split '\.')[0]
-		Severity = (@($_.Group.Severity | Sort-Object -Unique) -join '/')
+		Severity = (@($_.Group.Severity | Sort-Object @{ Expression = { Get-OrdinalSortKey ([string]$_) } } -Unique) -join '/')
 		Message = $first.Message
-		Sources = (@($_.Group.Source | Sort-Object -Unique) -join ', ')
+		Sources = (@($_.Group.Source | Sort-Object @{ Expression = { Get-OrdinalSortKey ([string]$_) } } -Unique) -join ', ')
 	}
-} | Sort-Object Category,Code)
+} | Sort-Object @{ Expression = { Get-OrdinalSortKey $_.Category } }, @{ Expression = { Get-OrdinalSortKey $_.Code } })
 
 foreach ($category in $unique | Group-Object Category) {
 	$lines.Add('')

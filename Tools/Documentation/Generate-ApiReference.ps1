@@ -14,6 +14,11 @@ function Escape-Cell([object]$Value) {
 	return ([string]$Value).Replace('|', '\|').Replace("`r", ' ').Replace("`n", ' ')
 }
 
+function Get-OrdinalSortKey([string]$Value) {
+	if ($null -eq $Value) { return '' }
+	return [BitConverter]::ToString([Text.Encoding]::UTF8.GetBytes($Value)).Replace('-', '')
+}
+
 function Schema-Type([object]$Node) {
 	if ($null -eq $Node) { return '' }
 	if ($null -ne $Node.'$ref') { return 'ref: `' + (($Node.'$ref' -split '/')[-1]) + '`' }
@@ -111,7 +116,8 @@ $index.Add('')
 $index.Add('| Contract | Reference |')
 $index.Add('| --- | --- |')
 
-foreach ($file in Get-ChildItem -LiteralPath $schemaRoot -Filter '*.schema.json' | Sort-Object Name) {
+foreach ($file in Get-ChildItem -LiteralPath $schemaRoot -Filter '*.schema.json' |
+	Sort-Object @{ Expression = { Get-OrdinalSortKey $_.Name } }) {
 	$schema = Get-Content -LiteralPath $file.FullName -Raw -Encoding utf8 | ConvertFrom-Json
 	$slug = $file.Name.Replace('.schema.json', '')
 	$title = if ($schema.title) { [string]$schema.title } else { $slug }

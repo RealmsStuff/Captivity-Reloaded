@@ -268,6 +268,12 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.ai.attack-range-gap` | Error | preferredRange cannot exceed every attack's initiateRange or the enemy can stop outside attack range. | `Assets/Scripts/Modding/EnemyAttackAuthoring.cs` |
 | `enemy.ai.retreat-range` | Error | retreatRange cannot be greater than preferredRange. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |
 | `enemy.ai.type` | Error | Original enemy AI type must be groundChase, flyingChase, or holdPosition. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |
+| `enemy.animation-ref-duplicate` | Error | Animation clip is defined inline and by reference:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.animation-ref-missing` | Error | Unknown normalized enemy animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.animation-ref-owner` | Error | Normalized animation  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.animation-refs.id` | Error | animationRefs values must be enemy-animation content IDs. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.animation-refs.limit` | Error | animationRefs supports at most 64 clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.animation-refs.name` | Error | animationRefs keys must be semantic clip names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.attack-hit-fields` | Error | attackHit does not accept amount or impulse fields. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.base-clips` | Error | Original animation sets require idle and move clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.camera-shake` | Error | cameraShake amount must be between 0 and 1. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -285,9 +291,9 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.animation.event-after-attack` | Error | Animation event at  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.event-clip` | Error | Enemy animation events are allowed only on clips referenced by an attack or finisher. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.event-loop` | Error | Enemy gameplay events are not allowed on looping clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.animation.events` | Error | Animation clips support at most 64 timed events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.event-time` | Error | Enemy animation event times must be ordered and fall within the clip duration. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.event-type` | Error | Unsupported enemy animation event type:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.animation.events` | Error | Animation clips support at most 64 timed events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.frame` | Error | Frame times must be ordered within the clip and include bone poses. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.impulse` | Error | impulse requires a finite x or y value between -1000 and 1000. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.impulse-amount` | Error | impulse uses x and y rather than amount. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -298,12 +304,6 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.animation.sound-fields` | Error | sound contains fields belonging to another event type. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.sound-file` | Error | sound requires a safe pack-relative WAV or OGG file. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.sound-volume` | Error | sound volume must be between 0 and 1. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.animation-ref-duplicate` | Error | Animation clip is defined inline and by reference:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.animation-ref-missing` | Error | Unknown normalized enemy animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.animation-ref-owner` | Error | Normalized animation  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.animation-refs.id` | Error | animationRefs values must be enemy-animation content IDs. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.animation-refs.limit` | Error | animationRefs supports at most 64 clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.animation-refs.name` | Error | animationRefs keys must be semantic clip names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.animation` | Error | Original attacks require an animation clip name. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.animation-missing` | Error | Attack references an unknown animation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.entry` | Error | Attack entries cannot be null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -315,8 +315,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.projectile-region` | Error | Projectile attacks require projectileRegion to reference an atlas region. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.required` | Error | Original enemies require at least one attack. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.stage-events` | Error | multiStage attacks require exactly one ordered attackHit animation event per stage. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.attacks.stages` | Error | Multi-stage attacks require 2 through 16 hit stages. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.stage-type` | Error | Each attack stage must use melee, hitscan, projectile, area, or grab. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.stages` | Error | Multi-stage attacks require 2 through 16 hit stages. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.type` | Error | The starter wizard supports melee, hitscan, projectile, area, grab, and multi-stage attacks. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.unexpected-stages` | Error | Only multiStage attacks may define stages. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.weight-total` | Error | At least one attack must have a selection weight greater than zero. | `Assets/Scripts/Modding/EnemyAttackAuthoring.cs` |
@@ -341,17 +341,17 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-phase-animation-missing` | Error | Finisher phase references an unknown enemy animation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-duration` | Error | Each finisher phase durationSeconds must be 0.1..60. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-id` | Error | Finisher phase IDs must be unique semantic names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.behavior.finisher-phases` | Error | downedFinisher phases must contain 2..8 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-total` | Error | Combined finisher phase duration cannot exceed 300 seconds. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-phases` | Error | downedFinisher phases must contain 2..8 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-animation` | Error | playerAnimation requires a bounded duration and 1..256 frames. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-animation-ref` | Error | playerAnimationRef must be a player-animation content ID. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-animation-source` | Error | Use playerAnimation or playerAnimationRef, not both. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-bone` | Error | playerAnimation references an unsupported player bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-event-amount` | Error | playerAnimation event amount must be greater than 0 and within the limit for its event type. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-event-fields` | Error | playerAnimation finisher events cannot define fields belonging to enemy-side events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.behavior.finisher-player-events` | Error | playerAnimation supports at most 64 timed events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-event-time` | Error | playerAnimation event times must be ordered and fall within the clip duration. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-event-type` | Error | Supported playerAnimation event types are pleasure, scaledPleasure, libido, strengthDamage, struggleDamage, and healthDamage. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-player-events` | Error | playerAnimation supports at most 64 timed events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-frame` | Error | playerAnimation frame times must be ordered within the clip and include bone poses. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-region` | Error | playerAnimation cannot replace player sprite regions. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-description` | Error | Finisher status descriptions support at most 256 characters. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -359,8 +359,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-status-key` | Error | Unsupported finisher status:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-title` | Error | Finisher status titles must contain 1..64 characters. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.module` | Error | Behavior modules must have unique types. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.behavior.modules` | Error | At most 8 behavior modules are supported. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.module-type` | Error | Unsupported behavior module:  | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.modules` | Error | At most 8 behavior modules are supported. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.on-hit-clothing-id` | Error | onHitEquipClothing clothing must be a clothing content ID. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.spawn-on-death-count` | Error | Spawn-on-death count must be 1 through 32. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.spawn-on-death-enemy` | Error | Spawn-on-death requires a full enemy content ID. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -374,8 +374,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.null` | Error | Enemy definition resolved to null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.on-hit-clothing-missing` | Error | Enemy references unknown on-hit clothing:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.player-animation-ref-missing` | Error | Unknown normalized player animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.spawn.original-inherit` | Error | Original enemies cannot inherit Core template spawners; reference their ID from a stage spawner instead. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn-on-death-missing` | Error | Enemy references an unknown spawnOnDeath enemy:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.spawn.original-inherit` | Error | Original enemies cannot inherit Core template spawners; reference their ID from a stage spawner instead. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.bounty` | Error | Bounty cannot be negative. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.speed-acceleration` | Error | Acceleration must be between 0.01 and 1000. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |
 | `enemy.stats.speed-max` | Error | Maximum speed must be between 0.01 and 1000. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |
@@ -386,13 +386,13 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.visual.bone-id` | Error | Bone IDs must be unique semantic names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.bone-parent` | Error | Bone references an invalid parent:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.bone-region` | Error | Bone references an unknown atlas region:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.visual.bones` | Error | Original skeletons require 1..64 bones. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.bone-transform` | Error | Bone transforms must be finite and pivots must be 0..1. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.visual.bones` | Error | Original skeletons require 1..64 bones. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.hips` | Error | Original skeletons require a hips bone. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.hit-zone-bone` | Error | Hit zones require one unique existing bone. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.hit-zone-damage` | Error | damageMultiplier must be low, normal, critical, or block. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.visual.hit-zones` | Error | Original skeletons require at least one hit zone. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.hit-zone-shape` | Error | Hit-zone shape must be box or circle. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.visual.hit-zones` | Error | Original skeletons require 1..64 hit zones. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.pixels-per-unit` | Error | pixelsPerUnit must be greater than 0 and at most 1024. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.region-name` | Error | Region name is not a safe semantic path:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.visual.region-rect` | Error | Region rectangle must have a non-negative origin and positive size:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -409,7 +409,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy-animation.reference-bone` | Error | Sprite effect references a missing rig bone:  | `Assets/Scripts/Modding/EnemyAnimationReferenceValidator.cs` |
 | `enemy-animation.reference-document` | Error | No enemy animation document was supplied. | `Assets/Scripts/Modding/EnemyAnimationReferenceValidator.cs` |
 | `enemy-animation.reference-effect` | Error | Effect trigger references an unknown effect:  | `Assets/Scripts/Modding/EnemyAnimationReferenceValidator.cs` |
-| `enemy-animation.reference-region` | Error | Sprite effect references a missing atlas region:  | `Assets/Scripts/Modding/EnemyAnimationReferenceValidator.cs` |
+| `enemy-animation.reference-region` | Error | Sprite key references a missing atlas region:  | `Assets/Scripts/Modding/EnemyAnimationReferenceValidator.cs` |
 | `enemy-animation.region-missing` | Error | Animation  | `Assets/Scripts/Modding/NormalizedEnemyAnimationDefinition.cs` |
 | `enemy-animation.sample-limit` | Warning | Animation  | `Assets/Scripts/Modding/NormalizedEnemyAnimationDefinition.cs` |
 | `enemy-animation.sprite-file` | Error | Animation sprite assets must be PNG files. | `Assets/Scripts/Modding/NormalizedEnemyAnimationDefinition.cs` |
@@ -497,10 +497,10 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 
 | Code | Severity | Message prefix | Source |
 | --- | --- | --- | --- |
-| `stage.audio.empty` | Error | audio must replace at least one stage audio slot. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.audio-decode` | Error | Could not decode  | `Assets/Scripts/Assembly-CSharp/ExternalStageFactory.cs` |
 | `stage.audio-file` | Error | Stage  | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
 | `stage.audio-load` | Error | Could not load  | `Assets/Scripts/Assembly-CSharp/ExternalStageFactory.cs` |
+| `stage.audio.empty` | Error | audio must replace at least one stage audio slot. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.camera.bounds` | Error | Camera bounds require finite min/max coordinates with max greater than min. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.enemy-missing` | Error | Stage references an unknown enemy:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `stage.extends-missing` | Error | Stage extends an unknown Core stage:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
@@ -513,7 +513,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `stage.layout.pixels-per-unit` | Error | pixelsPerUnit must be between 1 and 512. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.layout.player-spawn` | Error | tiledJson layouts define player-spawn in the Tiled map. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.layout.preserve-inherited-stage-objects` | Error | preserveInheritedStageObjects is only available for tiledJson layouts. | `Assets/Scripts/Modding/StageDefinition.cs` |
-| `stage.layout.reuse-inherited-spawners` | Error | reuseInheritedSpawners requires preserveInheritedStageObjects. | `Assets/Scripts/Modding/StageDefinition.cs` |
+| `stage.layout.reuse-inherited-spawners` | Error | reuseInheritedSpawners is only available for tiledJson compatibility ports. | `Assets/Scripts/Modding/StageDefinition.cs` |
 | `stage.layout.spawner-missing` | Error | Tiled map has no enemy-spawner point named  | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
 | `stage.layout.spawner-unused` | Error | Tiled enemy-spawner point has no matching stage spawner:  | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
 | `stage.layout.type` | Error | layout.type must be 'coreStageLayout' or 'tiledJson'. | `Assets/Scripts/Modding/StageDefinition.cs` |
@@ -582,7 +582,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `tiled.freeform-light-values` | Error | freeform-light has invalid color, shape, intensity, or sorting layers. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.global-light-shape` | Error | global-light must be a point. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.global-light-values` | Error | global-light has invalid color, intensity, falloff, or sorting layers. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
-| `tiled.image-layer-file` | Error | Image-layer PNG is missing or outside its pack:  | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
+| `tiled.image-layer-file` | Error | Image layers require a relative pack-local PNG. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.image-layer-values` | Error | Image-layer offsets must be finite; opacity must be 0..1 and parallax factors must be 0..2. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.interaction-chain-cycle` | Error | Interaction chains must not contain cycles (at  | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.interaction-challenges` | Error | requiredChallenges must contain at most 100 challenge content IDs. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
@@ -640,9 +640,9 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `tiled.room-shape` | Error | room objects must be non-empty rectangles. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.room-transition-destination` | Error | room-transition requires a destination room-entry ID. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.room-transition-shape` | Error | room-transition objects must be non-empty rectangles. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
+| `tiled.script-trigger-shape` | Error | script-trigger objects must be non-empty rectangles. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.scripted-actor-enemy` | Error | scripted-actor requires an enemy content ID. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.scripted-actor-shape` | Error | scripted-actor objects must be points. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
-| `tiled.script-trigger-shape` | Error | script-trigger objects must be non-empty rectangles. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.stage-item-file` | Error | stage-item requires a pack-local PNG no larger than 16 MiB. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.stage-item-shape` | Error | stage-item objects must be points. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.stage-item-text` | Error | stage-item requires a displayName and bounded onPickupSignal. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
@@ -662,10 +662,10 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `tiled.tileset-border` | Error | Sprite borders must be non-negative and fit inside the tileset tile dimensions. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.tileset-dimensions` | Error | Tilesets require positive tile/image dimensions, tilecount, and columns. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.tileset-gid` | Error | Tileset firstgid values must be positive and strictly increasing. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
-| `tiled.tileset-image` | Error | Tileset PNG is missing or outside its pack:  | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
+| `tiled.tileset-image` | Error | Tileset images must be relative PNG paths inside the pack. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.tileset-image-size` | Error | Tileset tile grid does not fit inside its declared image dimensions. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.tileset-object-alignment` | Error | Tileset objectalignment is not a supported Tiled alignment. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
-| `tiled.tileset-source` | Error | External tileset is missing, outside its pack, or is not JSON/TSJ:  | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
+| `tiled.tileset-source` | Error | External tilesets require a relative pack-local .json or .tsj source. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.vendor-visual` | Error | visualFile must be a pack-local PNG no larger than 16 MiB, with visualPixelsPerUnit from 1 to 1024. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.weapon-case-shape` | Error | weapon-case objects must be points. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
 | `tiled.weapon-case-size` | Error | weapon-case caseSize must be 1, 2, or 3. | `Assets/Scripts/Modding/TiledLevelDefinition.cs` |
@@ -727,7 +727,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `weapon.stats.ammo-pair` | Error | ammoMax and magazineSize must be overridden together. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.stats.magazine-size` | Error | magazineSize cannot exceed ammoMax. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.stats.original-reload-type` | Error | Fully original weapons currently support the event-free Magazine reload type. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
-| `weapon.stats.original-required` | Error | Fully original weapons require:  | `Assets/Scripts/Modding/WeaponDefinition.cs` |
+| `weapon.stats.original-required` | Error | A fully original weapon requires a complete stats object. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.throwable.explode-on-impact` | Error | throwable.explodeOnImpact requires a positive explosionRadius. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.throwable.explosion-color` | Error | throwable.explosionColor must use #RRGGBB or #RRGGBBAA. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.throwable.explosion-damage` | Error | A throwable explosionRadius requires a positive explosionDamageMultiplier. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
@@ -740,11 +740,11 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `weapon.visual.bundle-prefab` | Error | bundlePrefab must be a prefab/... ID owned by the defining pack. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.hidden-slot` | Error | hiddenSlots must name visible published prefab slots:  | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.original-fields` | Error | Rig, collider, pivot, and muzzle fields are only valid for originalWeaponSprites. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
-| `weapon.visual.part` | Error | parts entries cannot be null. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
-| `weapon.visual.parts` | Error | parts supports at most 16 entries. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
+| `weapon.visual.part` | Error | Each parts key must name a visible sprite from visual.sprites. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.part-sorting-order` | Error | part sortingOrder must be between -100 and 100. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
+| `weapon.visual.parts` | Error | parts is only valid for originalWeaponSprites. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.pixels-per-unit` | Error | pixelsPerUnit must be greater than 0 and at most 1024. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
-| `weapon.visual.slot` | Error | Original weapon sprite names must be lowercase identifiers:  | `Assets/Scripts/Modding/WeaponDefinition.cs` |
+| `weapon.visual.slot` | Error | Sprite slot is not published by the selected Core weapon template:  | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.sorting-order` | Error | sortingOrder must be between -100 and 100. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.sprites` | Error | At least one weapon sprite is required. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
 | `weapon.visual.type` | Error | visual.type must be coreWeaponSprites or originalWeaponSprites. | `Assets/Scripts/Modding/WeaponDefinition.cs` |
