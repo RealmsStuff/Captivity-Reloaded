@@ -16,15 +16,20 @@
     "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" }, "effects": { "$ref": "#/$defs/effects", "x-stability": "experimental" }
   },
   "allOf": [
-    { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalClothingSprites" } }, "required": ["type"] } } }, "then": {
+    { "if": { "properties": { "visual": { "properties": { "type": { "enum": ["originalClothingSprites", "originalClothingAtlas"] } }, "required": ["type"] } } }, "then": {
       "not": { "required": ["extends"] }, "required": ["category"],
       "properties": { "visual": { "properties": {
-        "sprites": { "required": ["icon"], "minProperties": 2, "maxProperties": 33 },
         "attachments": { "minProperties": 1, "additionalProperties": { "allOf": [
           { "$ref": "#/$defs/attachment" }, { "required": ["bone"] }
         ] } }
       } } }
-    }, "else": { "required": ["extends"] } }
+    }, "else": { "required": ["extends"] } },
+    { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalClothingSprites" } } } } }, "then": {
+      "properties": { "visual": { "properties": { "sprites": { "required": ["icon"], "minProperties": 2, "maxProperties": 33 } } } }
+    } },
+    { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalClothingAtlas" } } } } }, "then": {
+      "properties": { "visual": { "properties": { "regions": { "required": ["icon"], "minProperties": 2, "maxProperties": 33 } } } }
+    } }
   ],
   "$defs": {
     "clothingId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:clothing/[a-z0-9][a-z0-9._/-]*$" },
@@ -44,11 +49,12 @@
     "physics": { "type": "object", "additionalProperties": false, "required": ["mode"], "properties": {
       "mode": { "const": "sway" }, "spring": { "type": "number", "minimum": 0.1, "maximum": 200 },
       "damping": { "type": "number", "minimum": 0, "maximum": 50 }, "gravity": { "type": "number", "minimum": 0, "maximum": 1 },
-      "motionInfluence": { "type": "number", "minimum": 0, "maximum": 10 }, "maxAngle": { "type": "number", "minimum": 0, "maximum": 90 }
+      "motionInfluence": { "type": "number", "minimum": 0, "maximum": 10 }, "maxAngle": { "type": "number", "minimum": 0, "maximum": 90 },
+      "idleAmplitude": { "type": "number", "minimum": 0, "maximum": 20 }, "idleFrequency": { "type": "number", "minimum": 0, "maximum": 5 }
     }, "x-stability": "experimental" },
     "bodyVariant": { "type": "object", "minProperties": 1, "maxProperties": 32, "propertyNames": { "pattern": "^piece/[a-z0-9][a-z0-9/-]*$" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
     "visual": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
-      "type": { "enum": ["coreClothingAtlas", "coreClothingSprites", "originalClothingSprites"] }, "atlas": { "$ref": "#/$defs/pngPath" }, "sprites": { "type": "object", "propertyNames": { "$ref": "#/$defs/slot" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
+      "type": { "enum": ["coreClothingAtlas", "coreClothingSprites", "originalClothingSprites", "originalClothingAtlas"] }, "atlas": { "$ref": "#/$defs/pngPath" }, "sprites": { "type": "object", "propertyNames": { "$ref": "#/$defs/slot" }, "additionalProperties": { "$ref": "#/$defs/pngPath" } },
       "pixelsPerUnit": { "type": "number", "exclusiveMinimum": 0, "maximum": 1024, "default": 32 }, "regions": { "type": "object", "propertyNames": { "$ref": "#/$defs/slot" }, "additionalProperties": { "$ref": "#/$defs/region" } },
       "attachments": { "type": "object", "propertyNames": { "pattern": "^piece/[a-z0-9][a-z0-9/-]*$" }, "additionalProperties": { "$ref": "#/$defs/attachment" }, "x-stability": "experimental" },
       "bodyVariants": { "type": "object", "maxProperties": 32, "propertyNames": { "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" }, "additionalProperties": { "$ref": "#/$defs/bodyVariant" }, "x-stability": "experimental" }
@@ -56,9 +62,12 @@
       { "if": { "properties": { "type": { "const": "coreClothingAtlas" } } }, "then": { "required": ["atlas", "regions"], "properties": { "regions": { "minProperties": 1 } } } },
       { "if": { "properties": { "type": { "const": "coreClothingSprites" } } }, "then": { "required": ["sprites"], "properties": { "sprites": { "minProperties": 1 } } } }
       ,{ "if": { "properties": { "type": { "const": "originalClothingSprites" } } }, "then": { "required": ["sprites", "attachments"] } }
+      ,{ "if": { "properties": { "type": { "const": "originalClothingAtlas" } } }, "then": { "required": ["atlas", "regions", "attachments"] } }
     ] },
     "effects": { "type": "object", "additionalProperties": false, "properties": {
       "damageTakenMultiplier": { "type": "number", "minimum": 0.05, "maximum": 2 },
+      "escapePowerMultiplier": { "type": "number", "minimum": 0.1, "maximum": 3 },
+      "bountyMultiplier": { "type": "number", "minimum": 0, "maximum": 3 },
       "statModifiers": { "type": "object", "maxProperties": 8, "propertyNames": { "enum": ["HealthMax", "SpeedAccel", "SpeedMax", "Traction", "DamageMultiplierGun", "SpeedSprint", "PowerJump", "PowerDash"] }, "additionalProperties": { "type": "number", "minimum": -10000, "maximum": 10000 } }
     } }
   }

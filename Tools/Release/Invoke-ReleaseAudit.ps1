@@ -114,7 +114,7 @@ $policyPath = Join-Path $ProjectRoot 'Docs\Modding\Public\reference\licensing-an
 $noticesPath = Join-Path $ProjectRoot 'THIRD_PARTY_NOTICES.md'
 Add-ReleaseCheck 'Repository license exists' (Test-Path $licensePath) $licensePath
 Add-ReleaseCheck 'Redistribution policy exists' (Test-Path $policyPath) $policyPath
-$noticesComplete = (Test-Path $noticesPath) -and -not (Select-String -LiteralPath $noticesPath -SimpleMatch 'PROVENANCE REQUIRED' -Quiet)
+$noticesComplete = (Test-Path $noticesPath) -and (Select-String -LiteralPath $noticesPath -Pattern 'Release provenance approval:\s*\*\*yes\*\*' -Quiet)
 Add-ReleaseCheck 'Third-party notices are complete' $noticesComplete $noticesPath
 
 $script:Checks | Format-Table -AutoSize -Wrap

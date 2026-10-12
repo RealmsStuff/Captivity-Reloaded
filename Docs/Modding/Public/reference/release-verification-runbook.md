@@ -2,6 +2,8 @@
 
 This is the required order for a Mod API release. A pass from the developer's long-lived Unity folder is useful diagnostics, but it does not count as release verification.
 
+Create a copy of the [release evidence template](release-evidence-template.md) before starting and fill it in as each gate is exercised.
+
 ## 1. Freeze a release candidate
 
 1. Run `Tools/Release/Invoke-ReleaseAudit.ps1`.

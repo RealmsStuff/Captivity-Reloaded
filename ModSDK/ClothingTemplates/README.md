@@ -14,6 +14,8 @@ The supplied Core art starts in 32 by 32 cells, but **32 by 32 is not a runtime 
 
 Do not trim the exported canvas unless you also update every atlas coordinate. Duplicate-looking left/right layers are deliberate because those are independently addressable mod slots. Individual-PNG `coreClothingSprites` definitions are often simpler for unusually large pieces because every file becomes its full sprite automatically.
 
+For fully original layered garments and hair, `originalClothingAtlas` keeps author-defined `piece/...` regions in one PNG and gives every region its own attachment, pivot, sorting offset, and optional sway settings. `ExampleMods/authored-hairstyles` instead demonstrates the separate-PNG workflow when exact native canvas alignment matters.
+
 The three `clothing-variant.json` files are ready-to-copy additive definition examples. Change their namespace, IDs, display text, and atlas path for a real pack.
 
 `DefaultShirt/content/clothing-override.json` demonstrates the second workflow: replacing the existing Core shirt in place with individual PNG pieces. It does not add a wardrobe entry and preserves the Core shirt's save identity. When copying it into a pack, keep the referenced files inside that pack and adjust the paths to match their location relative to the pack root.

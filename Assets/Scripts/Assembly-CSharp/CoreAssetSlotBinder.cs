@@ -106,6 +106,11 @@ public static class CoreAssetSlotBinder
 		EnemyAnimatedSpriteBindings.Clear();
 	}
 
+	internal static void ResetForContentReload()
+	{
+		ResetRuntimeState();
+	}
+
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 	private static void Initialize()
 	{

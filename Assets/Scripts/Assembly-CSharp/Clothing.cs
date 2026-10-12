@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CaptivityReloaded.Modding;
 using UnityEngine;
 
 public class Clothing : MonoBehaviour
@@ -23,6 +24,8 @@ public class Clothing : MonoBehaviour
 	[SerializeField]
 	private List<Clothing> m_clothesCompatibleOverride = new List<Clothing>();
 	private float m_modDamageTakenMultiplier = 1f;
+	private float m_modEscapePowerMultiplier = 1f;
+	private float m_modBountyMultiplier = 1f;
 	private Dictionary<string, float> m_modStatModifiers = new Dictionary<string, float>();
 	private List<StatModifier> m_appliedModStatModifiers = new List<StatModifier>();
 
@@ -85,6 +88,8 @@ public class Clothing : MonoBehaviour
 		if (i_effects != null)
 		{
 			m_modDamageTakenMultiplier = i_effects.DamageTakenMultiplier ?? 1f;
+			m_modEscapePowerMultiplier = i_effects.EscapePowerMultiplier ?? 1f;
+			m_modBountyMultiplier = i_effects.BountyMultiplier ?? 1f;
 			m_modStatModifiers = i_effects.StatModifiers == null
 				? new Dictionary<string, float>() : new Dictionary<string, float>(i_effects.StatModifiers);
 		}
@@ -104,6 +109,8 @@ public class Clothing : MonoBehaviour
 	}
 
 	public float GetModDamageTakenMultiplier() { return m_modDamageTakenMultiplier; }
+	public float GetModEscapePowerMultiplier() { return m_modEscapePowerMultiplier; }
+	public float GetModBountyMultiplier() { return m_modBountyMultiplier; }
 
 	public bool IsCompatibleWithClothing(Clothing i_clothingToCheck)
 	{
@@ -153,5 +160,50 @@ public class Clothing : MonoBehaviour
 		m_clothesCompatibleOverride.Clear();
 		if (i_compatibleOverrides != null) foreach (Clothing clothing in i_compatibleOverrides)
 			if (clothing != null && clothing != this && !m_clothesCompatibleOverride.Contains(clothing)) m_clothesCompatibleOverride.Add(clothing);
+	}
+}
+
+public static class ModClothingEffects
+{
+	public static float GetEscapePowerMultiplier(Player i_player)
+	{
+		float multiplier = 1f;
+		foreach (Clothing clothing in GetEquipped(i_player))
+			if (clothing != null) multiplier *= clothing.GetModEscapePowerMultiplier();
+		return Mathf.Clamp(multiplier, 0.05f, 10f);
+	}
+
+	public static int ApplyBountyMultiplier(Player i_player, int i_bounty)
+	{
+		float multiplier = 1f;
+		foreach (Clothing clothing in GetEquipped(i_player))
+			if (clothing != null) multiplier *= clothing.GetModBountyMultiplier();
+		return Mathf.Max(0, Mathf.RoundToInt(i_bounty * Mathf.Clamp(multiplier, 0f, 10f)));
+	}
+
+	public static bool TryForceEquip(Player i_player, string i_clothingId)
+	{
+		if (i_player == null || !ContentId.TryParse(i_clothingId, out ContentId clothingId)
+			|| !ModLoaderRuntime.Registry.TryGet(clothingId, out ContentRegistration registration)
+			|| registration.Category != ContentCategory.Clothing || !(registration.RuntimeAsset is Clothing clothing)) return false;
+		SkeletonPlayer skeleton = i_player.GetSkeletonPlayer();
+		if (skeleton == null) return false;
+		if (skeleton.IsClothingEquipped(clothing)) return true;
+
+		List<Clothing> incompatible = new List<Clothing>();
+		foreach (Clothing equipped in skeleton.GetClothesEquipped())
+			if (equipped != null && !clothing.IsCompatibleWithClothing(equipped)) incompatible.Add(equipped);
+		foreach (Clothing equipped in incompatible) skeleton.RemoveClothing(equipped);
+		skeleton.EquipClothing(clothing);
+		ManagerDB.UnlockClothing(clothing);
+		ManagerDB.EquipClothes(new List<Clothing>(skeleton.GetClothesEquipped()));
+		return true;
+	}
+
+	private static IEnumerable<Clothing> GetEquipped(Player i_player)
+	{
+		SkeletonPlayer skeleton = i_player == null ? null : i_player.GetSkeletonPlayer();
+		if (skeleton == null) return new Clothing[0];
+		return skeleton.GetClothesEquipped();
 	}
 }

@@ -57,30 +57,40 @@ public class ExhaustedHud : MonoBehaviour
 		}
 		PlayerController controller = CommonReferences.Instance.GetPlayerController();
 		bool mobile = controller != null && controller.GetIsMobileControlsEnabled();
+		ManagerInput input = CommonReferences.Instance.GetManagerInput();
+		bool controllerInput = !mobile && input != null && input.IsControllerLastUsed();
+		bool useRecoveryButton = mobile || controllerInput;
 		if (mobile)
 		{
 			if (controller.GetIsMobileJumpPressed()) HandleHit();
 		}
+		else if (controllerInput)
+		{
+			// Controller directions are continuous axes, so IsButtonDown(MoveLeft/MoveRight)
+			// can never advance this alternating-key recovery game. Use the mapped Jump
+			// action just like the mobile recovery control instead.
+			if (input.IsButtonDown(InputButton.Jump)) HandleHit();
+		}
 		else if (m_keyCurrent == KeyCode.D)
 		{
-			if (CommonReferences.Instance.GetManagerInput().IsButtonDown(InputButton.MoveLeft))
+			if (input.IsButtonDown(InputButton.MoveLeft))
 			{
 				m_keyCurrent = KeyCode.A;
 				HandleHit();
 			}
 		}
-		else if (CommonReferences.Instance.GetManagerInput().IsButtonDown(InputButton.MoveRight))
+		else if (input.IsButtonDown(InputButton.MoveRight))
 		{
 			m_keyCurrent = KeyCode.D;
 			HandleHit();
 		}
-		RefreshMobilePrompt(mobile);
-		if (!mobile && m_keyCurrent == KeyCode.A)
+		RefreshRecoveryPrompt(useRecoveryButton);
+		if (!useRecoveryButton && m_keyCurrent == KeyCode.A)
 		{
 			m_txtLeft.color = m_colorArrowToPress;
 			m_txtRight.color = m_colorArrowToNotPress;
 		}
-		else if (!mobile)
+		else if (!useRecoveryButton)
 		{
 			m_txtLeft.color = m_colorArrowToNotPress;
 			m_txtRight.color = m_colorArrowToPress;
@@ -92,10 +102,10 @@ public class ExhaustedHud : MonoBehaviour
 		UpdateMeter();
 	}
 
-	private void RefreshMobilePrompt(bool i_mobile)
+	private void RefreshRecoveryPrompt(bool i_useRecoveryButton)
 	{
-		m_txtLeft.gameObject.SetActive(!i_mobile);
-		m_txtRight.gameObject.SetActive(!i_mobile);
+		m_txtLeft.gameObject.SetActive(!i_useRecoveryButton);
+		m_txtRight.gameObject.SetActive(!i_useRecoveryButton);
 		if (m_mobileInputGlyph == null)
 		{
 			m_mobileInputGlyph = InputGlyphLibrary.GetOrCreateImage(transform, "MobileKnockoutJumpGlyph");
@@ -105,8 +115,8 @@ public class ExhaustedHud : MonoBehaviour
 			rect.anchoredPosition = new Vector2(0f, 62f);
 			rect.sizeDelta = new Vector2(64f, 64f);
 		}
-		m_mobileInputGlyph.sprite = i_mobile ? InputGlyphLibrary.GetPromptSprite(InputButton.Jump) : null;
-		m_mobileInputGlyph.gameObject.SetActive(i_mobile && m_mobileInputGlyph.sprite != null);
+		m_mobileInputGlyph.sprite = i_useRecoveryButton ? InputGlyphLibrary.GetPromptSprite(InputButton.Jump) : null;
+		m_mobileInputGlyph.gameObject.SetActive(i_useRecoveryButton && m_mobileInputGlyph.sprite != null);
 	}
 
 	private void UpdateMeter()

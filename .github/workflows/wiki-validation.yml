@@ -1,0 +1,41 @@
+name: Wiki validation
+
+on:
+  push:
+    paths:
+      - "README.md"
+      - ".gitbook.yaml"
+      - "Docs/**"
+      - "Assets/Scripts/**"
+      - "Assets/Editor/Modding/**"
+      - "ExampleMods/**"
+      - "ModSDK/**"
+      - "Tools/Documentation/**"
+      - ".github/workflows/wiki-validation.yml"
+  pull_request:
+    paths:
+      - "README.md"
+      - ".gitbook.yaml"
+      - "Docs/**"
+      - "Assets/Scripts/**"
+      - "Assets/Editor/Modding/**"
+      - "ExampleMods/**"
+      - "ModSDK/**"
+      - "Tools/Documentation/**"
+      - ".github/workflows/wiki-validation.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate source-derived reference pages
+        shell: pwsh
+        run: |
+          ./Tools/Documentation/Generate-ApiReference.ps1
+          ./Tools/Documentation/Generate-AssetSlotCatalog.ps1
+          ./Tools/Documentation/Generate-ValidationCatalog.ps1
+          git diff --exit-code -- Docs/Modding/Public/reference
+      - name: Check wiki navigation and links
+        shell: pwsh
+        run: ./Tools/Documentation/Validate-Wiki.ps1

@@ -175,6 +175,11 @@ namespace CaptivityReloaded.Modding
 			Debug.Log("[ModLoader] Validation complete. Packs=" + LoadedPacks.Count + ", registry entries=" + Registry.Count + ", valid=" + report.IsValid + ".");
 		}
 
+		public static void ReloadFromDisk()
+		{
+			Initialize();
+		}
+
 		private static void RegisterCoreCatalog(ValidationReport io_report)
 		{
 			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
@@ -509,10 +514,13 @@ namespace CaptivityReloaded.Modding
 			HashSet<ContentId> coreEnemies = new HashSet<ContentId>();
 			HashSet<ContentId> knownItems = new HashSet<ContentId>();
 			HashSet<ContentId> knownEnemies = new HashSet<ContentId>();
+			HashSet<ContentId> knownClothing = new HashSet<ContentId>();
 			foreach (CoreContentCatalogEntry entry in CoreContentCatalog)
 				if (entry.Category == ContentCategory.Enemy) { coreEnemies.Add(entry.Id); knownEnemies.Add(entry.Id); }
 				else if (entry.Category == ContentCategory.Item) knownItems.Add(entry.Id);
+				else if (entry.Category == ContentCategory.Clothing) knownClothing.Add(entry.Id);
 			foreach (ContentRegistration item in Registry.GetByCategory(ContentCategory.Item)) knownItems.Add(item.Id);
+			foreach (ContentRegistration clothing in Registry.GetByCategory(ContentCategory.Clothing)) knownClothing.Add(clothing.Id);
 			foreach (EnemyDefinition definition in i_enemies) knownEnemies.Add(definition.Id);
 
 			foreach (EnemyDefinition enemy in i_enemies)
@@ -531,13 +539,33 @@ namespace CaptivityReloaded.Modding
 					dropsValid = false;
 				}
 				foreach (EnemyBehaviorModuleDefinition module in enemy.Behavior.Modules)
+				{
 					if (module.Type == "spawnOnDeath" && (!ContentId.TryParse(module.Enemy, out ContentId spawnId) || !knownEnemies.Contains(spawnId)))
 					{
 						io_report.Add(ValidationSeverity.Error, "enemy.spawn-on-death-missing", "Enemy references an unknown spawnOnDeath enemy: " + module.Enemy, enemy.Source);
 						dropsValid = false;
 					}
+					if (module.Type == "onHitEquipClothing" && (!ContentId.TryParse(module.Clothing, out ContentId hitClothing) || !knownClothing.Contains(hitClothing)))
+					{
+						io_report.Add(ValidationSeverity.Error, "enemy.on-hit-clothing-missing", "Enemy references unknown on-hit clothing: " + module.Clothing, enemy.Source);
+						dropsValid = false;
+					}
+					if (module.Type == "downedFinisher")
+						foreach (string clothing in GetFinisherClothing(module))
+							if (!ContentId.TryParse(clothing, out ContentId outcomeClothing) || !knownClothing.Contains(outcomeClothing))
+							{
+								io_report.Add(ValidationSeverity.Error, "enemy.finisher-clothing-missing", "Enemy finisher references unknown clothing: " + clothing, enemy.Source);
+								dropsValid = false;
+							}
+				}
 				if (dropsValid) Registry.Register(new ContentRegistration(enemy.Id, ContentCategory.Enemy, enemy.PackId, enemy.Source), io_report);
 			}
+		}
+
+		private static IEnumerable<string> GetFinisherClothing(EnemyBehaviorModuleDefinition i_module)
+		{
+			foreach (string clothing in i_module.SuccessOutcome?.EquipClothing ?? new List<string>()) yield return clothing;
+			foreach (string clothing in i_module.FailureOutcome?.EquipClothing ?? new List<string>()) yield return clothing;
 		}
 
 		private static void RegisterExternalWeapons(IEnumerable<WeaponDefinition> i_weapons, ValidationReport io_report)

@@ -89,6 +89,7 @@ public class VendorHud : MonoBehaviour
 
 	private void Awake()
 	{
+		MoneyHud.ConfigureMoneyText(m_txtMoneyPlayer);
 		ConfigureLayout();
 		m_vendorWindow.SetActive(value: false);
 	}

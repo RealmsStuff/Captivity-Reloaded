@@ -108,12 +108,16 @@
     } },
     "module": { "oneOf": [
       { "$ref": "#/$defs/regeneration" }, { "$ref": "#/$defs/berserk" }, { "$ref": "#/$defs/amountModule" },
-      { "$ref": "#/$defs/onHitRagdoll" }, { "$ref": "#/$defs/spawnOnDeath" }, { "$ref": "#/$defs/speedPulse" }, { "$ref": "#/$defs/downedFinisher" }
+      { "$ref": "#/$defs/onHitRagdoll" }, { "$ref": "#/$defs/onHitEquipClothing" }, { "$ref": "#/$defs/spawnOnDeath" }, { "$ref": "#/$defs/speedPulse" }, { "$ref": "#/$defs/downedFinisher" }
     ] },
     "regeneration": { "type": "object", "additionalProperties": false, "required": ["type", "amount", "intervalSeconds"], "properties": { "type": { "const": "regeneration" }, "amount": { "type": "number", "minimum": 0.01, "maximum": 100000 }, "intervalSeconds": { "type": "number", "minimum": 0.05, "maximum": 600 } } },
     "berserk": { "type": "object", "additionalProperties": false, "required": ["type", "healthThreshold"], "properties": { "type": { "const": "berserk" }, "healthThreshold": { "type": "number", "minimum": 0.01, "maximum": 1 }, "speedBonus": { "type": "number", "minimum": -1000, "maximum": 1000 }, "damageMultiplierBonus": { "type": "number", "minimum": -100, "maximum": 100 } } },
     "amountModule": { "type": "object", "additionalProperties": false, "required": ["type", "amount"], "properties": { "type": { "enum": ["lifesteal", "thorns"] }, "amount": { "type": "number", "minimum": 0.01, "maximum": 100000 } } },
     "onHitRagdoll": { "type": "object", "additionalProperties": false, "required": ["type", "durationSeconds"], "properties": { "type": { "const": "onHitRagdoll" }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 30 } } },
+    "onHitEquipClothing": { "type": "object", "additionalProperties": false, "required": ["type", "clothing"], "properties": {
+      "type": { "const": "onHitEquipClothing" }, "clothing": { "$ref": "#/$defs/clothingId" },
+      "chance": { "type": "number", "minimum": 0, "maximum": 1 }, "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }
+    } },
     "spawnOnDeath": { "type": "object", "additionalProperties": false, "required": ["type", "enemy", "count"], "properties": { "type": { "const": "spawnOnDeath" }, "enemy": { "$ref": "#/$defs/enemyId" }, "count": { "type": "integer", "minimum": 1, "maximum": 32 }, "radius": { "type": "number", "minimum": 0, "maximum": 20 } } },
     "speedPulse": { "type": "object", "additionalProperties": false, "required": ["type", "speedBonus", "intervalSeconds", "durationSeconds"], "properties": { "type": { "const": "speedPulse" }, "speedBonus": { "type": "number", "minimum": -1000, "maximum": 1000 }, "intervalSeconds": { "type": "number", "minimum": 0.1, "maximum": 600 }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 600 } } },
     "downedFinisher": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["type", "triggerRange", "meterMax", "inputPower"], "anyOf": [{ "required": ["durationSeconds"] }, { "required": ["phases"] }], "properties": {
@@ -164,7 +168,8 @@
       "libido": { "type": "number", "minimum": 0, "maximum": 10000 },
       "healthRecovery": { "type": "number", "minimum": 0, "maximum": 100000 },
       "enemyStunSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
-      "playerRagdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 }
+      "playerRagdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
+      "equipClothing": { "type": "array", "uniqueItems": true, "maxItems": 8, "items": { "$ref": "#/$defs/clothingId" } }
     } },
     "playerClip": { "type": "object", "additionalProperties": false, "required": ["durationSeconds", "frames"], "properties": {
       "durationSeconds": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 }, "loop": { "type": "boolean" },
@@ -172,6 +177,7 @@
       "events": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/playerAnimationEvent" } }
     } },
 	"playerAnimationId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-animation/[a-z0-9][a-z0-9._/-]*$" },
+	"clothingId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:clothing/[a-z0-9][a-z0-9._/-]*$" },
 	"playerAnimationEvent": { "oneOf": [
 	  { "type": "object", "additionalProperties": false, "required": ["time", "type", "amount"], "properties": {
 	    "time": { "type": "number", "minimum": 0, "maximum": 60 }, "type": { "enum": ["pleasure", "scaledPleasure"] }, "amount": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }

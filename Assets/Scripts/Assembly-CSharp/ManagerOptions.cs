@@ -158,6 +158,7 @@ public class ManagerOptions : MonoBehaviour
 		List<InputButtonXGame> inputButtons = ManagerDB.GetInputButtons();
 		for (int i = 0; i < inputButtons.Count; i++)
 		{
+			if (!ShouldShowInputBinding(inputButtons[i].GetInputButton(), ExternalRuleProfileFactory.IsSelfPleasureEnabled())) continue;
 			InputBox inputBox = UnityEngine.Object.Instantiate(m_inputBoxDefault, m_inputBoxDefault.transform.parent);
 			inputBox.Initialize(inputButtons[i]);
 			inputBox.gameObject.SetActive(value: true);
@@ -167,6 +168,11 @@ public class ManagerOptions : MonoBehaviour
 			inputBox2.gameObject.SetActive(value: true);
 			m_controllerInputBoxes.Add(inputBox2);
 		}
+	}
+
+	public static bool ShouldShowInputBinding(InputButton i_button, bool i_selfPleasureEnabled)
+	{
+		return i_button != InputButton.SelfPleasure || i_selfPleasureEnabled;
 	}
 
 	private void CreateControllerInputParent()
@@ -299,12 +305,11 @@ public class ManagerOptions : MonoBehaviour
 		List<string> names = new List<string> { "Standard" };
 		m_gameModeIds.Add(string.Empty);
 		int selected = 0;
-		for (int i = 0; i < RuleProfileRegistry.Definitions.Count; i++)
+		foreach (RuleProfileDefinition profile in RuleProfileRegistry.SelectableDefinitions)
 		{
-			RuleProfileDefinition profile = RuleProfileRegistry.Definitions[i];
 			names.Add(profile.DisplayName);
 			m_gameModeIds.Add(profile.Id.ToString());
-			if (profile.Id.ToString() == RuleProfileRegistry.CurrentId) selected = i + 1;
+			if (profile.Id.ToString() == RuleProfileRegistry.CurrentId) selected = m_gameModeIds.Count - 1;
 		}
 		m_dropDownGameMode.AddOptions(names);
 		m_dropDownGameMode.value = selected;

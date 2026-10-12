@@ -1,5 +1,19 @@
 # Tiled maps
 
+## Install and open the starter map
+
+1. Download the desktop build for your operating system from the [official Tiled download page](https://www.mapeditor.org/download.html), install it, and launch it once. Captivity does not require a Tiled plugin or scripted extension.
+2. Copy the complete `ModSDK/MapTemplates/TiledStage` directory into your mod workspace. Keep its `levels`, `templates`, `tilesets`, `assets`, and `reference` directories together so relative paths continue to resolve.
+3. In Tiled, select **File > Open File or Project** and open `levels/starter-map.json` from the copied directory. If Tiled asks for a format, choose **JSON map files**.
+4. Keep the map **Orthogonal** and **Finite**. Save it as JSON with raw tile-layer arrays; do not convert it to TMX/XML, an infinite map, base64 data, or compressed layer data.
+5. Before packaging, run the template's verification script from PowerShell:
+
+   ```powershell
+   .\ModSDK\MapTemplates\verify-tiled-pack.ps1 -PackPath ".\path\to\your-mod"
+   ```
+
+If you also need Unity's packager and previews, complete [Install the authoring tools](installing-authoring-tools.md). Tiled itself can edit a stage without Unity running.
+
 Export a finite orthogonal map as Tiled JSON. The experimental pipeline renders PNG-backed tile and image layers and constructs reviewed gameplay objects, including platforms, spawners, doors, vendors, registered pickups, pack-local `stage-item` key items, lights, moving platforms, navigation links, and interaction graphs. Exactly one `player-spawn` point defines the player start.
 
 For a `stage-item` that should remain on a shelf or cabinet until collected, set `initiallyKinematic: true`. Its world pickup still works normally; items without this property retain dynamic physics.
@@ -9,6 +23,12 @@ The same `initiallyKinematic` property works on registered `pickup` points, such
 Tiled pixels are converted from a top-left, downward-positive coordinate system to Unity units using the stage definition's `pixelsPerUnit`.
 
 Start with `ModSDK/MapTemplates/TiledStage`. It contains an editable map, a ready-to-copy stage definition, reusable `.tx` object templates, and a machine-readable summary of the supported gameplay objects.
+
+![The starter stage open in Tiled](../assets/screenshots/tiled-map-overview.png)
+
+Keep gameplay objects, decoration, platform art, repeated art, and backgrounds on their named layers. Select an object to inspect its template and supported per-instance Custom Properties.
+
+![A template-backed stage object selected in Tiled](../assets/screenshots/tiled-object-properties.png)
 
 Use `"extends": "core:stage/mod-template"` when the map should be stage-independent. This reserved base supplies only the runtime stage shell and shared object templates; it does not borrow layout, collision, actors, or scripted state from a playable Core location. Existing inherited ports can keep their current `core:stage/...` base while they migrate one object group at a time.
 

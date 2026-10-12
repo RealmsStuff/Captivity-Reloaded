@@ -11,6 +11,8 @@ public interface ISmasherHudSource
 	KeyCode GetKeyCodeToPress();
 	bool UsesCircularInput();
 	string GetInputPrompt();
+	Sprite GetInputGlyph();
+	bool AllowsHoldInput();
 }
 
 public class HudSmasher : MonoBehaviour
@@ -87,8 +89,9 @@ public class HudSmasher : MonoBehaviour
 		m_imgMeterCurrent.GetComponent<RectTransform>().anchoredPosition = vector;
 		if (m_smasher.UsesCircularInput())
 		{
+			m_txtUp.gameObject.SetActive(true);
 			m_txtUp.text = m_smasher.GetInputPrompt();
-			RefreshCircularInputGlyph();
+			RefreshInputGlyph();
 			m_txtUp.color = m_colorArrowToPress;
 			m_txtLeft.gameObject.SetActive(false);
 			m_txtRight.gameObject.SetActive(false);
@@ -98,8 +101,9 @@ public class HudSmasher : MonoBehaviour
 		if (m_inputGlyph != null) m_inputGlyph.gameObject.SetActive(false);
 		m_txtLeft.gameObject.SetActive(true);
 		m_txtRight.gameObject.SetActive(true);
+		m_txtUp.gameObject.SetActive(m_smasher.AllowsHoldInput());
 		m_txtUp.text = m_textUpOriginal;
-		if (CommonReferences.Instance.GetManagerInput().IsButton(InputButton.Jump))
+		if (m_smasher.AllowsHoldInput() && CommonReferences.Instance.GetManagerInput().IsButton(InputButton.Jump))
 		{
 			m_txtUp.color = m_colorArrowToPress;
 			m_txtLeft.color = m_colorArrowToNotPress;
@@ -121,9 +125,9 @@ public class HudSmasher : MonoBehaviour
 		}
 	}
 
-	private void RefreshCircularInputGlyph()
+	private void RefreshInputGlyph()
 	{
-		Sprite sprite = InputGlyphLibrary.GetStruggleSprite();
+		Sprite sprite = m_smasher.GetInputGlyph();
 		if (sprite == null)
 		{
 			if (m_inputGlyph != null) m_inputGlyph.gameObject.SetActive(false);
@@ -131,7 +135,7 @@ public class HudSmasher : MonoBehaviour
 		}
 		if (m_inputGlyph == null)
 		{
-			m_inputGlyph = InputGlyphLibrary.GetOrCreateImage(m_txtUp.transform, "CircularInputGlyph");
+			m_inputGlyph = InputGlyphLibrary.GetOrCreateImage(m_txtUp.transform, "QteInputGlyph");
 			RectTransform rect = m_inputGlyph.rectTransform;
 			rect.anchorMin = new Vector2(0.5f, 0.5f);
 			rect.anchorMax = new Vector2(0.5f, 0.5f);

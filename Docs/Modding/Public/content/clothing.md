@@ -30,9 +30,29 @@ Add `visual.attachments` entries keyed by a supplied `piece/...` slot. Each entr
 
 The optional top-level `effects.damageTakenMultiplier` provides armor or vulnerability (0.05–2). `effects.statModifiers` can modify up to eight reviewed player stats while the garment is equipped: `HealthMax`, `SpeedAccel`, `SpeedMax`, `Traction`, `DamageMultiplierGun`, `SpeedSprint`, `PowerJump`, and `PowerDash`. Modifiers are removed on unequip. Multiple garments combine multiplicatively for incoming damage and additively for player stats.
 
+Experimental curse/trade-off fields are also available:
+
+- `escapePowerMultiplier` (0.1–3) multiplies progress from player input in both Core and modular finisher QTEs. Values below 1 make escape harder.
+- `bountyMultiplier` (0–3) multiplies enemy-kill money after active rule-profile bounty modifiers. Values below 1 reduce the reward.
+
+```json
+"effects": {
+  "damageTakenMultiplier": 0.7,
+  "escapePowerMultiplier": 0.65,
+  "bountyMultiplier": 0.5,
+  "statModifiers": { "DamageMultiplierGun": 0.4 }
+}
+```
+
+Equipped garments stack multiplicatively for all three multipliers. The combined runtime value is bounded to prevent overflow or an unrecoverable zero-strength QTE. Removing the garment immediately removes its effects.
+
+Enemies may attach a garment with `onHitEquipClothing` or a finisher outcome. Forced equipment replaces incompatible clothing normally, unlocks and saves the attached garment, and remains removable from the wardrobe. The system does not create an unremovable item or silently execute code.
+
 ## Fully original clothing rigs
 
 Use experimental `originalClothingSprites` without `extends` to construct a garment entirely from PNG files. An icon, category, and at least one `piece/...` sprite are required. Piece names are author-defined and every piece needs an attachment specifying its player bone. This permits back attachments, tails, jewelry, anatomy, layered armor, and other slots that do not exist on a Core garment.
+
+Use `originalClothingAtlas` for the same fully original workflow when the icon and pieces share one PNG. Supply `visual.atlas` and a `visual.regions` entry for `icon` and every `piece/...`; region coordinates use a bottom-left origin.
 
 ```json
 "visual": {
@@ -60,6 +80,10 @@ Use experimental `originalClothingSprites` without `extends` to construct a garm
 ```
 
 `physics.mode: "sway"` is a bounded procedural spring intended for hanging pieces such as capes, straps, hair, and accessories. It does not add colliders or joints to the player and disables itself if the piece is torn off.
+
+`idleAmplitude` (degrees) and `idleFrequency` (cycles per second) optionally add a small authored resting motion. Both default to zero/no idle movement, so existing clothing is unchanged. Translation and rotation response still come from `motionInfluence`, with `maxAngle` bounding the combined result.
+
+The [Moving Ponytail](../../../../ExampleMods/authored-hairstyles/README.md) example shows how to split a native-size Core hairstyle into a fixed layer and a moving layer without changing its canvas, scale, or resting alignment.
 
 ## Persistent player attachments
 

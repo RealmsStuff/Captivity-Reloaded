@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UIButton = UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 
 public static class CoreContentAdapter
 {
+	private static bool m_reloadPending;
+
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 	private static void BindCoreContent()
 	{
@@ -54,6 +57,27 @@ public static class CoreContentAdapter
 		ExternalStageFactory.Schedule(stageManager);
 		ExternalChallengeFactory.Schedule(challengeManager);
 		ExternalRuleProfileFactory.Schedule();
+	}
+
+	public static void ReloadInstalledMods()
+	{
+		if (m_reloadPending) return;
+		m_reloadPending = true;
+		SceneManager.sceneLoaded -= BindReloadedScene;
+		SceneManager.sceneLoaded += BindReloadedScene;
+		ExternalFactoryRunner.ResetRuntime();
+		CoreAssetSlotBinder.ResetForContentReload();
+		ModLoaderRuntime.ReloadFromDisk();
+		Scene active = SceneManager.GetActiveScene();
+		if (active.buildIndex >= 0) SceneManager.LoadScene(active.buildIndex, LoadSceneMode.Single);
+		else SceneManager.LoadScene(active.name, LoadSceneMode.Single);
+	}
+
+	private static void BindReloadedScene(Scene i_scene, LoadSceneMode i_mode)
+	{
+		SceneManager.sceneLoaded -= BindReloadedScene;
+		m_reloadPending = false;
+		BindCoreContent();
 	}
 
 	private static void ApplyPackagedCoreDefinition(ContentId i_id, Object i_runtimeAsset)
@@ -483,7 +507,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		m_uninstallButton = CreateButton(i_template, inner.transform, "Uninstall", "UNINSTALL", UninstallSelected);
 		SetNeutralButtonColors(m_uninstallButton); SetButtonFontSize(m_uninstallButton, 18);
 		SetFixedRect(m_uninstallButton.GetComponent<RectTransform>(), 836f, 91f, 180f, 58f, new Vector2(0f, 0f));
-		m_closeButton = CreateButton(i_template, inner.transform, "Close", "CLOSE", Close);
+		m_closeButton = CreateButton(i_template, inner.transform, "Close", "CLOSE", CloseOrApply);
 		SetNeutralButtonColors(m_closeButton); SetButtonFontSize(m_closeButton, 22);
 		SetFixedRect(m_closeButton.GetComponent<RectTransform>(), 1034f, 18f, 218f, 58f, new Vector2(0f, 0f));
 		m_panel.SetActive(false);
@@ -636,7 +660,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		{
 			if (m_changedIds.Contains(choice.Pack.Id))
 			{
-				m_installMessage = "Restart before changing '" + choice.Pack.Id + "' again.";
+				m_installMessage = "Apply the pending changes before changing '" + choice.Pack.Id + "' again.";
 				RefreshDetails(); yield break;
 			}
 			totalBytes += choice.Version.SizeBytes;
@@ -729,7 +753,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 					}
 					m_pendingRestart = true;
 					m_installMessage = "Installed " + plan.Downloads.Count + " release" + (plan.Downloads.Count == 1 ? "" : "s")
-						+ " together. Restart to activate; previous versions remain available for rollback.";
+						+ " together. Press APPLY MODS to activate them; previous versions remain available for rollback.";
 				}
 				else m_installMessage = FirstInstallError(installed);
 			}
@@ -937,6 +961,15 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		if (EventSystem.current != null && m_openButton != null) EventSystem.current.SetSelectedGameObject(m_openButton.gameObject);
 	}
 
+	private void CloseOrApply()
+	{
+		if (!m_pendingRestart) { Close(); return; }
+		m_installBusy = true;
+		m_installMessage = "Reloading the title screen and activating mod changes...";
+		RefreshDetails();
+		CoreContentAdapter.ReloadInstalledMods();
+	}
+
 	private void SelectRow(int i_visibleRow)
 	{
 		if (m_installBusy) return;
@@ -982,7 +1015,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		LocalCapmodArchive archive = m_localArchives[m_selectedIndex];
 		if (!archive.Report.IsValid || archive.Manifest == null) { m_installMessage = FirstInstallError(archive.Report); RefreshDetails(); return; }
 		if (m_changedIds.Contains(archive.Manifest.Id))
-		{ m_installMessage = "Restart before changing this mod again."; RefreshDetails(); return; }
+		{ m_installMessage = "Apply the pending changes before changing this mod again."; RefreshDetails(); return; }
 		if (archive.Manifest.ModApiVersion != ModManifestParser.SupportedModApiVersion)
 		{ m_installMessage = "This mod uses an incompatible Mod API version."; RefreshDetails(); return; }
 		string mods = ModStoragePaths.GetModsDirectory();
@@ -990,7 +1023,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		if (replacing && m_confirmModifiedId != archive.Manifest.Id)
 		{
 			m_confirmModifiedId = archive.Manifest.Id;
-			m_installMessage = "Press CONFIRM REPLACE to back up the installed version, then install this .capmod. Restart required.";
+			m_installMessage = "Press CONFIRM REPLACE to back up the installed version, then install this .capmod.";
 			RefreshDetails(); return;
 		}
 		m_confirmModifiedId = null;
@@ -1006,7 +1039,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 			m_pendingRestart = true;
 			m_localArchives.RemoveAt(m_selectedIndex);
 			m_selectedIndex = Mathf.Min(m_selectedIndex, m_localArchives.Count - 1);
-			m_installMessage = "Installed. Restart to activate; the previous version remains available for rollback.";
+			m_installMessage = "Installed. Press APPLY MODS to activate it; the previous version remains available for rollback.";
 		}
 		else m_installMessage = FirstInstallError(report);
 		Refresh();
@@ -1018,7 +1051,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		ModPackStatus status = m_statuses[m_selectedIndex];
 		if (m_changedIds.Contains(status.Id)) return;
 		ValidationReport report = ModInstallRecovery.Rollback(ModStoragePaths.GetModsDirectory(), status.Id);
-		m_installMessage = report.IsValid ? "Rolled back. Restart to activate the previous version." : FirstInstallError(report);
+		m_installMessage = report.IsValid ? "Rolled back. Press APPLY MODS to activate the previous version." : FirstInstallError(report);
 		if (report.IsValid) { m_changedIds.Add(status.Id); m_pendingRestart = true; }
 		ApplyCatalogFilters();
 		RefreshDetails();
@@ -1030,7 +1063,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		string id = m_browsing ? m_filteredCatalogPacks[m_selectedIndex].Id : m_statuses[m_selectedIndex].Id;
 		if (IsInstalled(id) || !m_removedIds.Contains(id)) return;
 		ValidationReport report = ModInstallRecovery.Restore(ModStoragePaths.GetModsDirectory(), id);
-		m_installMessage = report.IsValid ? "Restored the removed copy. Restart to activate it." : FirstInstallError(report);
+		m_installMessage = report.IsValid ? "Restored the removed copy. Press APPLY MODS to activate it." : FirstInstallError(report);
 		if (report.IsValid) { m_removedIds.Remove(id); m_newInstallIds.Add(id); m_changedIds.Add(id); m_pendingRestart = true; }
 		ApplyCatalogFilters();
 		Refresh();
@@ -1050,7 +1083,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		}
 		m_confirmRemoveId = null;
 		ValidationReport report = ModInstallRecovery.Uninstall(ModStoragePaths.GetModsDirectory(), status.Id);
-		m_installMessage = report.IsValid ? "Removed to recovery storage. Restart to unload it." : FirstInstallError(report);
+		m_installMessage = report.IsValid ? "Removed to recovery storage. Press APPLY MODS to unload it." : FirstInstallError(report);
 		if (report.IsValid) { m_changedIds.Add(status.Id); m_removedIds.Add(status.Id); m_pendingRestart = true; }
 		ApplyCatalogFilters();
 		RefreshDetails();
@@ -1069,6 +1102,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 
 	private void Refresh()
 	{
+		SetButtonText(m_closeButton, m_pendingRestart ? "APPLY MODS" : "CLOSE");
 		SetButtonText(m_browseButton, m_browsing ? "INSTALLED" : "BROWSE");
 		SetButtonText(m_localButton, m_localBrowsing ? "INSTALLED" : "LOCAL FILES");
 		m_localButton.interactable = !m_installBusy && !m_catalogBusy;
@@ -1123,6 +1157,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 
 	private void RefreshDetails()
 	{
+		SetButtonText(m_closeButton, m_pendingRestart ? "APPLY MODS" : "CLOSE");
 		if (m_localBrowsing)
 		{
 			m_rollbackButton.gameObject.SetActive(false); m_uninstallButton.gameObject.SetActive(false);
@@ -1232,7 +1267,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 				: plan != null && !plan.Report.IsValid ? "REQUIREMENTS BLOCKED"
 				: modifiedUpdates.Count > 0 && m_confirmModifiedId == catalogPack.Id ? "CONFIRM UPDATE"
 				: modifiedUpdates.Count > 0 ? "UPDATE AVAILABLE"
-				: update ? "UPDATE (RESTART REQUIRED)" : "INSTALL (RESTART REQUIRED)");
+				: update ? "UPDATE AVAILABLE" : "INSTALL");
 			return;
 		}
 		if (m_selectedIndex < 0 || m_selectedIndex >= m_statuses.Count)
@@ -1245,7 +1280,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		if (m_removedIds.Contains(status.Id))
 		{
 			m_detailText.text = status.DisplayName + "\n" + status.Id + "  v" + status.Version
-				+ "\n\nSaved outside Mods; it will not load after restart."
+				+ "\n\nSaved outside Mods; it will remain unloaded after changes are applied."
 				+ (m_installMessage.Length == 0 ? string.Empty : "\n\n" + m_installMessage);
 			m_toggleButton.gameObject.SetActive(false);
 			m_uninstallButton.gameObject.SetActive(false);
@@ -1271,7 +1306,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 				"\nOPTIONAL: " + DependencyList(status.Pack.Manifest.OptionalDependencies);
 			if (status.Pack.Manifest.Conflicts != null && status.Pack.Manifest.Conflicts.Count > 0) details += "\nCONFLICTS: " + string.Join(", ", status.Pack.Manifest.Conflicts);
 		}
-		if (m_pendingRestart) details += "\n\nCHANGES ARE SAVED AND WILL APPLY AFTER RESTART.";
+		if (m_pendingRestart) details += "\n\nCHANGES ARE SAVED. PRESS APPLY MODS TO RELOAD THE TITLE SCREEN AND ACTIVATE THEM.";
 		string backupVersion = ModInstallRecovery.BackupVersion(ModStoragePaths.GetModsDirectory(), status.Id);
 		if (backupVersion != null) details += "\nPREVIOUS VERSION: v" + backupVersion;
 		if (m_installMessage.Length > 0) details += "\n\n" + m_installMessage;
@@ -1284,8 +1319,8 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		m_uninstallButton.gameObject.SetActive(status.Id != "core" && !m_changedIds.Contains(status.Id));
 		SetButtonText(m_uninstallButton, m_confirmRemoveId == status.Id ? "CONFIRM REMOVE" : "UNINSTALL");
 		if (status.IsUserConfigurable)
-			SetButtonText(m_toggleButton, status.State == ModPackState.Conflicting ? "MAKE ACTIVE AFTER RESTART" :
-				(ModEnableState.IsEnabled(status.Id) ? "DISABLE AFTER RESTART" : "ENABLE AFTER RESTART"));
+			SetButtonText(m_toggleButton, status.State == ModPackState.Conflicting ? "MAKE ACTIVE" :
+				(ModEnableState.IsEnabled(status.Id) ? "DISABLE" : "ENABLE"));
 	}
 
 	private bool IsInstalled(string i_id)
@@ -1553,5 +1588,15 @@ public static class ExternalFactoryRunner
 		}
 		T component = m_host.GetComponent<T>();
 		return component == null ? m_host.AddComponent<T>() : component;
+	}
+
+	public static void ResetRuntime()
+	{
+		if (m_host != null)
+		{
+			m_host.SetActive(false);
+			Object.Destroy(m_host);
+		}
+		m_host = null;
 	}
 }

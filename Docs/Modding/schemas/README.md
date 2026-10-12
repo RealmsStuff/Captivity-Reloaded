@@ -5,6 +5,7 @@ These Draft 2020-12 schemas describe every public Mod API v1 document:
 - `manifest.schema.json`
 - `asset-patch.schema.json`
 - `challenge.schema.json`
+- `catalog-v1.schema.json` (community catalog; not a pack content document)
 - `clothing.schema.json`
 - `difficulty.schema.json`
 - `enemy.schema.json`
@@ -13,6 +14,7 @@ These Draft 2020-12 schemas describe every public Mod API v1 document:
 - `player-attachment.schema.json`
 - `rule-profile.schema.json`
 - `stage.schema.json`
+- `stage-script.schema.json`
 - `tiled-map.schema.json`
 - `tiled-tileset.schema.json`
 - `usable.schema.json`

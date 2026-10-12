@@ -46,7 +46,7 @@ The usable-item vending machine publishes `core:map-art/usable-vendor/sprite`. R
 
 ## Core enemy anatomy slots
 
-The 32 explicit anatomy sprites changed by the legacy CNR/SFW archive are published below `core:enemy-anatomy/sprite/...`. These slots preserve the distinct original sprite canvases and pivots. Runtime substitutions are reapplied after Animator evaluation so animated Core enemies cannot restore an unpatched frame. `ExampleMods/captivity-sfw` contains the complete reference patch.
+The 32 explicit anatomy sprites changed by the legacy CNR/SFW archive are published below `core:enemy-anatomy/sprite/...`. These slots preserve the distinct original sprite canvases and pivots. Runtime substitutions are reapplied after Animator evaluation so animated Core enemies cannot restore an unpatched frame. The converted reference pack is not included in the current `ExampleMods` set.
 
 ## Core enemy rig slots
 

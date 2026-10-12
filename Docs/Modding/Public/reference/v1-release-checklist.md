@@ -43,7 +43,12 @@ Moving platforms, Tiled visuals, Core-art objects, and authored doors have been 
 - [x] Reconcile the draft specification, public guide, examples, and published schemas.
 - [x] Verify GitBook navigation and internal links.
 - [x] Document installation, packaging, troubleshooting, and Windows desktop support.
-- [ ] Finalize licensing and redistribution text.
+- [x] Publish generated field-by-field schema, validation-code, and Core asset-slot references.
+- [x] Establish the public API changelog and future migration-guide format.
+- [x] Document code-confirmed Android and WebGL behavior without marking release-build verification complete.
+- [x] Capture verified installation, Mods panel, Unity authoring, Tiled, and DragonBones screenshots.
+- [x] Finalize licensing, redistribution, and documentation-publication policy text.
+- [ ] Complete per-artifact provenance and permission decisions for the player build, SDK, examples, catalog archives, and previews selected for release.
 - [ ] Remove generated/local files from the pull request and review the final diff.
 
 ## Explicitly not required to freeze v1

@@ -16,7 +16,7 @@ This keeps the one-image goal realistic without pretending a flat animation shee
 
 ## 2. External-mod platforms
 
-External folder discovery is Windows-desktop-only for v1. The Core registry and definitions must work on every supported platform. Mobile distribution can be designed later without coupling the content format to one storefront.
+Windows reads external packs from `Mods` beside the player executable. Android and WebGL use `Application.persistentDataPath/Mods` and are intended to install through the in-game catalog. Those non-Windows paths are implemented but remain subject to the platform verification listed in the release checklist. Distribution stays separate from the content format and registry.
 
 ## 3. Executable code
 

@@ -15,7 +15,9 @@ Mod API v1 applies conservative limits before allocating or constructing runtime
 | PNG file | 32 MiB, 8,192 pixels on either side, and 32 megapixels decoded |
 | Weapon effect PNG | 16 MiB before decode |
 | WAV/OGG file | 64 MiB |
+| `.capmod` archive | 256 MiB on Windows/Android; 32 MiB on WebGL |
+| Catalog dependency install batch | 512 MiB on Windows/Android; 64 MiB on WebGL |
 | Weapon sprite-animation frames | 120 per clip and four named clips |
 | Stage spawners | 256; 64 enemy IDs per spawner |
 
-The JSON Schemas contain more specific array and numeric limits. Authors should stay substantially below these ceilings, particularly for decoded textures, animated tiles, particle counts, and simultaneous enemies. Passing validation does not guarantee acceptable frame time or memory usage on every device.
+The JSON Schemas contain more specific array and numeric limits. Authors should stay substantially below these ceilings, particularly for decoded textures, animated tiles, particle counts, and simultaneous enemies. Passing validation does not guarantee acceptable frame time or memory usage on every device. See [Windows, Android, and WebGL](../getting-started/platforms.md) for platform packaging and verification status.

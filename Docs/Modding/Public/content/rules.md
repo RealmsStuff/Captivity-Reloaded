@@ -62,7 +62,9 @@ Challenge progress is tracked during the active run. Completion is persisted by 
 
 ## Difficulties and game modes
 
-Difficulty profiles expose bounded global multipliers. Rule profiles are selectable game modes. Installed and valid profiles appear under **Options > Game mode**, alongside **Standard**, and the selection is remembered. Only the selected mode runs; disabling or removing its pack safely falls back to Standard.
+Difficulty profiles expose bounded global multipliers. Rule profiles default to selectable game modes. Installed and valid selectable profiles appear under **Options > Game mode**, alongside **Standard**, and the selection is remembered. Only the selected mode runs; disabling or removing its pack safely falls back to Standard.
+
+Set `"activation": "pack"` only for rules that are an inseparable part of enabling the pack, such as an accessibility or safety pack. Pack-activated profiles run whenever their owning pack is loaded and do not create a game-mode entry. Omitting `activation`, or setting it to `selectable`, retains the normal game-mode behavior.
 
 One rule profile can contain up to 16 module entries across seven reviewed module types:
 
@@ -103,4 +105,4 @@ These mechanics are disabled in Standard mode. A mod can opt into repeat consuma
 
 When enabled by the selected profile, self-pleasure is available during an active combat wave while grounded. It uses `M`, **View / Share**, or the mobile **Pleasure** button, stops on the same input or when interrupted, and uses the late Squoid player loop. The mobile button is only created while the feature is enabled. A heart cost of `0` allows climax without losing a heart. These fields are experimental for Mod API v1 because their balance and presentation may still change. See `ExampleMods/convenience-mechanics` for a complete pack.
 
-`enemyFinishersEnabled`, `clothingDamageEnabled`, and `safeKnockouts` provide a reviewed nonsexual-mode path without replacing game assemblies. With safe knockouts enabled, reaching zero health consumes a heart and restores health; exhausting the final heart returns the player to the Hub bed. `playerHealthMultiplier` scales both health and the stamina capacity inherited from the health stat. `ExampleMods/captivity-sfw` recreates the legacy CNR behavior with these fields.
+`enemyFinishersEnabled`, `clothingDamageEnabled`, and `safeKnockouts` provide a reviewed nonsexual-mode path without replacing game assemblies. With safe knockouts enabled, reaching zero health consumes a heart and restores health; exhausting the final heart returns the player to the Hub bed. `playerHealthMultiplier` scales both health and the stamina capacity inherited from the health stat. These fields can be combined in a pack-activated rule profile; the former `captivity-sfw` conversion is not included in the current example set.

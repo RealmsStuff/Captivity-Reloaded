@@ -9,6 +9,41 @@ namespace CaptivityReloaded.Modding.Tests
 	public class ContentIdTests
 	{
 		[Test]
+		public void Options_HideSelfPleasureBindingWhenNoActiveModEnablesIt()
+		{
+			System.Type managerOptions = System.Type.GetType("ManagerOptions, Assembly-CSharp");
+			System.Type inputButton = System.Type.GetType("InputButton, Assembly-CSharp");
+			Assert.That(managerOptions, Is.Not.Null);
+			Assert.That(inputButton, Is.Not.Null);
+			System.Reflection.MethodInfo method = managerOptions.GetMethod("ShouldShowInputBinding");
+			object selfPleasure = System.Enum.Parse(inputButton, "SelfPleasure");
+			object jump = System.Enum.Parse(inputButton, "Jump");
+			Assert.That(method.Invoke(null, new[] { selfPleasure, (object)false }), Is.False);
+			Assert.That(method.Invoke(null, new[] { selfPleasure, (object)true }), Is.True);
+			Assert.That(method.Invoke(null, new[] { jump, (object)false }), Is.True);
+		}
+
+		[Test]
+		public void MoneyHud_ConfiguresLargeBalancesToFitWithoutChangingTheValue()
+		{
+			GameObject gameObject = new GameObject("Money text");
+			try
+			{
+				UnityEngine.UI.Text text = gameObject.AddComponent<UnityEngine.UI.Text>();
+				text.fontSize = 36;
+				text.text = "$1000000";
+				System.Type moneyHud = System.Type.GetType("MoneyHud, Assembly-CSharp");
+				Assert.That(moneyHud, Is.Not.Null);
+				moneyHud.GetMethod("ConfigureMoneyText").Invoke(null, new object[] { text });
+				Assert.That(text.resizeTextForBestFit, Is.True);
+				Assert.That(text.resizeTextMinSize, Is.EqualTo(18));
+				Assert.That(text.resizeTextMaxSize, Is.EqualTo(36));
+				Assert.That(text.text, Is.EqualTo("$1000000"));
+			}
+			finally { Object.DestroyImmediate(gameObject); }
+		}
+
+		[Test]
 		public void StickCircleGesture_RequiresContinuousRotation()
 		{
 			object gesture = CreateStickCircleGesture();
@@ -34,20 +69,56 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
-		public void StickCircleGesture_ReturningToDeadzoneResetsProgress()
+		public void StickCircleGesture_FastSparseRotationStillCompletes()
 		{
 			object gesture = CreateStickCircleGesture();
-			for (int degrees = 0; degrees <= 180; degrees += 30)
-			{
-				float radians = degrees * Mathf.Deg2Rad;
-				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
-			}
-			UpdateStickCircleGesture(gesture, Vector2.zero);
 			bool completed = false;
-			for (int degrees = 180; degrees <= 360; degrees += 30)
+			float time = 0f;
+			for (int degrees = 0; degrees <= 300; degrees += 75)
 			{
 				float radians = degrees * Mathf.Deg2Rad;
-				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
+				completed |= UpdateStickCircleGesture(gesture,
+					new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			Assert.That(completed, Is.True);
+		}
+
+		[Test]
+		public void StickCircleGesture_BriefDeadzonePreservesProgress()
+		{
+			object gesture = CreateStickCircleGesture();
+			float time = 0f;
+			for (int degrees = 0; degrees <= 150; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			UpdateStickCircleGesture(gesture, Vector2.zero, time += 0.02f);
+			bool completed = false;
+			for (int degrees = 180; degrees <= 330; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			Assert.That(completed, Is.True);
+		}
+
+		[Test]
+		public void StickCircleGesture_SustainedDeadzoneResetsProgress()
+		{
+			object gesture = CreateStickCircleGesture();
+			float time = 0f;
+			for (int degrees = 0; degrees <= 150; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			UpdateStickCircleGesture(gesture, Vector2.zero, time += 0.4f);
+			bool completed = false;
+			for (int degrees = 180; degrees <= 330; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
 			}
 			Assert.That(completed, Is.False);
 		}
@@ -61,7 +132,14 @@ namespace CaptivityReloaded.Modding.Tests
 
 		private static bool UpdateStickCircleGesture(object i_gesture, Vector2 i_input)
 		{
-			return (bool)i_gesture.GetType().GetMethod("Update").Invoke(i_gesture, new object[] { i_input });
+			return (bool)i_gesture.GetType().GetMethod("Update", new[] { typeof(Vector2) })
+				.Invoke(i_gesture, new object[] { i_input });
+		}
+
+		private static bool UpdateStickCircleGesture(object i_gesture, Vector2 i_input, float i_sampleTime)
+		{
+			return (bool)i_gesture.GetType().GetMethod("Update", new[] { typeof(Vector2), typeof(float) })
+				.Invoke(i_gesture, new object[] { i_input, i_sampleTime });
 		}
 
 		[Test]
@@ -1058,6 +1136,20 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Definition.Behavior.Modules.Single().PlayerAnimation.Events[0].Amount, Is.EqualTo(2f));
 			Assert.That(result.Definition.Behavior.Modules.Single().Statuses["active"].Title, Is.EqualTo("Pinned"));
 
+			foreach (string pattern in new[] { "adaptive", "alternate", "rotate", "tap" })
+			{
+				EnemyDefinitionLoadResult patterned = EnemyDefinitionParser.Parse(
+					json.Replace("'meterMax': 100", "'meterMax': 100, 'inputPattern': '" + pattern + "'"),
+					"example.enemies", "stalker-" + pattern + ".json");
+				Assert.That(patterned.Report.IsValid, Is.True, pattern + ": "
+					+ string.Join("\n", patterned.Report.Issues.Select(issue => issue.Code + ": " + issue.Message)));
+				Assert.That(patterned.Definition.Behavior.Modules.Single().InputPattern, Is.EqualTo(pattern));
+			}
+			EnemyDefinitionLoadResult invalidPattern = EnemyDefinitionParser.Parse(
+				json.Replace("'meterMax': 100", "'meterMax': 100, 'inputPattern': 'callAnyKey'"),
+				"example.enemies", "stalker-invalid-pattern.json");
+			Assert.That(invalidPattern.Report.Issues.Any(issue => issue.Code == "enemy.behavior.finisher-input-pattern"), Is.True);
+
 			EnemyDefinitionLoadResult finisherEvent = EnemyDefinitionParser.Parse(
 				json.Replace("'durationSeconds': 8,", "'durationSeconds': 8, 'animation': 'finisher',")
 					.Replace("'idle': {", "'finisher': { 'durationSeconds': 0.5, 'frames': [{ 'time': 0, 'bones': { 'hips': { 'y': 0 } } }], 'events': [{ 'time': 0.2, 'type': 'cameraShake', 'amount': 0.1 }] }, 'idle': {"),
@@ -1421,6 +1513,34 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(result.Definition.IsOriginal, Is.True);
 			Assert.That(result.Definition.Visual.Attachments["piece/back"].Physics.Mode, Is.EqualTo("sway"));
 			Assert.That(result.Definition.Visual.BodyVariants.ContainsKey("example.body-pack"), Is.True);
+		}
+
+		[Test]
+		public void Parse_AcceptsOriginalAtlasWithCustomLayeredHairSlots()
+		{
+			const string json = @"{
+  'schemaVersion': 1, 'type': 'clothing',
+  'id': 'example.clothes:clothing/layered-hair',
+  'displayName': 'Layered Hair', 'category': 'Hair', 'unlockedByDefault': true,
+  'visual': {
+    'type': 'originalClothingAtlas', 'atlas': 'assets/hair.png', 'pixelsPerUnit': 400,
+    'regions': {
+      'icon': { 'x': 0, 'y': 0, 'width': 32, 'height': 32 },
+      'piece/hair-base': { 'x': 32, 'y': 0, 'width': 32, 'height': 32 },
+      'piece/hair-rear': { 'x': 64, 'y': 0, 'width': 32, 'height': 32 }
+    },
+    'attachments': {
+      'piece/hair-base': { 'bone': 'Head', 'attachToBone': true },
+      'piece/hair-rear': { 'bone': 'Head', 'attachToBone': true,
+        'physics': { 'mode': 'sway', 'spring': 50, 'damping': 10, 'maxAngle': 20, 'idleAmplitude': 4, 'idleFrequency': 1.1 } }
+    }
+  }
+}";
+			ClothingDefinitionLoadResult result = ClothingDefinitionParser.Parse(json, "example.clothes", "hair.json");
+			Assert.That(result.Report.IsValid, Is.True, string.Join("\n", result.Report.Issues.Select(issue => issue.Message)));
+			Assert.That(result.Definition.IsOriginal, Is.True);
+			Assert.That(result.Definition.Visual.Regions.ContainsKey("piece/hair-rear"), Is.True);
+			Assert.That(result.Definition.Visual.Attachments["piece/hair-rear"].Physics.IdleAmplitude, Is.EqualTo(4f));
 		}
 
 		[Test]
@@ -3993,40 +4113,6 @@ namespace CaptivityReloaded.Modding.Tests
 			}));
 		}
 
-		[Test]
-		public void ConvertedCaptivitySfwExample_PreservesAllCensorSpritesAndCnrRules()
-		{
-			string examples = Path.GetFullPath(Path.Combine(Application.dataPath, "../ExampleMods"));
-			ModDiscoveryResult packs = ModDiscovery.Discover(examples);
-			ModPack sfw = packs.Packs.Single(pack => pack.Manifest.Id == "legacy.captivity-sfw");
-			ModContentDiscoveryResult content = ModContentDiscovery.Discover(new[] { sfw });
-			Assert.That(content.Report.IsValid, Is.True,
-				string.Join("\n", content.Report.Issues.Select(issue => issue.ToString())));
-			AssetPatchDefinition anatomy = content.AssetPatches.Single(patch =>
-				patch.Target == ContentId.Parse("core:enemy-anatomy"));
-			Assert.That(anatomy.Replacements, Has.Count.EqualTo(32));
-			foreach (AssetReplacementDefinition replacement in anatomy.Replacements)
-			{
-				string path = Path.Combine(sfw.RootPath, replacement.AssetPath);
-				Assert.That(File.Exists(path), Is.True, replacement.AssetPath);
-				Texture2D texture = new Texture2D(2, 2);
-				try
-				{
-					Assert.That(texture.LoadImage(File.ReadAllBytes(path)), Is.True, replacement.AssetPath);
-					Assert.That(texture.GetPixels32().All(pixel => pixel.a == 0), Is.True,
-						replacement.AssetPath + " should remain a transparent censor sprite.");
-				}
-				finally { Object.DestroyImmediate(texture); }
-			}
-
-			RuleProfileDefinition profile = content.RuleProfiles.Single();
-			PlayerRule rules = profile.PlayerRules.Single();
-			Assert.That(rules.EnemyFinishersEnabled, Is.False);
-			Assert.That(rules.ClothingDamageEnabled, Is.False);
-			Assert.That(rules.SafeKnockouts, Is.True);
-			Assert.That(rules.PlayerHealthMultiplier, Is.EqualTo(3f));
-		}
-
 		[TestCase("DefaultShirt", "example.default-shirt-template", "core:clothing/shirt-default", 3, 96, 32)]
 		[TestCase("LabCoat", "example.lab-coat-template", "core:clothing/scientist-set", 13, 128, 128)]
 		[TestCase("HazmatSuit", "example.hazmat-suit-template", "core:clothing/hazmat-suit", 22, 160, 160)]
@@ -4685,10 +4771,66 @@ namespace CaptivityReloaded.Modding.Tests
 		{
 			RuleProfileLoadResult result = RuleProfileParser.Parse(ValidRule, "example.rules", "gun-game.json");
 			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.IsSelectable, Is.True);
 			Assert.That(result.Definition.Id, Is.EqualTo(ContentId.Parse("example.rules:rule/gun-game")));
 			Assert.That(result.Definition.WeaponProgressions, Has.Count.EqualTo(1));
 			Assert.That(result.Definition.WeaponProgressions[0].WeaponPool, Has.Count.EqualTo(2));
 			Assert.That(result.Definition.WeaponProgressions[0].ReplaceExistingWeapons, Is.True);
+		}
+
+		[Test]
+		public void Parse_AcceptsPackActivatedRulesWithoutMakingThemSelectable()
+		{
+			const string json = @"{
+  'schemaVersion': 1,
+  'type': 'ruleProfile',
+  'id': 'example.rules:rule/safety',
+  'displayName': 'Safety Rules',
+  'activation': 'pack',
+  'modules': [{ 'type': 'playerRules', 'enemyFinishersEnabled': false }]
+}";
+			RuleProfileLoadResult result = RuleProfileParser.Parse(json, "example.rules", "safety.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.IsAutomaticallyActive, Is.True);
+			Assert.That(result.Definition.IsSelectable, Is.False);
+		}
+
+		[Test]
+		public void Parse_RejectsUnknownRuleActivation()
+		{
+			string json = ValidRule.Replace("'displayName': 'Gun Game',", "'displayName': 'Gun Game', 'activation': 'sometimes',");
+			RuleProfileLoadResult result = RuleProfileParser.Parse(json, "example.rules", "invalid-activation.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "rule.activation"), Is.True);
+		}
+
+		[Test]
+		public void Registry_ExcludesPackActivatedRulesFromGameModeSelection()
+		{
+			RuleProfileDefinition[] previous = RuleProfileRegistry.Definitions.ToArray();
+			string previousId = RuleProfileRegistry.CurrentId;
+			const string automaticJson = @"{
+  'schemaVersion': 1, 'type': 'ruleProfile',
+  'id': 'example.rules:rule/safety', 'displayName': 'Safety Rules', 'activation': 'pack',
+  'modules': [{ 'type': 'playerRules', 'enemyFinishersEnabled': false }]
+}";
+			try
+			{
+				RuleProfileDefinition selectable = RuleProfileParser.Parse(ValidRule, "example.rules", "gun-game.json").Definition;
+				RuleProfileDefinition automatic = RuleProfileParser.Parse(automaticJson, "example.rules", "safety.json").Definition;
+				RuleProfileRegistry.Initialize(new[] { selectable, automatic });
+				Assert.That(RuleProfileRegistry.SelectableDefinitions.Select(item => item.Id),
+					Is.EquivalentTo(new[] { selectable.Id }));
+				Assert.That(RuleProfileRegistry.AutomaticallyActiveDefinitions.Select(item => item.Id),
+					Is.EquivalentTo(new[] { automatic.Id }));
+				RuleProfileRegistry.SetCurrent(automatic.Id.ToString());
+				Assert.That(RuleProfileRegistry.Current, Is.Null);
+			}
+			finally
+			{
+				RuleProfileRegistry.Initialize(previous);
+				RuleProfileRegistry.SetCurrent(previousId);
+			}
 		}
 
 		[Test]

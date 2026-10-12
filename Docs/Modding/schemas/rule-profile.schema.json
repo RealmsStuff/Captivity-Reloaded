@@ -12,6 +12,7 @@
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:rule/[a-z0-9][a-z0-9._/-]*$", "x-stability": "stable" },
     "displayName": { "type": "string", "minLength": 1, "maxLength": 80, "x-stability": "stable" },
     "description": { "type": "string", "x-stability": "stable" },
+    "activation": { "enum": ["selectable", "pack"], "default": "selectable", "x-stability": "experimental" },
     "modules": {
       "type": "array", "minItems": 1, "maxItems": 16,
       "x-stability": "experimental",

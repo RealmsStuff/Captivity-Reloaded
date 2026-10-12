@@ -1357,7 +1357,7 @@ namespace CaptivityReloaded.Editor.Modding
 			string packRoot = AuthoringPackRoot();
 			m_authoringReferenceValidation = EnemyAnimationReferenceValidator.Validate(m_normalizedEnemyClip,
 				m_normalizedEnemyBones.Count == 0 ? null : m_normalizedEnemyBones.Keys,
-				m_mode == 3 ? m_modSprites.Keys : AvailableRegionNames(), packRoot, m_normalizedEnemyPath);
+				m_mode == 3 ? (IEnumerable<string>)m_modSprites.Keys : AvailableRegionNames(), packRoot, m_normalizedEnemyPath);
 			IEnumerable<ValidationIssue> errors = result.Report.Issues.Concat(m_authoringReferenceValidation.Issues)
 				.Where(i_issue => i_issue.Severity == ValidationSeverity.Error)
 				.GroupBy(i_issue => i_issue.Message, StringComparer.Ordinal).Select(i_group => i_group.First());
@@ -1393,7 +1393,8 @@ namespace CaptivityReloaded.Editor.Modding
 					{
 						int changes = 0;
 						RecordAuthoringChange("Fix animation references", () => changes = EnemyAnimationReferenceValidator.RepairSafeReferences(
-							m_normalizedEnemyClip, m_normalizedEnemyBones.Keys, m_mode == 3 ? m_modSprites.Keys : AvailableRegionNames()));
+							m_normalizedEnemyClip, m_normalizedEnemyBones.Keys,
+							m_mode == 3 ? (IEnumerable<string>)m_modSprites.Keys : AvailableRegionNames()));
 						if (changes == 0) EditorUtility.DisplayDialog("No automatic fix", "Missing files cannot be guessed. Use Choose pack audio or Choose texture to replace them.", "OK");
 					}
 			}

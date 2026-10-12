@@ -4,6 +4,8 @@ The repository's `LICENSE` file is GNU GPL version 3. Source code distributed as
 
 This repository also contains reconstructed game data, artwork, audio, third-party packages, converted community mods, and contributor submissions. A GPL file alone is not proof that every imported asset was contributed by its copyright holder. Until provenance and permission are recorded for a file, do not publish that file in the SDK, an example pack, a catalog release, or a binary distribution.
 
+The repository-level [third-party notices and provenance inventory](../../../../THIRD_PARTY_NOTICES.md) records the current decision for each asset group. Treat **Cleared**, **Project distribution only**, **Review per release**, and **Blocked** as different states; credit is not a substitute for permission.
+
 ## Repository releases
 
 - Publish source corresponding to each distributed binary and identify the exact source commit.
@@ -27,6 +29,17 @@ This repository also contains reconstructed game data, artwork, audio, third-par
 - Mods may depend on public Core IDs, but must not redistribute ripped Core or third-party assets without permission.
 - Removed catalog entries do not remotely delete an already installed copy. Updates and removals must remain recoverable by the user.
 
+Converted legacy packs credited to an unknown or generic legacy author are not ready for public catalog distribution. A pack-local `THIRD_PARTY.md` gate also remains binding until it records permission or the affected material is replaced.
+
+## Documentation and wiki publication
+
+The public wiki may reproduce its own Markdown, diagrams, and project-interface screenshots. Publishing documentation does not publish or relicense the game, SDK, example packs, catalog archives, external authoring tools, or the raw assets visible in a screenshot.
+
+- Keep source links and project credits with the documentation.
+- Do not upload Unity, Tiled, LibreSprite, DragonBones, Adobe AIR, or other third-party installers to the wiki repository.
+- Do not turn screenshots or exported Core artwork into a downloadable asset collection.
+- Link to the main repository for source files outside the public wiki rather than copying those files into the wiki.
+
 ## Release gate
 
-Public release is blocked until the maintainers complete asset provenance/third-party notices and confirm that the intended game binaries, Mod SDK, examples, catalog archives, and preview images are all covered. This document is a project policy, not legal advice; uncertain rights require permission from the rightsholder or removal of the material.
+Each release artifact is blocked until its included files have a recorded provenance decision and the required notices. Documentation can therefore be published while an unrelated example pack or player build remains blocked. This document is a project policy, not legal advice; uncertain rights require permission from the rightsholder or removal of the material.

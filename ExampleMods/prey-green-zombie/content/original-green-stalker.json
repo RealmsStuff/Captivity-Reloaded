@@ -35,9 +35,9 @@
 	    "mindBroken": { "title": "Mind Broken", "description": "{enemy} has broken your mind. It's over." }
 	  },
       "phases": [
-      { "id": "restraint", "durationSeconds": 4, "animation": "finisher", "inputPower": 14, "decayPerSecond": 2,
+      { "id": "restraint", "durationSeconds": 4, "animation": "finisher", "inputPattern": "alternate", "inputPower": 14, "decayPerSecond": 2,
       "playerAnimationRef": "draco66electro.prey-green-zombie:player-animation/stalker-restraint" },
-      { "id": "drain", "durationSeconds": 4, "animation": "finisher-intense", "inputPower": 12, "decayPerSecond": 4,
+      { "id": "drain", "durationSeconds": 4, "animation": "finisher-intense", "inputPattern": "tap", "inputPower": 12, "decayPerSecond": 4,
       "playerAnimationRef": "draco66electro.prey-green-zombie:player-animation/stalker-sqoid-presentation" }
       ] }
   ] },

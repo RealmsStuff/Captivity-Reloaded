@@ -473,6 +473,9 @@ public static class ExternalRuleProfileFactory
 
 	internal static IEnumerable<RuleProfileDefinition> ActiveProfiles()
 	{
+		foreach (RuleProfileDefinition automatic in RuleProfileRegistry.AutomaticallyActiveDefinitions)
+			if (ModLoaderRuntime.Registry.TryGet(automatic.Id, out ContentRegistration automaticRegistration)
+				&& automaticRegistration.Category == ContentCategory.Rule) yield return automatic;
 		RuleProfileDefinition profile = RuleProfileRegistry.Current;
 		if (profile != null && ModLoaderRuntime.Registry.TryGet(profile.Id, out ContentRegistration registration)
 			&& registration.Category == ContentCategory.Rule) yield return profile;

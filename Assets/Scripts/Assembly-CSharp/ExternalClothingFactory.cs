@@ -81,6 +81,38 @@ public static class ExternalClothingFactory
 		int playerLayer = LayerMask.NameToLayer("Player");
 		if (playerLayer >= 0) root.layer = playerLayer;
 		o_clothing = root.AddComponent<Clothing>();
+		if (i_definition.Visual.Type == "originalClothingAtlas")
+		{
+			if (!RuntimePngAssetLoader.TryLoad(i_packRoot, i_definition.Visual.Atlas, i_definition.Id + "/atlas",
+				FilterMode.Point, ModLoaderRuntime.LastReport, "clothing.factory-atlas", "clothing.factory-atlas-decode",
+				i_definition.Source, out Texture2D atlas))
+			{
+				UnityEngine.Object.Destroy(root);
+				o_clothing = null;
+				return false;
+			}
+			foreach (KeyValuePair<string, AtlasRegionDefinition> entry in i_definition.Visual.Regions)
+			{
+				AtlasRegionDefinition area = entry.Value;
+				if (area == null || area.X + area.Width > atlas.width || area.Y + area.Height > atlas.height)
+				{
+					Report("clothing.factory-region-bounds", "Original clothing atlas region is outside the PNG: " + entry.Key, i_definition.Source);
+					UnityEngine.Object.Destroy(root);
+					o_clothing = null;
+					return false;
+				}
+				ClothingAttachmentDefinition attachment = null;
+				i_definition.Visual.Attachments?.TryGetValue(entry.Key, out attachment);
+				Vector2 pivot = new Vector2(attachment?.PivotX ?? 0.5f, attachment?.PivotY ?? 0.5f);
+				Sprite sprite = Sprite.Create(atlas, new Rect(area.X, area.Y, area.Width, area.Height), pivot,
+					i_definition.Visual.PixelsPerUnit, 0, SpriteMeshType.FullRect);
+				sprite.name = i_definition.Id + "/" + entry.Key;
+				if (entry.Key == "icon") o_clothing.SetIcon(sprite);
+				else CreateOriginalPiece(root.transform, playerLayer, entry.Key, sprite, attachment);
+			}
+			o_clothing.Initialize();
+			return true;
+		}
 		foreach (KeyValuePair<string, string> entry in i_definition.Visual.Sprites)
 		{
 			if (!RuntimePngAssetLoader.TryLoad(i_packRoot, entry.Value, i_definition.Id + "/" + entry.Key,
@@ -102,18 +134,24 @@ public static class ExternalClothingFactory
 				o_clothing.SetIcon(sprite);
 				continue;
 			}
-			GameObject pieceObject = new GameObject("clp_" + entry.Key.Substring("piece/".Length).Replace('/', '_'));
-			pieceObject.transform.SetParent(root.transform, false);
-			if (playerLayer >= 0) pieceObject.layer = playerLayer;
-			SpriteRenderer renderer = pieceObject.AddComponent<SpriteRenderer>();
-			renderer.sprite = sprite;
-			renderer.sortingLayerName = "Player";
-			ClothingPiece piece = pieceObject.AddComponent<ClothingPiece>();
-			pieceObject.AddComponent<ModClothingSlotIdentity>().Configure(entry.Key);
-			piece.ConfigureModAttachment(attachment);
+			CreateOriginalPiece(root.transform, playerLayer, entry.Key, sprite, attachment);
 		}
 		o_clothing.Initialize();
 		return true;
+	}
+
+	private static void CreateOriginalPiece(Transform i_parent, int i_playerLayer, string i_slot, Sprite i_sprite,
+		ClothingAttachmentDefinition i_attachment)
+	{
+		GameObject pieceObject = new GameObject("clp_" + i_slot.Substring("piece/".Length).Replace('/', '_'));
+		pieceObject.transform.SetParent(i_parent, false);
+		if (i_playerLayer >= 0) pieceObject.layer = i_playerLayer;
+		SpriteRenderer renderer = pieceObject.AddComponent<SpriteRenderer>();
+		renderer.sprite = i_sprite;
+		renderer.sortingLayerName = "Player";
+		ClothingPiece piece = pieceObject.AddComponent<ClothingPiece>();
+		pieceObject.AddComponent<ModClothingSlotIdentity>().Configure(i_slot);
+		piece.ConfigureModAttachment(i_attachment);
 	}
 
 	private static bool ApplyAtlas(Clothing i_clone, ClothingDefinition i_definition, string i_packRoot)
@@ -324,6 +362,8 @@ public sealed class ModClothingSway : MonoBehaviour
 	[SerializeField] private float m_gravity = 0.25f;
 	[SerializeField] private float m_motionInfluence = 1f;
 	[SerializeField] private float m_maxAngle = 30f;
+	[SerializeField] private float m_idleAmplitude;
+	[SerializeField] private float m_idleFrequency = 1f;
 	private float m_baseAngle;
 	private float m_angle;
 	private float m_velocity;
@@ -339,6 +379,8 @@ public sealed class ModClothingSway : MonoBehaviour
 		m_gravity = i_definition.Gravity ?? 0.25f;
 		m_motionInfluence = i_definition.MotionInfluence ?? 1f;
 		m_maxAngle = i_definition.MaxAngle ?? 30f;
+		m_idleAmplitude = i_definition.IdleAmplitude ?? 0f;
+		m_idleFrequency = i_definition.IdleFrequency ?? 1f;
 	}
 
 	private void OnEnable()
@@ -365,7 +407,10 @@ public sealed class ModClothingSway : MonoBehaviour
 		float rotationImpulse = -Mathf.DeltaAngle(m_parentAngle, parentAngle) * m_motionInfluence;
 		float horizontalSpeed = (transform.parent.position.x - m_parentPosition.x) / deltaTime;
 		float gravityTarget = Mathf.DeltaAngle(parentAngle, 0f) * m_gravity;
-		float target = Mathf.Clamp(gravityTarget + rotationImpulse - horizontalSpeed * m_motionInfluence,
+		float idleTarget = m_idleAmplitude > 0f && m_idleFrequency > 0f
+			? Mathf.Sin(Time.time * m_idleFrequency * Mathf.PI * 2f) * m_idleAmplitude
+			: 0f;
+		float target = Mathf.Clamp(gravityTarget + rotationImpulse - horizontalSpeed * m_motionInfluence + idleTarget,
 			-m_maxAngle, m_maxAngle);
 		m_velocity += ((target - m_angle) * m_spring - m_velocity * m_damping) * deltaTime;
 		m_angle = Mathf.Clamp(m_angle + m_velocity * deltaTime, -m_maxAngle, m_maxAngle);

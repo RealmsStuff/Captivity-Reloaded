@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "type": "clothing",
+  "id": "example.authored-hairstyles:clothing/shoulder-length-layers",
+  "displayName": "Moving Ponytail",
+  "description": "A pixel-perfect copy of the Core brown ponytail with its ponytail isolated for subtle secondary movement.",
+  "unlockedByDefault": true,
+  "category": "Hair",
+  "incompatibleCategories": ["Hair"],
+  "visual": {
+    "type": "originalClothingSprites",
+    "pixelsPerUnit": 32,
+    "sprites": {
+      "icon": "assets/icon.png",
+      "piece/hair-base": "assets/ponytail-base.png",
+      "piece/ponytail": "assets/ponytail-moving.png"
+    },
+    "attachments": {
+      "piece/hair-base": {
+        "bone": "Head", "attachToBone": true,
+        "pivotX": 0.46875, "pivotY": 0.265625,
+        "sortingOffset": 2
+      },
+      "piece/ponytail": {
+        "bone": "Head", "attachToBone": true,
+        "offsetX": -0.15625, "offsetY": 0.78125,
+        "pivotX": 0.390625, "pivotY": 0.65625,
+        "sortingOffset": 1,
+        "physics": {
+          "mode": "sway", "spring": 38, "damping": 7,
+          "gravity": 0.12, "motionInfluence": 1.4, "maxAngle": 25,
+          "idleAmplitude": 8, "idleFrequency": 0.85
+        }
+      }
+    }
+  }
+}

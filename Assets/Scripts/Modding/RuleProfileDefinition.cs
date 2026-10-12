@@ -374,6 +374,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("id", Required = Required.Always)] public string Id { get; set; }
 		[JsonProperty("displayName", Required = Required.Always)] public string DisplayName { get; set; }
 		[JsonProperty("description")] public string Description { get; set; }
+		[JsonProperty("activation")] public string Activation { get; set; }
 		[JsonProperty("modules", Required = Required.Always)] public List<RuleModuleDocument> Modules { get; set; }
 	}
 
@@ -427,6 +428,9 @@ namespace CaptivityReloaded.Modding
 		public string Source { get; }
 		public string DisplayName { get; }
 		public string Description { get; }
+		public string Activation { get; }
+		public bool IsSelectable => Activation == "selectable";
+		public bool IsAutomaticallyActive => Activation == "pack";
 		public IReadOnlyList<WeaponProgressionRule> WeaponProgressions { get; }
 		public IReadOnlyList<SpawnModifierRule> SpawnModifiers { get; }
 		public IReadOnlyList<WaveRule> WaveRules { get; }
@@ -447,6 +451,7 @@ namespace CaptivityReloaded.Modding
 			IReadOnlyList<ExperimentScalingRule> i_experimentScalingRules, IReadOnlyList<WeaponTuningRule> i_weaponTuningRules)
 		{
 			Id = i_id; PackId = i_packId; Source = i_source ?? string.Empty; DisplayName = i_document.DisplayName;
+			Activation = string.IsNullOrEmpty(i_document.Activation) ? "selectable" : i_document.Activation;
 			Description = i_document.Description ?? string.Empty; WeaponProgressions = i_progressions; SpawnModifiers = i_spawnModifiers;
 			WaveRules = i_waveRules; EconomyRules = i_economyRules; PlayerRules = i_playerRules;
 			ScoringRules = i_scoringRules; GoalRules = i_goalRules; ConsumableRules = i_consumableRules; EventRewardRules = i_eventRewardRules;
@@ -461,6 +466,23 @@ namespace CaptivityReloaded.Modding
 		private static readonly List<RuleProfileDefinition> m_definitions = new List<RuleProfileDefinition>();
 		private static RuleProfileDefinition m_current;
 		public static IReadOnlyList<RuleProfileDefinition> Definitions => m_definitions;
+		public static IEnumerable<RuleProfileDefinition> SelectableDefinitions
+		{
+			get
+			{
+				foreach (RuleProfileDefinition definition in m_definitions)
+					if (definition.IsSelectable) yield return definition;
+			}
+		}
+
+		public static IEnumerable<RuleProfileDefinition> AutomaticallyActiveDefinitions
+		{
+			get
+			{
+				foreach (RuleProfileDefinition definition in m_definitions)
+					if (definition.IsAutomaticallyActive) yield return definition;
+			}
+		}
 
 		public static void Initialize(IEnumerable<RuleProfileDefinition> i_definitions)
 		{
@@ -470,7 +492,7 @@ namespace CaptivityReloaded.Modding
 			m_current = null;
 			string saved = UnityEngine.PlayerPrefs.GetString(PreferenceKey, string.Empty);
 			foreach (RuleProfileDefinition definition in m_definitions)
-				if (definition.Id.ToString() == saved) { m_current = definition; break; }
+				if (definition.IsSelectable && definition.Id.ToString() == saved) { m_current = definition; break; }
 			if (m_current == null && !string.IsNullOrEmpty(saved)) UnityEngine.PlayerPrefs.SetString(PreferenceKey, string.Empty);
 		}
 
@@ -481,7 +503,7 @@ namespace CaptivityReloaded.Modding
 		{
 			if (string.IsNullOrEmpty(i_id)) { m_current = null; UnityEngine.PlayerPrefs.SetString(PreferenceKey, string.Empty); return; }
 			foreach (RuleProfileDefinition definition in m_definitions)
-				if (definition.Id.ToString() == i_id) { m_current = definition; UnityEngine.PlayerPrefs.SetString(PreferenceKey, i_id); return; }
+				if (definition.IsSelectable && definition.Id.ToString() == i_id) { m_current = definition; UnityEngine.PlayerPrefs.SetString(PreferenceKey, i_id); return; }
 			m_current = null;
 			UnityEngine.PlayerPrefs.SetString(PreferenceKey, string.Empty);
 		}
@@ -506,6 +528,8 @@ namespace CaptivityReloaded.Modding
 			if (document == null) { Error(result, "null", "Rule profile resolved to null.", i_source); return result; }
 			if (document.SchemaVersion != SupportedSchemaVersion) Error(result, "schema-version", "Unsupported schemaVersion.", i_source);
 			if (document.Type != "ruleProfile") Error(result, "type", "Definition type must be 'ruleProfile'.", i_source);
+			if (!string.IsNullOrEmpty(document.Activation) && document.Activation != "selectable" && document.Activation != "pack")
+				Error(result, "activation", "activation must be 'selectable' or 'pack'.", i_source);
 			bool validId = ContentId.TryParse(document.Id, out ContentId id) && id.Namespace == i_packId && id.Path.StartsWith("rule/", StringComparison.Ordinal);
 			if (!validId) Error(result, "id", "Rule profile ID must use the defining pack namespace and a rule/ path.", i_source);
 			if (string.IsNullOrWhiteSpace(document.DisplayName) || document.DisplayName.Length > 80) Error(result, "display-name", "displayName must contain 1 to 80 characters.", i_source);

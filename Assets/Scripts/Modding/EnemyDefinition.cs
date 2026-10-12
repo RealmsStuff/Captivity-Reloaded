@@ -169,6 +169,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("durationSeconds")] public float? DurationSeconds { get; set; }
 		[JsonProperty("radius")] public float? Radius { get; set; }
 		[JsonProperty("enemy")] public string Enemy { get; set; }
+		[JsonProperty("clothing")] public string Clothing { get; set; }
+		[JsonProperty("chance")] public float? Chance { get; set; }
 		[JsonProperty("count")] public int? Count { get; set; }
 		[JsonProperty("triggerRange")] public float? TriggerRange { get; set; }
 		[JsonProperty("startDelaySeconds")] public float? StartDelaySeconds { get; set; }
@@ -236,6 +238,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("healthRecovery")] public float? HealthRecovery { get; set; }
 		[JsonProperty("enemyStunSeconds")] public float? EnemyStunSeconds { get; set; }
 		[JsonProperty("playerRagdollSeconds")] public float? PlayerRagdollSeconds { get; set; }
+		[JsonProperty("equipClothing")] public List<string> EquipClothing { get; set; } = new List<string>();
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -661,6 +664,12 @@ namespace CaptivityReloaded.Modding
 				case "onHitRagdoll":
 					ValidateRequiredRange(module.DurationSeconds, 0.05f, 30f, "on-hit-ragdoll-duration", io_report, i_source);
 					break;
+				case "onHitEquipClothing":
+					if (!ContentId.TryParse(module.Clothing, out ContentId hitClothing) || !hitClothing.Path.StartsWith("clothing/", StringComparison.Ordinal))
+						io_report.Add(ValidationSeverity.Error, "enemy.behavior.on-hit-clothing-id", "onHitEquipClothing clothing must be a clothing content ID.", i_source);
+					ValidateRange(module.Chance, 0f, 1f, "on-hit-clothing-chance", io_report, i_source);
+					ValidateRange(module.CooldownSeconds, 0f, 600f, "on-hit-clothing-cooldown", io_report, i_source);
+					break;
 				case "spawnOnDeath":
 					if (!ContentId.TryParse(module.Enemy, out ContentId spawnEnemy) || !spawnEnemy.Path.StartsWith("enemy/", StringComparison.Ordinal))
 						io_report.Add(ValidationSeverity.Error, "enemy.behavior.spawn-on-death-enemy", "spawnOnDeath enemy must be an enemy content ID.", i_source);
@@ -820,6 +829,12 @@ namespace CaptivityReloaded.Modding
 			ValidateRange(i_outcome.HealthRecovery, 0f, 100000f, "finisher-" + i_name + "-health-recovery", io_report, i_source);
 			ValidateRange(i_outcome.EnemyStunSeconds, 0f, 30f, "finisher-" + i_name + "-enemy-stun", io_report, i_source);
 			ValidateRange(i_outcome.PlayerRagdollSeconds, 0f, 30f, "finisher-" + i_name + "-player-ragdoll", io_report, i_source);
+			if ((i_outcome.EquipClothing?.Count ?? 0) > 8)
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-" + i_name + "-clothing-count", "Finisher outcomes support at most 8 equipped clothing entries.", i_source);
+			HashSet<string> clothing = new HashSet<string>(StringComparer.Ordinal);
+			foreach (string value in i_outcome.EquipClothing ?? new List<string>())
+				if (!ContentId.TryParse(value, out ContentId clothingId) || !clothingId.Path.StartsWith("clothing/", StringComparison.Ordinal) || !clothing.Add(value))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-" + i_name + "-clothing", "equipClothing entries must be unique clothing content IDs.", i_source);
 		}
 
 		private static void ValidatePlayerFinisherAnimation(EnemyAnimationClipDefinition i_clip, ValidationReport io_report, string i_source)

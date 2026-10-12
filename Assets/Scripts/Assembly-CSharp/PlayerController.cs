@@ -122,6 +122,11 @@ public class PlayerController : MonoBehaviour
 		return m_mobileAimInput;
 	}
 
+	public Vector2 GetMobileMovementInput()
+	{
+		return m_leftJoystickInput;
+	}
+
 	public bool GetUseMobileDPad()
 	{
 		return PlayerPrefs.GetInt("MobileUseDPad", 0) == 1;
@@ -226,6 +231,11 @@ public class PlayerController : MonoBehaviour
 
 	private void HandleSelfPleasureInput()
 	{
+		if (!ExternalRuleProfileFactory.IsSelfPleasureEnabled())
+		{
+			if (m_player.IsSelfPleasuring()) m_player.StopSelfPleasure();
+			return;
+		}
 		bool menuOpen = CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused()
 			|| CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen()
 			|| CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing()

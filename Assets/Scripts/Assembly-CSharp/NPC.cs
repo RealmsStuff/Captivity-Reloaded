@@ -534,7 +534,9 @@ public abstract class NPC : Actor
 		ModEnemyBehaviorController modBehavior = GetComponent<ModEnemyBehaviorController>();
 		if (modBehavior != null) modBehavior.HandleDeathModules();
 		base.Die();
-		CommonReferences.Instance.GetPlayerController().GainMoney(ExternalRuleProfileFactory.ApplyBounty(m_bounty));
+		int bounty = ExternalRuleProfileFactory.ApplyBounty(m_bounty);
+		bounty = ModClothingEffects.ApplyBountyMultiplier(CommonReferences.Instance.GetPlayer(), bounty);
+		CommonReferences.Instance.GetPlayerController().GainMoney(bounty);
 		CommonReferences.Instance.GetUtilityTools().DestroyObjectAfterTime(base.gameObject, 20f);
 		CommonReferences.Instance.GetManagerAudio().PlayAudioHitsound(1f, i_isKill: true);
 		CommonReferences.Instance.GetPlayer().KillNpc(this);

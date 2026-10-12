@@ -1,6 +1,6 @@
 # Captivity Reloaded modding specification
 
-This directory defines the draft contract for the built-in, data-driven content system. The runtime validates IDs and manifests, discovers desktop packs, resolves required and optional dependencies, tracks disabled/conflicting/invalid packs, loads the packaged Core catalog, applies explicit asset patches, and constructs inherited enemies, clothing, weapons, usables, stages, challenges, difficulties, and game modes. The title-screen Mods panel persists enable/disable choices for the next restart.
+This directory defines the draft contract for the built-in, data-driven content system. The runtime validates IDs and manifests, discovers packs, resolves required and optional dependencies, tracks disabled/conflicting/invalid packs, loads the packaged Core catalog, applies explicit asset patches, and constructs inherited enemies, clothing, weapons, usables, stages, challenges, difficulties, and game modes. The title-screen Mods panel stages changes and can reload the title scene to apply them without restarting the application.
 
 The long-term model separates the game into two layers:
 
@@ -16,6 +16,7 @@ The shipped game is represented by the required, read-only `core` content pack. 
 - [JSON Schemas](schemas) provide validation and autocomplete for every public v1 content contract, with machine-readable stable and experimental field classifications.
 - [V1 design decisions](decisions.md) records the scope used by the draft implementation and still subject to the schema freeze review.
 - [GitHub mod browser plan](github-mod-browser-plan.md) tracks the implemented browser, dependency installs, updates, rollback/recovery, remote previews, and remaining player-build verification.
+- [Sandboxed scripting roadmap](sandboxed-scripting-roadmap.md) records the post-v1 MoonSharp proposal for safe event scripting, advanced enemy AI, custom game modes, and multi-enemy QTE integration.
 - [Legacy `.capmod` conversion inventory](../Planning/legacy-capmod-conversion-inventory.md) maps every archived community release to its maintained source, duplicates, composition archives, parity gaps, and packaging status.
 - [Enemy variant example](examples/acid-gremlin) demonstrates the target of one sprite sheet and one enemy JSON file.
 - [Asset replacement example](examples/shaded-girl) demonstrates explicit player sprite-slot replacement.
@@ -57,7 +58,7 @@ Generated test stages now opt into an isolated **Mod Finisher Test** panel. In P
 
 The same window's **Import DragonBones** tab provides the safe return path. It diagnoses the edited armature, converts into temporary files, resolves destinations by content ID, validates a staged copy of the entire loose mod, and backs up every original animation outside the mod before replacement. Paired enemy/player sidecars are handled together and a failed live validation is rolled back automatically.
 
-After importing a pair, use **Paired interaction** in the same window. It discovers only enemy animations already connected through that enemy's `animationRefs`, pairs them with pack-local player animations, and creates either a single continuous interaction or two named phases. Trigger distance, delay, struggle meter, input strength, decay, cooldown, and success/failure outcomes are exposed without manually editing JSON. Existing non-finisher behavior modules are preserved; an older `downedFinisher` is replaced after staging and validating the complete mod, with its enemy definition backed up under `ModAuthoringBackups`. **Open Pair in Preview** selects both documents in the existing animation/VFX preview.
+After importing a pair, use **Paired interaction** in the same window. It discovers only enemy animations already connected through that enemy's `animationRefs`, pairs them with pack-local player animations, and creates either a single continuous interaction or two named phases. Trigger distance, delay, struggle meter, QTE pattern (`adaptive`, `alternate`, `rotate`, or `tap`), input strength, decay, cooldown, and success/failure outcomes are exposed without manually editing JSON. Two-phase interactions may choose a different pattern for each phase. Existing non-finisher behavior modules are preserved; an older `downedFinisher` is replaced after staging and validating the complete mod, with its enemy definition backed up under `ModAuthoringBackups`. **Open Pair in Preview** selects both documents in the existing animation/VFX preview.
 
 For modded-enemy animation and effects, open **Captivity Reloaded > Modding > Player Animation Preview**, choose **Modded enemies**, and select the mod folder. The window discovers its enemy and `enemyAnimation` documents and groups animations by their target enemy. Existing motion data remains the source of animation; the editor is no longer intended to replace a dedicated animation package.
 
