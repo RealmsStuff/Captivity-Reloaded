@@ -15,9 +15,35 @@ The window supports two workflows:
 
 The source directory must contain `manifest.json` directly at its root. Save the resulting package outside the source directory.
 
+## Archive root layout
+
+Do not create the release by selecting the mod folder in Explorer and choosing **Compress to ZIP**. That normally adds an extra wrapper directory, and renaming the resulting `.zip` to `.capmod` does not repair it.
+
+Correct `.capmod` contents:
+
+```text
+manifest.json
+content/
+assets/
+levels/
+```
+
+Rejected wrapper layout:
+
+```text
+my-mod/
+  manifest.json
+  content/
+  assets/
+```
+
+The official packager writes the correct root layout and `.capmod` extension. A source ZIP may be useful for collaborators, but it is not the installable release artifact.
+
 ## Data-only packages
 
 Choose the directory containing the pack's manifest. **Validate Mod** checks the manifest, declared content roots, preview files, content definitions, file types, paths, counts, and size limits. Resolve every error before building. Warnings deserve review but do not necessarily prevent packaging.
+
+Run the packager from the same game release or source commit that the mod claims to support. During the pre-v1 freeze period, `modApiVersion: 1` identifies the draft API line; it does not prove that experimental fields from two different development builds are interchangeable.
 
 **Build .capmod** proposes a filename in this form:
 
@@ -57,10 +83,15 @@ Executables, scripts, symbolic links, reparse points, absolute paths, traversal 
 
 Before publishing:
 
-1. Copy the `.capmod` into the current build's `Mods` directory or select it with the Mods panel **Browse** action.
-2. Install it through the game, restart when requested, and confirm its status is **Loaded**.
-3. Exercise the advertised content using the [author test matrix](../reference/author-test-matrix.md).
-4. Record the package's exact byte count and lowercase SHA-256 shown by the packager.
-5. Install that exact final file once more. Do not test one archive and upload a rebuilt archive with a different digest.
+1. Select **Validate Mod** in the exact Unity project revision used to build the target game. JSON syntax checking by itself is not sufficient.
+2. Resolve every error, including unknown fields and unsupported event names. Do not assume a plausible field exists because a similar field is available on another content type.
+3. Build the `.capmod` through the packager. Do not manually ZIP or rename a ZIP.
+4. Copy the `.capmod` into the current build's `Mods` directory or select it with the Mods panel **Browse** action.
+5. Install it through the game, restart when requested, and confirm its status is **Loaded**.
+6. Exercise the advertised content using the [author test matrix](../reference/author-test-matrix.md).
+7. Record the package's exact byte count and lowercase SHA-256 shown by the packager.
+8. Install that exact final file once more. Do not test one archive and upload a rebuilt archive with a different digest.
+
+If an AI assistant, custom generator, or third-party template produced any JSON, verify every generated property against the current [field reference](../reference/api-fields.md) or authoritative schemas before publishing. Generated prose, comments, and README claims do not establish API support.
 
 Use the [validation/error-code catalog](../reference/error-codes.md) to investigate a packager or installer diagnostic.

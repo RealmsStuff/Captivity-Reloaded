@@ -16,10 +16,6 @@ Enemy than can hypnotise/control players
 
 Custom Colors for clothing
 
-money counter breaks because it wasnt made to display 6 digits
-
-multiple enemies in one qte, the more enemies the harder it is to escape
-
 Moving hair/longer hair
 I hate to make requests without much contribution, but... can we get longer hair? Perhaps with some physics?
 While I don't anticipate outright Rapunzeling around, it'd be nice to have some proper length

@@ -33,7 +33,9 @@ public class ScreenTitle : Screen
 		CommonReferences.Instance.GetManagerAudio().SetVolumesToSaved();
 		m_parentTitle.SetActive(value: true);
 		m_parentLoading.SetActive(value: false);
-		m_txtVersion.text = "version " + Application.version;
+		string version = Application.version;
+		if (version.EndsWith(".0")) version = version.Substring(0, version.Length - 2);
+		m_txtVersion.text = "version " + version;
 	}
 
 	private void CheckPrefs()

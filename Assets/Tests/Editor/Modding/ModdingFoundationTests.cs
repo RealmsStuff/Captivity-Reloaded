@@ -9,6 +9,21 @@ namespace CaptivityReloaded.Modding.Tests
 	public class ContentIdTests
 	{
 		[Test]
+		public void Options_HideSelfPleasureBindingWhenNoActiveModEnablesIt()
+		{
+			System.Type managerOptions = System.Type.GetType("ManagerOptions, Assembly-CSharp");
+			System.Type inputButton = System.Type.GetType("InputButton, Assembly-CSharp");
+			Assert.That(managerOptions, Is.Not.Null);
+			Assert.That(inputButton, Is.Not.Null);
+			System.Reflection.MethodInfo method = managerOptions.GetMethod("ShouldShowInputBinding");
+			object selfPleasure = System.Enum.Parse(inputButton, "SelfPleasure");
+			object jump = System.Enum.Parse(inputButton, "Jump");
+			Assert.That(method.Invoke(null, new[] { selfPleasure, (object)false }), Is.False);
+			Assert.That(method.Invoke(null, new[] { selfPleasure, (object)true }), Is.True);
+			Assert.That(method.Invoke(null, new[] { jump, (object)false }), Is.True);
+		}
+
+		[Test]
 		public void MoneyHud_ConfiguresLargeBalancesToFitWithoutChangingTheValue()
 		{
 			GameObject gameObject = new GameObject("Money text");
@@ -54,20 +69,56 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
-		public void StickCircleGesture_ReturningToDeadzoneResetsProgress()
+		public void StickCircleGesture_FastSparseRotationStillCompletes()
 		{
 			object gesture = CreateStickCircleGesture();
-			for (int degrees = 0; degrees <= 180; degrees += 30)
-			{
-				float radians = degrees * Mathf.Deg2Rad;
-				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
-			}
-			UpdateStickCircleGesture(gesture, Vector2.zero);
 			bool completed = false;
-			for (int degrees = 180; degrees <= 360; degrees += 30)
+			float time = 0f;
+			for (int degrees = 0; degrees <= 300; degrees += 75)
 			{
 				float radians = degrees * Mathf.Deg2Rad;
-				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
+				completed |= UpdateStickCircleGesture(gesture,
+					new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			Assert.That(completed, Is.True);
+		}
+
+		[Test]
+		public void StickCircleGesture_BriefDeadzonePreservesProgress()
+		{
+			object gesture = CreateStickCircleGesture();
+			float time = 0f;
+			for (int degrees = 0; degrees <= 150; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			UpdateStickCircleGesture(gesture, Vector2.zero, time += 0.02f);
+			bool completed = false;
+			for (int degrees = 180; degrees <= 330; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			Assert.That(completed, Is.True);
+		}
+
+		[Test]
+		public void StickCircleGesture_SustainedDeadzoneResetsProgress()
+		{
+			object gesture = CreateStickCircleGesture();
+			float time = 0f;
+			for (int degrees = 0; degrees <= 150; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
+			}
+			UpdateStickCircleGesture(gesture, Vector2.zero, time += 0.4f);
+			bool completed = false;
+			for (int degrees = 180; degrees <= 330; degrees += 30)
+			{
+				float radians = degrees * Mathf.Deg2Rad;
+				completed |= UpdateStickCircleGesture(gesture, new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), time += 0.02f);
 			}
 			Assert.That(completed, Is.False);
 		}
@@ -81,7 +132,14 @@ namespace CaptivityReloaded.Modding.Tests
 
 		private static bool UpdateStickCircleGesture(object i_gesture, Vector2 i_input)
 		{
-			return (bool)i_gesture.GetType().GetMethod("Update").Invoke(i_gesture, new object[] { i_input });
+			return (bool)i_gesture.GetType().GetMethod("Update", new[] { typeof(Vector2) })
+				.Invoke(i_gesture, new object[] { i_input });
+		}
+
+		private static bool UpdateStickCircleGesture(object i_gesture, Vector2 i_input, float i_sampleTime)
+		{
+			return (bool)i_gesture.GetType().GetMethod("Update", new[] { typeof(Vector2), typeof(float) })
+				.Invoke(i_gesture, new object[] { i_input, i_sampleTime });
 		}
 
 		[Test]

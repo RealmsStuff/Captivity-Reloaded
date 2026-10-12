@@ -162,6 +162,7 @@ public static class ExternalEnemyFactory
 				boneObject.transform.localRotation = Quaternion.Euler(0f, 0f, definition.Rotation);
 				Rigidbody2D boneBody = boneObject.AddComponent<Rigidbody2D>();
 				boneBody.isKinematic = true;
+				boneBody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 				boneObject.AddComponent<Bone>();
 				if (!string.IsNullOrEmpty(definition.Parent))
 				{
@@ -1111,6 +1112,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private RigidbodyType2D m_enemyBodyType;
 	private bool m_actorPhysicsLocked;
 	private bool m_isIgnoringActorCollision;
+	private bool m_playerFacingBeforeFinisher;
+	private bool m_hasPlayerFacingSnapshot;
 	private Vector2 m_playerLockedPosition;
 	private Vector2 m_enemyLockedPosition;
 	private int m_nextPlayerAnimationEvent;
@@ -1240,6 +1243,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		if (m_player.GetStateActorCurrent() == StateActor.Ragdoll) m_player.DisableRagdoll();
 		AlignPlayerToFinisherFloor();
 		AlignEnemyToPlayerForFinisher();
+		SynchronizePlayerFacingForFinisher();
 		m_player.SetIsExposing(false);
 		m_player.SetIsCrouching(false);
 		m_player.SetStateActor(StateActor.Idle);
@@ -1296,6 +1300,29 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_npc.PlaceFeetOnPos(m_player.GetPosFeet());
 	}
 
+	private void SynchronizePlayerFacingForFinisher()
+	{
+		if (m_player == null || m_npc == null) return;
+		m_playerFacingBeforeFinisher = m_player.GetIsFacingLeft();
+		m_hasPlayerFacingSnapshot = true;
+		// Normalized paired clips use one shared local coordinate frame. Mirroring
+		// only one actor puts player-side root offsets behind the enemy when the
+		// finisher starts from the opposite approach side.
+		m_player.SetIsFacingLeft(m_npc.GetIsFacingLeft());
+		SkeletonPlayer skeleton = m_player.GetSkeletonPlayer();
+		if (skeleton != null) skeleton.ResetArmSorting();
+	}
+
+	private void RestorePlayerFacingAfterFinisher()
+	{
+		if (!m_hasPlayerFacingSnapshot) return;
+		m_hasPlayerFacingSnapshot = false;
+		if (m_player == null) return;
+		m_player.SetIsFacingLeft(m_playerFacingBeforeFinisher);
+		SkeletonPlayer skeleton = m_player.GetSkeletonPlayer();
+		if (skeleton != null) skeleton.ResetArmSorting();
+	}
+
 	private void UpdateFinisher()
 	{
 		if (m_npc.IsDead() || m_player == null || m_player.IsDead()) { EndFinisher(false, false); return; }
@@ -1308,10 +1335,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_meter = Mathf.Max(0f, m_meter - GetCurrentDecayPerSecond() * Time.deltaTime);
 		ManagerInput input = CommonReferences.Instance.GetManagerInput();
 		PlayerController controller = CommonReferences.Instance.GetPlayerController();
-		bool pressed = UpdateQteInput(GetCurrentInputPattern(), input, controller);
-		if (pressed)
+		float inputStrength = UpdateQteInput(GetCurrentInputPattern(), input, controller);
+		if (inputStrength > 0f)
 		{
-			m_meter += GetCurrentInputPower() * ModClothingEffects.GetEscapePowerMultiplier(m_player);
+			m_meter += GetCurrentInputPower() * inputStrength * ModClothingEffects.GetEscapePowerMultiplier(m_player);
 			HudSmasher hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames().GetHudSmasher();
 			if (hud != null) hud.Thrust();
 		}
@@ -1368,6 +1395,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		EndPlayerAnimation();
 		EndParticipantControl();
 		EndPairedSorting();
+		RestorePlayerFacingAfterFinisher();
 		SeparateActorsForRelease();
 		UnlockActorPhysics();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1439,6 +1467,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		EndPlayerAnimation();
 		EndParticipantControl();
 		EndPairedSorting();
+		RestorePlayerFacingAfterFinisher();
 		UnlockActorPhysics();
 		if (CommonReferences.Instance != null && CommonReferences.Instance.GetPlayerController() != null)
 			CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(false);
@@ -1457,7 +1486,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		ReleaseSessionReservations();
 	}
 
-	private bool UpdateQteInput(string i_pattern, ManagerInput i_input, PlayerController i_controller)
+	private float UpdateQteInput(string i_pattern, ManagerInput i_input, PlayerController i_controller)
 	{
 		bool mobile = i_controller != null && i_controller.GetIsMobileControlsEnabled();
 		bool gamepad = !mobile && i_input != null && i_input.IsControllerLastUsed()
@@ -1465,24 +1494,27 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		switch (i_pattern)
 		{
 		case "tap":
-			return mobile ? i_controller.GetIsMobileJumpPressed() : i_input.IsButtonDown(InputButton.Jump);
+			return (mobile ? i_controller.GetIsMobileJumpPressed() : i_input.IsButtonDown(InputButton.Jump)) ? 1f : 0f;
 		case "alternate":
-			return UpdateAlternateInput(i_input, i_controller, mobile, gamepad);
+			return UpdateAlternateInput(i_input, i_controller, mobile, gamepad) ? 1f : 0f;
 		case "rotate":
-			if (mobile) return m_circleGesture.Update(i_controller.GetMobileAimInput());
-			if (gamepad) return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue());
-			return UpdateAlternateInput(i_input, i_controller, false, false);
+			if (mobile) return m_circleGesture.Update(i_controller.GetMobileAimInput()) ? 4f : 0f;
+			if (gamepad) return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue()) ? 4f : 0f;
+			return UpdateAlternateInput(i_input, i_controller, false, false) ? 1f : 0f;
 		default: // adaptive preserves the v1 input behavior.
 			if (mobile)
-				return i_controller.GetIsMobileJumpPressed() || m_circleGesture.Update(i_controller.GetMobileAimInput());
+			{
+				if (i_controller.GetIsMobileJumpPressed()) return 1f;
+				return m_circleGesture.Update(i_controller.GetMobileAimInput()) ? 4f : 0f;
+			}
 			if (gamepad)
-				return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue());
+				return m_circleGesture.Update(UnityEngine.InputSystem.Gamepad.current.rightStick.ReadValue()) ? 4f : 0f;
 			if (i_input.IsButton(InputButton.Jump))
 			{
 				m_meter += GetCurrentInputPower() * 0.2f * Time.deltaTime * 10f;
-				return false;
+				return 0f;
 			}
-			return UpdateAlternateInput(i_input, i_controller, false, false);
+			return UpdateAlternateInput(i_input, i_controller, false, false) ? 1f : 0f;
 		}
 	}
 
@@ -1568,9 +1600,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		string pattern = GetCurrentInputPattern();
 		if (pattern == "tap") return "Tap Jump";
 		if (pattern == "rotate") return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
-			? "Rotate aim stick" : "Rotate right stick";
+			? "Circle aim stick" : "Circle right stick";
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
-			? "Rotate aim stick or tap Jump" : "Rotate right stick";
+			? "Circle aim stick or tap Jump" : "Circle right stick";
 	}
 	public Sprite GetInputGlyph()
 	{

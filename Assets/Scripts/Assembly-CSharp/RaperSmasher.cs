@@ -283,8 +283,8 @@ public class RaperSmasher : RaperGame, ISmasherHudSource
 	public string GetInputPrompt()
 	{
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
-			? "Rotate aim stick or tap Jump"
-			: "Rotate right stick";
+			? "Circle aim stick or tap Jump"
+			: "Circle right stick";
 	}
 
 	public Sprite GetInputGlyph()
@@ -300,36 +300,51 @@ public class RaperSmasher : RaperGame, ISmasherHudSource
 
 public sealed class StickCircleGesture
 {
-	private const float ActivationMagnitude = 0.45f;
-	private const float CompletionDegrees = 300f;
+	private const float ActivationMagnitude = 0.35f;
+	private const float CompletionDegrees = 270f;
+	private const float DeadzoneGraceSeconds = 0.3f;
+	private const float AmbiguousSampleDegrees = 175f;
 	private Vector2 m_previous;
 	private float m_accumulatedDegrees;
+	private float m_lastActiveAt = float.NegativeInfinity;
 	private bool m_hasPrevious;
 
 	public bool Update(Vector2 i_stick)
 	{
+		return Update(i_stick, Time.unscaledTime);
+	}
+
+	public bool Update(Vector2 i_stick, float i_sampleTime)
+	{
 		if (i_stick.magnitude < ActivationMagnitude)
 		{
-			Reset();
+			// Real sticks and touch joysticks briefly cross the centre during a
+			// quick circle. Preserve partial progress through that short gap, but
+			// still require a new gesture after the stick has actually been released.
+			if (m_hasPrevious && i_sampleTime - m_lastActiveAt > DeadzoneGraceSeconds) Reset();
 			return false;
 		}
 		Vector2 current = i_stick.normalized;
-		if (!m_hasPrevious)
+		if (!m_hasPrevious || i_sampleTime - m_lastActiveAt > DeadzoneGraceSeconds)
 		{
+			m_accumulatedDegrees = 0f;
 			m_previous = current;
 			m_hasPrevious = true;
+			m_lastActiveAt = i_sampleTime;
 			return false;
 		}
 		float delta = Vector2.SignedAngle(m_previous, current);
 		m_previous = current;
-		if (Mathf.Abs(delta) > 120f)
+		m_lastActiveAt = i_sampleTime;
+		if (Mathf.Abs(delta) >= AmbiguousSampleDegrees)
 		{
-			m_accumulatedDegrees = 0f;
+			// An exact half-turn has no reliable direction. Ignore only this
+			// sample instead of erasing the valid rotation already accumulated.
 			return false;
 		}
 		m_accumulatedDegrees += delta;
 		if (Mathf.Abs(m_accumulatedDegrees) < CompletionDegrees) return false;
-		m_accumulatedDegrees = 0f;
+		m_accumulatedDegrees -= Mathf.Sign(m_accumulatedDegrees) * CompletionDegrees;
 		return true;
 	}
 
@@ -337,6 +352,7 @@ public sealed class StickCircleGesture
 	{
 		m_previous = Vector2.zero;
 		m_accumulatedDegrees = 0f;
+		m_lastActiveAt = float.NegativeInfinity;
 		m_hasPrevious = false;
 	}
 }

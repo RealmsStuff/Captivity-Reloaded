@@ -158,6 +158,7 @@ public class ManagerOptions : MonoBehaviour
 		List<InputButtonXGame> inputButtons = ManagerDB.GetInputButtons();
 		for (int i = 0; i < inputButtons.Count; i++)
 		{
+			if (!ShouldShowInputBinding(inputButtons[i].GetInputButton(), ExternalRuleProfileFactory.IsSelfPleasureEnabled())) continue;
 			InputBox inputBox = UnityEngine.Object.Instantiate(m_inputBoxDefault, m_inputBoxDefault.transform.parent);
 			inputBox.Initialize(inputButtons[i]);
 			inputBox.gameObject.SetActive(value: true);
@@ -167,6 +168,11 @@ public class ManagerOptions : MonoBehaviour
 			inputBox2.gameObject.SetActive(value: true);
 			m_controllerInputBoxes.Add(inputBox2);
 		}
+	}
+
+	public static bool ShouldShowInputBinding(InputButton i_button, bool i_selfPleasureEnabled)
+	{
+		return i_button != InputButton.SelfPleasure || i_selfPleasureEnabled;
 	}
 
 	private void CreateControllerInputParent()

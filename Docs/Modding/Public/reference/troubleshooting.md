@@ -24,6 +24,8 @@ Incorrect:
 Mods/example.my-mod/example.my-mod/manifest.json
 ```
 
+The same rule applies inside an installable archive: opening the `.capmod` should show `manifest.json` immediately, not another folder. A manually created `.zip` is source material, not an installable package, and changing its extension does not flatten its contents.
+
 ## The pack is yellow, disabled, or conflicting
 
 Common causes are:
@@ -48,6 +50,20 @@ dotnet run --project Tools/ModSchemaValidator -- . Mods/example.my-mod
 Typical structural failures include unknown fields, a wrong `type`, a missing required property, a value outside its allowed range, a Windows-style `\` path, or a path that leaves the pack directory. The JSON path in the error identifies the failing value.
 
 Schema success does not prove that referenced IDs or assets exist. Launch the game and inspect the Mods panel for cross-file and runtime validation.
+
+### `Could not find member ...`
+
+The named property is not part of that document type in the running build. Check the matching field-reference page and schema. Do not merely rename it to another plausible term. A similarly named field on a Tiled object, rule profile, stage action, or another content type does not make it valid here.
+
+If the property came from generated files, confirm that the referenced generator actually exists in the same source checkout and rerun it. A README that names a missing generator or planning document is not evidence that the output matches the public API.
+
+### `player-animation.event-name`
+
+Player-animation gameplay events use a strict allowlist: `pleasure`, `scaledPleasure`, `libido`, `strengthDamage`, `struggleDamage`, and `healthDamage`. Visual reactions belong in animation tracks or supported presentation effects. Names such as `hitReaction` are not inert visual labels and are rejected.
+
+### The pack validates on another machine or branch
+
+Compare the exact game version or source commit, not only `modApiVersion`. During the pre-v1 freeze period, experimental fields can differ between development revisions. Revalidate and rebuild the final `.capmod` with the project revision used for the target player.
 
 ## Artwork is missing or misaligned
 

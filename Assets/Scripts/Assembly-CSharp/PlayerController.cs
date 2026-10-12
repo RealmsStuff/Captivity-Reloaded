@@ -231,6 +231,11 @@ public class PlayerController : MonoBehaviour
 
 	private void HandleSelfPleasureInput()
 	{
+		if (!ExternalRuleProfileFactory.IsSelfPleasureEnabled())
+		{
+			if (m_player.IsSelfPleasuring()) m_player.StopSelfPleasure();
+			return;
+		}
 		bool menuOpen = CommonReferences.Instance.GetManagerScreens().GetScreenGame().IsPaused()
 			|| CommonReferences.Instance.GetManagerHud().GetVendorHud().GetIsOpen()
 			|| CommonReferences.Instance.GetManagerHud().GetWardrobeHud().IsShowing()

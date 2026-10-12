@@ -4,6 +4,16 @@
 
 Inherited enemies extend a stable Core enemy ID. They can currently override bounded statistics, inherited attacks, selected behavior modules, drop rules, animation speed, spawning behavior, and published rig sprites.
 
+Only use properties listed for their exact object in the [enemy API reference](../reference/api/enemy.md). Enemy JSON is closed to unknown fields. In particular:
+
+- `spawn` currently contains `inheritTemplateSpawners` and optional `selectionWeight`; there is no `joinCoreSpawners` list.
+- Original enemies cannot join selected Core spawners through `spawn`; place their content ID in authored stage spawners.
+- Enemy attacks do not currently have `ragdollSeconds`. The property with that name belongs to supported Tiled interactions.
+- `animation` does not currently have `blendSeconds`.
+- A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
+
+These names may be reasonable future feature requests, but adding them to a document before the schema and runtime implement them invalidates the pack.
+
 The Zombie I LibreSprite kit in `ModSDK/EnemyTemplates/Zombie1` builds a named-layer 128×128 atlas from the exact Core sprites. It inherits `core:enemy/zombie-1`, including the original rig, animation clips, colliders, and specialized prefab behavior.
 
 ## Fully original enemies (experimental)
@@ -17,9 +27,11 @@ The Unity shortcut is **Captivity Reloaded > Modding > Create Original Enemy...*
 An original visual requires:
 
 - `regions`: rectangles within one pack-local PNG atlas.
-- `bones`: up to 64 named bones. Every bone selects a region and may name a parent. A `hips` bone is required. Local `x`, `y`, `rotation`, pivot, and sorting order are explicit, so the hierarchy is not limited to the humanoid Core rig.
-- `hitZones`: box or circle projectile zones attached to named bones. One zone per bone may use `low`, `normal`, `critical`, or `block` damage.
-- `bodyWidth`, `bodyHeight`, and optional body offsets: the solid capsule used for floors and walls. Hit zones are triggers and do not replace this movement collider.
+- `bones`: up to 64 named bones. Every bone selects a region and may name a parent. A `hips` bone is required. Make `hips` the single top-level bone: do not retain editor-only wrapper bones such as `root`, an armature name, or `skeleton-*` above it. Every declared bone receives a physics body during ragdoll, so empty wrapper bones can destabilize the chain or pull it away from the floor. Local `x`, `y`, `rotation`, pivot, and sorting order are explicit, so descendants are not limited to the humanoid Core rig.
+- `hitZones`: box or circle projectile zones attached to named bones. One zone per bone may use `low`, `normal`, `critical`, or `block` damage. Add practical zones to `hips`, the torso, and major limbs; these trigger hitboxes become solid colliders while the enemy is ragdolled and keep it on platforms.
+- `bodyWidth`, `bodyHeight`, and optional body offsets: the solid capsule used for floors and walls while the enemy is standing. It remains separate from the per-bone ragdoll colliders.
+
+After importing from DragonBones, inspect the hierarchy before packaging. `hips` should have no `parent`, all other physical bones should descend from it, and the lower body must have non-zero hit zones. Test at least one temporary knockdown and one death on both a Core stage and any bundled Tiled stage; a rig that stands correctly can still have an invalid ragdoll hierarchy.
 
 `animation.clips` contains named procedural clips. Each clip has an ordered list of frames; a frame supplies an atlas `region`, absolute local position, rotation, or scale values for any subset of bones. Sprite regions switch at the authored frame while transforms interpolate between frames. `idle` and `move` are required. Attack definitions reference another clip by name and specify the exact hit time, total duration, ranges, damage, knockback, chance, and cooldown.
 
@@ -130,6 +142,8 @@ Reaching `meterMax` releases the player, optionally restores health, and can rag
 - `rotate` requires aim-stick rotation on controller/mobile and uses alternating directions as its keyboard fallback.
 - `tap` requires repeated presses of the normal Jump action and displays that device's Jump glyph.
 
+A controller or touch-stick rotation completes after roughly three quarters of a circle and grants four times the phase's `inputPower`, matching four successful alternating inputs. Brief crossings through the stick dead zone are tolerated, but releasing the stick for about 0.3 seconds starts a new gesture. Set `decayPerSecond` with that cadence in mind; requiring several complete circles per second is not practical on either device.
+
 For a reusable curve-based animation, put a `playerAnimation` document in a content root and replace the inline object with `"playerAnimationRef": "your.pack:player-animation/example"`. Normalized position, rotation, and scale tracks are sampled through their authored linear or Hermite curves and converted into the same safe finisher player. A reference may be used on the top-level finisher or an individual phase. Missing IDs invalidate the pack, and an entry cannot define both `playerAnimation` and `playerAnimationRef`. Runtime v1 accepts the `core:player-rig/alex` rig. See `ExampleMods/prey-green-zombie/content/stalker-restraint.player-animation.json`.
 
 For an ordered finisher, replace the single presentation with 2–8 `phases`. Each phase requires a unique `id`, its own `durationSeconds`, and an enemy `animation`; it may also provide a separate `playerAnimation`, `inputPattern`, `inputPower`, and `decayPerSecond`. The struggle meter persists between phases, while the prompt and input gesture may change. Phase animations restart at each transition, and enemy/player events use time relative to that phase. Reaching `meterMax` succeeds immediately; reaching the end of the last phase fails. Combined phase duration is capped at 300 seconds.
@@ -175,6 +189,8 @@ Optional `successOutcome` and `failureOutcome` objects replace the legacy fixed 
 - `strengthDamage` removes its amount from the yellow strength bar.
 - `struggleDamage` removes its amount in points from current QTE progress and cannot lower it below zero.
 - `healthDamage` deals its amount as normal player health damage, including active difficulty, rule-profile, and clothing modifiers.
+
+This list is exhaustive. Do not use animation labels such as `hitReaction` as gameplay events. Author the reaction through bone/sprite tracks or a supported presentation effect instead.
 
 Events repeat on every cycle when `loop` is true. The example reproduces the main effects of a normal Zombie thrust at 0.4 seconds in each 0.8-second cycle; its `struggleDamage` is 10 points out of the configured 100-point meter. At most 64 events are allowed and every event time must fall within the clip duration. Positive amounts are required. `pleasure` and `scaledPleasure` are capped at 100 per event, `libido` and `struggleDamage` at 10,000, and damage events at 100,000.
 

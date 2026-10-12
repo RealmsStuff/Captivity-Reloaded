@@ -2,6 +2,8 @@
 
 **Current status: freeze review.**
 
+During freeze review, validate against the exact game release or source commit you intend to support. `modApiVersion: 1` identifies the draft v1 line but does not make experimental fields from different development snapshots interchangeable. The shipped parser rejects fields it does not implement even if a newer wiki page, old template, private branch, generator, or AI-produced example mentions them.
+
 Freezing the first public schemas means choosing the fields that are ready to become a compatibility promise. It does not mean development stops.
 
 After Mod API v1 is frozen:
@@ -15,6 +17,8 @@ After Mod API v1 is frozen:
 Fields marked **Experimental** are intentionally excluded from that promise. They can be tested publicly, but may be renamed, redesigned, or removed before promotion. We will mark them in reference documentation and with the custom JSON Schema annotation `"x-stability": "experimental"`; mod JSON itself does not need to contain a stability field.
 
 Before freezing a schema, it should have a complete JSON Schema, useful validation errors, at least one working example mod, automated parser/runtime tests, and a documented fallback or migration rule.
+
+A proposed field is not public API until all of those pieces agree. Design notes and generated examples must not be distributed as working mods before their fields exist in the schema, parser, runtime, reference pages, and tests.
 
 ## Current schema inventory
 

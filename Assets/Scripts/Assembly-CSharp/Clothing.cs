@@ -203,6 +203,7 @@ public static class ModClothingEffects
 	private static IEnumerable<Clothing> GetEquipped(Player i_player)
 	{
 		SkeletonPlayer skeleton = i_player == null ? null : i_player.GetSkeletonPlayer();
-		return skeleton == null ? new Clothing[0] : skeleton.GetClothesEquipped();
+		if (skeleton == null) return new Clothing[0];
+		return skeleton.GetClothesEquipped();
 	}
 }

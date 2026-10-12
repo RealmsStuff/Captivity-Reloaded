@@ -6,6 +6,16 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-11: authoring and packaging clarification
+
+- Clarified that pre-v1 mods must be validated against the exact target game release or source commit.
+- Documented that unknown generated fields remain errors even when their names resemble features on another content type.
+- Added explicit guidance for original-enemy spawning, player-animation event names, and current unsupported enemy fields.
+- Added the required root layout for `.capmod` archives and warned that renaming a manually wrapped ZIP does not create a valid package.
+- Added a validation checklist for AI-assisted and custom-generator output.
+
+This clarification does not change the runtime API.
+
 ### 2026-10-08: authoring and activation additions
 
 - Added `ruleProfile.activation`; `selectable` remains the default, while `pack` applies the profile whenever its owning pack is loaded without adding a game-mode entry.
