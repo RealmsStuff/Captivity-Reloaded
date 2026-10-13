@@ -7,6 +7,8 @@ if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
 
 $binderPath = Join-Path $ProjectRoot 'Assets/Scripts/Assembly-CSharp/CoreAssetSlotBinder.cs'
 $binder = Get-Content -LiteralPath $binderPath -Raw -Encoding utf8
+$legacyCatalogPath = Join-Path $ProjectRoot 'Assets/Scripts/Assembly-CSharp/CoreLegacyVisualSpriteCatalog.cs'
+$legacyCatalog = Get-Content -LiteralPath $legacyCatalogPath -Raw -Encoding utf8
 $output = Join-Path $ProjectRoot 'Docs/Modding/Public/reference/asset-slots.md'
 $slots = New-Object System.Collections.Generic.List[object]
 
@@ -83,11 +85,11 @@ foreach ($match in [regex]::Matches($binder, 'BindNamedCoreSpriteSlot\("(?<sprit
 	if ($owner) { Add-Slot ($owner + '/' + $match.Groups['suffix'].Value) 'named-core-sprite' ('Core sprite ' + $match.Groups['sprite'].Value) }
 }
 
-# Indirect legacy visual array.
-$legacyBlock = [regex]::Match($binder, '(?s)LegacyVisualSpriteNames\s*=\s*\{(?<body>.*?)\};').Groups['body'].Value
+# Indirect legacy visual catalog.
+$legacyBlock = [regex]::Match($legacyCatalog, '(?s)Names\s*=\s*\{(?<body>.*?)\};').Groups['body'].Value
 foreach ($match in [regex]::Matches($legacyBlock, '"(?<name>[^"]+)"')) {
 	$name = $match.Groups['name'].Value
-	Add-Slot ('core:sprite/' + (Slug $name) + '/image') 'legacy-presentation' ('Placed/background sprite ' + $name)
+	Add-Slot ('core:sprite/' + (Slug $name) + '/image') 'legacy-presentation' ('Legacy Core sprite ' + $name)
 }
 
 # Fixed usable-vendor slot.
@@ -97,7 +99,7 @@ $slots = @($slots | Sort-Object @{ Expression = { Get-OrdinalSortKey $_.Id } } -
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add('# Public asset-slot catalog')
 $lines.Add('')
-$lines.Add('This searchable catalog is generated from `CoreAssetSlotBinder.cs`, packaged Core weapon definitions, and `core-clothing.json`. Regenerate it with `Tools/Documentation/Generate-AssetSlotCatalog.ps1`.')
+$lines.Add('This searchable catalog is generated from `CoreAssetSlotBinder.cs`, `CoreLegacyVisualSpriteCatalog.cs`, packaged Core weapon definitions, and `core-clothing.json`. Regenerate it with `Tools/Documentation/Generate-AssetSlotCatalog.ps1`.')
 $lines.Add('')
 $lines.Add('A slot is registered only when its baseline Unity sprite or renderer is available. This matters for legacy weapons and enemy rigs whose prefabs do not all expose the same pieces. An unknown target is rejected instead of guessing a private Unity name.')
 $lines.Add('')

@@ -70,6 +70,14 @@ namespace CaptivityReloaded.Modding
 
 		public int Count => m_slots.Count;
 
+		/// <summary>Returns a stable snapshot for diagnostics and authoring tools.</summary>
+		public IReadOnlyList<AssetSlotRegistration> Snapshot()
+		{
+			List<AssetSlotRegistration> result = new List<AssetSlotRegistration>(m_slots.Values);
+			result.Sort((i_left, i_right) => string.CompareOrdinal(i_left.Id.ToString(), i_right.Id.ToString()));
+			return result;
+		}
+
 		public bool Register(AssetSlotRegistration i_slot, ValidationReport io_report)
 		{
 			if (i_slot == null)

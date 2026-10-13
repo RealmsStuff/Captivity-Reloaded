@@ -3,7 +3,7 @@
 ## Implemented and exercised
 
 * Pack discovery, stable IDs, dependencies, ordering, conflicts, and enable state
-* Asset-slot patches
+* PNG asset-slot patches for Core weapons, clothing, players, enemies, reviewed UI, environment, effects, and legacy presentation artwork
 * Inherited enemies, clothing, weapons, and usables
 * All 79 Core challenge behaviors through inheritance, 15 general data-driven challenge objectives, difficulty profiles, and selectable game modes with weapon, spawn, wave, economy, and player rules
 * Hybrid Core catalogs backed by existing Unity prefabs
@@ -20,7 +20,8 @@
 
 ## Outside the stable v1 scope or still in migration
 
-* Fully loose Core artwork, audio, colliders, projectiles, and specialized mechanics
+* Fully loose Core artwork, colliders, projectiles, and specialized mechanics
+* General Core audio replacement slots. Mod API v1 `assetPatch` files are PNG-only; pack-local audio is supported only by content types with explicit audio fields.
 * Core enemy rigs and all public semantic clips can be exported as packaged normalized definitions; vanilla runtime enemies still use prefab controllers as a compatibility fallback while specialized attack and AI parity is completed
 * Arbitrary new scripted machine behavior and custom Unity components
 * A standalone graphical mod-maker
