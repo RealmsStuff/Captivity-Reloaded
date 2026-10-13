@@ -84,6 +84,18 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void MobileControls_DoNotMaskLastUsedPhysicalGamepad()
+		{
+			System.Type smasher = System.Type.GetType("RaperSmasher, Assembly-CSharp");
+			Assert.That(smasher, Is.Not.Null);
+			System.Reflection.MethodInfo method = smasher.GetMethod("ShouldUsePhysicalGamepad");
+			Assert.That(method, Is.Not.Null);
+			Assert.That(method.Invoke(null, new object[] { true, true }), Is.True);
+			Assert.That(method.Invoke(null, new object[] { false, true }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { true, false }), Is.False);
+		}
+
+		[Test]
 		public void StickCircleGesture_BriefDeadzonePreservesProgress()
 		{
 			object gesture = CreateStickCircleGesture();

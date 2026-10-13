@@ -31,15 +31,16 @@ public class RaperSmasher : RaperGame, ISmasherHudSource
         }
 
 		PlayerController controller = CommonReferences.Instance.GetPlayerController();
+		ManagerInput input = CommonReferences.Instance.GetManagerInput();
+		if (ShouldUsePhysicalGamepad(input != null && input.IsControllerLastUsed(), Gamepad.current != null))
+		{
+			if (m_circleGesture.Update(Gamepad.current.rightStick.ReadValue())) HandleHit(4f);
+			return;
+		}
 		if (controller.GetIsMobileControlsEnabled())
 		{
 			if (controller.GetIsMobileJumpPressed()) HandleHit();
 			if (m_circleGesture.Update(controller.GetMobileAimInput())) HandleHit(4f);
-			return;
-		}
-		if (CommonReferences.Instance.GetManagerInput().IsControllerLastUsed() && Gamepad.current != null)
-		{
-			if (m_circleGesture.Update(Gamepad.current.rightStick.ReadValue())) HandleHit(4f);
 			return;
 		}
 
@@ -282,9 +283,17 @@ public class RaperSmasher : RaperGame, ISmasherHudSource
 
 	public string GetInputPrompt()
 	{
+		ManagerInput input = CommonReferences.Instance.GetManagerInput();
+		if (ShouldUsePhysicalGamepad(input != null && input.IsControllerLastUsed(), Gamepad.current != null))
+			return "Circle right stick";
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
 			? "Circle aim stick or tap Jump"
 			: "Circle right stick";
+	}
+
+	public static bool ShouldUsePhysicalGamepad(bool i_controllerLastUsed, bool i_gamepadConnected)
+	{
+		return i_controllerLastUsed && i_gamepadConnected;
 	}
 
 	public Sprite GetInputGlyph()

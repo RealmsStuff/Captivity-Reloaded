@@ -1488,9 +1488,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private float UpdateQteInput(string i_pattern, ManagerInput i_input, PlayerController i_controller)
 	{
-		bool mobile = i_controller != null && i_controller.GetIsMobileControlsEnabled();
-		bool gamepad = !mobile && i_input != null && i_input.IsControllerLastUsed()
-			&& UnityEngine.InputSystem.Gamepad.current != null;
+		bool gamepad = RaperSmasher.ShouldUsePhysicalGamepad(i_input != null && i_input.IsControllerLastUsed(),
+			UnityEngine.InputSystem.Gamepad.current != null);
+		bool mobile = !gamepad && i_controller != null && i_controller.GetIsMobileControlsEnabled();
 		switch (i_pattern)
 		{
 		case "tap":
@@ -1599,6 +1599,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	{
 		string pattern = GetCurrentInputPattern();
 		if (pattern == "tap") return "Tap Jump";
+		ManagerInput input = CommonReferences.Instance.GetManagerInput();
+		bool gamepad = RaperSmasher.ShouldUsePhysicalGamepad(input != null && input.IsControllerLastUsed(),
+			UnityEngine.InputSystem.Gamepad.current != null);
+		if (gamepad) return "Circle right stick";
 		if (pattern == "rotate") return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
 			? "Circle aim stick" : "Circle right stick";
 		return CommonReferences.Instance.GetPlayerController().GetIsMobileControlsEnabled()
