@@ -127,8 +127,17 @@ def safe_name(value):
 
 
 def stable_slug(value):
-    value = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", value)
-    return safe_name(value.replace("_", "-")).lower()
+    # Match CoreAssetSlotBinder.StableSpriteSlug exactly. In particular, legacy
+    # acronym names such as BPrec, CS446, NP40, and SIID21 split at every
+    # uppercase character rather than only after a lowercase letter.
+    result = []
+    for index, character in enumerate(value):
+        if character == "_":
+            character = "-"
+        if character.isupper() and index > 0 and result and result[-1] != "-":
+            result.append("-")
+        result.append(character.lower())
+    return safe_name("".join(result)).lower()
 
 
 def named_sprite_target(source_name):
