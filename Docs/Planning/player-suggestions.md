@@ -21,3 +21,8 @@ I hate to make requests without much contribution, but... can we get longer hair
 While I don't anticipate outright Rapunzeling around, it'd be nice to have some proper length
 Seconded. Maybe not mid-back length but like... shoulder length? Maybe a half-ponytail, or messy ponytail? Would still give off the vibe of "ready for combat, hair outta the way" but still length and volume.
 Thirded!, i would like to see a wolf cut style, or more weapons but yeh animations are necessary
+
+make the futa protag mod also cum from her penis instead of just her pussy
+
+add linux support
+add xbox dev mode support

@@ -6,6 +6,7 @@ Captivity Reloaded is a Unity 2021.3 LTS project with a data-driven Mod API, in-
 
 ## Choose a starting point
 
+- **Windows players:** extract the entire release ZIP before running the game. Keep `Captivity Reloaded.exe`, `Captivity Reloaded_Data`, `MonoBleedingEdge`, and `UnityPlayer.dll` together in the same extracted folder. Running the executable from inside the ZIP, moving it alone, or renaming it causes Unity's “cannot find data folder” error.
 - **Players and mod users:** read the [wiki home](Docs/Modding/Public/README.md), then [installing and managing mods](Docs/Modding/Public/getting-started/installing-mods.md).
 - **First-time mod authors:** follow [Your first pack](Docs/Modding/Public/getting-started/first-pack.md) and browse the [example pack index](Docs/Modding/Public/reference/example-packs.md).
 - **Artists and map authors:** use the [authoring tools](Docs/Modding/Public/tools/README.md) and the templates under `ModSDK`.

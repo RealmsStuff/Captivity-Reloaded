@@ -1,5 +1,7 @@
 # Installing mods
 
+On Windows, extract the entire game release ZIP before launching it. Keep `Captivity Reloaded.exe`, `Captivity Reloaded_Data`, `MonoBleedingEdge`, and `UnityPlayer.dll` together in the extracted folder. Do not run the executable from inside the ZIP, move it by itself, or rename it; Unity will report that it cannot find the data folder.
+
 Place each unpacked mod folder directly inside `Mods` beside the game executable:
 
 ```text

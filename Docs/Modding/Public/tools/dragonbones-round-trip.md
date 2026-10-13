@@ -28,6 +28,32 @@ Select **Export Every Core Enemy to DragonBones** in the round-trip window, or u
 
 `DragonBonesExports/core-enemies/core-enemy-export-index.json` records every enemy, armature, skeleton, sidecar, animation count, and image count. The export stops with an error if a catalog enemy has no normalized rig or does not produce both its skeleton and round-trip sidecar, so a partial batch is never reported as complete.
 
+### Preview a Core rig in the browser
+
+The [Captivity Rig & Animation Player](https://realmsstuff.github.io/Rig-Previewer/) provides a quick browser preview of the Core enemy exports. It reads the Core Enemies bundle generated from the DragonBones export workflow and does not require DragonBones Pro or Unity for playback.
+
+The previewer selects folders, not ZIP archives. Extract the **Core Enemies** ZIP first, then select one individual enemy folder. Do not select the top-level folder containing every enemy, because unrelated images with the same filename can be mixed together.
+
+The selected folder should contain one of the supported skeleton documents and its images:
+
+```text
+<enemy-folder>/
+  captivity-roundtrip.json
+  <enemy>_ske.json
+  images/
+    <display>.png
+```
+
+Either `captivity-roundtrip.json` or the DragonBones `<enemy>_ske.json` can supply the rig. The previewer automatically scans PNG, JPEG, and WebP images in the selected folder tree.
+
+1. Open the [Rig Previewer](https://realmsstuff.github.io/Rig-Previewer/).
+2. Select **Select Character Folder**, or drag the extracted enemy folder onto the page.
+3. Choose an entry in **Animations** to play it.
+4. Use Play/Pause, Reset, Loop, timeline scrubbing, playback speed, preview scale, and wireframe display as needed.
+5. Hover a bone in **Bone Hierarchy** to identify it in the preview.
+
+This is a read-only inspection tool. It is useful for checking that the exported rig, sprite assignment, hierarchy, and animation list load before opening the project in DragonBones, but it does not edit the export or replace the Unity round-trip importer.
+
 Choose **Original enemy atlas** for a data-defined enemy. Select its `.enemy.json`, animation directory, and output directory. This mode reads the atlas directly, extracts every declared region with nearest-neighbor scaling, preserves the bone hierarchy and sorting order, and converts each normalized bottom-left pivot into the corresponding centered DragonBones display offset. It does not need a prefab or Unity-imported sprites.
 
 The **Create Original Enemy** wizard can perform this export automatically. Its projects are written outside the loose mod under `DragonBonesProjects/<pack-id>/<enemy-id>` so authoring files and enlarged working images are not included in the `.capmod`.

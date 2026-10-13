@@ -6,6 +6,18 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-13: expanded Core visual replacement catalog (game 2.2.1)
+
+- Expanded the reviewed legacy-presentation catalog from 352 to 458 Core sprite names.
+- Published 417 canonical enemy-specific renderer slots across all 21 Core enemies and 72 compatibility aliases.
+- Added isolated multipart feet, anatomy, asymmetric limbs, breast pieces, and animation-only variants so retextures do not need shared global sprite IDs.
+- Added remaining high-value keypad/menu controls, doors and room pieces, backgrounds, floors, walls, platforms, furniture, projectiles, beams, fire, and shell artwork.
+- Added stable asset-slot registry snapshots for diagnostics and deterministic authoring output.
+- Added runtime coverage logging for advertised legacy visual slots and editor checks for duplicate IDs and missing shipped baselines.
+- Clarified that Mod API v1 `assetPatch` replacements are PNG-only. General Core audio replacement remains outside the v1 contract.
+
+This is additive: existing pack IDs and replacement slots are unchanged. Packs using the new IDs require game version 2.2.1 or newer.
+
 ### 2026-10-11: authoring and packaging clarification
 
 - Clarified that pre-v1 mods must be validated against the exact target game release or source commit.

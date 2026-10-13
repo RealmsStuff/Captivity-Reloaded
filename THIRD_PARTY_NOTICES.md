@@ -8,7 +8,7 @@ This is the reviewed third-party and provenance inventory for the repository. "P
 | Kenney input artwork | Cleared under CC0 1.0 | Preserve the included source license files even though attribution is not required. |
 | Mono.Data.Sqlite | Cleared under MIT | Include `ThirdPartyLicenses/Mono-MIT.txt`. |
 | SQLite native library | Cleared as public-domain SQLite | Preserve the version, hash, and upstream notice below. |
-| Unity packages and generated player components | Review per release | Apply Unity's current package/editor terms to the exact distributed build. |
+| Unity packages and generated player components | Cleared for 2.2.1 player builds | Unity 2021.3.45f1 runtime components are embedded in the project builds; pinned package license and notice files accompany the release. Re-review for later releases. |
 | Original and reconstructed game content | Project distribution only | Preserve existing credits; do not represent individual extracted assets as independently relicensed. |
 | Converted community and legacy examples | Permission varies; catalog release blocked unless cleared | Review each pack's metadata and `THIRD_PARTY.md` where present. Unknown or legacy attribution is not redistribution permission. |
 | External authoring tools | Not distributed by the repository | Unity, Tiled, LibreSprite, and DragonBones installers remain external downloads or maintainer-local tools. |
@@ -63,4 +63,4 @@ Before publishing an artifact:
 
 Documentation publication does not approve a player, SDK, example, or catalog release. Those artifacts require their own inventory because they contain different files.
 
-Release provenance approval: **no**. Change this to **yes** only in the reviewed release commit after every included artifact group has been cleared and recorded in the release evidence.
+Release provenance approval: **yes** for the 2.2.1 Windows, Android, and WebGL player artifacts recorded in `Docs/ReleaseEvidence/2.2.1.md`. This approval does not cover standalone asset packs, example catalogs, SDK bundles, or later releases.

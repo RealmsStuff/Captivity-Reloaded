@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 public class ScreenTitle : Screen
 {
+	private const string PatchNotesPanelName = "PatchNotesPanel";
+
+	private static readonly Color PatchNotesBorderColor = new Color(0.82f, 0f, 0.08f, 1f);
+
+	private static readonly Color PatchNotesBackgroundColor = new Color(0.12f, 0f, 0.015f, 0.9f);
+
 	[SerializeField]
 	private GameObject m_parentLoading;
 
@@ -26,6 +32,7 @@ public class ScreenTitle : Screen
 	public override void Open()
 	{
 		base.Open();
+		EnsurePatchNotesPanel();
 		CommonReferences.Instance.GetManagerAudio().PlayAudioMusic(m_audioScreenMenu);
 		StartCoroutine(CoroutineAnimateFadeIn());
 		ManagerDB.Initialize();
@@ -36,6 +43,93 @@ public class ScreenTitle : Screen
 		string version = Application.version;
 		if (version.EndsWith(".0")) version = version.Substring(0, version.Length - 2);
 		m_txtVersion.text = "version " + version;
+	}
+
+	private void EnsurePatchNotesPanel()
+	{
+		if (m_parentTitle == null || m_parentTitle.transform.Find(PatchNotesPanelName) != null)
+		{
+			return;
+		}
+
+		Font font = (m_txtVersion != null) ? m_txtVersion.font : Resources.GetBuiltinResource<Font>("Arial.ttf");
+		GameObject panel = CreateUiObject(PatchNotesPanelName, m_parentTitle.transform);
+		RectTransform panelRect = panel.GetComponent<RectTransform>();
+		panelRect.anchorMin = new Vector2(0.63f, 0.19f);
+		panelRect.anchorMax = new Vector2(0.92f, 0.63f);
+		panelRect.offsetMin = Vector2.zero;
+		panelRect.offsetMax = Vector2.zero;
+		Image borderImage = panel.AddComponent<Image>();
+		borderImage.color = PatchNotesBorderColor;
+		borderImage.raycastTarget = false;
+
+		GameObject background = CreateUiObject("Background", panel.transform);
+		Stretch(background.GetComponent<RectTransform>(), 3f, 3f, 3f, 3f);
+		Image backgroundImage = background.AddComponent<Image>();
+		backgroundImage.color = PatchNotesBackgroundColor;
+		backgroundImage.raycastTarget = false;
+
+		GameObject header = CreateUiObject("Header", background.transform);
+		RectTransform headerRect = header.GetComponent<RectTransform>();
+		headerRect.anchorMin = new Vector2(0f, 0.82f);
+		headerRect.anchorMax = Vector2.one;
+		headerRect.offsetMin = new Vector2(18f, 0f);
+		headerRect.offsetMax = new Vector2(-18f, 0f);
+		Text headerText = header.AddComponent<Text>();
+		ConfigureText(headerText, font, 32, TextAnchor.MiddleCenter, PatchNotesBorderColor);
+		headerText.fontStyle = FontStyle.Bold;
+		headerText.text = "Patch Notes";
+
+		GameObject divider = CreateUiObject("Divider", background.transform);
+		RectTransform dividerRect = divider.GetComponent<RectTransform>();
+		dividerRect.anchorMin = new Vector2(0f, 0.82f);
+		dividerRect.anchorMax = new Vector2(1f, 0.82f);
+		dividerRect.anchoredPosition = Vector2.zero;
+		dividerRect.sizeDelta = new Vector2(0f, 3f);
+		Image dividerImage = divider.AddComponent<Image>();
+		dividerImage.color = PatchNotesBorderColor;
+		dividerImage.raycastTarget = false;
+
+		GameObject body = CreateUiObject("Body", background.transform);
+		RectTransform bodyRect = body.GetComponent<RectTransform>();
+		bodyRect.anchorMin = Vector2.zero;
+		bodyRect.anchorMax = new Vector2(1f, 0.82f);
+		bodyRect.offsetMin = new Vector2(26f, 20f);
+		bodyRect.offsetMax = new Vector2(-26f, -18f);
+		Text bodyText = body.AddComponent<Text>();
+		ConfigureText(bodyText, font, 22, TextAnchor.UpperLeft, Color.white);
+		bodyText.resizeTextForBestFit = true;
+		bodyText.resizeTextMinSize = 15;
+		bodyText.resizeTextMaxSize = 22;
+		bodyText.lineSpacing = 1.15f;
+		bodyText.text = "Version 2.2.1\n\n- Fixed incomplete enemy body-part retextures\n- Enemy retextures stay isolated to their target";
+	}
+
+	private static GameObject CreateUiObject(string name, Transform parent)
+	{
+		GameObject gameObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer));
+		gameObject.layer = parent.gameObject.layer;
+		gameObject.transform.SetParent(parent, worldPositionStays: false);
+		return gameObject;
+	}
+
+	private static void Stretch(RectTransform rect, float left, float bottom, float right, float top)
+	{
+		rect.anchorMin = Vector2.zero;
+		rect.anchorMax = Vector2.one;
+		rect.offsetMin = new Vector2(left, bottom);
+		rect.offsetMax = new Vector2(-right, -top);
+	}
+
+	private static void ConfigureText(Text text, Font font, int fontSize, TextAnchor alignment, Color color)
+	{
+		text.font = font;
+		text.fontSize = fontSize;
+		text.alignment = alignment;
+		text.color = color;
+		text.raycastTarget = false;
+		text.horizontalOverflow = HorizontalWrapMode.Wrap;
+		text.verticalOverflow = VerticalWrapMode.Truncate;
 	}
 
 	private void CheckPrefs()

@@ -1,6 +1,6 @@
 # Asset patches
 
-Use an `assetPatch` when the goal is to replace published artwork or audio without creating new gameplay content. A patch targets a stable content ID and maps its public slot names to pack-local files.
+Use an `assetPatch` when the goal is to replace published PNG artwork without creating new gameplay content. A patch targets a stable content ID and maps its public slot names to pack-local PNG files. Mod API v1 does not expose Core audio through `assetPatch`; pack-local audio remains available on content types that explicitly declare audio fields.
 
 ## Minimal example
 
@@ -30,6 +30,31 @@ The manifest must authorize replacement of each full slot ID:
 
 This explicit declaration makes replacements reviewable and prevents matching filenames from changing unrelated content.
 
+## Multipart enemy example
+
+Target the enemy owner and use its relative body slots when retexturing a Core enemy. Do not use shared `core:sprite/...` compatibility slots when an enemy-specific slot exists.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "yourname.jenny-retexture:patch/body",
+  "target": "core:enemy/jenny",
+  "replacements": {
+    "body/l-foot-base": "assets/jenny/left-foot-base.png",
+    "body/r-foot-base": "assets/jenny/right-foot-base.png",
+    "body/l-foot-end": "assets/jenny/left-foot-end.png",
+    "body/r-foot-end": "assets/jenny/right-foot-end.png",
+    "body/breast": "assets/jenny/breast.png",
+    "body/breast-bg": "assets/jenny/breast-background.png"
+  }
+}
+```
+
+Authorize the corresponding full IDs in `manifest.json`, such as `core:enemy/jenny/body/l-foot-base`. The [Core enemy asset-slot catalog](../reference/enemy-asset-slots.md) lists every exact body part, original sprite name, animation-only variant, and compatibility alias for all 21 Core enemies.
+
+The complete enemy-specific catalog is available in game version 2.2.1 and newer. Packs intended for older builds must use only the slots actually published by that build.
+
 ## Published slot families
 
 The current Core adapter publishes slots for:
@@ -39,9 +64,11 @@ The current Core adapter publishes slots for:
 - clothing icons and semantic rig pieces;
 - selected map machines and props;
 - Core enemy body, rig, and anatomy artwork;
-- reviewed interface and presentation assets.
+- reviewed interface, environment, effect, and presentation assets.
 
-The internal `Docs/Modding/asset-slots.md` inventory and the manifests of maintained conversion packs show the currently registered IDs. Runtime lookup uses these public IDs, never Unity GUIDs or private hierarchy paths.
+The [public asset-slot catalog](../reference/asset-slots.md) lists the exact IDs. Runtime lookup uses these public IDs, never Unity GUIDs or private hierarchy paths. Legacy-presentation slots are a compatibility layer over reviewed Core sprite names; prefer player, clothing, weapon, enemy, and stage semantic slots when both forms exist.
+
+Every legacy-presentation slot requires its Core baseline to be loaded. The game log reports `Core legacy visual slots=<registered>/<advertised>` after binding and lists any advertised names unavailable in the current scene. A temporarily unavailable baseline is retried after scene loads and after relevant Core objects start.
 
 ## Resolution rules
 
@@ -50,6 +77,7 @@ The internal `Docs/Modding/asset-slots.md` inventory and the manifests of mainta
 - Two enabled packs targeting the same slot conflict unless the later pack is explicitly authorized under the load-order rules.
 - Disabling a patch restores the baseline asset when the title scene reloads.
 - Filename case and `/` separators must be portable across supported platforms.
+- A PNG that is entirely black or transparent is still structurally valid. Inspect extracted legacy artwork before packaging; do not assume every changed Unity texture contains authored art.
 
 ## When not to use a patch
 

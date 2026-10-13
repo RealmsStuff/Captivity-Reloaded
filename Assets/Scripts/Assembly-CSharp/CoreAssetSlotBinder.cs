@@ -74,6 +74,7 @@ public static class CoreAssetSlotBinder
 	private static readonly HashSet<SpriteRenderer> NamedSpriteRenderers = new HashSet<SpriteRenderer>();
 	private static readonly Dictionary<string, Sprite> NamedSpriteReplacements =
 		new Dictionary<string, Sprite>(StringComparer.Ordinal);
+	private static string LastLegacyCoverageSignature;
 	private sealed class EnemyAnimatedSpriteBinding
 	{
 		public SpriteRenderer Renderer;
@@ -83,14 +84,7 @@ public static class CoreAssetSlotBinder
 	}
 	private static readonly List<EnemyAnimatedSpriteBinding> EnemyAnimatedSpriteBindings =
 		new List<EnemyAnimatedSpriteBinding>();
-	private static readonly string[] LegacyVisualSpriteNames =
-	{
-		"Foot", "ArmLower_2", "Blush", "LegUpper_1", "Head2", "Head3", "Head1",
-		"LegUpper_3", "Eyelid", "Hand_2", "Neck_5",
-		"Hip_3", "Neck_8", "Head_8", "Head4", "Hip_5",
-		"LegLower_11", "rontgen", "LegLower_15", "painting", "MedicBody", "Hand_16",
-		"TorsoLower_8", "ArmUpper_18", "face", "ArmUpper_20", "LadyStatue", "Butt_15"
-	};
+	private static readonly string[] LegacyVisualSpriteNames = CoreLegacyVisualSpriteCatalog.Names;
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 	private static void ResetRuntimeState()
@@ -104,6 +98,7 @@ public static class CoreAssetSlotBinder
 		NamedSpriteRenderers.Clear();
 		NamedSpriteReplacements.Clear();
 		EnemyAnimatedSpriteBindings.Clear();
+		LastLegacyCoverageSignature = null;
 	}
 
 	internal static void ResetForContentReload()
@@ -134,6 +129,7 @@ public static class CoreAssetSlotBinder
 	internal static void BindAfterSceneObjectsStarted()
 	{
 		BindAvailableSlots();
+		ReportLegacyVisualCoverage();
 	}
 
 	internal static void RestoreBaselineAssets()
@@ -528,10 +524,36 @@ public static class CoreAssetSlotBinder
 
 	private static void BindLegacyVisualArtSlots()
 	{
+		HashSet<string> requestedNames = new HashSet<string>(LegacyVisualSpriteNames, StringComparer.Ordinal);
+		Dictionary<string, Sprite> baselines = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+		foreach (SpriteRenderer renderer in Resources.FindObjectsOfTypeAll<SpriteRenderer>())
+		{
+			if (renderer == null || !renderer.gameObject.scene.IsValid() || renderer.sprite == null
+				|| !requestedNames.Contains(renderer.sprite.name)) continue;
+			baselines[renderer.sprite.name] = renderer.sprite;
+			NamedSpriteRenderers.Add(renderer);
+		}
+		foreach (Sprite sprite in Resources.FindObjectsOfTypeAll<Sprite>())
+		{
+			if (sprite == null || !requestedNames.Contains(sprite.name) || baselines.ContainsKey(sprite.name)) continue;
+			baselines.Add(sprite.name, sprite);
+		}
+
 		foreach (string spriteName in LegacyVisualSpriteNames)
 		{
+			if (!baselines.TryGetValue(spriteName, out Sprite baseline)) continue;
 			ContentId ownerId = ContentId.Parse("core:sprite/" + StableSpriteSlug(spriteName));
-			BindNamedCoreSpriteSlot(spriteName, ownerId, "image");
+			ContentId slotId = ContentId.Parse(ownerId + "/image");
+			Sprite boundBaseline = baseline;
+			string boundName = spriteName;
+			Action<UnityEngine.Object> apply = asset => SetNamedSpriteReplacement(boundName, boundBaseline, (Sprite)asset);
+			if (ModLoaderRuntime.AssetSlots.TryGet(slotId, out AssetSlotRegistration existing))
+			{
+				if (BoundNamedSlotCallbacks.Add(slotId)) existing.AddBinding(apply);
+			}
+			else if (ModLoaderRuntime.AssetSlots.Register(new AssetSlotRegistration(slotId, ownerId,
+				"core", "Core sprite " + spriteName, baseline, typeof(Sprite), apply), ModLoaderRuntime.LastReport))
+				BoundNamedSlotCallbacks.Add(slotId);
 		}
 	}
 
@@ -547,6 +569,28 @@ public static class CoreAssetSlotBinder
 			result.Append(char.ToLowerInvariant(character));
 		}
 		return result.ToString();
+	}
+
+	internal static IReadOnlyList<string> GetUnavailableLegacyVisualSpriteNames()
+	{
+		List<string> unavailable = new List<string>();
+		foreach (string spriteName in LegacyVisualSpriteNames)
+		{
+			ContentId slotId = ContentId.Parse("core:sprite/" + StableSpriteSlug(spriteName) + "/image");
+			if (!ModLoaderRuntime.AssetSlots.TryGet(slotId, out _)) unavailable.Add(spriteName);
+		}
+		return unavailable;
+	}
+
+	private static void ReportLegacyVisualCoverage()
+	{
+		IReadOnlyList<string> unavailable = GetUnavailableLegacyVisualSpriteNames();
+		string signature = string.Join("|", unavailable);
+		if (signature == LastLegacyCoverageSignature) return;
+		LastLegacyCoverageSignature = signature;
+		int registered = LegacyVisualSpriteNames.Length - unavailable.Count;
+		string detail = unavailable.Count == 0 ? string.Empty : " Unavailable in this scene: " + string.Join(", ", unavailable) + ".";
+		Debug.Log("[ModLoader] Core legacy visual slots=" + registered + "/" + LegacyVisualSpriteNames.Length + "." + detail);
 	}
 
 	private static void BindFerRetouchArtSlots()
