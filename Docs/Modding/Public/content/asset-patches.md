@@ -53,6 +53,8 @@ Target the enemy owner and use its relative body slots when retexturing a Core e
 
 Authorize the corresponding full IDs in `manifest.json`, such as `core:enemy/jenny/body/l-foot-base`. The [Core enemy asset-slot catalog](../reference/enemy-asset-slots.md) lists every exact body part, original sprite name, animation-only variant, and compatibility alias for all 21 Core enemies.
 
+The complete enemy-specific catalog is available in game version 2.2.1 and newer. Packs intended for older builds must use only the slots actually published by that build.
+
 ## Published slot families
 
 The current Core adapter publishes slots for:
