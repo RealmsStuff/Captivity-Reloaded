@@ -32,6 +32,25 @@ function Slug([string]$Name) {
 	return $result.ToString()
 }
 
+function Get-CatalogSection($Slot) {
+	if ($Slot.Family -eq 'clothing') { return 'Clothing' }
+	if ($Slot.Family -eq 'player' -or $Slot.Family -eq 'player-mouth' -or $Slot.Id.StartsWith('core:player/')) { return 'Player' }
+	if ($Slot.Family -eq 'weapon' -or $Slot.Family -eq 'weapon-effect') { return 'Weapons and weapon effects' }
+	if ($Slot.Id.StartsWith('core:enemy-anatomy/')) { return 'Enemy anatomy' }
+	if ($Slot.Id.StartsWith('core:stage-art/') -or $Slot.Id.StartsWith('core:map-art/')) { return 'Stages and map art' }
+	if ($Slot.Id.StartsWith('core:sprite/')) {
+		$name = $Slot.Id.Substring('core:sprite/'.Length)
+		$first = [char]::ToUpperInvariant($name[0])
+		if ($first -le 'D') { return 'Legacy compatibility (A-D)' }
+		if ($first -le 'H') { return 'Legacy compatibility (E-H)' }
+		if ($first -le 'L') { return 'Legacy compatibility (I-L)' }
+		if ($first -le 'P') { return 'Legacy compatibility (M-P)' }
+		if ($first -le 'T') { return 'Legacy compatibility (Q-T)' }
+		return 'Legacy compatibility (U-Z)'
+	}
+	return 'Other'
+}
+
 $owners = @{}
 foreach ($match in [regex]::Matches($binder, 'ContentId\s+(?<name>\w+)\s*=\s*ContentId\.Parse\("(?<id>[^"]+)"\)')) {
 	$owners[$match.Groups['name'].Value] = $match.Groups['id'].Value
@@ -103,6 +122,17 @@ $lines.Add('This searchable catalog is generated from `CoreAssetSlotBinder.cs`, 
 $lines.Add('')
 $lines.Add('A slot is registered only when its baseline Unity sprite or renderer is available. This matters for legacy weapons and enemy rigs whose prefabs do not all expose the same pieces. An unknown target is rejected instead of guessing a private Unity name.')
 $lines.Add('')
+$lines.Add('Prefer the player, enemy, clothing, weapon, and stage sections when a semantic slot exists. The `core:sprite/...` sections are a compatibility layer for artwork that does not yet have a more specific public owner; those replacements can affect every Core object that shares the same original sprite name.')
+$lines.Add('')
+$lines.Add('## Find the right slot')
+$lines.Add('')
+$lines.Add('- Replacing one Core enemy body part: start with [Enemy semantic slots](#enemy-semantic-slots).')
+$lines.Add('- Replacing player artwork: use [Player](#player).')
+$lines.Add('- Retexturing clothing: use [Clothing](#clothing).')
+$lines.Add('- Retexturing guns or muzzle flashes: use [Weapons and weapon effects](#weapons-and-weapon-effects).')
+$lines.Add('- Replacing FER or map artwork: use [Stages and map art](#stages-and-map-art).')
+$lines.Add('- Replacing shared legacy body pieces, props, UI, backgrounds, or effects: search the [Legacy compatibility](#legacy-compatibility-a-d) sections by original sprite name.')
+$lines.Add('')
 $lines.Add('## Enemy semantic slots')
 $lines.Add('')
 $lines.Add('For a Core enemy ID `core:enemy/<enemy>`, the binder publishes the following suffixes when that named renderer exists:')
@@ -111,17 +141,57 @@ foreach ($part in $enemyParts) { $lines.Add('- `core:enemy/<enemy>/' + $part + '
 $lines.Add('')
 $lines.Add('Paired limbs intentionally share semantic slots except for left and right feet. Use the in-game validation result to confirm availability on a particular legacy enemy.')
 $lines.Add('')
-$lines.Add('## Exact registered slot IDs')
-$lines.Add('')
-$lines.Add('| Slot ID | Family | Meaning | Availability |')
-$lines.Add('| --- | --- | --- | --- |')
-foreach ($slot in $slots) {
-	$lines.Add('| `' + $slot.Id + '` | ' + $slot.Family + ' | ' + $slot.Meaning.Replace('|','\|') + ' | ' + $slot.Availability.Replace('|','\|') + ' |')
-}
-$lines.Add('')
 $lines.Add('## Using a slot')
 $lines.Add('')
 $lines.Add('Declare the exact slot ID in the manifest `overrides` list, then target its owner in an `assetPatch` and use the suffix relative to that owner in `replacements`. See [Asset patches](../content/asset-patches.md) for examples and resolution rules.')
+$lines.Add('')
+$lines.Add('## Exact registered slot IDs')
+$lines.Add('')
+$sectionOrder = @(
+	'Player',
+	'Enemy anatomy',
+	'Clothing',
+	'Weapons and weapon effects',
+	'Stages and map art',
+	'Legacy compatibility (A-D)',
+	'Legacy compatibility (E-H)',
+	'Legacy compatibility (I-L)',
+	'Legacy compatibility (M-P)',
+	'Legacy compatibility (Q-T)',
+	'Legacy compatibility (U-Z)',
+	'Other'
+)
+$groupedSlots = @{}
+foreach ($slot in $slots) {
+	$section = Get-CatalogSection $slot
+	if (!$groupedSlots.ContainsKey($section)) { $groupedSlots[$section] = New-Object System.Collections.Generic.List[object] }
+	$groupedSlots[$section].Add($slot)
+}
+$lines.Add('| Section | Entries |')
+$lines.Add('| --- | ---: |')
+foreach ($section in $sectionOrder) {
+	if (!$groupedSlots.ContainsKey($section)) { continue }
+	$anchor = $section.ToLowerInvariant().Replace(' ', '-').Replace('(', '').Replace(')', '')
+	$lines.Add('| [' + $section + '](#' + $anchor + ') | ' + $groupedSlots[$section].Count + ' |')
+}
+$lines.Add('')
+foreach ($section in $sectionOrder) {
+	if (!$groupedSlots.ContainsKey($section)) { continue }
+	$lines.Add('### ' + $section)
+	$lines.Add('')
+	if ($section.StartsWith('Legacy compatibility')) {
+		$lines.Add('These slots follow original Core sprite names and may affect multiple objects that reuse the same sprite. Prefer a semantic slot above when one exists.')
+		$lines.Add('')
+	}
+	$lines.Add('| Slot ID | Meaning | Availability |')
+	$lines.Add('| --- | --- | --- |')
+	foreach ($slot in $groupedSlots[$section]) {
+		$lines.Add('| `' + $slot.Id + '` | ' + $slot.Meaning.Replace('|','\|') + ' | ' + $slot.Availability.Replace('|','\|') + ' |')
+	}
+	$lines.Add('')
+}
+
+if ($lines.Count -gt 0 -and $lines[$lines.Count - 1] -eq '') { $lines.RemoveAt($lines.Count - 1) }
 
 [IO.File]::WriteAllLines($output, [string[]]$lines, (New-Object Text.UTF8Encoding($false)))
 Write-Host "Generated $($slots.Count) exact asset-slot entries and $($enemyParts.Count) enemy semantic patterns."
