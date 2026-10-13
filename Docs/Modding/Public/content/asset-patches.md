@@ -30,6 +30,29 @@ The manifest must authorize replacement of each full slot ID:
 
 This explicit declaration makes replacements reviewable and prevents matching filenames from changing unrelated content.
 
+## Multipart enemy example
+
+Target the enemy owner and use its relative body slots when retexturing a Core enemy. Do not use shared `core:sprite/...` compatibility slots when an enemy-specific slot exists.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "yourname.jenny-retexture:patch/body",
+  "target": "core:enemy/jenny",
+  "replacements": {
+    "body/l-foot-base": "assets/jenny/left-foot-base.png",
+    "body/r-foot-base": "assets/jenny/right-foot-base.png",
+    "body/l-foot-end": "assets/jenny/left-foot-end.png",
+    "body/r-foot-end": "assets/jenny/right-foot-end.png",
+    "body/breast": "assets/jenny/breast.png",
+    "body/breast-bg": "assets/jenny/breast-background.png"
+  }
+}
+```
+
+Authorize the corresponding full IDs in `manifest.json`, such as `core:enemy/jenny/body/l-foot-base`. The [Core enemy asset-slot catalog](../reference/enemy-asset-slots.md) lists every exact body part, original sprite name, animation-only variant, and compatibility alias for all 21 Core enemies.
+
 ## Published slot families
 
 The current Core adapter publishes slots for:
