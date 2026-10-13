@@ -42,7 +42,12 @@ namespace CaptivityReloaded.Modding.Tests
 					if (asset is Sprite sprite) shippedNames.Add(sprite.name);
 			}
 
-			HashSet<string> runtimeBaselines = new HashSet<string>(new[] { "UsableVendor", "titleBg" }, StringComparer.Ordinal);
+			// Unity built-in UI sprites and sprites constructed by Core runtime objects do not
+			// appear as standalone t:Sprite assets in AssetDatabase, but are present in players.
+			HashSet<string> runtimeBaselines = new HashSet<string>(new[]
+			{
+				"Background", "Checkmark", "DropdownArrow", "UsableVendor", "titleBg"
+			}, StringComparer.Ordinal);
 			string[] missing = names.Where(i_name => !shippedNames.Contains(i_name) && !runtimeBaselines.Contains(i_name)).ToArray();
 			Assert.That(missing, Is.Empty, "Catalog entries have no shipped or documented runtime baseline: " + string.Join(", ", missing));
 		}
