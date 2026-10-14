@@ -30,3 +30,5 @@ powershell -ExecutionPolicy Bypass -File .\Tools\Release\New-ReleasePackage.ps1 
 ```
 
 The Windows and WebGL archives carry the legal bundle internally. The same bundle is emitted as a separate `Licenses.zip` companion for the Android APK and release page.
+
+After the GitHub release and every advertised download are publicly available, update `release-channel-v1.json` on `main` with the published semantic version, short player-facing summary, release-page URL, and prerelease flag. Do this last: installed games read that small file once per day, and publishing it early would prompt players before the downloads exist. The runtime accepts only the official HTTPS GitHub release-page path and ignores invalid or unreachable channel data without blocking startup.

@@ -407,7 +407,7 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		m_browseButton.interactable = true;
 		m_localButton = CreateButton(i_template, inner.transform, "LocalArchives", "LOCAL FILES", ToggleLocalArchives);
 		SetNeutralButtonColors(m_localButton); SetButtonFontSize(m_localButton, 18);
-		SetFixedRect(m_localButton.GetComponent<RectTransform>(), 702f, 724f, 220f, 44f, new Vector2(0f, 0f));
+		SetFixedRect(m_localButton.GetComponent<RectTransform>(), 802f, 776f, 220f, 44f, new Vector2(0f, 0f));
 
 		GameObject list = CreateUiObject("PackList", inner.transform);
 		RectTransform listRect = list.GetComponent<RectTransform>();
@@ -1116,8 +1116,11 @@ public sealed class ModManagerPresenter : MonoBehaviour
 		m_searchInput.interactable = !m_catalogBusy && !m_installBusy;
 		m_typeFilterButton.interactable = !m_catalogBusy && !m_installBusy;
 		m_statusFilterButton.interactable = !m_catalogBusy && !m_installBusy;
-		Transform heading = m_panel.transform.Find("Frame/Inner/ListHeading");
-		if (heading != null) heading.GetComponent<Text>().text = m_localBrowsing ? "LOCAL .CAPMOD FILES" : m_browsing ? "BROWSE MODS" : "INSTALLED MODS";
+		Transform titleHeading = m_panel.transform.Find("Frame/Inner/Top");
+		Text titleText = titleHeading == null ? null : titleHeading.GetComponentInChildren<Text>(true);
+		if (titleText != null) titleText.gameObject.SetActive(!m_browsing);
+		Transform listHeading = m_panel.transform.Find("Frame/Inner/ListHeading");
+		if (listHeading != null) listHeading.GetComponent<Text>().text = m_localBrowsing ? "LOCAL .CAPMOD FILES" : m_browsing ? "BROWSE MODS" : "INSTALLED MODS";
 		int pages = Mathf.Max(1, Mathf.CeilToInt((float)ItemCount / RowsPerPage));
 		m_pageText.text = "PAGE " + (m_page + 1) + " / " + pages;
 		m_previousButton.interactable = !m_installBusy && m_page > 0;
