@@ -4,6 +4,8 @@ This tutorial creates a loose data-only pack that replaces the three published p
 
 If you are working inside the Unity project, **Captivity Reloaded > Modding > Create Mod...** creates the initial pack folder and authoring profile. This tutorial shows the same fundamental files manually so their roles remain clear.
 
+If you only want to replace PNG artwork, follow the [Simple retexture wizard](../tools/simple-retextures.md) after creating the pack. It performs steps 2 through 5 for you and is the recommended route for a first retexture.
+
 ![Unity Create Mod window](../assets/screenshots/unity-create-mod.png)
 
 ## 1. Create the folder
