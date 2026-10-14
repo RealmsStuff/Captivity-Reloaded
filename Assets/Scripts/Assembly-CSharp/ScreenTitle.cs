@@ -9,6 +9,7 @@ using UIButton = UnityEngine.UI.Button;
 public class ScreenTitle : Screen
 {
 	private const string PatchNotesPanelName = "PatchNotesPanel";
+	private const string TitleOverlayRootName = "TitleOverlayRoot";
 	private const string UpdateBannerName = "ReleaseUpdateBanner";
 	private const string ReleaseChannelUrl = "https://raw.githubusercontent.com/RealmsStuff/Captivity-Reloaded/main/release-channel-v1.json";
 	private const string ReleaseChannelCacheKey = "ReleaseUpdate.Channel.V1";
@@ -101,10 +102,11 @@ public class ScreenTitle : Screen
 	{
 		if (m_parentTitle == null || m_releaseUpdateBanner != null || i_release == null) return;
 		Font font = m_txtVersion != null ? m_txtVersion.font : Resources.GetBuiltinResource<Font>("Arial.ttf");
-		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, m_parentTitle.transform);
+		RectTransform overlayRoot = EnsureTitleOverlayRoot();
+		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, overlayRoot);
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
-		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = Vector2.zero;
-		bannerRect.anchoredPosition = new Vector2(145f, 197f);
+		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = new Vector2(0.5f, 0.5f);
+		bannerRect.anchoredPosition = new Vector2(-654f, -217f);
 		bannerRect.sizeDelta = new Vector2(650f, 78f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;
@@ -153,18 +155,19 @@ public class ScreenTitle : Screen
 
 	private void EnsurePatchNotesPanel()
 	{
-		if (m_parentTitle == null || m_parentTitle.transform.Find(PatchNotesPanelName) != null)
+		if (m_parentTitle == null)
 		{
 			return;
 		}
 
+		RectTransform overlayRoot = EnsureTitleOverlayRoot();
+		if (overlayRoot.Find(PatchNotesPanelName) != null) return;
 		Font font = (m_txtVersion != null) ? m_txtVersion.font : Resources.GetBuiltinResource<Font>("Arial.ttf");
-		GameObject panel = CreateUiObject(PatchNotesPanelName, m_parentTitle.transform);
+		GameObject panel = CreateUiObject(PatchNotesPanelName, overlayRoot);
 		RectTransform panelRect = panel.GetComponent<RectTransform>();
-		panelRect.anchorMin = new Vector2(0.63f, 0.19f);
-		panelRect.anchorMax = new Vector2(0.92f, 0.63f);
-		panelRect.offsetMin = Vector2.zero;
-		panelRect.offsetMax = Vector2.zero;
+		panelRect.anchorMin = panelRect.anchorMax = panelRect.pivot = new Vector2(0.5f, 0.5f);
+		panelRect.anchoredPosition = new Vector2(528f, -81f);
+		panelRect.sizeDelta = new Vector2(557f, 316f);
 		Image borderImage = panel.AddComponent<Image>();
 		borderImage.color = PatchNotesBorderColor;
 		borderImage.raycastTarget = false;
@@ -209,6 +212,19 @@ public class ScreenTitle : Screen
 		bodyText.resizeTextMaxSize = 22;
 		bodyText.lineSpacing = 1.15f;
 		bodyText.text = "Version 2.2.1\n\n- Fixed incomplete enemy body-part retextures\n- Enemy retextures stay isolated to their target";
+	}
+
+	private RectTransform EnsureTitleOverlayRoot()
+	{
+		Transform layoutParent = m_parentTitle.transform.Find("MiddleArea") ?? m_parentTitle.transform;
+		Transform existing = layoutParent.Find(TitleOverlayRootName);
+		if (existing != null) return existing as RectTransform;
+		GameObject root = CreateUiObject(TitleOverlayRootName, layoutParent);
+		RectTransform rect = root.GetComponent<RectTransform>();
+		rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+		rect.anchoredPosition = Vector2.zero;
+		rect.sizeDelta = new Vector2(1920f, 1080f);
+		return rect;
 	}
 
 	private static GameObject CreateUiObject(string name, Transform parent)
