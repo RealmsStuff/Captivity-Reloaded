@@ -1,10 +1,19 @@
+using CaptivityReloaded.Modding;
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using UIButton = UnityEngine.UI.Button;
 
 public class ScreenTitle : Screen
 {
 	private const string PatchNotesPanelName = "PatchNotesPanel";
+	private const string UpdateBannerName = "ReleaseUpdateBanner";
+	private const string ReleaseChannelUrl = "https://raw.githubusercontent.com/RealmsStuff/Captivity-Reloaded/main/release-channel-v1.json";
+	private const string ReleaseChannelCacheKey = "ReleaseUpdate.Channel.V1";
+	private const string ReleaseChannelCheckedTicksKey = "ReleaseUpdate.CheckedTicks.V1";
+	private const long ReleaseCheckIntervalTicks = TimeSpan.TicksPerHour * 24L;
 
 	private static readonly Color PatchNotesBorderColor = new Color(0.82f, 0f, 0.08f, 1f);
 
@@ -25,6 +34,10 @@ public class ScreenTitle : Screen
 	[SerializeField]
 	private Text m_txtVersion;
 
+	private bool m_releaseCheckStarted;
+
+	private GameObject m_releaseUpdateBanner;
+
 	private void Start()
 	{
 	}
@@ -43,6 +56,97 @@ public class ScreenTitle : Screen
 		string version = Application.version;
 		if (version.EndsWith(".0")) version = version.Substring(0, version.Length - 2);
 		m_txtVersion.text = "version " + version;
+		if (!m_releaseCheckStarted)
+		{
+			m_releaseCheckStarted = true;
+			StartCoroutine(CheckForReleaseUpdate());
+		}
+	}
+
+	private IEnumerator CheckForReleaseUpdate()
+	{
+		string cached = PlayerPrefs.GetString(ReleaseChannelCacheKey, string.Empty);
+		TryShowReleaseUpdate(cached);
+		long now = DateTime.UtcNow.Ticks;
+		if (long.TryParse(PlayerPrefs.GetString(ReleaseChannelCheckedTicksKey, string.Empty), out long checkedTicks)
+			&& checkedTicks > 0L && now >= checkedTicks && now - checkedTicks < ReleaseCheckIntervalTicks) yield break;
+
+		string dailyUrl = ReleaseChannelUrl + "?day=" + DateTime.UtcNow.ToString("yyyyMMdd");
+		using (UnityWebRequest request = UnityWebRequest.Get(dailyUrl))
+		{
+			request.timeout = 5;
+			yield return request.SendWebRequest();
+			if (request.result != UnityWebRequest.Result.Success) yield break;
+			string json = request.downloadHandler.text;
+			if (!GameReleaseUpdate.TryParse(json, out _, out string error))
+			{
+				Debug.LogWarning("[ReleaseUpdate] Rejected release channel: " + error);
+				yield break;
+			}
+			PlayerPrefs.SetString(ReleaseChannelCacheKey, json);
+			PlayerPrefs.SetString(ReleaseChannelCheckedTicksKey, now.ToString());
+			PlayerPrefs.Save();
+			TryShowReleaseUpdate(json);
+		}
+	}
+
+	private void TryShowReleaseUpdate(string i_json)
+	{
+		if (!GameReleaseUpdate.TryParse(i_json, out GameReleaseInfo release, out _)
+			|| !GameReleaseUpdate.IsNewerThanInstalled(release, Application.version)) return;
+		EnsureReleaseUpdateBanner(release);
+	}
+
+	private void EnsureReleaseUpdateBanner(GameReleaseInfo i_release)
+	{
+		if (m_parentTitle == null || m_releaseUpdateBanner != null || i_release == null) return;
+		Font font = m_txtVersion != null ? m_txtVersion.font : Resources.GetBuiltinResource<Font>("Arial.ttf");
+		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, m_parentTitle.transform);
+		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
+		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = Vector2.zero;
+		bannerRect.anchoredPosition = new Vector2(16f, 42f);
+		bannerRect.sizeDelta = new Vector2(590f, 58f);
+		Image border = m_releaseUpdateBanner.AddComponent<Image>();
+		border.color = PatchNotesBorderColor;
+
+		GameObject background = CreateUiObject("Background", m_releaseUpdateBanner.transform);
+		Stretch(background.GetComponent<RectTransform>(), 2f, 2f, 2f, 2f);
+		Image backgroundImage = background.AddComponent<Image>();
+		backgroundImage.color = PatchNotesBackgroundColor;
+		backgroundImage.raycastTarget = false;
+
+		GameObject label = CreateUiObject("Label", m_releaseUpdateBanner.transform);
+		RectTransform labelRect = label.GetComponent<RectTransform>();
+		labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
+		labelRect.offsetMin = new Vector2(14f, 4f); labelRect.offsetMax = new Vector2(-190f, -4f);
+		Text labelText = label.AddComponent<Text>();
+		ConfigureText(labelText, font, 19, TextAnchor.MiddleLeft, Color.white);
+		labelText.text = "UPDATE " + i_release.version + " AVAILABLE" + (i_release.prerelease ? " (TEST)" : string.Empty);
+
+		CreateUpdateButton("View", m_releaseUpdateBanner.transform, "VIEW", font, 410f, 7f, 78f, 44f,
+			delegate { Application.OpenURL(i_release.releaseUrl); });
+		CreateUpdateButton("Later", m_releaseUpdateBanner.transform, "LATER", font, 496f, 7f, 86f, 44f,
+			delegate { m_releaseUpdateBanner.SetActive(false); }, 14);
+		m_releaseUpdateBanner.transform.SetAsLastSibling();
+	}
+
+	private static void CreateUpdateButton(string i_name, Transform i_parent, string i_label, Font i_font,
+		float i_x, float i_y, float i_width, float i_height, UnityEngine.Events.UnityAction i_action, int i_fontSize = 16)
+	{
+		GameObject root = CreateUiObject(i_name, i_parent);
+		RectTransform rect = root.GetComponent<RectTransform>();
+		rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
+		rect.anchoredPosition = new Vector2(i_x, i_y); rect.sizeDelta = new Vector2(i_width, i_height);
+		Image image = root.AddComponent<Image>();
+		image.color = new Color(0.3f, 0.3f, 0.33f, 1f);
+		UIButton button = root.AddComponent<UIButton>();
+		button.targetGraphic = image;
+		button.onClick.AddListener(i_action);
+		GameObject label = CreateUiObject("Text", root.transform);
+		Stretch(label.GetComponent<RectTransform>(), 3f, 3f, 3f, 3f);
+		Text text = label.AddComponent<Text>();
+		ConfigureText(text, i_font, i_fontSize, TextAnchor.MiddleCenter, Color.white);
+		text.resizeTextForBestFit = true; text.resizeTextMinSize = 10; text.resizeTextMaxSize = i_fontSize;
 	}
 
 	private void EnsurePatchNotesPanel()
