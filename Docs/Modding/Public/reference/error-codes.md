@@ -486,6 +486,20 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `registry.namespace` | Error | Content ID namespace must match its defining pack:  | `Assets/Scripts/Modding/ContentRegistry.cs` |
 | `registry.null` | Error | Cannot register a null content entry. | `Assets/Scripts/Modding/ContentRegistry.cs` |
 
+## `retexture.*`
+
+| Code | Severity | Message prefix | Source |
+| --- | --- | --- | --- |
+| `retexture.duplicate-slot` | Error | The slot was added more than once:  | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.empty` | Error | Add at least one replacement PNG. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.exists` | Error | Retexture files already exist. Confirm replacement in the wizard to update them. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.pack` | Error | Choose a mod folder containing manifest.json. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.patch-id` | Error | Patch name must use lowercase ID characters, for example jenny-blue. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.png` | Error | Replacement must be an existing PNG file. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.scale` | Error | Source scale must be between 1 and 16. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.slot` | Error | Invalid relative slot:  | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+| `retexture.target` | Error | Target must be a valid public content ID. | `Assets/Scripts/Modding/SimpleRetexturePackBuilder.cs` |
+
 ## `rule.*`
 
 | Code | Severity | Message prefix | Source |
