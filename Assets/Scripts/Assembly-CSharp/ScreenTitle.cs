@@ -104,8 +104,8 @@ public class ScreenTitle : Screen
 		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, m_parentTitle.transform);
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
 		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = Vector2.zero;
-		bannerRect.anchoredPosition = new Vector2(16f, 42f);
-		bannerRect.sizeDelta = new Vector2(590f, 58f);
+		bannerRect.anchoredPosition = new Vector2(50f, 205f);
+		bannerRect.sizeDelta = new Vector2(380f, 54f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;
 
@@ -118,15 +118,16 @@ public class ScreenTitle : Screen
 		GameObject label = CreateUiObject("Label", m_releaseUpdateBanner.transform);
 		RectTransform labelRect = label.GetComponent<RectTransform>();
 		labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
-		labelRect.offsetMin = new Vector2(14f, 4f); labelRect.offsetMax = new Vector2(-190f, -4f);
+		labelRect.offsetMin = new Vector2(12f, 4f); labelRect.offsetMax = new Vector2(-158f, -4f);
 		Text labelText = label.AddComponent<Text>();
-		ConfigureText(labelText, font, 19, TextAnchor.MiddleLeft, Color.white);
+		ConfigureText(labelText, font, 17, TextAnchor.MiddleLeft, Color.white);
+		labelText.resizeTextForBestFit = true; labelText.resizeTextMinSize = 12; labelText.resizeTextMaxSize = 17;
 		labelText.text = "UPDATE " + i_release.version + " AVAILABLE" + (i_release.prerelease ? " (TEST)" : string.Empty);
 
-		CreateUpdateButton("View", m_releaseUpdateBanner.transform, "VIEW", font, 410f, 7f, 78f, 44f,
+		CreateUpdateButton("View", m_releaseUpdateBanner.transform, "VIEW", font, 225f, 6f, 65f, 42f,
 			delegate { Application.OpenURL(i_release.releaseUrl); });
-		CreateUpdateButton("Later", m_releaseUpdateBanner.transform, "LATER", font, 496f, 7f, 86f, 44f,
-			delegate { m_releaseUpdateBanner.SetActive(false); }, 14);
+		CreateUpdateButton("Later", m_releaseUpdateBanner.transform, "LATER", font, 298f, 6f, 74f, 42f,
+			delegate { m_releaseUpdateBanner.SetActive(false); }, 13);
 		m_releaseUpdateBanner.transform.SetAsLastSibling();
 	}
 
@@ -147,6 +148,7 @@ public class ScreenTitle : Screen
 		Text text = label.AddComponent<Text>();
 		ConfigureText(text, i_font, i_fontSize, TextAnchor.MiddleCenter, Color.white);
 		text.resizeTextForBestFit = true; text.resizeTextMinSize = 10; text.resizeTextMaxSize = i_fontSize;
+		text.text = i_label;
 	}
 
 	private void EnsurePatchNotesPanel()
