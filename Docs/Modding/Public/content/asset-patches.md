@@ -2,6 +2,8 @@
 
 Use an `assetPatch` when the goal is to replace published PNG artwork without creating new gameplay content. A patch targets a stable content ID and maps its public slot names to pack-local PNG files. Mod API v1 does not expose Core audio through `assetPatch`; pack-local audio remains available on content types that explicitly declare audio fields.
 
+> **Fast path:** inside the Unity project, use **Captivity Reloaded > Modding > Create Simple Retexture...**. The [Simple retexture wizard](../tools/simple-retextures.md) generates this JSON, copies the PNGs, adds the exact manifest overrides, recognizes Core enemy export filenames, and corrects DragonBones export scale automatically.
+
 ## Minimal example
 
 ```json

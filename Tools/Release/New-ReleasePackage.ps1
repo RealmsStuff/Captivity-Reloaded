@@ -16,6 +16,10 @@ $windowsBuild = Join-Path $ProjectRoot "Builds\Windows-$Version"
 $webGlBuild = Join-Path $ProjectRoot "Builds\WebGL-$Version"
 $androidBuild = Join-Path $ProjectRoot "Builds\Android\Captivity-Reloaded-$Version.apk"
 $patchNotes = Join-Path $ProjectRoot "Docs\PatchNotes\$Version.md"
+$nonShippingDirectoryPatterns = @(
+	'*_BurstDebugInformation_DoNotShip',
+	'BackUpThisFolder_ButDontShipItWithYourGame'
+)
 
 foreach ($required in @($windowsBuild, $webGlBuild, $androidBuild, $patchNotes)) {
 	if (-not (Test-Path -LiteralPath $required)) {
@@ -71,20 +75,76 @@ Set-Content -LiteralPath (Join-Path $legalRoot 'SOURCE.txt') -Value $sourceText 
 $windowsStage = Join-Path $stagingRoot 'Windows'
 $webGlStage = Join-Path $stagingRoot 'WebGL'
 New-Item -ItemType Directory -Path $windowsStage, $webGlStage -Force | Out-Null
-Copy-Item -Path (Join-Path $windowsBuild '*') -Destination $windowsStage -Recurse -Force
+foreach ($entry in @(Get-ChildItem -LiteralPath $windowsBuild -Force)) {
+	$isNonShipping = $false
+	foreach ($pattern in $nonShippingDirectoryPatterns) {
+		if ($entry.PSIsContainer -and $entry.Name -like $pattern) {
+			$isNonShipping = $true
+			break
+		}
+	}
+	if (-not $isNonShipping) {
+		Copy-Item -LiteralPath $entry.FullName -Destination $windowsStage -Recurse -Force
+	}
+}
 Copy-Item -Path (Join-Path $webGlBuild '*') -Destination $webGlStage -Recurse -Force
 Copy-Item -LiteralPath $legalRoot -Destination $windowsStage -Recurse
 Copy-Item -LiteralPath $legalRoot -Destination $webGlStage -Recurse
 
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function New-ZipArchive {
 	param([string]$SourceDirectory, [string]$DestinationPath)
 	if (Test-Path -LiteralPath $DestinationPath) { Remove-Item -LiteralPath $DestinationPath -Force }
-	[System.IO.Compression.ZipFile]::CreateFromDirectory(
-		$SourceDirectory,
-		$DestinationPath,
-		[System.IO.Compression.CompressionLevel]::Optimal,
-		$false)
+	$sourceRoot = (Resolve-Path -LiteralPath $SourceDirectory).Path.TrimEnd('\', '/')
+	$outputStream = [System.IO.File]::Open($DestinationPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write)
+	$archive = $null
+	try {
+		$archive = [System.IO.Compression.ZipArchive]::new($outputStream, [System.IO.Compression.ZipArchiveMode]::Create, $false)
+		foreach ($file in @(Get-ChildItem -LiteralPath $sourceRoot -File -Recurse | Sort-Object FullName)) {
+			$relativePath = $file.FullName.Substring($sourceRoot.Length).TrimStart('\', '/').Replace('\', '/')
+			$entry = $archive.CreateEntry($relativePath, [System.IO.Compression.CompressionLevel]::Optimal)
+			$entry.LastWriteTime = [System.DateTimeOffset]$file.LastWriteTime
+			$inputStream = [System.IO.File]::OpenRead($file.FullName)
+			$entryStream = $entry.Open()
+			try {
+				$inputStream.CopyTo($entryStream)
+			}
+			finally {
+				$entryStream.Dispose()
+				$inputStream.Dispose()
+			}
+		}
+	}
+	finally {
+		if ($null -ne $archive) { $archive.Dispose() }
+		else { $outputStream.Dispose() }
+	}
+}
+
+function Assert-NoNonShippingBuildOutput {
+	param([string]$ArchivePath)
+	$archive = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
+	try {
+		$nonPortable = @($archive.Entries | Where-Object { $_.FullName.Contains('\') })
+		if ($nonPortable.Count -gt 0) {
+			throw "Release archive contains a non-portable backslash path: $($nonPortable[0].FullName)"
+		}
+		$forbidden = @($archive.Entries | Where-Object {
+			$entryPath = $_.FullName.Replace('\', '/')
+			$segments = @($entryPath.Split('/', [System.StringSplitOptions]::RemoveEmptyEntries))
+			$segments | Where-Object {
+				$segment = $_
+				$nonShippingDirectoryPatterns | Where-Object { $segment -like $_ }
+			} | Select-Object -First 1
+		})
+		if ($forbidden.Count -gt 0) {
+			throw "Release archive contains Unity non-shipping build output: $($forbidden[0].FullName)"
+		}
+	}
+	finally {
+		$archive.Dispose()
+	}
 }
 
 $windowsZip = Join-Path $releaseRoot "Captivity-Reloaded-$Version-Windows.zip"
@@ -94,6 +154,8 @@ $androidOutput = Join-Path $releaseRoot "Captivity-Reloaded-$Version-Android.apk
 New-ZipArchive $windowsStage $windowsZip
 New-ZipArchive $webGlStage $webGlZip
 New-ZipArchive $legalRoot $licensesZip
+Assert-NoNonShippingBuildOutput $windowsZip
+Assert-NoNonShippingBuildOutput $webGlZip
 Copy-Item -LiteralPath $androidBuild -Destination $androidOutput
 Copy-Item -LiteralPath $patchNotes -Destination (Join-Path $releaseRoot 'PATCH-NOTES.md')
 

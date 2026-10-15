@@ -4,6 +4,8 @@ The SDK favors free tools with open formats. LibreSprite is used for pixel-art t
 
 Start with [Install the authoring tools](installing-authoring-tools.md) to obtain the correct Unity editor, open the Captivity Reloaded project, and install Tiled or DragonBones. Captivity Reloaded is a complete Unity project; do not create a blank Unity project and do not look for a separate `.unitypackage` to import.
 
+For PNG-only mods, the [Simple retexture wizard](simple-retextures.md) is the shortest route from edited art to a validated pack. It generates the asset patch and manifest overrides, matches Core enemy export filenames to their public slots, and restores enlarged DragonBones editing images to native size.
+
 Use the [visual walkthroughs](visual-walkthroughs.md) for annotated locations in the game, Unity, Tiled, and DragonBones. The screenshots are captured from the actual project and installed tools; uncaptured steps are labeled instead of being represented by mock UI.
 
 For a quick check of an exported Core enemy without opening an authoring application, extract the Core Enemies ZIP and load one enemy folder in the [browser-based Rig Previewer](https://realmsstuff.github.io/Rig-Previewer/). See [DragonBones round trip](dragonbones-round-trip.md#preview-a-core-rig-in-the-browser) for the expected folder layout and controls.

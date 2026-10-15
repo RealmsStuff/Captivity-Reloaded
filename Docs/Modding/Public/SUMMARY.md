@@ -23,6 +23,7 @@
   * [Challenges, difficulties, and rules](content/rules.md)
 * [Authoring tools](tools/README.md)
   * [Visual walkthroughs](tools/visual-walkthroughs.md)
+  * [Simple retexture wizard](tools/simple-retextures.md)
   * [LibreSprite templates](tools/libresprite.md)
   * [Tiled maps](tools/tiled.md)
   * [Map verification](tools/map-verification.md)
