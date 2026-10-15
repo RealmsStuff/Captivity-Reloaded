@@ -78,7 +78,9 @@ public class MenuLocations : Menu
 		bool overflow = LayoutUtility.GetPreferredHeight(m_stageContent) > m_stageViewport.rect.height;
 		m_stageLayout.childAlignment = overflow ? TextAnchor.UpperCenter : TextAnchor.MiddleCenter;
 		m_stageScroll.vertical = overflow;
-		m_stageScroll.verticalScrollbar.gameObject.SetActive(overflow);
+		// Keep the red right-side bar visible as part of the Locations layout even
+		// when the centered list is short enough that scrolling is unnecessary.
+		m_stageScroll.verticalScrollbar.gameObject.SetActive(true);
 		if (!overflow)
 		{
 			m_stageContentFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
