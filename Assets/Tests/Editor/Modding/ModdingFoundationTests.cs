@@ -9,6 +9,20 @@ namespace CaptivityReloaded.Modding.Tests
 	public class ContentIdTests
 	{
 		[Test]
+		public void KeyboardAutoAim_ActivatesOnlyForKeyboardFireWithoutAnotherAimDevice()
+		{
+			System.Type managerInput = System.Type.GetType("ManagerInput, Assembly-CSharp");
+			Assert.That(managerInput, Is.Not.Null);
+			System.Reflection.MethodInfo method = managerInput.GetMethod("ShouldUseKeyboardAutoAim");
+			Assert.That(method, Is.Not.Null);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, false, false }), Is.True);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.Mouse0, false, false, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, true, false, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, true, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, false, true }), Is.False);
+		}
+
+		[Test]
 		public void Options_HideSelfPleasureBindingWhenNoActiveModEnablesIt()
 		{
 			System.Type managerOptions = System.Type.GetType("ManagerOptions, Assembly-CSharp");

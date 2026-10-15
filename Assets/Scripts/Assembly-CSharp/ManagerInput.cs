@@ -66,6 +66,14 @@ public class ManagerInput : MonoBehaviour
 
 	private bool m_hasAimAssistTarget;
 
+	private const float KeyboardAutoAimMouseGraceSeconds = 0.75f;
+
+	private float m_lastMouseAimTime = float.NegativeInfinity;
+
+	private int m_keyboardAimFrame = -1;
+
+	private NPC m_keyboardAimTarget;
+
 	private bool m_isControllerInputActiveThisFrame;
 
 	private int m_ignoreMouseMovementFrames;
@@ -123,6 +131,7 @@ public class ManagerInput : MonoBehaviour
 		bool flag = mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame || (m_ignoreMouseMovementFrames <= 0 && mouse.delta.ReadValue().sqrMagnitude > 0.01f));
 		if (flag)
 		{
+			m_lastMouseAimTime = Time.unscaledTime;
 			m_isControllerLastUsed = false;
 			m_controllerOpenDropdown = null;
 			ClearControllerSelection();
@@ -329,6 +338,10 @@ public class ManagerInput : MonoBehaviour
 		{
 			return ApplyAimAssist(playerController.GetMobileAimScreenPosition(i_worldOrigin));
 		}
+		if (IsKeyboardAutoAiming())
+		{
+			return GetKeyboardAimScreenPosition(i_worldOrigin);
+		}
 		if (!IsControllerAiming() || Camera.main == null)
 		{
 			return Input.mousePosition;
@@ -340,7 +353,7 @@ public class ManagerInput : MonoBehaviour
 	public Vector3 GetAimWorldPosition(Vector3 i_worldOrigin)
 	{
 		PlayerController playerController = CommonReferences.Instance.GetPlayerController();
-		if (!IsControllerAiming() && (playerController == null || !playerController.GetIsMobileControlsEnabled()))
+		if (!IsControllerAiming() && !IsKeyboardAutoAiming() && (playerController == null || !playerController.GetIsMobileControlsEnabled()))
 		{
 			return CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity()
 				.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
@@ -348,6 +361,95 @@ public class ManagerInput : MonoBehaviour
 		Camera camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent().GetCameraUnity();
 		Vector3 vector = GetAimScreenPosition(i_worldOrigin);
 		return camera.ScreenToWorldPoint(new Vector3(vector.x, vector.y, 10f));
+	}
+
+	private bool IsKeyboardAutoAiming()
+	{
+		PlayerController playerController = CommonReferences.Instance.GetPlayerController();
+		bool mobile = playerController != null && playerController.GetIsMobileControlsEnabled();
+		KeyCode fireKey = KeyCode.None;
+		for (int i = 0; i < m_buttons.Count; i++)
+		{
+			if (m_buttons[i].GetInputButton() == InputButton.Fire)
+			{
+				fireKey = m_buttons[i].GetKeyCode();
+				break;
+			}
+		}
+		bool pointerRecentlyUsed = Mouse.current != null && Time.unscaledTime - m_lastMouseAimTime < KeyboardAutoAimMouseGraceSeconds;
+		return ShouldUseKeyboardAutoAim(fireKey, IsControllerAiming(), mobile, pointerRecentlyUsed);
+	}
+
+	public static bool ShouldUseKeyboardAutoAim(KeyCode i_fireKey, bool i_controllerAiming, bool i_mobileControls, bool i_pointerRecentlyUsed)
+	{
+		return i_fireKey != KeyCode.None && (int)i_fireKey < (int)KeyCode.Mouse0
+			&& !i_controllerAiming && !i_mobileControls && !i_pointerRecentlyUsed;
+	}
+
+	private Vector3 GetKeyboardAimScreenPosition(Vector3 i_worldOrigin)
+	{
+		Camera camera = Camera.main;
+		if (camera == null)
+		{
+			return Input.mousePosition;
+		}
+		if (m_keyboardAimFrame != Time.frameCount)
+		{
+			m_keyboardAimFrame = Time.frameCount;
+			m_keyboardAimTarget = FindKeyboardAimTarget(i_worldOrigin, camera, m_keyboardAimTarget);
+		}
+		if (m_keyboardAimTarget != null)
+		{
+			return camera.WorldToScreenPoint(GetNPCAimPoint(m_keyboardAimTarget));
+		}
+		Player player = CommonReferences.Instance.GetPlayer();
+		Vector2 direction = player != null && player.GetIsFacingLeft() ? Vector2.left : Vector2.right;
+		return camera.WorldToScreenPoint(i_worldOrigin) + (Vector3)(direction * 500f);
+	}
+
+	private static NPC FindKeyboardAimTarget(Vector3 i_origin, Camera i_camera, NPC i_current)
+	{
+		NPC best = IsKeyboardAimTargetValid(i_current, i_camera) ? i_current : null;
+		float bestScore = best != null ? GetKeyboardAimScore(best, i_origin) * 0.8f : float.PositiveInfinity;
+		NPC[] array = UnityEngine.Object.FindObjectsOfType<NPC>();
+		for (int i = 0; i < array.Length; i++)
+		{
+			NPC candidate = array[i];
+			if (!IsKeyboardAimTargetValid(candidate, i_camera))
+			{
+				continue;
+			}
+			float score = GetKeyboardAimScore(candidate, i_origin);
+			if (score < bestScore)
+			{
+				best = candidate;
+				bestScore = score;
+			}
+		}
+		return best;
+	}
+
+	private static bool IsKeyboardAimTargetValid(NPC i_npc, Camera i_camera)
+	{
+		if (i_npc == null || !i_npc.gameObject.activeInHierarchy || i_npc.IsDead() || !i_npc.GetIsCanBeAttacked())
+		{
+			return false;
+		}
+		Vector3 screen = i_camera.WorldToScreenPoint(GetNPCAimPoint(i_npc));
+		return screen.z > 0f && screen.x >= 0f && screen.x <= UnityEngine.Screen.width && screen.y >= 0f && screen.y <= UnityEngine.Screen.height;
+	}
+
+	private static float GetKeyboardAimScore(NPC i_npc, Vector3 i_origin)
+	{
+		Vector3 offset = GetNPCAimPoint(i_npc) - i_origin;
+		Player player = CommonReferences.Instance != null ? CommonReferences.Instance.GetPlayer() : null;
+		float facing = player != null && player.GetIsFacingLeft() ? -1f : 1f;
+		float score = offset.sqrMagnitude;
+		if (offset.x * facing < -0.1f)
+		{
+			score *= 4f;
+		}
+		return score;
 	}
 
 	public void SetAimAssistStrength(float i_strength)
