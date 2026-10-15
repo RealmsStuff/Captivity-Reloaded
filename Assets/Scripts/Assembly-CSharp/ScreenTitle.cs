@@ -107,7 +107,7 @@ public class ScreenTitle : Screen
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
 		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = new Vector2(0.5f, 0.5f);
 		// Keep the compact banner centered beneath the title-screen logo artwork.
-		bannerRect.anchoredPosition = new Vector2(-505f, -217f);
+		bannerRect.anchoredPosition = new Vector2(-505f, -252f);
 		bannerRect.sizeDelta = new Vector2(540f, 78f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;
