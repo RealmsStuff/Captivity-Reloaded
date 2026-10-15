@@ -106,11 +106,9 @@ public class ScreenTitle : Screen
 		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, overlayRoot);
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
 		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = new Vector2(0.5f, 0.5f);
-		// The 650-wide banner sits 50 units inside the fixed 1920-wide overlay.
-		// Keeping the complete translucent panel in-bounds prevents its border and
-		// label from being clipped by narrow or scaled game views.
-		bannerRect.anchoredPosition = new Vector2(-585f, -217f);
-		bannerRect.sizeDelta = new Vector2(650f, 78f);
+		// Keep the compact banner centered beneath the title-screen logo artwork.
+		bannerRect.anchoredPosition = new Vector2(-505f, -217f);
+		bannerRect.sizeDelta = new Vector2(540f, 78f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;
 
@@ -123,15 +121,15 @@ public class ScreenTitle : Screen
 		GameObject label = CreateUiObject("Label", m_releaseUpdateBanner.transform);
 		RectTransform labelRect = label.GetComponent<RectTransform>();
 		labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
-		labelRect.offsetMin = new Vector2(18f, 5f); labelRect.offsetMax = new Vector2(-218f, -5f);
+		labelRect.offsetMin = new Vector2(18f, 5f); labelRect.offsetMax = new Vector2(-192f, -5f);
 		Text labelText = label.AddComponent<Text>();
 		ConfigureText(labelText, font, 22, TextAnchor.MiddleLeft, Color.white);
 		labelText.resizeTextForBestFit = true; labelText.resizeTextMinSize = 16; labelText.resizeTextMaxSize = 22;
 		labelText.text = "UPDATE " + i_release.version + " AVAILABLE" + (i_release.prerelease ? " (TEST)" : string.Empty);
 
-		CreateUpdateButton("View", m_releaseUpdateBanner.transform, "VIEW", font, 442f, 9f, 94f, 60f,
+		CreateUpdateButton("View", m_releaseUpdateBanner.transform, "VIEW", font, 356f, 9f, 82f, 60f,
 			delegate { Application.OpenURL(i_release.releaseUrl); }, 18);
-		CreateUpdateButton("Later", m_releaseUpdateBanner.transform, "LATER", font, 546f, 9f, 96f, 60f,
+		CreateUpdateButton("Later", m_releaseUpdateBanner.transform, "LATER", font, 446f, 9f, 86f, 60f,
 			delegate { m_releaseUpdateBanner.SetActive(false); }, 18);
 		m_releaseUpdateBanner.transform.SetAsLastSibling();
 	}
