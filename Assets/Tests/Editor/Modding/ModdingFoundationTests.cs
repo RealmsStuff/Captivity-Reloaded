@@ -2030,6 +2030,8 @@ namespace CaptivityReloaded.Modding.Tests
 			CoreWeaponDefinition schockgewehr = result.CoreWeapons.Single(weapon => weapon.Id == ContentId.Parse("core:item/weapon/schockgewehr"));
 			Assert.That(schockgewehr.Stats.Damage, Is.EqualTo(0));
 			Assert.That(schockgewehr.Stats.FireIntervalSeconds, Is.EqualTo(0.02f));
+			Assert.That(schockgewehr.Stats.Marketable, Is.False,
+				"Schockgewehr is a secret FER pickup and must not appear in weapon shops.");
 		}
 
 		[Test]

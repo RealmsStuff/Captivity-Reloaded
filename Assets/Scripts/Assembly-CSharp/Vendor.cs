@@ -127,7 +127,7 @@ public class Vendor : Interactable
 		{
 			foreach (Gun allGun in Library.Instance.Guns.GetAllGuns())
 			{
-				if (allGun.GetName() == "Pistol" || (bool)CommonReferences.Instance.GetPlayerController().GetInventory().CheckAndReturnIfHasPickUpable(allGun))
+				if (allGun.GetName() == "Pistol" || !allGun.IsMarketable() || (bool)CommonReferences.Instance.GetPlayerController().GetInventory().CheckAndReturnIfHasPickUpable(allGun))
 				{
 					continue;
 				}
