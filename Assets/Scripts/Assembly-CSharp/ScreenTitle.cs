@@ -106,7 +106,10 @@ public class ScreenTitle : Screen
 		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, overlayRoot);
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
 		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = new Vector2(0.5f, 0.5f);
-		bannerRect.anchoredPosition = new Vector2(-624f, -217f);
+		// The 650-wide banner sits 50 units inside the fixed 1920-wide overlay.
+		// Keeping the complete translucent panel in-bounds prevents its border and
+		// label from being clipped by narrow or scaled game views.
+		bannerRect.anchoredPosition = new Vector2(-585f, -217f);
 		bannerRect.sizeDelta = new Vector2(650f, 78f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;
