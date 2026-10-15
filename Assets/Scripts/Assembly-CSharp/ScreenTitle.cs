@@ -106,7 +106,7 @@ public class ScreenTitle : Screen
 		m_releaseUpdateBanner = CreateUiObject(UpdateBannerName, overlayRoot);
 		RectTransform bannerRect = m_releaseUpdateBanner.GetComponent<RectTransform>();
 		bannerRect.anchorMin = bannerRect.anchorMax = bannerRect.pivot = new Vector2(0.5f, 0.5f);
-		bannerRect.anchoredPosition = new Vector2(-654f, -217f);
+		bannerRect.anchoredPosition = new Vector2(-624f, -217f);
 		bannerRect.sizeDelta = new Vector2(650f, 78f);
 		Image border = m_releaseUpdateBanner.AddComponent<Image>();
 		border.color = PatchNotesBorderColor;

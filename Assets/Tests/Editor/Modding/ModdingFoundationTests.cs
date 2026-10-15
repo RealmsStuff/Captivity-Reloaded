@@ -15,11 +15,11 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(managerInput, Is.Not.Null);
 			System.Reflection.MethodInfo method = managerInput.GetMethod("ShouldUseKeyboardAutoAim");
 			Assert.That(method, Is.Not.Null);
-			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, false, false }), Is.True);
-			Assert.That(method.Invoke(null, new object[] { KeyCode.Mouse0, false, false, false }), Is.False);
-			Assert.That(method.Invoke(null, new object[] { KeyCode.J, true, false, false }), Is.False);
-			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, true, false }), Is.False);
-			Assert.That(method.Invoke(null, new object[] { KeyCode.J, false, false, true }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, KeyCode.K, false, false }), Is.True);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.Mouse0, KeyCode.K, false, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, KeyCode.Mouse1, false, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, KeyCode.K, true, false }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { KeyCode.J, KeyCode.K, false, true }), Is.False);
 		}
 
 		[Test]
