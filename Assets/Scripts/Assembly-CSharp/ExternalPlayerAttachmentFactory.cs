@@ -46,7 +46,8 @@ public sealed class ExternalPlayerAttachmentFactoryHost : MonoBehaviour
 				Sprite sprite = LoadSprite(pack.RootPath, definition, entry.Value, entry.Key);
 				if (sprite != null) prepared.SkinSprites[entry.Key] = sprite;
 			}
-			if (prepared.DefaultSprite != null || prepared.SkinSprites.Count > 0) m_attachments.Add(prepared);
+			if (prepared.DefaultSprite != null || prepared.SkinSprites.Count > 0 || definition.Document.OrgasmEmitter)
+				m_attachments.Add(prepared);
 		}
 		AttachToScenePlayers();
 	}
@@ -83,7 +84,7 @@ public sealed class ExternalPlayerAttachmentFactoryHost : MonoBehaviour
 			existing.Configure(i_attachment.Definition.Id.ToString(), i_skeleton, bone,
 				existing.GetComponent<SpriteRenderer>(), i_attachment.DefaultSprite,
 				i_attachment.SkinSprites, i_attachment.Definition.Document.SortingOffset,
-				i_attachment.Definition.Document.PregnancyGrowth);
+				i_attachment.Definition.Document.PregnancyGrowth, i_attachment.Definition.Document.OrgasmEmitter);
 			return;
 		}
 		Transform parent = i_attachment.Definition.Document.AttachToBone ? bone.transform : bone.GetBodyPartPlayer().transform;
@@ -98,7 +99,7 @@ public sealed class ExternalPlayerAttachmentFactoryHost : MonoBehaviour
 		ModPersistentPlayerAttachment runtime = gameObject.AddComponent<ModPersistentPlayerAttachment>();
 		runtime.Configure(i_attachment.Definition.Id.ToString(), i_skeleton, bone, renderer,
 			i_attachment.DefaultSprite, i_attachment.SkinSprites, i_attachment.Definition.Document.SortingOffset,
-			i_attachment.Definition.Document.PregnancyGrowth);
+			i_attachment.Definition.Document.PregnancyGrowth, i_attachment.Definition.Document.OrgasmEmitter);
 		if (i_attachment.Definition.Document.Physics != null)
 		{
 			ModClothingSway sway = gameObject.AddComponent<ModClothingSway>();
@@ -159,18 +160,36 @@ public sealed class ModPersistentPlayerAttachment : MonoBehaviour
 	private PlayerAttachmentPregnancyGrowthDefinition m_pregnancyGrowth;
 	private int m_pregnancyStage = -1;
 	private Coroutine m_growthCoroutine;
+	private bool m_orgasmEmitter;
+	private ParticleSystem m_orgasmParticles;
 
 	public string Id => m_id;
 
 	public void Configure(string i_id, SkeletonPlayer i_skeleton, BonePlayer i_bone, SpriteRenderer i_renderer,
 		Sprite i_defaultSprite, Dictionary<string, Sprite> i_skinSprites, int i_sortingOffset,
-		PlayerAttachmentPregnancyGrowthDefinition i_pregnancyGrowth)
+		PlayerAttachmentPregnancyGrowthDefinition i_pregnancyGrowth, bool i_orgasmEmitter)
 	{
 		m_id = i_id; m_skeleton = i_skeleton; m_bone = i_bone; m_renderer = i_renderer;
 		m_defaultSprite = i_defaultSprite; m_skinSprites = i_skinSprites; m_sortingOffset = i_sortingOffset;
 		m_pregnancyGrowth = i_pregnancyGrowth;
+		m_orgasmEmitter = i_orgasmEmitter;
 		RefreshForSkinTone();
 		RefreshPregnancyGrowth(true);
+	}
+
+	public void PlayOrgasmEmission(ParticleSystem i_template)
+	{
+		if (!m_orgasmEmitter || i_template == null) return;
+		if (m_orgasmParticles == null)
+		{
+			GameObject clone = UnityEngine.Object.Instantiate(i_template.gameObject, transform, false);
+			clone.name = "mod-orgasm-emitter";
+			clone.transform.localPosition = Vector3.zero;
+			clone.transform.localRotation = Quaternion.identity;
+			clone.transform.localScale = Vector3.one;
+			m_orgasmParticles = clone.GetComponent<ParticleSystem>();
+		}
+		if (m_orgasmParticles != null) m_orgasmParticles.Play(true);
 	}
 
 	private void LateUpdate()

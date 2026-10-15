@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-15: positioned player climax emitters
+
+- Added the opt-in `playerAttachment.orgasmEmitter` field.
+- Emitter-only attachments may omit sprite fields and replay the normal player climax particles at their bone-relative position.
+- The original player emitter remains active, allowing body mods to add rather than replace emission points.
+
 ### 2026-10-13: expanded Core visual replacement catalog (game 2.2.1)
 
 - Expanded the reviewed legacy-presentation catalog from 352 to 458 Core sprite names.

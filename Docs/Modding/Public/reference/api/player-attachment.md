@@ -21,6 +21,7 @@
 | `pivotY` | number | no | experimental | min: `0`; max: `1`; default: `0.5` |
 | `sortingOffset` | integer | no | experimental | min: `-100`; max: `100`; default: `1` |
 | `tintWithSkin` | boolean | no | experimental | default: `False` |
+| `orgasmEmitter` | boolean | no | experimental | default: `False` |
 | `pregnancyGrowth` | object | no | experimental |  |
 | `physics` | object | no | experimental |  |
 
@@ -53,6 +54,12 @@
 | `gravity` | number | no |  | min: `0`; max: `1` |
 | `motionInfluence` | number | no |  | min: `0`; max: `10` |
 | `maxAngle` | number | no |  | min: `0`; max: `90` |
+
+### Fields for `root (anyOf 3)`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `orgasmEmitter` | const: `True` | yes |  |  |
 
 ## Definition: `pngPath`
 

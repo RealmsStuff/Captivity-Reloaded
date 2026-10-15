@@ -89,6 +89,8 @@ The [Moving Ponytail](../../../../ExampleMods/authored-hairstyles/README.md) exa
 
 Experimental `playerAttachment` definitions add an always-present sprite to a published player bone without treating it as wardrobe clothing. They support a default PNG, per-skin PNG overrides, runtime skin tinting, positioning, sorting, and the same bounded sway module used by original clothing.
 
+Set `orgasmEmitter` to `true` to replay the player's climax particles at the attachment position while preserving the normal emitter. An emitter-only attachment may omit `sprite` and `skinSprites`, which is useful when an asset patch already supplies the visible anatomy. Parent it to the appropriate bone and use `offsetX`, `offsetY`, and `rotation` to place the effect origin.
+
 The optional `pregnancyGrowth` module selects a transform stage from the player's current fetus count and smoothly transitions when that count changes. Every stage declares a unique `minimumFetuses`, offset, and scale, including a required zero-fetus stage. `breakSpineClothing` can reproduce expanding-body presentations by tearing pieces attached to the Spine after a bounded delay. The [Original Dev Extras](../../../../ExampleMods/original-dev-extras/README.md) pack demonstrates the module with the exact five belly stages and four skin sprites recovered from v1.0.5bDebug.
 
 ## Body variants

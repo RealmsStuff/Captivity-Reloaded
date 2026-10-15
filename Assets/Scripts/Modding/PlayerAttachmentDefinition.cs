@@ -22,6 +22,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("pivotY")] public float PivotY { get; set; } = 0.5f;
 		[JsonProperty("sortingOffset")] public int SortingOffset { get; set; } = 1;
 		[JsonProperty("tintWithSkin")] public bool TintWithSkin { get; set; }
+		[JsonProperty("orgasmEmitter")] public bool OrgasmEmitter { get; set; }
 		[JsonProperty("physics")] public ClothingPhysicsDefinition Physics { get; set; }
 		[JsonProperty("pregnancyGrowth")] public PlayerAttachmentPregnancyGrowthDefinition PregnancyGrowth { get; set; }
 	}
@@ -99,8 +100,8 @@ namespace CaptivityReloaded.Modding
 			if (!s_bones.Contains(document.Bone ?? string.Empty)) Error(result, "bone", "Unknown player bone: " + (document.Bone ?? "<null>"), i_source);
 			bool hasDefault = IsPng(document.Sprite);
 			if (!string.IsNullOrWhiteSpace(document.Sprite) && !hasDefault) Error(result, "sprite", "sprite must be a safe pack-relative PNG path.", i_source);
-			if (!hasDefault && (document.SkinSprites == null || document.SkinSprites.Count == 0))
-				Error(result, "sprite-missing", "Provide sprite or at least one skinSprites entry.", i_source);
+			if (!hasDefault && (document.SkinSprites == null || document.SkinSprites.Count == 0) && !document.OrgasmEmitter)
+				Error(result, "sprite-missing", "Provide sprite, at least one skinSprites entry, or enable orgasmEmitter.", i_source);
 			foreach (KeyValuePair<string, string> sprite in document.SkinSprites ?? new Dictionary<string, string>())
 			{
 				if (!s_skins.Contains(sprite.Key)) Error(result, "skin", "Unknown supported skinSprites tone: " + sprite.Key, i_source);

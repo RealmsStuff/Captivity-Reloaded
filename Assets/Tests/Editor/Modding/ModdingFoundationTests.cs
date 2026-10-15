@@ -1395,6 +1395,31 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_AcceptsEmitterOnlyPlayerAttachment()
+		{
+			const string json = @"{
+  'schemaVersion': 1, 'type': 'playerAttachment',
+  'id': 'example.clothes:player-attachment/extra-emitter',
+  'bone': 'Hips', 'offsetX': 0.45, 'offsetY': -0.06, 'orgasmEmitter': true
+}";
+			PlayerAttachmentLoadResult result = PlayerAttachmentParser.Parse(json, "example.clothes", "emitter.json");
+			Assert.That(result.Report.IsValid, Is.True, string.Join("\n", result.Report.Issues.Select(issue => issue.ToString())));
+			Assert.That(result.Definition.Document.OrgasmEmitter, Is.True);
+		}
+
+		[Test]
+		public void Parse_RejectsPlayerAttachmentWithoutSpriteOrEmitter()
+		{
+			const string json = @"{
+  'schemaVersion': 1, 'type': 'playerAttachment',
+  'id': 'example.clothes:player-attachment/empty', 'bone': 'Hips'
+}";
+			PlayerAttachmentLoadResult result = PlayerAttachmentParser.Parse(json, "example.clothes", "empty.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "player-attachment.sprite-missing"), Is.True);
+		}
+
+		[Test]
 		public void Parse_AcceptsBoundedPregnancyGrowthAttachment()
 		{
 			const string json = @"{

@@ -27,6 +27,7 @@
     "pivotY": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5, "x-stability": "experimental" },
     "sortingOffset": { "type": "integer", "minimum": -100, "maximum": 100, "default": 1, "x-stability": "experimental" },
     "tintWithSkin": { "type": "boolean", "default": false, "x-stability": "experimental" },
+    "orgasmEmitter": { "type": "boolean", "default": false, "x-stability": "experimental" },
     "pregnancyGrowth": {
       "type": "object", "additionalProperties": false, "required": ["stages"],
       "properties": {
@@ -66,7 +67,8 @@
   },
   "anyOf": [
     { "required": ["sprite"] },
-    { "required": ["skinSprites"] }
+    { "required": ["skinSprites"] },
+    { "properties": { "orgasmEmitter": { "const": true } }, "required": ["orgasmEmitter"] }
   ],
   "$defs": {
     "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" }

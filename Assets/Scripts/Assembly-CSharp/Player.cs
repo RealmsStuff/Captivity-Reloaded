@@ -1805,6 +1805,9 @@ public class Player : Actor
 		m_pleasureCurrent = 0f;
 		GetSkeletonPlayer().GetManagerFacePlayer().Orgasm();
 		m_particleOrgasm.Play();
+		foreach (ModPersistentPlayerAttachment attachment in GetSkeletonPlayer()
+			.GetComponentsInChildren<ModPersistentPlayerAttachment>(includeInactive: true))
+			attachment.PlayOrgasmEmission(m_particleOrgasm);
 		PlayAudioSFX(m_audioOrgasm);
 		PlayAudioVoice(m_audiosVoiceOrgasm);
 		CommonReferences.Instance.GetManagerPostProcessing().PlayEffectOrgasm();

@@ -218,7 +218,7 @@ Region keys are validated during discovery against the published V1 clothing-slo
 
 Reconstructed Core garments also publish these semantic sprites as asset-patch slots beneath their content ID. For example, an in-place refit of the default shirt targets `core:clothing/shirt-default` and replaces `piece/shirt-chest` and `piece/shirt-spine`. This preserves the original garment's unlock, equipment, compatibility, and save identity instead of adding another wardrobe entry.
 
-Experimental `playerAttachment` documents add persistent artwork to an existing semantic player bone without participating in wardrobe categories or saves. They support one default sprite, optional per-tone sprites, automatic palette matching through `tintWithSkin`, offsets, pivot, sorting, and bounded sway. Core exposes Pale, White, Tan, Black, Olive, Brown, and Deep tones. Attachments extend rendering only: v1 attachments do not introduce new animated bones, physics colliders, or gameplay anatomy.
+Experimental `playerAttachment` documents add persistent artwork or a positioned effect emitter to an existing semantic player bone without participating in wardrobe categories or saves. They support one default sprite, optional per-tone sprites, automatic palette matching through `tintWithSkin`, offsets, pivot, sorting, bounded sway, and an opt-in `orgasmEmitter` that duplicates the player's climax particles at the attachment position. Core exposes Pale, White, Tan, Black, Olive, Brown, and Deep tones. Attachments do not introduce new animated bones, physics colliders, or gameplay anatomy.
 
 ### Weapon definition draft
 
