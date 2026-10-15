@@ -91,21 +91,45 @@ Copy-Item -Path (Join-Path $webGlBuild '*') -Destination $webGlStage -Recurse -F
 Copy-Item -LiteralPath $legalRoot -Destination $windowsStage -Recurse
 Copy-Item -LiteralPath $legalRoot -Destination $webGlStage -Recurse
 
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function New-ZipArchive {
 	param([string]$SourceDirectory, [string]$DestinationPath)
 	if (Test-Path -LiteralPath $DestinationPath) { Remove-Item -LiteralPath $DestinationPath -Force }
-	[System.IO.Compression.ZipFile]::CreateFromDirectory(
-		$SourceDirectory,
-		$DestinationPath,
-		[System.IO.Compression.CompressionLevel]::Optimal,
-		$false)
+	$sourceRoot = (Resolve-Path -LiteralPath $SourceDirectory).Path.TrimEnd('\', '/')
+	$outputStream = [System.IO.File]::Open($DestinationPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write)
+	$archive = $null
+	try {
+		$archive = [System.IO.Compression.ZipArchive]::new($outputStream, [System.IO.Compression.ZipArchiveMode]::Create, $false)
+		foreach ($file in @(Get-ChildItem -LiteralPath $sourceRoot -File -Recurse | Sort-Object FullName)) {
+			$relativePath = $file.FullName.Substring($sourceRoot.Length).TrimStart('\', '/').Replace('\', '/')
+			$entry = $archive.CreateEntry($relativePath, [System.IO.Compression.CompressionLevel]::Optimal)
+			$entry.LastWriteTime = [System.DateTimeOffset]$file.LastWriteTime
+			$inputStream = [System.IO.File]::OpenRead($file.FullName)
+			$entryStream = $entry.Open()
+			try {
+				$inputStream.CopyTo($entryStream)
+			}
+			finally {
+				$entryStream.Dispose()
+				$inputStream.Dispose()
+			}
+		}
+	}
+	finally {
+		if ($null -ne $archive) { $archive.Dispose() }
+		else { $outputStream.Dispose() }
+	}
 }
 
 function Assert-NoNonShippingBuildOutput {
 	param([string]$ArchivePath)
 	$archive = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
 	try {
+		$nonPortable = @($archive.Entries | Where-Object { $_.FullName.Contains('\') })
+		if ($nonPortable.Count -gt 0) {
+			throw "Release archive contains a non-portable backslash path: $($nonPortable[0].FullName)"
+		}
 		$forbidden = @($archive.Entries | Where-Object {
 			$entryPath = $_.FullName.Replace('\', '/')
 			$segments = @($entryPath.Split('/', [System.StringSplitOptions]::RemoveEmptyEntries))
