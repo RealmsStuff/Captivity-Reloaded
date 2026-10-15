@@ -21,6 +21,11 @@ public class MenuLocations : Menu
 
 	private Stage m_stageSelected;
 	private ManagerStages m_managerStages;
+	private RectTransform m_stageContent;
+	private RectTransform m_stageViewport;
+	private ContentSizeFitter m_stageContentFitter;
+	private VerticalLayoutGroup m_stageLayout;
+	private ScrollRect m_stageScroll;
 
 	private void Start()
 	{
@@ -34,34 +39,57 @@ public class MenuLocations : Menu
 
 	private void ConfigureStageScrollView()
 	{
-		RectTransform content = m_stageMenuItemDefault.transform.parent as RectTransform;
-		RectTransform viewport = content == null ? null : content.parent as RectTransform;
-		if (content == null || viewport == null) return;
-		ContentSizeFitter fitter = content.GetComponent<ContentSizeFitter>() ?? content.gameObject.AddComponent<ContentSizeFitter>();
-		fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-		fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-		content.anchorMin = new Vector2(0f, 1f);
-		content.anchorMax = new Vector2(1f, 1f);
-		content.pivot = new Vector2(0.5f, 1f);
-		content.anchoredPosition = Vector2.zero;
-		content.sizeDelta = new Vector2(-20f, 0f);
-		VerticalLayoutGroup layout = content.GetComponent<VerticalLayoutGroup>();
-		if (layout != null) layout.childAlignment = TextAnchor.UpperCenter;
-		if (viewport.GetComponent<RectMask2D>() == null) viewport.gameObject.AddComponent<RectMask2D>();
-		Image viewportImage = viewport.GetComponent<Image>() ?? viewport.gameObject.AddComponent<Image>();
+		m_stageContent = m_stageMenuItemDefault.transform.parent as RectTransform;
+		m_stageViewport = m_stageContent == null ? null : m_stageContent.parent as RectTransform;
+		if (m_stageContent == null || m_stageViewport == null) return;
+		m_stageViewport.anchorMin = Vector2.zero;
+		m_stageViewport.anchorMax = new Vector2(0.5f, 1f);
+		m_stageViewport.pivot = new Vector2(0.5f, 0.5f);
+		m_stageViewport.offsetMin = new Vector2(20f, 20f);
+		m_stageViewport.offsetMax = new Vector2(-20f, -20f);
+		m_stageContentFitter = m_stageContent.GetComponent<ContentSizeFitter>() ?? m_stageContent.gameObject.AddComponent<ContentSizeFitter>();
+		m_stageContentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+		m_stageLayout = m_stageContent.GetComponent<VerticalLayoutGroup>();
+		if (m_stageViewport.GetComponent<RectMask2D>() == null) m_stageViewport.gameObject.AddComponent<RectMask2D>();
+		Image viewportImage = m_stageViewport.GetComponent<Image>() ?? m_stageViewport.gameObject.AddComponent<Image>();
 		viewportImage.color = new Color(0f, 0f, 0f, 0.001f);
-		ScrollRect scroll = viewport.GetComponent<ScrollRect>() ?? viewport.gameObject.AddComponent<ScrollRect>();
-		scroll.content = content;
-		scroll.viewport = viewport;
-		scroll.horizontal = false;
-		scroll.vertical = true;
-		scroll.movementType = ScrollRect.MovementType.Clamped;
-		scroll.scrollSensitivity = 42f;
-		scroll.verticalScrollbar = CreateVerticalScrollbar(viewport);
-		scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+		m_stageScroll = m_stageViewport.GetComponent<ScrollRect>() ?? m_stageViewport.gameObject.AddComponent<ScrollRect>();
+		m_stageScroll.content = m_stageContent;
+		m_stageScroll.viewport = m_stageViewport;
+		m_stageScroll.horizontal = false;
+		m_stageScroll.movementType = ScrollRect.MovementType.Clamped;
+		m_stageScroll.scrollSensitivity = 42f;
+		m_stageScroll.verticalScrollbar = CreateVerticalScrollbar(m_stageViewport);
+		m_stageScroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+		RefreshStageLayout();
+	}
+
+	private void RefreshStageLayout()
+	{
+		if (m_stageContent == null || m_stageViewport == null || m_stageContentFitter == null || m_stageLayout == null || m_stageScroll == null) return;
+		m_stageContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+		m_stageContent.anchorMin = new Vector2(0f, 1f);
+		m_stageContent.anchorMax = Vector2.one;
+		m_stageContent.pivot = new Vector2(0.5f, 1f);
+		m_stageContent.anchoredPosition = Vector2.zero;
+		m_stageContent.sizeDelta = new Vector2(-20f, 0f);
 		Canvas.ForceUpdateCanvases();
-		LayoutRebuilder.ForceRebuildLayoutImmediate(content);
-		scroll.verticalNormalizedPosition = 1f;
+		LayoutRebuilder.ForceRebuildLayoutImmediate(m_stageContent);
+		bool overflow = LayoutUtility.GetPreferredHeight(m_stageContent) > m_stageViewport.rect.height;
+		m_stageLayout.childAlignment = overflow ? TextAnchor.UpperCenter : TextAnchor.MiddleCenter;
+		m_stageScroll.vertical = overflow;
+		m_stageScroll.verticalScrollbar.gameObject.SetActive(overflow);
+		if (!overflow)
+		{
+			m_stageContentFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+			m_stageContent.anchorMin = Vector2.zero;
+			m_stageContent.anchorMax = Vector2.one;
+			m_stageContent.pivot = new Vector2(0.5f, 0.5f);
+			m_stageContent.anchoredPosition = Vector2.zero;
+			m_stageContent.sizeDelta = new Vector2(-20f, 0f);
+		}
+		LayoutRebuilder.ForceRebuildLayoutImmediate(m_stageContent);
+		m_stageScroll.verticalNormalizedPosition = 1f;
 	}
 
 	private static Scrollbar CreateVerticalScrollbar(RectTransform i_parent)
@@ -71,10 +99,10 @@ public class MenuLocations : Menu
 		GameObject barObject = new GameObject("LocationScrollbar", typeof(RectTransform), typeof(Image), typeof(Scrollbar));
 		RectTransform bar = barObject.GetComponent<RectTransform>();
 		bar.SetParent(i_parent, false);
-		bar.anchorMin = new Vector2(0.5f, 0f);
-		bar.anchorMax = new Vector2(0.5f, 1f);
-		bar.pivot = new Vector2(0.5f, 0.5f);
-		bar.anchoredPosition = new Vector2(296f, 0f);
+		bar.anchorMin = new Vector2(1f, 0f);
+		bar.anchorMax = Vector2.one;
+		bar.pivot = new Vector2(1f, 0.5f);
+		bar.anchoredPosition = new Vector2(-4f, 0f);
 		bar.sizeDelta = new Vector2(10f, -12f);
 		barObject.GetComponent<Image>().color = new Color(0.08f, 0.02f, 0.02f, 0.8f);
 		GameObject slidingObject = new GameObject("SlidingArea", typeof(RectTransform));
@@ -122,6 +150,7 @@ public class MenuLocations : Menu
 		stageMenuItem.SetStage(i_stage);
 		stageMenuItem.gameObject.SetActive(value: true);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(m_stageMenuItemDefault.transform.parent as RectTransform);
+		RefreshStageLayout();
 	}
 
 	public void Go()
