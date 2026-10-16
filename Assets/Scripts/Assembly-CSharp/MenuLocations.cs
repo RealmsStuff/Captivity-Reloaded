@@ -42,11 +42,6 @@ public class MenuLocations : Menu
 		m_stageContent = m_stageMenuItemDefault.transform.parent as RectTransform;
 		m_stageViewport = m_stageContent == null ? null : m_stageContent.parent as RectTransform;
 		if (m_stageContent == null || m_stageViewport == null) return;
-		m_stageViewport.anchorMin = Vector2.zero;
-		m_stageViewport.anchorMax = new Vector2(0.5f, 1f);
-		m_stageViewport.pivot = new Vector2(0.5f, 0.5f);
-		m_stageViewport.offsetMin = new Vector2(20f, 20f);
-		m_stageViewport.offsetMax = new Vector2(-20f, -20f);
 		m_stageContentFitter = m_stageContent.GetComponent<ContentSizeFitter>() ?? m_stageContent.gameObject.AddComponent<ContentSizeFitter>();
 		m_stageContentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
 		m_stageLayout = m_stageContent.GetComponent<VerticalLayoutGroup>();
@@ -67,12 +62,16 @@ public class MenuLocations : Menu
 	private void RefreshStageLayout()
 	{
 		if (m_stageContent == null || m_stageViewport == null || m_stageContentFitter == null || m_stageLayout == null || m_stageScroll == null) return;
+		// The original red divider sits 296 pixels to the right of the viewport
+		// centre. Centre the buttons in the area to its left without shrinking the
+		// viewport itself, since doing that also moved and hid the divider.
+		float contentWidth = Mathf.Max(0f, m_stageViewport.rect.width * 0.5f + 276f);
 		m_stageContentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 		m_stageContent.anchorMin = new Vector2(0f, 1f);
-		m_stageContent.anchorMax = Vector2.one;
+		m_stageContent.anchorMax = new Vector2(0f, 1f);
 		m_stageContent.pivot = new Vector2(0.5f, 1f);
-		m_stageContent.anchoredPosition = Vector2.zero;
-		m_stageContent.sizeDelta = new Vector2(-20f, 0f);
+		m_stageContent.anchoredPosition = new Vector2(contentWidth * 0.5f, 0f);
+		m_stageContent.sizeDelta = new Vector2(contentWidth, 0f);
 		Canvas.ForceUpdateCanvases();
 		LayoutRebuilder.ForceRebuildLayoutImmediate(m_stageContent);
 		bool overflow = LayoutUtility.GetPreferredHeight(m_stageContent) > m_stageViewport.rect.height;
@@ -84,11 +83,11 @@ public class MenuLocations : Menu
 		if (!overflow)
 		{
 			m_stageContentFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-			m_stageContent.anchorMin = Vector2.zero;
-			m_stageContent.anchorMax = Vector2.one;
+			m_stageContent.anchorMin = new Vector2(0f, 0f);
+			m_stageContent.anchorMax = new Vector2(0f, 1f);
 			m_stageContent.pivot = new Vector2(0.5f, 0.5f);
-			m_stageContent.anchoredPosition = Vector2.zero;
-			m_stageContent.sizeDelta = new Vector2(-20f, 0f);
+			m_stageContent.anchoredPosition = new Vector2(contentWidth * 0.5f, 0f);
+			m_stageContent.sizeDelta = new Vector2(contentWidth, 0f);
 		}
 		LayoutRebuilder.ForceRebuildLayoutImmediate(m_stageContent);
 		m_stageScroll.verticalNormalizedPosition = 1f;
@@ -101,10 +100,10 @@ public class MenuLocations : Menu
 		GameObject barObject = new GameObject("LocationScrollbar", typeof(RectTransform), typeof(Image), typeof(Scrollbar));
 		RectTransform bar = barObject.GetComponent<RectTransform>();
 		bar.SetParent(i_parent, false);
-		bar.anchorMin = new Vector2(1f, 0f);
-		bar.anchorMax = Vector2.one;
-		bar.pivot = new Vector2(1f, 0.5f);
-		bar.anchoredPosition = new Vector2(-4f, 0f);
+		bar.anchorMin = new Vector2(0.5f, 0f);
+		bar.anchorMax = new Vector2(0.5f, 1f);
+		bar.pivot = new Vector2(0.5f, 0.5f);
+		bar.anchoredPosition = new Vector2(296f, 0f);
 		bar.sizeDelta = new Vector2(10f, -12f);
 		barObject.GetComponent<Image>().color = new Color(0.08f, 0.02f, 0.02f, 0.8f);
 		GameObject slidingObject = new GameObject("SlidingArea", typeof(RectTransform));
