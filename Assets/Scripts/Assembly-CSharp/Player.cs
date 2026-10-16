@@ -1543,6 +1543,7 @@ public class Player : Actor
 
 	public override void DropPickupAble(PickUpable i_pickUpable)
 	{
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(i_pickUpable)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (i_pickUpable.GetIsCanDrop())
 		{
 			i_pickUpable.Drop(0.5f);
@@ -1556,6 +1557,7 @@ public class Player : Actor
 
 	public override void DropPickupAble(PickUpable i_pickUpable, float i_powerDrop01)
 	{
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(i_pickUpable)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (i_pickUpable.GetIsCanDrop())
 		{
 			i_pickUpable.Drop(i_powerDrop01);
@@ -1570,6 +1572,7 @@ public class Player : Actor
 	public void DropEquippedEquippable()
 	{
 		Weapon equippableEquipped = GetEquippableEquipped();
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(equippableEquipped)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
 			equippableEquipped.Drop(0.25f);
@@ -1585,6 +1588,7 @@ public class Player : Actor
 	public void DropEquippedEquippableWithPlayerForce()
 	{
 		Weapon equippableEquipped = GetEquippableEquipped();
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(equippableEquipped)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
 			equippableEquipped.Drop(GetVelocity());
@@ -1605,6 +1609,7 @@ public class Player : Actor
 	public void DropEquippedEquippable(float i_powerDrop01)
 	{
 		Weapon equippableEquipped = GetEquippableEquipped();
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(equippableEquipped)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
 			equippableEquipped.Drop(i_powerDrop01);
@@ -1616,6 +1621,7 @@ public class Player : Actor
 	public void DropEquippedEquippable(Vector2 i_forceDrop)
 	{
 		Weapon equippableEquipped = GetEquippableEquipped();
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(equippableEquipped)) { RandomizerGameMode.NotifyLocked(); return; }
 		if (!(equippableEquipped == null) && equippableEquipped.GetIsCanDrop())
 		{
 			equippableEquipped.Drop(i_forceDrop);
@@ -1995,6 +2001,7 @@ public class Player : Actor
 		StopSelfPleasure();
 		if (CommonReferences.Instance.GetManagerStages().GetStageCurrent() is StageHub)
 		{
+			RandomizerGameMode.ClearRunStatus();
 			if (CommonReferences.Instance.GetManagerScreens().GetScreenGame().GetIsFirstTimeSpawn())
 			{
 				EnterHubFirstTime();
@@ -2006,8 +2013,9 @@ public class Player : Actor
 		}
 		else
 		{
-			Gun starter = ExternalRuleProfileFactory.ResolveStarterWeapon(Library.Instance.Guns.GetGun(SpawnGun));
-			if (starter != null)
+			bool randomizerGranted = RandomizerGameMode.TryGrantLoadout(this);
+			Gun starter = randomizerGranted ? null : ExternalRuleProfileFactory.ResolveStarterWeapon(Library.Instance.Guns.GetGun(SpawnGun));
+			if (!randomizerGranted && starter != null)
 			{
 				Gun gun = Object.Instantiate(starter, base.transform.parent);
 				PickUp(gun, i_isDuplicate: false);
@@ -2100,6 +2108,11 @@ public class Player : Actor
 
 	public override void PickUp(PickUpable i_pickUpable, bool i_isDuplicate)
 	{
+		if (RandomizerGameMode.ShouldBlockWeaponAcquisition(i_pickUpable))
+		{
+			RandomizerGameMode.NotifyLocked();
+			return;
+		}
 		PickUpable pickUpable = null;
 		pickUpable = ((!i_isDuplicate) ? i_pickUpable : Object.Instantiate(i_pickUpable));
 		pickUpable.PickUp(this);

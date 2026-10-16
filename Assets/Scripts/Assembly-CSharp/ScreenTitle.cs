@@ -212,7 +212,7 @@ public class ScreenTitle : Screen
 		bodyText.resizeTextMinSize = 15;
 		bodyText.resizeTextMaxSize = 22;
 		bodyText.lineSpacing = 1.15f;
-		bodyText.text = "Version 2.2.1\n\n- Fixed incomplete enemy body-part retextures\n- Enemy retextures stay isolated to their target";
+		bodyText.text = "Version 2.2.2\n\n- Added the native Randomizer game mode\n- Added keyboard-only assisted aiming and quick turning\n- Randomizer loadouts stay locked throughout each run\n- Improved the location menu layout and scrollbars\n- Removed Schockgewehr from weapon vendors";
 	}
 
 	private RectTransform EnsureTitleOverlayRoot()

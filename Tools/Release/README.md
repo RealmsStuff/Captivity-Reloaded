@@ -26,7 +26,7 @@ After every audit item passes, run Unity tests from a fresh clone/worktree and u
 Package all three completed player builds with the repository license, third-party notices, pinned Unity-package license texts, source link, patch notes, and SHA-256 manifest:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Tools\Release\New-ReleasePackage.ps1 -Version 2.2.1
+powershell -ExecutionPolicy Bypass -File .\Tools\Release\New-ReleasePackage.ps1 -Version 2.2.2
 ```
 
 The Windows and WebGL archives carry the legal bundle internally. The same bundle is emitted as a separate `Licenses.zip` companion for the Android APK and release page.

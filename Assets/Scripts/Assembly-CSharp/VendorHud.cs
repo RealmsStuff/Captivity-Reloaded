@@ -364,6 +364,12 @@ public class VendorHud : MonoBehaviour
 			{
 				m_txtPriceWeapon.text = m_vendorItemSelected.GetPickUpable().GetValue() + "$";
 				m_txtLabelPriceWeapon.text = "Price";
+				if (RandomizerGameMode.IsWeaponLockActive)
+				{
+					m_btnBuySellWeapon.GetComponentInChildren<Text>().text = "Loadout locked";
+					m_btnBuySellWeapon.interactable = false;
+					return;
+				}
 				if (!CommonReferences.Instance.GetPlayerController().GetInventory().IsHasRoomForPickUpable(i_pickUpable))
 				{
 					m_btnBuySellWeapon.GetComponentInChildren<Text>().text = "Too heavy";
@@ -386,7 +392,8 @@ public class VendorHud : MonoBehaviour
 				m_txtLabelPriceWeapon.text = "Sell price (-75%)";
 				UpdateAmmoValues();
 				CommonReferences.Instance.GetPlayerController().GetInventory().GetMoney();
-				m_btnBuySellWeapon.GetComponentInChildren<Text>().text = "Sell";
+				m_btnBuySellWeapon.GetComponentInChildren<Text>().text = RandomizerGameMode.IsWeaponLockActive ? "Loadout locked" : "Sell";
+				m_btnBuySellWeapon.interactable = !RandomizerGameMode.IsWeaponLockActive;
 			}
 		}
 		if (!(m_vendorItemSelected.GetPickUpable() is Usable))
@@ -532,6 +539,7 @@ public class VendorHud : MonoBehaviour
 
 	public void BuyItem()
 	{
+		if (RandomizerGameMode.ShouldBlockWeaponAcquisition(m_vendorItemSelected.GetPickUpable())) { RandomizerGameMode.NotifyLocked(); return; }
 		CommonReferences.Instance.GetPlayerController().LoseMoney(m_vendorItemSelected.GetPickUpable().GetValue());
 		PickUpable pickUpable = Object.Instantiate(m_vendorItemSelected.GetPickUpable());
 		if (pickUpable is Gun)
@@ -569,6 +577,7 @@ public class VendorHud : MonoBehaviour
 
 	public void Sell()
 	{
+		if (RandomizerGameMode.ShouldBlockWeaponRemoval(m_vendorItemSelected.GetPickUpable())) { RandomizerGameMode.NotifyLocked(); return; }
 		CommonReferences.Instance.GetPlayerController().GainMoney(m_vendorItemSelected.GetPickUpable().GetValue() / 4);
 		CommonReferences.Instance.GetPlayer().DropPickupAble(m_vendorItemSelected.GetPickUpable());
 		Object.Destroy(m_vendorItemSelected.GetPickUpable().gameObject);

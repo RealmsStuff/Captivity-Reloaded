@@ -302,14 +302,15 @@ public class ManagerOptions : MonoBehaviour
 	{
 		m_dropDownGameMode.options.Clear();
 		m_gameModeIds.Clear();
-		List<string> names = new List<string> { "Standard" };
-		m_gameModeIds.Add(string.Empty);
-		int selected = 0;
+		List<string> names = new List<string> { "Standard", "Randomizer" };
+		m_gameModeIds.Add(BaseGameModeRegistry.StandardId);
+		m_gameModeIds.Add(BaseGameModeRegistry.RandomizerId);
+		int selected = BaseGameModeRegistry.IsRandomizer ? 1 : 0;
 		foreach (RuleProfileDefinition profile in RuleProfileRegistry.SelectableDefinitions)
 		{
 			names.Add(profile.DisplayName);
-			m_gameModeIds.Add(profile.Id.ToString());
-			if (profile.Id.ToString() == RuleProfileRegistry.CurrentId) selected = m_gameModeIds.Count - 1;
+			m_gameModeIds.Add("mod:" + profile.Id);
+			if (!BaseGameModeRegistry.IsRandomizer && profile.Id.ToString() == RuleProfileRegistry.CurrentId) selected = m_gameModeIds.Count - 1;
 		}
 		m_dropDownGameMode.AddOptions(names);
 		m_dropDownGameMode.value = selected;
@@ -548,7 +549,17 @@ public class ManagerOptions : MonoBehaviour
 			DifficultyRegistry.SetCurrent(m_difficultyIds[m_dropDownDifficulty.value]);
 		if (m_dropDownGameMode != null && m_dropDownGameMode.value >= 0 && m_dropDownGameMode.value < m_gameModeIds.Count)
 		{
-			RuleProfileRegistry.SetCurrent(m_gameModeIds[m_dropDownGameMode.value]);
+			string selectedMode = m_gameModeIds[m_dropDownGameMode.value];
+			if (selectedMode == BaseGameModeRegistry.RandomizerId)
+			{
+				BaseGameModeRegistry.SetCurrent(BaseGameMode.Randomizer);
+				RuleProfileRegistry.SetCurrent(string.Empty);
+			}
+			else
+			{
+				BaseGameModeRegistry.SetCurrent(BaseGameMode.Standard);
+				RuleProfileRegistry.SetCurrent(selectedMode.StartsWith("mod:", StringComparison.Ordinal) ? selectedMode.Substring(4) : string.Empty);
+			}
 			ExternalRuleProfileController profileController = UnityEngine.Object.FindObjectOfType<ExternalRuleProfileController>();
 			if (profileController != null) profileController.RefreshSelectedProfile();
 			if (CommonReferences.Instance != null && CommonReferences.Instance.GetPlayer() != null)

@@ -65,8 +65,23 @@ public class WeaponCase : Interactable
 		GetComponentsInChildren<SpriteRenderer>()[1].sprite = m_weapon.GetSpriteIcon();
 	}
 
+	protected override void LateUpdate()
+	{
+		if (RandomizerGameMode.IsWeaponLockActive && m_weapon is Gun)
+		{
+			// Wall cases stay visible as scenery, but expose no purchase prompt in Randomizer.
+			DestroyNotification();
+			return;
+		}
+		base.LateUpdate();
+	}
+
 	public override void Use()
 	{
+		if (RandomizerGameMode.IsWeaponLockActive && m_weapon is Gun)
+		{
+			return;
+		}
 		if (m_isActivatedOnceAlready)
 		{
 			return;
