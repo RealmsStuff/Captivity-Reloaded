@@ -5,5 +5,36 @@
   "legacyId": 2,
   "displayName": "Cave",
   "description": "You have set up camp inside a dark cave to escape the storm that is raging outside. It seems like there have been miners working inside the cave. You decide to rest and get some sleep... until you suddenly start hearing buzzing.",
-  "firstWaveEnemyCount": 12
+  "firstWaveEnemyCount": 12,
+  "specialWaves": [
+    {
+      "id": "buzzing-swarm",
+      "displayName": "Buzzing Swarm",
+      "minimumWave": 5,
+      "everyNthWave": 5,
+      "chance": 0.7,
+      "cooldownWaves": 4,
+      "enemyCountMultiplier": 1.1,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/fly", "weight": 3.0 },
+        { "enemy": "core:enemy/musca", "weight": 1.0 }
+      ]
+    },
+    {
+      "id": "brood-below",
+      "displayName": "Brood Below",
+      "minimumWave": 7,
+      "everyNthWave": 7,
+      "chance": 0.5,
+      "cooldownWaves": 6,
+      "enemyCountMultiplier": 0.8,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/maggot", "weight": 3.0 },
+        { "enemy": "core:enemy/head-humper", "weight": 1.5 },
+        { "enemy": "core:enemy/spider-mother", "weight": 0.5 }
+      ]
+    }
+  ]
 }

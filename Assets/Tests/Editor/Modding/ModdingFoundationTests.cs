@@ -2253,23 +2253,50 @@ namespace CaptivityReloaded.Modding.Tests
 			CoreStageDefinition shack = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/shack"));
 			Assert.That(shack.DisplayName, Is.EqualTo("Shack"));
 			Assert.That(shack.FirstWaveEnemyCount, Is.EqualTo(12));
+			Assert.That(shack.SpecialWaves.Select(wave => wave.Id), Is.EquivalentTo(new[]
+			{
+				"rotting-horde", "grabber-night"
+			}));
 
 			CoreStageDefinition spaceStation = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/space-station"));
 			Assert.That(spaceStation.FirstWaveEnemyCount, Is.EqualTo(10));
+			Assert.That(spaceStation.SpecialWaves.Select(wave => wave.Id), Is.EquivalentTo(new[]
+			{
+				"boarding-party", "specimen-breach"
+			}));
 
 			CoreStageDefinition fieldDay = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/field-day"));
 			Assert.That(fieldDay.LegacyId, Is.EqualTo(6));
 			Assert.That(fieldDay.FirstWaveEnemyCount, Is.EqualTo(2));
+			Assert.That(fieldDay.SpecialWaves.Select(wave => wave.Id), Is.EquivalentTo(new[]
+			{
+				"target-practice", "mixed-drill"
+			}));
+
+			CoreStageDefinition cave = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/cave"));
+			Assert.That(cave.SpecialWaves.Select(wave => wave.Id), Is.EquivalentTo(new[]
+			{
+				"buzzing-swarm", "brood-below"
+			}));
+
+			CoreStageDefinition jungle = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/jungle"));
+			Assert.That(jungle.SpecialWaves.Select(wave => wave.Id), Is.EquivalentTo(new[]
+			{
+				"goblin-warband", "hunter-pack"
+			}));
 
 			CoreStageDefinition fer = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/furry-entertainment-robotics"));
-			Assert.That(fer.SpecialWaves, Has.Count.EqualTo(1));
-			Assert.That(fer.SpecialWaves[0].SelectionMode, Is.EqualTo("singleRandom"));
-			Assert.That(fer.SpecialWaves[0].Enemies, Has.Count.EqualTo(3));
-			Assert.That(fer.SpecialWaves[0].Enemies.Select(enemy => enemy.Enemy), Is.EquivalentTo(new[]
+			Assert.That(fer.SpecialWaves, Has.Count.EqualTo(2));
+			StageSpecialWaveDefinition spotlight = fer.SpecialWaves.Single(wave => wave.Id == "animatronic-spotlight");
+			Assert.That(spotlight.SelectionMode, Is.EqualTo("singleRandom"));
+			Assert.That(spotlight.Enemies, Has.Count.EqualTo(3));
+			Assert.That(spotlight.Enemies.Select(enemy => enemy.Enemy), Is.EquivalentTo(new[]
 			{
 				ContentId.Parse("core:enemy/sunny"), ContentId.Parse("core:enemy/jenny"),
 				ContentId.Parse("core:enemy/abby")
 			}));
+			Assert.That(result.CoreStages.Where(stage => stage.LegacyId > 0)
+				.All(stage => stage.SpecialWaves.Count >= 2), Is.True);
 		}
 
 		[Test]

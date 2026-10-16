@@ -5,5 +5,37 @@
   "legacyId": 4,
   "displayName": "Space Station",
   "description": "You have been sent out to investigate a cargoship wandering in space. Upon arrival, you hear sounds echoing through the hallways of the deserted ship...",
-  "firstWaveEnemyCount": 10
+  "firstWaveEnemyCount": 10,
+  "specialWaves": [
+    {
+      "id": "boarding-party",
+      "displayName": "Boarding Party",
+      "minimumWave": 5,
+      "everyNthWave": 5,
+      "chance": 0.7,
+      "cooldownWaves": 4,
+      "enemyCountMultiplier": 1.0,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/litigant", "weight": 2.0 },
+        { "enemy": "core:enemy/sqoid", "weight": 2.0 },
+        { "enemy": "core:enemy/head-humper", "weight": 1.0 }
+      ]
+    },
+    {
+      "id": "specimen-breach",
+      "displayName": "Specimen Breach",
+      "minimumWave": 8,
+      "everyNthWave": 8,
+      "chance": 0.55,
+      "cooldownWaves": 7,
+      "enemyCountMultiplier": 0.8,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/spider-mother", "weight": 1.0 },
+        { "enemy": "core:enemy/sqoid", "weight": 2.0 },
+        { "enemy": "core:enemy/musca", "weight": 1.0 }
+      ]
+    }
+  ]
 }

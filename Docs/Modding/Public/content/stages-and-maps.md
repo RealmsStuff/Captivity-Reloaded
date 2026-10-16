@@ -85,3 +85,24 @@ The existing stage-script signal bus arms matching rules. A door-state or intera
 - Optional `appearance` keeps the selected enemy's AI, attacks, and finishers but copies sprites from another enemy with a compatible named-bone hierarchy. Incompatible appearances are skipped with a warning.
 
 Special-wave roster overrides and generated appearance templates are cleared before the following wave. Animations are not retargeted: `appearance` is intended only for enemies that already share the same bone layout.
+
+### Shipped Core roster
+
+Core stages include a conservative starter roster so ordinary waves remain the majority of a run. Chances are evaluated only on the listed cadence, and the same rule cannot repeat inside its cooldown.
+
+| Stage | Special wave | First eligible cadence | Chance | Roster |
+| --- | --- | ---: | ---: | --- |
+| Shack | Rotting Horde | Every 6 waves | 65% | Zombie I, Zombie II, Zombie III |
+| Shack | Grabber Night | Every 7 waves | 45% | Zombie Grabber, reduced enemy count |
+| Cave | Buzzing Swarm | Every 5 waves | 70% | Fly and Musca |
+| Cave | Brood Below | Every 7 waves | 50% | Maggot, Head Humper, Spider Mother |
+| Jungle | Goblin Warband | Every 5 waves | 70% | Orc, Goblin Marksman, Goblin Trapper, Gremlin |
+| Jungle | Hunter Pack | Every 7 waves | 50% | Hunter and Death Hound, reduced enemy count |
+| Space Station | Boarding Party | Every 5 waves | 70% | Litigant, Sqoid, Head Humper |
+| Space Station | Specimen Breach | Every 8 waves | 55% | Spider Mother, Sqoid, Musca, reduced enemy count |
+| FER | Animatronic Spotlight | Every 5 waves | 100% | One of Abby, Jenny, or Sunny using the faceless android appearance |
+| FER | Closing Shift | Every 8 waves | 65% | Sunny, Jenny, Abby, and Jacky |
+| Field-Day | Target Practice | Every 3 waves | 75% | One of Zombie I, Fly, or Gremlin |
+| Field-Day | Mixed Drill | Every 5 waves | 60% | Zombie Grabber, Goblin Marksman, Sqoid |
+
+When two rules are eligible on the same wave, only one is selected. Passing candidates use their configured chance values as relative selection weights.
