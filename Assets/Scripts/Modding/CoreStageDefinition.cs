@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CaptivityReloaded.Modding
@@ -13,6 +14,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("displayName", Required = Required.Always)] public string DisplayName { get; set; }
 		[JsonProperty("description")] public string Description { get; set; }
 		[JsonProperty("firstWaveEnemyCount")] public int? FirstWaveEnemyCount { get; set; }
+		[JsonProperty("specialWaves")] public List<StageSpecialWaveDocument> SpecialWaves { get; set; } = new List<StageSpecialWaveDocument>();
 	}
 
 	public sealed class CoreStageDefinition
@@ -23,12 +25,15 @@ namespace CaptivityReloaded.Modding
 		public string DisplayName { get; }
 		public string Description { get; }
 		public int? FirstWaveEnemyCount { get; }
+		public IReadOnlyList<StageSpecialWaveDefinition> SpecialWaves { get; }
 
-		internal CoreStageDefinition(ContentId i_id, string i_source, CoreStageDocument i_document)
+		internal CoreStageDefinition(ContentId i_id, string i_source, CoreStageDocument i_document,
+			IReadOnlyList<StageSpecialWaveDefinition> i_specialWaves)
 		{
 			Id = i_id; LegacyId = i_document.LegacyId; Source = i_source ?? string.Empty;
 			DisplayName = i_document.DisplayName; Description = i_document.Description ?? string.Empty;
 			FirstWaveEnemyCount = i_document.FirstWaveEnemyCount;
+			SpecialWaves = i_specialWaves;
 		}
 	}
 
@@ -59,7 +64,11 @@ namespace CaptivityReloaded.Modding
 				Error(result, "hub-wave", "The Hub cannot define a wave count.", i_source);
 			if (validId && id.Path != "stage/hub" && !document.FirstWaveEnemyCount.HasValue)
 				Error(result, "wave-required", "Non-Hub Core stages require firstWaveEnemyCount.", i_source);
-			if (result.Report.IsValid) result.Definition = new CoreStageDefinition(id, i_source, document);
+			List<StageSpecialWaveDefinition> specialWaves = StageSpecialWaveParser.Validate(document.SpecialWaves,
+				result.Report, i_source, "core-stage.special-wave");
+			if (validId && id.Path == "stage/hub" && specialWaves.Count > 0)
+				Error(result, "hub-special-wave", "The Hub cannot define special waves.", i_source);
+			if (result.Report.IsValid) result.Definition = new CoreStageDefinition(id, i_source, document, specialWaves);
 			return result;
 		}
 

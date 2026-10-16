@@ -17,6 +17,9 @@ public static class ExternalStageFactory
 	public static void RestoreRuntimeStageClone(Stage i_source, Stage i_clone)
 	{
 		if (i_source == null || i_clone == null) return;
+		ManagerWave sourceWave = i_source.GetManagerWave();
+		ManagerWave cloneWave = i_clone.GetManagerWave();
+		if (sourceWave != null && cloneWave != null) cloneWave.CopyRuntimeSettingsFrom(sourceWave);
 		RuntimeContentIdentity identity = i_source.GetComponent<RuntimeContentIdentity>();
 		if (identity == null || !identity.TryGetContentId(out ContentId stageId) || stageId.Namespace == "core") return;
 		Dictionary<UnityEngine.Object, UnityEngine.Object> counterparts = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
@@ -219,7 +222,7 @@ public static class ExternalStageFactory
 				UnityEngine.Object.Destroy(clone.gameObject);
 				continue;
 			}
-			wave.ConfigureModWave(definition.Waves.FirstWaveEnemyCount);
+			wave.ConfigureModWave(definition.Waves.FirstWaveEnemyCount, definition.SpecialWaves);
 			i_manager.AddRuntimeStage(clone);
 			ModLoaderRuntime.Registry.BindRuntimeAsset(definition.Id, clone, ModLoaderRuntime.LastReport);
 			Debug.Log("[ModLoader] Built external stage " + definition.Id + " from "
@@ -2069,6 +2072,7 @@ public sealed class ModStageScriptRunner : MonoBehaviour
 	{
 		m_signalVersions.TryGetValue(i_signal, out int version);
 		m_signalVersions[i_signal] = version + 1;
+		if (m_wave != null) m_wave.NotifyStageSignal(i_signal);
 		Trigger("signal", i_signal);
 	}
 

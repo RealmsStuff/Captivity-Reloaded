@@ -56,8 +56,17 @@ public class PlayerController : MonoBehaviour
 
     private bool IsUsingMobileInput()
     {
-		return m_useMobileControls && Gamepad.current == null;
+		// Some Android devices expose a phantom/idle gamepad even when no controller is
+		// connected. Only suppress touch input after real controller activity has made
+		// the controller the last-used input source.
+		bool physicalControllerLastUsed = m_managerInput != null && m_managerInput.IsControllerLastUsed();
+		return ShouldUseMobileInput(m_useMobileControls, physicalControllerLastUsed);
     }
+
+	public static bool ShouldUseMobileInput(bool i_mobileControlsEnabled, bool i_physicalControllerLastUsed)
+	{
+		return i_mobileControlsEnabled && !i_physicalControllerLastUsed;
+	}
 
     private void Update()
     {

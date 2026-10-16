@@ -17,6 +17,7 @@
 | `audio` | ref: `audio` | no | experimental |  |
 | `camera` | ref: `camera` | no | experimental |  |
 | `testTools` | ref: `testTools` | no | experimental |  |
+| `specialWaves` | array of ref: `specialWave` | no | experimental | max items: `32` |
 | `spawners` | array of ref: `spawner` | yes | stable | min items: `1`; max items: `256` |
 
 ## Definition: `stageId`
@@ -145,6 +146,33 @@ Schema form: object.
 | `enemy` | ref: `enemyId` | yes |  |  |
 | `spawnPosition` | ref: `point` | no |  |  |
 
+## Definition: `specialWave`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `id` | ref: `localId` | yes |  |  |
+| `displayName` | string | yes |  | min length: `1` |
+| `minimumWave` | integer | no |  | min: `1`; max: `10000`; default: `1` |
+| `everyNthWave` | integer | no |  | min: `0`; max: `10000`; default: `0` |
+| `chance` | number | yes |  | exclusive min: `0`; max: `1` |
+| `cooldownWaves` | integer | no |  | min: `0`; max: `10000`; default: `0` |
+| `enemyCountMultiplier` | number | no |  | min: `0.1`; max: `10`; default: `1` |
+| `selectionMode` | enum: `replace`, `add`, `singleRandom` | no |  | default: `replace` |
+| `triggerSignal` | ref: `signalName` | no |  |  |
+| `enemies` | array of ref: `specialWaveEnemy` | yes |  | min items: `1`; max items: `64` |
+
+## Definition: `specialWaveEnemy`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `enemy` | ref: `enemyId` | yes |  |  |
+| `appearance` | ref: `enemyId` | no |  |  |
+| `weight` | number | yes |  | min: `0.001`; max: `1000` |
+
 ## Definition: `audioPath`
 
 Schema form: allOf.
@@ -178,6 +206,16 @@ Schema form: object.
 Schema form: string.
 
 Constraints: pattern: `^[a-z0-9][a-z0-9-]*$`.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+
+## Definition: `signalName`
+
+Schema form: string.
+
+Constraints: min length: `1`; max length: `64`; pattern: `^[a-z_][a-z0-9_-]*$`.
 
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |

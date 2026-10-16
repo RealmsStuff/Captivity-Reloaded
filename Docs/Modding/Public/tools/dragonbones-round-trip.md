@@ -22,11 +22,11 @@ Open **Captivity Reloaded > Modding > DragonBones Round Trip**. **Core/reference
 
 ![Unity DragonBones Round Trip export window](../assets/screenshots/unity-dragonbones-round-trip.png)
 
-### Export every Core enemy
+### Export every Core character
 
-Select **Export Every Core Enemy to DragonBones** in the round-trip window, or use **Captivity Reloaded > Modding > Export Every Core Enemy to DragonBones** directly. The command first refreshes the complete normalized animation set, then creates one DragonBones 5.5 project for every enemy in the Core animation catalog under `DragonBonesExports/core-enemies/<enemy-id>`.
+Select **Export Every Core Character to DragonBones** in the round-trip window, or use **Captivity Reloaded > Modding > Export Every Core Character to DragonBones** directly. The command first refreshes the normalized references, then creates DragonBones 5.5 projects for all 21 combat enemies, Betsy, and Alex. Existing enemy projects remain under `DragonBonesExports/core-enemies/<enemy-id>`; Betsy is under `core-enemies/npcs/betsy`, and Alex is under `core-enemies/players/alex`.
 
-`DragonBonesExports/core-enemies/core-enemy-export-index.json` records every enemy, armature, skeleton, sidecar, animation count, and image count. The export stops with an error if a catalog enemy has no normalized rig or does not produce both its skeleton and round-trip sidecar, so a partial batch is never reported as complete.
+`DragonBonesExports/core-enemies/core-character-export-index.json` records each actor's type, ID, armature, skeleton, sidecar, animation count, and image count. A compatibility copy remains at `core-enemy-export-index.json`. Betsy is an authoring reference NPC—not a spawnable combat enemy—and Alex is the player reference. The export stops with an error if a required normalized rig, skeleton, or round-trip sidecar is missing, so a partial batch is never reported as complete.
 
 ### Preview a Core rig in the browser
 

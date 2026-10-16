@@ -110,7 +110,7 @@ public static class CoreContentAdapter
 				stage.ConfigureCoreStage(definition.DisplayName, definition.Description);
 				ManagerWave managerWave = stage.GetManagerWave();
 				if (managerWave != null && definition.FirstWaveEnemyCount.HasValue)
-					managerWave.ConfigureCoreWave(definition.FirstWaveEnemyCount.Value);
+					managerWave.ConfigureCoreWave(definition.FirstWaveEnemyCount.Value, definition.SpecialWaves);
 				return;
 			}
 		}

@@ -5,5 +5,37 @@
   "legacyId": 6,
   "displayName": "Field-Day",
   "description": "A random field where a house once stood. You've been here before. But now, you sense a presense unlike any before.",
-  "firstWaveEnemyCount": 2
+  "firstWaveEnemyCount": 2,
+  "specialWaves": [
+    {
+      "id": "target-practice",
+      "displayName": "Target Practice",
+      "minimumWave": 3,
+      "everyNthWave": 3,
+      "chance": 0.75,
+      "cooldownWaves": 2,
+      "enemyCountMultiplier": 1.0,
+      "selectionMode": "singleRandom",
+      "enemies": [
+        { "enemy": "core:enemy/zombie-1", "weight": 2.0 },
+        { "enemy": "core:enemy/fly", "weight": 1.0 },
+        { "enemy": "core:enemy/gremlin", "weight": 1.0 }
+      ]
+    },
+    {
+      "id": "mixed-drill",
+      "displayName": "Mixed Drill",
+      "minimumWave": 5,
+      "everyNthWave": 5,
+      "chance": 0.6,
+      "cooldownWaves": 4,
+      "enemyCountMultiplier": 1.25,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/zombie-grabber", "weight": 1.0 },
+        { "enemy": "core:enemy/goblin-marksman", "weight": 1.0 },
+        { "enemy": "core:enemy/sqoid", "weight": 1.0 }
+      ]
+    }
+  ]
 }

@@ -5,5 +5,38 @@
   "legacyId": 5,
   "displayName": "Furry Entertainment Robotics",
   "description": "Furry Entertainment Robotics (F.E.R) was a company that built androids for entertainment, designed for kid's parties and performances. All F.E.R facilities have been closed due to unknown reasons.",
-  "firstWaveEnemyCount": 12
+  "firstWaveEnemyCount": 12,
+  "specialWaves": [
+    {
+      "id": "animatronic-spotlight",
+      "displayName": "Animatronic Spotlight",
+      "minimumWave": 5,
+      "everyNthWave": 5,
+      "chance": 1,
+      "cooldownWaves": 4,
+      "enemyCountMultiplier": 1.0,
+      "selectionMode": "singleRandom",
+      "enemies": [
+        { "enemy": "core:enemy/abby", "appearance": "core:enemy/android", "weight": 1.0 },
+        { "enemy": "core:enemy/jenny", "appearance": "core:enemy/android", "weight": 1.0 },
+        { "enemy": "core:enemy/sunny", "appearance": "core:enemy/android", "weight": 1.0 }
+      ]
+    },
+    {
+      "id": "closing-shift",
+      "displayName": "Closing Shift",
+      "minimumWave": 8,
+      "everyNthWave": 8,
+      "chance": 0.65,
+      "cooldownWaves": 7,
+      "enemyCountMultiplier": 0.9,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/sunny", "weight": 1.0 },
+        { "enemy": "core:enemy/jenny", "weight": 1.0 },
+        { "enemy": "core:enemy/abby", "weight": 1.0 },
+        { "enemy": "core:enemy/jacky", "weight": 1.0 }
+      ]
+    }
+  ]
 }

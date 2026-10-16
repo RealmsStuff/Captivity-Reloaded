@@ -22,6 +22,7 @@ namespace CaptivityReloaded.Editor.Modding
 		private const string PlayerInteractionDirectory = "Assets/Resources/raper";
 		private const string PlayerPrefabPath = "Assets/Actors/Players/Alex.prefab";
 		private const string PlayerControllerPath = "Assets/AnimatorController/DefaultPlayer.controller";
+		private const string BetsyPrefabPath = "Assets/Actors/Npcs/Betsy.prefab";
 
 		private static readonly Dictionary<int, string> PlayerInteractionSets = new Dictionary<int, string>
 		{
@@ -40,13 +41,13 @@ namespace CaptivityReloaded.Editor.Modding
 		public static void Export()
 		{
 			CatalogDocument catalog = BuildCatalog();
-			List<EnemyAnimationSet> incomplete = catalog.Enemies
+			List<EnemyAnimationSet> incomplete = catalog.Enemies.Concat(catalog.ReferenceNpcs)
 				.Where(i_enemy => string.IsNullOrEmpty(i_enemy.Controller) || i_enemy.EnemyClips.Count == 0)
 				.ToList();
 			if (incomplete.Count > 0)
 			{
 				string message = "The Core animation catalog was not written because " + incomplete.Count
-					+ " enemy set(s) had no controller or clips. See the Console for their IDs.";
+					+ " character set(s) had no controller or clips. See the Console for their IDs.";
 				Debug.LogError("[Modding] " + message + " Missing: " + string.Join(", ", incomplete.Select(i_enemy => i_enemy.Id).ToArray()));
 				EditorUtility.DisplayDialog("Core animation export incomplete", message, "OK");
 				return;
@@ -56,9 +57,10 @@ namespace CaptivityReloaded.Editor.Modding
 			AssetDatabase.Refresh();
 			Debug.Log(string.Format(
 				CultureInfo.InvariantCulture,
-				"[Modding] Exported {0} Core enemy animation sets and {1} clip records to {2}.",
+				"[Modding] Exported {0} Core enemy animation sets, {1} reference NPC set(s), and {2} clip records to {3}.",
 				catalog.Enemies.Count,
-				catalog.Enemies.Sum(i_enemy => i_enemy.EnemyClips.Count + i_enemy.PlayerInteractionClips.Count),
+				catalog.ReferenceNpcs.Count,
+				catalog.Enemies.Concat(catalog.ReferenceNpcs).Sum(i_enemy => i_enemy.EnemyClips.Count + i_enemy.PlayerInteractionClips.Count),
 				OutputPath));
 		}
 
@@ -68,7 +70,7 @@ namespace CaptivityReloaded.Editor.Modding
 			Dictionary<int, GameObject> prefabsByLegacyId = LoadEnemyPrefabsByLegacyId();
 			CatalogDocument catalog = new CatalogDocument
 			{
-				SchemaVersion = 3,
+				SchemaVersion = 4,
 				UnityVersion = Application.unityVersion,
 				Purpose = "Experimental authoring reference. Runtime Core enemies still use their prefab Animator controllers.",
 				PlayerPreview = ExportPlayerPreview()
@@ -130,7 +132,40 @@ namespace CaptivityReloaded.Editor.Modding
 				catalog.Enemies.Add(output);
 			}
 
+			catalog.ReferenceNpcs.Add(ExportReferenceNpc(
+				"core:npc/betsy", -1, "Betsy", BetsyPrefabPath, "betsy"));
+
 			return catalog;
+		}
+
+		private static EnemyAnimationSet ExportReferenceNpc(string i_id, int i_legacyId, string i_displayName,
+			string i_prefabPath, string i_interactionSet)
+		{
+			EnemyAnimationSet output = new EnemyAnimationSet
+			{
+				Id = i_id,
+				LegacyId = i_legacyId,
+				DisplayName = i_displayName,
+				Prefab = i_prefabPath,
+				PlayerInteractionSet = i_interactionSet
+			};
+			GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(i_prefabPath);
+			Animator animator = prefab == null ? null : prefab.GetComponentsInChildren<Animator>(true)
+				.FirstOrDefault(i_animator => i_animator.runtimeAnimatorController != null);
+			if (animator == null || animator.runtimeAnimatorController == null)
+			{
+				output.Warnings.Add("The reference NPC prefab has no assigned runtime Animator controller.");
+			}
+			else
+			{
+				output.Controller = AssetDatabase.GetAssetPath(animator.runtimeAnimatorController);
+				output.States = ExportStates(animator.runtimeAnimatorController);
+				output.EnemyClips = ExportClips(animator.runtimeAnimatorController.animationClips);
+				AssignClipSemantics(output.States, output.EnemyClips);
+			}
+			output.PlayerInteractionClips = ExportClips(LoadClipsInDirectory(PlayerInteractionDirectory + "/" + i_interactionSet));
+			output.InteractionPairs = BuildInteractionPairs(output.States, output.PlayerInteractionClips);
+			return output;
 		}
 
 		private static PlayerPreviewSet ExportPlayerPreview()
@@ -494,7 +529,8 @@ namespace CaptivityReloaded.Editor.Modding
 			[JsonProperty("purpose", Order = 2)] public string Purpose;
 			[JsonProperty("playerPreview", Order = 3)] public PlayerPreviewSet PlayerPreview;
 			[JsonProperty("enemies", Order = 4)] public List<EnemyAnimationSet> Enemies = new List<EnemyAnimationSet>();
-			[JsonProperty("warnings", Order = 5)] public List<string> Warnings = new List<string>();
+			[JsonProperty("referenceNpcs", Order = 5)] public List<EnemyAnimationSet> ReferenceNpcs = new List<EnemyAnimationSet>();
+			[JsonProperty("warnings", Order = 6)] public List<string> Warnings = new List<string>();
 		}
 
 		[Serializable]

@@ -5,5 +5,37 @@
   "legacyId": 3,
   "displayName": "Jungle",
   "description": "Your helicopter has crashed in a jungle. As you gather your bearings, you look around you to figure out where you are. You can see odd creatures in the distance. They look angry...",
-  "firstWaveEnemyCount": 12
+  "firstWaveEnemyCount": 12,
+  "specialWaves": [
+    {
+      "id": "goblin-warband",
+      "displayName": "Goblin Warband",
+      "minimumWave": 5,
+      "everyNthWave": 5,
+      "chance": 0.7,
+      "cooldownWaves": 4,
+      "enemyCountMultiplier": 1.0,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/orc", "weight": 2.0 },
+        { "enemy": "core:enemy/goblin-marksman", "weight": 1.5 },
+        { "enemy": "core:enemy/goblin-trapper", "weight": 1.5 },
+        { "enemy": "core:enemy/gremlin", "weight": 1.0 }
+      ]
+    },
+    {
+      "id": "hunter-pack",
+      "displayName": "Hunter Pack",
+      "minimumWave": 7,
+      "everyNthWave": 7,
+      "chance": 0.5,
+      "cooldownWaves": 6,
+      "enemyCountMultiplier": 0.75,
+      "selectionMode": "replace",
+      "enemies": [
+        { "enemy": "core:enemy/hunter", "weight": 2.0 },
+        { "enemy": "core:enemy/death-hound", "weight": 1.0 }
+      ]
+    }
+  ]
 }

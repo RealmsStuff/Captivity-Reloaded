@@ -45,6 +45,9 @@ namespace CaptivityReloaded.Editor.Modding
 			ExportClip("Assets/Resources/Raper/sqoid/Sqoid8.anim", "core:player-animation/finisher-sqoid-8");
 			ExportClip("Assets/Resources/Raper/sunny/Sunny1.anim", "core:player-animation/finisher-sunny-1");
 			ExportClip("Assets/Resources/Raper/jacky/Jacky5.anim", "core:player-animation/finisher-jacky-5");
+			ExportClip("Assets/Resources/Raper/betsy/Betsy1.anim", "core:player-animation/finisher-betsy-1");
+			ExportClip("Assets/Resources/Raper/betsy/Betsy2.anim", "core:player-animation/finisher-betsy-2");
+			ExportClip("Assets/Resources/Raper/betsy/Betsy3.anim", "core:player-animation/finisher-betsy-3");
 			AssetDatabase.Refresh();
 			Debug.Log("[Modding] Exported normalized player rig and representative animations to " + OutputDirectory + ".");
 		}

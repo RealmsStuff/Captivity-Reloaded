@@ -9,6 +9,9 @@ public class Spawner : MonoBehaviour
 	private List<NPC> m_npcsPossibleToSpawn = new List<NPC>();
 
 	private readonly List<float> m_modNpcSelectionWeights = new List<float>();
+	private readonly List<NPC> m_waveOverrideNpcs = new List<NPC>();
+	private readonly List<float> m_waveOverrideWeights = new List<float>();
+	private bool m_hasWaveOverride;
 	private readonly List<string> m_requiredOpenDoors = new List<string>();
 	private readonly List<string> m_requiredClosedDoors = new List<string>();
 
@@ -108,17 +111,20 @@ public class Spawner : MonoBehaviour
 
 	private void Spawn()
 	{
-		EnsureModSelectionWeights();
+		List<NPC> availableNpcs = m_hasWaveOverride ? m_waveOverrideNpcs : m_npcsPossibleToSpawn;
+		List<float> availableWeights = m_hasWaveOverride ? m_waveOverrideWeights : m_modNpcSelectionWeights;
+		if (availableNpcs.Count == 0) return;
+		if (!m_hasWaveOverride) EnsureModSelectionWeights();
 		float totalWeight = 0f;
-		foreach (float weight in m_modNpcSelectionWeights) totalWeight += weight;
+		foreach (float weight in availableWeights) totalWeight += weight;
 		float roll = Random.Range(0f, totalWeight);
 		int index = 0;
-		for (; index < m_modNpcSelectionWeights.Count - 1; index++)
+		for (; index < availableWeights.Count - 1; index++)
 		{
-			roll -= m_modNpcSelectionWeights[index];
+			roll -= availableWeights[index];
 			if (roll <= 0f) break;
 		}
-		NPC nPC = Object.Instantiate(m_npcsPossibleToSpawn[index], CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetActorsParent()
+		NPC nPC = Object.Instantiate(availableNpcs[index], CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetActorsParent()
 			.transform);
 			nPC.transform.position = base.transform.position;
 			nPC.gameObject.SetActive(value: true);
@@ -160,7 +166,7 @@ public class Spawner : MonoBehaviour
 
 		public bool IsCanSpawn()
 		{
-			if (m_npcsPossibleToSpawn.Count < 1)
+			if (GetAvailableNpcCount() < 1)
 			{
 				return false;
 			}
@@ -183,7 +189,7 @@ public class Spawner : MonoBehaviour
 
 		public bool IsAvailableForWaveAllocation()
 		{
-			if (!m_isEnabled || m_npcsPossibleToSpawn.Count == 0 || !IsDoorStateReady()) return false;
+			if (!m_isEnabled || GetAvailableNpcCount() == 0 || !IsDoorStateReady()) return false;
 			ManagerWave wave = CommonReferences.Instance == null || CommonReferences.Instance.GetManagerStages() == null
 				? null : CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetManagerWave();
 			return wave != null && wave.GetNumWaveCurrent() >= m_numWaveBeforeCanSpawn;
@@ -214,6 +220,38 @@ public class Spawner : MonoBehaviour
 			m_spawnAmount = 0f;
 			if (m_coroutineSpawn != null) StopCoroutine(m_coroutineSpawn);
 			m_coroutineSpawn = null;
+		}
+
+		public void BeginSpecialWave(IReadOnlyList<NPC> i_npcs, IReadOnlyList<float> i_weights, bool i_includeOriginal)
+		{
+			m_waveOverrideNpcs.Clear();
+			m_waveOverrideWeights.Clear();
+			if (i_includeOriginal)
+			{
+				EnsureModSelectionWeights();
+				m_waveOverrideNpcs.AddRange(m_npcsPossibleToSpawn);
+				m_waveOverrideWeights.AddRange(m_modNpcSelectionWeights);
+			}
+			if (i_npcs != null)
+			{
+				for (int index = 0; index < i_npcs.Count; index++)
+				{
+					NPC npc = i_npcs[index];
+					if (npc == null) continue;
+					int existing = m_waveOverrideNpcs.IndexOf(npc);
+					float weight = i_weights != null && index < i_weights.Count ? Mathf.Max(0.001f, i_weights[index]) : 1f;
+					if (existing >= 0) m_waveOverrideWeights[existing] += weight;
+					else { m_waveOverrideNpcs.Add(npc); m_waveOverrideWeights.Add(weight); }
+				}
+			}
+			m_hasWaveOverride = m_waveOverrideNpcs.Count > 0;
+		}
+
+		public void ClearSpecialWave()
+		{
+			m_hasWaveOverride = false;
+			m_waveOverrideNpcs.Clear();
+			m_waveOverrideWeights.Clear();
 		}
 
 		public bool AddNpcVariant(NPC i_template, NPC i_variant, float i_selectionWeight = 1f)
@@ -318,6 +356,11 @@ public class Spawner : MonoBehaviour
 			if (m_modNpcSelectionWeights.Count > m_npcsPossibleToSpawn.Count)
 				m_modNpcSelectionWeights.RemoveRange(m_npcsPossibleToSpawn.Count,
 					m_modNpcSelectionWeights.Count - m_npcsPossibleToSpawn.Count);
+		}
+
+		private int GetAvailableNpcCount()
+		{
+			return m_hasWaveOverride ? m_waveOverrideNpcs.Count : m_npcsPossibleToSpawn.Count;
 		}
 
 		private void OnDrawGizmos()
