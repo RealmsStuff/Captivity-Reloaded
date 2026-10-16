@@ -50,6 +50,170 @@ namespace CaptivityReloaded.Modding
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageSpecialWaveEnemyDocument
+	{
+		[JsonProperty("enemy", Required = Required.Always)] public string Enemy { get; set; }
+		[JsonProperty("appearance")] public string Appearance { get; set; }
+		[JsonProperty("weight", Required = Required.Always)] public float Weight { get; set; }
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class StageSpecialWaveDocument
+	{
+		[JsonProperty("id", Required = Required.Always)] public string Id { get; set; }
+		[JsonProperty("displayName", Required = Required.Always)] public string DisplayName { get; set; }
+		[JsonProperty("minimumWave")] public int MinimumWave { get; set; } = 1;
+		[JsonProperty("everyNthWave")] public int EveryNthWave { get; set; }
+		[JsonProperty("chance", Required = Required.Always)] public float Chance { get; set; }
+		[JsonProperty("cooldownWaves")] public int CooldownWaves { get; set; }
+		[JsonProperty("enemyCountMultiplier")] public float EnemyCountMultiplier { get; set; } = 1f;
+		[JsonProperty("selectionMode")] public string SelectionMode { get; set; } = "replace";
+		[JsonProperty("triggerSignal")] public string TriggerSignal { get; set; }
+		[JsonProperty("enemies", Required = Required.Always)] public List<StageSpecialWaveEnemyDocument> Enemies { get; set; }
+	}
+
+	public sealed class StageSpecialWaveEnemyDefinition
+	{
+		public ContentId Enemy { get; }
+		public ContentId? Appearance { get; }
+		public float Weight { get; }
+
+		internal StageSpecialWaveEnemyDefinition(ContentId i_enemy, ContentId? i_appearance, float i_weight)
+		{
+			Enemy = i_enemy;
+			Appearance = i_appearance;
+			Weight = i_weight;
+		}
+	}
+
+	public sealed class StageSpecialWaveDefinition
+	{
+		public string Id { get; }
+		public string DisplayName { get; }
+		public int MinimumWave { get; }
+		public int EveryNthWave { get; }
+		public float Chance { get; }
+		public int CooldownWaves { get; }
+		public float EnemyCountMultiplier { get; }
+		public string SelectionMode { get; }
+		public string TriggerSignal { get; }
+		public IReadOnlyList<StageSpecialWaveEnemyDefinition> Enemies { get; }
+
+		internal StageSpecialWaveDefinition(StageSpecialWaveDocument i_document,
+			IReadOnlyList<StageSpecialWaveEnemyDefinition> i_enemies)
+		{
+			Id = i_document.Id;
+			DisplayName = i_document.DisplayName;
+			MinimumWave = i_document.MinimumWave;
+			EveryNthWave = i_document.EveryNthWave;
+			Chance = i_document.Chance;
+			CooldownWaves = i_document.CooldownWaves;
+			EnemyCountMultiplier = i_document.EnemyCountMultiplier;
+			SelectionMode = i_document.SelectionMode ?? "replace";
+			TriggerSignal = i_document.TriggerSignal ?? string.Empty;
+			Enemies = i_enemies;
+		}
+	}
+
+	public static class StageSpecialWaveParser
+	{
+		public static List<StageSpecialWaveDefinition> Validate(List<StageSpecialWaveDocument> i_documents,
+			ValidationReport io_report, string i_source, string i_codePrefix)
+		{
+			List<StageSpecialWaveDefinition> definitions = new List<StageSpecialWaveDefinition>();
+			if (i_documents == null) return definitions;
+			if (i_documents.Count > 32)
+			{
+				io_report.Add(ValidationSeverity.Error, i_codePrefix + ".limit", "specialWaves supports at most 32 entries.", i_source);
+				return definitions;
+			}
+			HashSet<string> ids = new HashSet<string>(StringComparer.Ordinal);
+			foreach (StageSpecialWaveDocument document in i_documents)
+			{
+				if (document == null)
+				{
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".null", "Special-wave entries cannot be null.", i_source);
+					continue;
+				}
+				if (!ContentId.TryParse("local:" + document.Id, out _) || document.Id.Contains("/") || !ids.Add(document.Id))
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".id", "Special-wave IDs must be unique lowercase path segments.", i_source);
+				if (string.IsNullOrWhiteSpace(document.DisplayName))
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".display-name", "A special wave requires displayName.", i_source);
+				if (document.MinimumWave < 1 || document.MinimumWave > 10000)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".minimum-wave", "minimumWave must be between 1 and 10000.", i_source);
+				if (document.EveryNthWave < 0 || document.EveryNthWave > 10000)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".every-nth-wave", "everyNthWave must be between 0 and 10000.", i_source);
+				if (!IsFinite(document.Chance) || document.Chance <= 0f || document.Chance > 1f)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".chance", "chance must be greater than 0 and at most 1.", i_source);
+				if (document.CooldownWaves < 0 || document.CooldownWaves > 10000)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".cooldown", "cooldownWaves must be between 0 and 10000.", i_source);
+				if (!IsFinite(document.EnemyCountMultiplier) || document.EnemyCountMultiplier < 0.1f || document.EnemyCountMultiplier > 10f)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".enemy-count", "enemyCountMultiplier must be between 0.1 and 10.", i_source);
+				if (document.SelectionMode != "replace" && document.SelectionMode != "add" && document.SelectionMode != "singleRandom")
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".selection-mode", "selectionMode must be replace, add, or singleRandom.", i_source);
+				if (!string.IsNullOrEmpty(document.TriggerSignal)
+					&& (!IsSimpleName(document.TriggerSignal) || document.TriggerSignal.Length > 64))
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".trigger-signal",
+						"triggerSignal must be a lowercase stage-signal name no longer than 64 characters.", i_source);
+				if (!string.IsNullOrEmpty(document.TriggerSignal) && document.EveryNthWave > 0)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".trigger-cadence",
+						"A signal-triggered special wave cannot also define everyNthWave.", i_source);
+
+				List<StageSpecialWaveEnemyDefinition> enemies = new List<StageSpecialWaveEnemyDefinition>();
+				if (document.Enemies == null || document.Enemies.Count == 0 || document.Enemies.Count > 64)
+					io_report.Add(ValidationSeverity.Error, i_codePrefix + ".enemies", "A special wave requires between 1 and 64 enemies.", i_source);
+				else
+				{
+					HashSet<ContentId> unique = new HashSet<ContentId>();
+					foreach (StageSpecialWaveEnemyDocument entry in document.Enemies)
+					{
+						if (entry == null || !ContentId.TryParse(entry.Enemy, out ContentId enemy) || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal))
+						{
+							io_report.Add(ValidationSeverity.Error, i_codePrefix + ".enemy-id", "Special-wave enemies must use enemy content IDs.", i_source);
+							continue;
+						}
+						if (!unique.Add(enemy))
+							io_report.Add(ValidationSeverity.Error, i_codePrefix + ".duplicate-enemy", "A special wave cannot contain duplicate enemy IDs: " + enemy, i_source);
+						ContentId? appearance = null;
+						if (!string.IsNullOrWhiteSpace(entry.Appearance))
+						{
+							if (!ContentId.TryParse(entry.Appearance, out ContentId appearanceId)
+								|| !appearanceId.Path.StartsWith("enemy/", StringComparison.Ordinal))
+								io_report.Add(ValidationSeverity.Error, i_codePrefix + ".appearance-id",
+									"Special-wave appearances must use enemy content IDs.", i_source);
+							else appearance = appearanceId;
+						}
+						if (!IsFinite(entry.Weight) || entry.Weight < 0.001f || entry.Weight > 1000f)
+							io_report.Add(ValidationSeverity.Error, i_codePrefix + ".enemy-weight", "Enemy weights must be between 0.001 and 1000.", i_source);
+						enemies.Add(new StageSpecialWaveEnemyDefinition(enemy, appearance, entry.Weight));
+					}
+				}
+				definitions.Add(new StageSpecialWaveDefinition(document, enemies));
+			}
+			return definitions;
+		}
+
+		private static bool IsFinite(float i_value)
+		{
+			return !float.IsNaN(i_value) && !float.IsInfinity(i_value);
+		}
+
+		private static bool IsSimpleName(string i_value)
+		{
+			if (string.IsNullOrEmpty(i_value)) return false;
+			if (!((i_value[0] >= 'a' && i_value[0] <= 'z') || i_value[0] == '_')) return false;
+			for (int index = 0; index < i_value.Length; index++)
+			{
+				char character = i_value[index];
+				if ((character >= 'a' && character <= 'z') || (character >= '0' && character <= '9')
+					|| character == '-' || character == '_') continue;
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
 	public sealed class StageAudioDefinition
 	{
 		[JsonProperty("ambience")] public string Ambience { get; set; }
@@ -155,6 +319,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("waves", Required = Required.Always)]
 		public StageWaveDefinition Waves { get; set; }
 
+		[JsonProperty("specialWaves")]
+		public List<StageSpecialWaveDocument> SpecialWaves { get; set; } = new List<StageSpecialWaveDocument>();
+
 		[JsonProperty("audio")]
 		public StageAudioDefinition Audio { get; set; }
 
@@ -215,6 +382,7 @@ namespace CaptivityReloaded.Modding
 		public string Description { get; }
 		public StageLayoutDefinition Layout { get; }
 		public StageWaveDefinition Waves { get; }
+		public IReadOnlyList<StageSpecialWaveDefinition> SpecialWaves { get; }
 		public StageAudioDefinition Audio { get; }
 		public StageCameraDefinition Camera { get; }
 		public StageTestToolsDefinition TestTools { get; }
@@ -222,7 +390,8 @@ namespace CaptivityReloaded.Modding
 		public IReadOnlyList<StageSpawnerDefinition> Spawners { get; }
 
 		internal StageDefinition(ContentId i_id, ContentId i_extends, string i_packId, string i_source,
-			StageDefinitionDocument i_document, IReadOnlyList<StageSpawnerDefinition> i_spawners)
+			StageDefinitionDocument i_document, IReadOnlyList<StageSpawnerDefinition> i_spawners,
+			IReadOnlyList<StageSpecialWaveDefinition> i_specialWaves)
 		{
 			Id = i_id;
 			Extends = i_extends;
@@ -232,6 +401,7 @@ namespace CaptivityReloaded.Modding
 			Description = i_document.Description ?? string.Empty;
 			Layout = i_document.Layout;
 			Waves = i_document.Waves;
+			SpecialWaves = i_specialWaves;
 			Audio = i_document.Audio;
 			Camera = i_document.Camera;
 			TestTools = i_document.TestTools;
@@ -288,11 +458,13 @@ namespace CaptivityReloaded.Modding
 				Error(result, "runtime-template-inheritance",
 					"The stage-independent runtime template cannot preserve inherited objects or spawners.", i_source);
 			ValidateWaves(document.Waves, result.Report, i_source);
+			List<StageSpecialWaveDefinition> specialWaves = StageSpecialWaveParser.Validate(document.SpecialWaves,
+				result.Report, i_source, "stage.special-wave");
 			ValidateAudio(document.Audio, result.Report, i_source);
 			ValidateCamera(document.Camera, result.Report, i_source);
 			ValidateTestTools(document.TestTools, result.Report, i_source);
 			List<StageSpawnerDefinition> spawners = ValidateSpawners(document.Spawners, result.Report, i_source);
-			if (result.Report.IsValid) result.Definition = new StageDefinition(id, extends, i_packId, i_source, document, spawners);
+			if (result.Report.IsValid) result.Definition = new StageDefinition(id, extends, i_packId, i_source, document, spawners, specialWaves);
 			return result;
 		}
 

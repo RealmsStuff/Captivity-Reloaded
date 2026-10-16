@@ -28,9 +28,11 @@ public class WaveHud : MonoBehaviour
 		GetComponent<Animator>().Play("ShowWaveStart");
 	}
 
-	public void ShowWaveStart(int i_numWave)
+	public void ShowWaveStart(int i_numWave, string i_specialWaveName = "")
 	{
-		m_txtsTitleWave[0].text = "Wave " + i_numWave;
+		m_txtsTitleWave[0].text = string.IsNullOrEmpty(i_specialWaveName)
+			? "Wave " + i_numWave
+			: "SPECIAL WAVE\n" + i_specialWaveName + "\nWave " + i_numWave;
 		m_txtsTitleWave[1].text = m_txtsTitleWave[0].text;
 		if (m_coroutineTimer != null)
 		{

@@ -6,6 +6,19 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-16: signal-triggered special waves and HUD identity
+
+- Added optional experimental `triggerSignal` activation for special-wave rules, connected to stage-script signals from doors, buttons, pickups, and authored sequences.
+- Signal activation replaces `everyNthWave`; minimum-wave, chance, and cooldown safeguards still apply.
+- Special waves now receive a dedicated start banner and remain identified beside the wave number until they end.
+
+### 2026-10-15: special-wave appearance variants
+
+- Added experimental stage `specialWaves` rules with temporary weighted enemy rosters and wave cadence controls.
+- Added the optional enemy-entry `appearance` field for copying sprites from an enemy with a compatible named-bone hierarchy while retaining the gameplay enemy's AI, attacks, animations, and finishers.
+- Generated appearance templates exist only for the active wave and are destroyed afterward.
+- Existing stages and special-wave entries without `appearance` are unchanged.
+
 ### 2026-10-15: positioned player climax emitters
 
 - Added the opt-in `playerAttachment.orgasmEmitter` field.

@@ -193,6 +193,63 @@ public sealed class DeveloperToolkitPanel : MonoBehaviour
 		if (m_stages.Count == 0) { GUILayout.Label("No stages are currently available."); return; }
 		foreach (Stage stage in m_stages)
 			if (stage != null && GUILayout.Button(stage.GetName())) OpenStage(stage);
+
+		GUILayout.Space(12f);
+		GUILayout.Label("Current stage special-wave testing");
+		ManagerStages manager = GetStages();
+		Stage currentStage = manager == null ? null : manager.GetStageCurrent();
+		ManagerWave wave = currentStage == null ? null : currentStage.GetManagerWave();
+		if (wave == null)
+		{
+			GUILayout.Label("The current stage has no wave manager.", GUI.skin.box);
+			return;
+		}
+		IReadOnlyList<StageSpecialWaveDefinition> specialWaves = wave.GetSpecialWaves();
+		if (specialWaves == null || specialWaves.Count == 0)
+		{
+			GUILayout.Label("The current stage has no configured special waves.", GUI.skin.box);
+			return;
+		}
+		string active = wave.GetActiveSpecialWaveId();
+		string queued = wave.GetQueuedSpecialWaveId();
+		string queuedEnemy = wave.GetQueuedSpecialWaveEnemyId();
+		GUILayout.Label("Active: " + (string.IsNullOrEmpty(active) ? "none" : active)
+			+ "    Queued: " + (string.IsNullOrEmpty(queued) ? "none" : queued)
+			+ (string.IsNullOrEmpty(queuedEnemy) ? string.Empty : " / " + queuedEnemy), GUI.skin.box);
+		foreach (StageSpecialWaveDefinition specialWave in specialWaves)
+		{
+			if (specialWave == null) continue;
+			if (!string.IsNullOrEmpty(specialWave.TriggerSignal))
+			{
+				GUILayout.Label("Signal: " + specialWave.TriggerSignal + " ("
+					+ (wave.IsSpecialWaveArmed(specialWave.Id) ? "armed" : "waiting") + ")");
+				if (GUILayout.Button("Emit test signal: " + specialWave.TriggerSignal))
+				{
+					if (wave.NotifyStageSignal(specialWave.TriggerSignal))
+						SetStatus("Emitted test signal '" + specialWave.TriggerSignal + "'.");
+					else SetStatus("No special wave accepted signal '" + specialWave.TriggerSignal + "'.");
+				}
+			}
+			if (GUILayout.Button("Force next: " + specialWave.DisplayName))
+			{
+				if (wave.QueueSpecialWave(specialWave.Id))
+					SetStatus("Queued special wave '" + specialWave.DisplayName + "' for the next wave.");
+				else SetStatus("Could not queue special wave '" + specialWave.DisplayName + "'.");
+			}
+			if (specialWave.SelectionMode != "singleRandom" || specialWave.Enemies == null) continue;
+			foreach (StageSpecialWaveEnemyDefinition enemy in specialWave.Enemies)
+			{
+				if (enemy == null) continue;
+				if (GUILayout.Button("Force next: " + specialWave.DisplayName + " / " + enemy.Enemy))
+				{
+					if (wave.QueueSpecialWaveEnemy(specialWave.Id, enemy.Enemy))
+						SetStatus("Queued '" + specialWave.DisplayName + "' with " + enemy.Enemy + ".");
+					else SetStatus("Could not queue " + enemy.Enemy + " for '" + specialWave.DisplayName + "'.");
+				}
+			}
+		}
+		GUILayout.Label("Mannequin smoke test (Sunny, Jenny, and Abby): attacks, knockdown/get-up, death, and paired QTE alignment.");
+		if (wave.GetIsWaitingForNextWave() && GUILayout.Button("Start queued wave now")) wave.SkipWaitingForNextWave();
 	}
 
 	private void RefreshRegisteredContent()

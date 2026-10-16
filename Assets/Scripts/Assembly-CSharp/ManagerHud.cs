@@ -484,13 +484,14 @@ public class ManagerHud : MonoBehaviour
 		m_txtsWaveNumber[1].gameObject.SetActive(i_isShow);
 	}
 
-	public void SetWaveNumber(int i_numWave, bool i_isHighscore)
+	public void SetWaveNumber(int i_numWave, bool i_isHighscore, string i_specialWaveName = "")
 	{
 		string text = "Wave " + i_numWave;
 		if (i_isHighscore)
 		{
 			text += " HIGHSCORE";
 		}
+		if (!string.IsNullOrEmpty(i_specialWaveName)) text += " | SPECIAL: " + i_specialWaveName;
 		m_txtsWaveNumber[0].text = text;
 		m_txtsWaveNumber[1].text = m_txtsWaveNumber[0].text;
 	}

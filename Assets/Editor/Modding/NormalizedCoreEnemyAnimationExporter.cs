@@ -15,6 +15,7 @@ namespace CaptivityReloaded.Editor.Modding
 	public static class NormalizedCoreEnemyAnimationExporter
 	{
 		private const string OutputRoot = "ModSDK/AnimationReference/NormalizedEnemies";
+		private const string ReferenceNpcOutputRoot = "ModSDK/AnimationReference/NormalizedNpcs";
 		private const string PackagedCoreOutputRoot = "Assets/Resources/Modding/Core/Content/Animations";
 		private static readonly Dictionary<string, string> BoneNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
@@ -45,7 +46,40 @@ namespace CaptivityReloaded.Editor.Modding
 		/// <summary>Refreshes every normalized Core enemy rig and animation without opening a completion dialog.</summary>
 		public static int ExportCompleteSetForAuthoring()
 		{
-			return ExportSet(true, false);
+			int written = ExportSet(true, false);
+			return written + ExportReferenceNpcsForAuthoring();
+		}
+
+		/// <summary>Exports non-combat Core NPCs for external animation authoring only.</summary>
+		public static int ExportReferenceNpcsForAuthoring()
+		{
+			CoreAnimationCatalogExporter.CatalogDocument catalog = CoreAnimationCatalogExporter.BuildCatalog();
+			int written = 0;
+			foreach (CoreAnimationCatalogExporter.EnemyAnimationSet actor in catalog.ReferenceNpcs)
+			{
+				string actorPath = Slug(actor.DisplayName ?? actor.Id);
+				Dictionary<string, string> pathMap = BuildSemanticPathMap(actor.EnemyClips);
+				WriteRig(actor, actorPath, pathMap, ReferenceNpcOutputRoot);
+				HashSet<string> exported = new HashSet<string>(StringComparer.Ordinal);
+				foreach (CoreAnimationCatalogExporter.AnimationClipRecord record in actor.EnemyClips)
+				{
+					AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(record.Asset);
+					if (clip == null) continue;
+					IEnumerable<string> semantics = record.SemanticNames.Where(IsPublicSemantic);
+					if (!semantics.Any()) semantics = new[] { "clip-" + Slug(record.Name) };
+					foreach (string semantic in semantics)
+					{
+						if (!exported.Add(semantic)) continue;
+						NormalizedEnemyAnimationDocument document = Convert(actor.Id, actorPath, semantic, clip, pathMap);
+						if (document.Tracks.Count == 0 && document.ObjectTracks.Count == 0) continue;
+						WriteAuthoringOnly(ReferenceNpcOutputRoot, actorPath, semantic, document);
+						written++;
+					}
+				}
+			}
+			AssetDatabase.Refresh();
+			Debug.Log("[Modding] Exported " + written + " normalized reference-NPC animations to " + ReferenceNpcOutputRoot + ".");
+			return written;
 		}
 
 		private static int ExportSet(bool i_includeAllSemanticClips, bool i_showDialog)
@@ -123,6 +157,17 @@ namespace CaptivityReloaded.Editor.Modding
 			string packagedDirectory = PackagedCoreOutputRoot + "/" + i_enemyPath;
 			Directory.CreateDirectory(packagedDirectory);
 			File.WriteAllText(packagedDirectory + "/" + Slug(i_semantic) + ".json", json);
+			return path;
+		}
+
+		private static string WriteAuthoringOnly(string i_outputRoot, string i_actorPath, string i_semantic,
+			NormalizedEnemyAnimationDocument i_document)
+		{
+			string directory = i_outputRoot + "/" + i_actorPath;
+			Directory.CreateDirectory(directory);
+			string path = directory + "/" + Slug(i_semantic) + ".json";
+			File.WriteAllText(path, JsonConvert.SerializeObject(i_document, Formatting.Indented,
+				new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
 			return path;
 		}
 
@@ -211,7 +256,8 @@ namespace CaptivityReloaded.Editor.Modding
 			return Slug(string.Join("-", meaningful.ToArray()));
 		}
 
-		private static void WriteRig(CoreAnimationCatalogExporter.EnemyAnimationSet i_enemy, string i_enemyPath, Dictionary<string, string> i_pathMap)
+		private static void WriteRig(CoreAnimationCatalogExporter.EnemyAnimationSet i_enemy, string i_enemyPath,
+			Dictionary<string, string> i_pathMap, string i_outputRoot = OutputRoot)
 		{
 			CoreEnemyRigReference document = new CoreEnemyRigReference
 			{
@@ -219,7 +265,7 @@ namespace CaptivityReloaded.Editor.Modding
 				Enemy = i_enemy.Id, Prefab = i_enemy.Prefab, Controller = i_enemy.Controller
 			};
 			GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(i_enemy.Prefab);
-			if (prefab == null) { document.Warnings.Add("Core prefab could not be loaded."); WriteRigFile(i_enemyPath, document); return; }
+			if (prefab == null) { document.Warnings.Add("Core prefab could not be loaded."); WriteRigFile(i_outputRoot, i_enemyPath, document); return; }
 			string[] paths = i_pathMap.Keys.ToArray();
 			List<Transform> candidates = prefab.GetComponentsInChildren<Animator>(true).Select(i_animator => i_animator.transform).ToList();
 			candidates.Add(prefab.transform);
@@ -270,7 +316,7 @@ namespace CaptivityReloaded.Editor.Modding
 					});
 				}
 			}
-			WriteRigFile(i_enemyPath, document);
+			WriteRigFile(i_outputRoot, i_enemyPath, document);
 		}
 
 		private static void AugmentPathMapWithArtwork(Transform i_sampleRoot, Dictionary<string, string> io_pathMap)
@@ -306,9 +352,9 @@ namespace CaptivityReloaded.Editor.Modding
 			}
 		}
 
-		private static void WriteRigFile(string i_enemyPath, CoreEnemyRigReference i_document)
+		private static void WriteRigFile(string i_outputRoot, string i_enemyPath, CoreEnemyRigReference i_document)
 		{
-			string directory = OutputRoot + "/" + i_enemyPath;
+			string directory = i_outputRoot + "/" + i_enemyPath;
 			Directory.CreateDirectory(directory);
 			File.WriteAllText(directory + "/rig.json", JsonConvert.SerializeObject(i_document, Formatting.Indented,
 				new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));

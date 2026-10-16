@@ -110,6 +110,36 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void MobileControls_IgnoreIdleOrPhantomGamepadPresence()
+		{
+			System.Type controller = System.Type.GetType("PlayerController, Assembly-CSharp");
+			Assert.That(controller, Is.Not.Null);
+			System.Reflection.MethodInfo method = controller.GetMethod("ShouldUseMobileInput");
+			Assert.That(method, Is.Not.Null);
+			Assert.That(method.Invoke(null, new object[] { true, false }), Is.True,
+				"Android touch controls must remain active until a physical controller is actually used.");
+			Assert.That(method.Invoke(null, new object[] { true, true }), Is.False);
+			Assert.That(method.Invoke(null, new object[] { false, false }), Is.False);
+		}
+
+		[Test]
+		public void CoreAnimationCatalog_IncludesBetsyAsReferenceNpcWithoutChangingEnemyRoster()
+		{
+			System.Type exporter = System.Type.GetType(
+				"CaptivityReloaded.Editor.Modding.CoreAnimationCatalogExporter, Assembly-CSharp-Editor");
+			Assert.That(exporter, Is.Not.Null);
+			object catalog = exporter.GetMethod("BuildCatalog").Invoke(null, null);
+			System.Type catalogType = catalog.GetType();
+			System.Collections.ICollection enemies = (System.Collections.ICollection)catalogType.GetField("Enemies").GetValue(catalog);
+			System.Collections.IEnumerable referenceNpcs = (System.Collections.IEnumerable)catalogType.GetField("ReferenceNpcs").GetValue(catalog);
+			Assert.That(enemies.Count, Is.EqualTo(21));
+			System.Collections.Generic.List<string> ids = new System.Collections.Generic.List<string>();
+			foreach (object npc in referenceNpcs)
+				ids.Add((string)npc.GetType().GetField("Id").GetValue(npc));
+			Assert.That(ids, Does.Contain("core:npc/betsy"));
+		}
+
+		[Test]
 		public void StickCircleGesture_BriefDeadzonePreservesProgress()
 		{
 			object gesture = CreateStickCircleGesture();
@@ -2230,6 +2260,16 @@ namespace CaptivityReloaded.Modding.Tests
 			CoreStageDefinition fieldDay = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/field-day"));
 			Assert.That(fieldDay.LegacyId, Is.EqualTo(6));
 			Assert.That(fieldDay.FirstWaveEnemyCount, Is.EqualTo(2));
+
+			CoreStageDefinition fer = result.CoreStages.Single(stage => stage.Id == ContentId.Parse("core:stage/furry-entertainment-robotics"));
+			Assert.That(fer.SpecialWaves, Has.Count.EqualTo(1));
+			Assert.That(fer.SpecialWaves[0].SelectionMode, Is.EqualTo("singleRandom"));
+			Assert.That(fer.SpecialWaves[0].Enemies, Has.Count.EqualTo(3));
+			Assert.That(fer.SpecialWaves[0].Enemies.Select(enemy => enemy.Enemy), Is.EquivalentTo(new[]
+			{
+				ContentId.Parse("core:enemy/sunny"), ContentId.Parse("core:enemy/jenny"),
+				ContentId.Parse("core:enemy/abby")
+			}));
 		}
 
 		[Test]
@@ -2839,6 +2879,54 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_AcceptsValidatedSpecialWaves()
+		{
+			string json = ValidStage.Replace("'spawners': [", @"'specialWaves': [{
+    'id': 'zombie-rush', 'displayName': 'Zombie Rush', 'minimumWave': 3,
+    'triggerSignal': 'security-door-opened', 'chance': 0.5, 'cooldownWaves': 2,
+    'enemyCountMultiplier': 1.25, 'selectionMode': 'singleRandom',
+    'enemies': [
+      { 'enemy': 'core:enemy/zombie-1', 'appearance': 'core:enemy/zombie-3', 'weight': 2 },
+      { 'enemy': 'core:enemy/zombie-2', 'weight': 1 }
+    ]
+  }],
+  'spawners': [");
+			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
+			Assert.That(result.Report.IsValid, Is.True);
+			Assert.That(result.Definition.SpecialWaves, Has.Count.EqualTo(1));
+			Assert.That(result.Definition.SpecialWaves[0].Id, Is.EqualTo("zombie-rush"));
+			Assert.That(result.Definition.SpecialWaves[0].EnemyCountMultiplier, Is.EqualTo(1.25f));
+			Assert.That(result.Definition.SpecialWaves[0].TriggerSignal, Is.EqualTo("security-door-opened"));
+			Assert.That(result.Definition.SpecialWaves[0].Enemies[0].Appearance,
+				Is.EqualTo(ContentId.Parse("core:enemy/zombie-3")));
+			Assert.That(result.Definition.SpecialWaves[0].Enemies.Select(entry => entry.Enemy), Is.EquivalentTo(new[]
+			{
+				ContentId.Parse("core:enemy/zombie-1"),
+				ContentId.Parse("core:enemy/zombie-2")
+			}));
+		}
+
+		[Test]
+		public void Parse_RejectsInvalidSpecialWaveRules()
+		{
+			string json = ValidStage.Replace("'spawners': [", @"'specialWaves': [{
+    'id': 'bad-wave', 'displayName': 'Bad Wave', 'chance': 0, 'everyNthWave': 5,
+    'triggerSignal': 'Bad Signal',
+    'selectionMode': 'unknown',
+    'enemies': [{ 'enemy': 'core:enemy/zombie-1', 'appearance': 'core:item/weapon/pistol', 'weight': 0 }]
+  }],
+  'spawners': [");
+			StageDefinitionLoadResult result = StageDefinitionParser.Parse(json, "example.stages", "stage.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.chance"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.selection-mode"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.appearance-id"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.enemy-weight"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.trigger-signal"), Is.True);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "stage.special-wave.trigger-cadence"), Is.True);
+		}
+
+		[Test]
 		public void Parse_AcceptsReservedStageIndependentRuntimeTemplate()
 		{
 			string json = ValidStage.Replace("\r\n", "\n").Replace("core:stage/field-day", "core:stage/mod-template")
@@ -3206,6 +3294,73 @@ namespace CaptivityReloaded.Modding.Tests
 				Assert.That((string)bridgeType.GetField("m_objectId",
 					System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
 					.GetValue(clone.GetComponentInChildren(bridgeType, true)), Is.EqualTo("int-doorbasement"));
+			}
+			finally
+			{
+				if (clone != null) Object.DestroyImmediate(clone);
+				Object.DestroyImmediate(source);
+			}
+		}
+
+		[Test]
+		public void CoreStageClone_RestoresRuntimeSpecialWaves()
+		{
+			ValidationReport report = new ValidationReport();
+			List<StageSpecialWaveDefinition> specialWaves = StageSpecialWaveParser.Validate(
+				new List<StageSpecialWaveDocument>
+				{
+					new StageSpecialWaveDocument
+					{
+						Id = "animatronic-spotlight",
+						DisplayName = "Animatronic Spotlight",
+						MinimumWave = 5,
+						TriggerSignal = "spotlight-button",
+						Chance = 1f,
+						CooldownWaves = 4,
+						Enemies = new List<StageSpecialWaveEnemyDocument>
+						{
+							new StageSpecialWaveEnemyDocument { Enemy = "core:enemy/sunny", Weight = 1f }
+						}
+					}
+				}, report, "test", "stage.special-wave");
+			Assert.That(report.IsValid, Is.True);
+
+			GameObject source = new GameObject("Core stage special-wave source");
+			GameObject clone = null;
+			try
+			{
+				System.Type stageType = System.Type.GetType("Stage, Assembly-CSharp");
+				System.Type waveType = System.Type.GetType("ManagerWave, Assembly-CSharp");
+				System.Type factoryType = System.Type.GetType("ExternalStageFactory, Assembly-CSharp");
+				Assert.That(stageType != null && waveType != null && factoryType != null, Is.True);
+				Component sourceStage = source.AddComponent(stageType);
+				Component sourceWave = source.AddComponent(waveType);
+				source.AddComponent<RuntimeContentIdentity>().Configure(
+					ContentId.Parse("core:stage/furry-entertainment-robotics"), ContentCategory.Stage);
+				waveType.GetMethod("ConfigureCoreWave").Invoke(sourceWave, new object[] { 12, specialWaves });
+				clone = Object.Instantiate(source);
+				Component cloneWave = clone.GetComponent(waveType);
+				System.Reflection.FieldInfo specialWavesField = waveType.GetField("m_specialWaves",
+					System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+				Assert.That(((System.Collections.ICollection)specialWavesField.GetValue(cloneWave)).Count, Is.Zero,
+					"Unity does not serialize the configured special-wave list into the playable clone.");
+				factoryType.GetMethod("RestoreRuntimeStageClone").Invoke(null,
+					new object[] { sourceStage, clone.GetComponent(stageType) });
+				Assert.That(((System.Collections.ICollection)specialWavesField.GetValue(cloneWave)).Count, Is.EqualTo(1));
+				Assert.That((bool)waveType.GetMethod("QueueSpecialWave").Invoke(cloneWave,
+					new object[] { "animatronic-spotlight" }), Is.True);
+				Assert.That((string)waveType.GetMethod("GetQueuedSpecialWaveId").Invoke(cloneWave, null),
+					Is.EqualTo("animatronic-spotlight"));
+				Assert.That((bool)waveType.GetMethod("QueueSpecialWaveEnemy").Invoke(cloneWave,
+					new object[] { "animatronic-spotlight", ContentId.Parse("core:enemy/sunny") }), Is.True);
+				Assert.That((string)waveType.GetMethod("GetQueuedSpecialWaveEnemyId").Invoke(cloneWave, null),
+					Is.EqualTo("core:enemy/sunny"));
+				Assert.That((bool)waveType.GetMethod("NotifyStageSignal").Invoke(cloneWave,
+					new object[] { "spotlight-button" }), Is.True);
+				Assert.That((bool)waveType.GetMethod("IsSpecialWaveArmed").Invoke(cloneWave,
+					new object[] { "animatronic-spotlight" }), Is.True);
+				Assert.That((bool)waveType.GetMethod("QueueSpecialWave").Invoke(cloneWave,
+					new object[] { "missing-wave" }), Is.False);
 			}
 			finally
 			{
