@@ -8,7 +8,7 @@ Only use properties listed for their exact object in the [enemy API reference](.
 
 - `spawn` currently contains `inheritTemplateSpawners` and optional `selectionWeight`; there is no `joinCoreSpawners` list.
 - Original enemies cannot join selected Core spawners through `spawn`; place their content ID in authored stage spawners.
-- Enemy attacks do not currently have `ragdollSeconds`. The property with that name belongs to supported Tiled interactions.
+- Only original-enemy attacks and their stages have `ragdollSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it. Tiled interactions have their own, unrelated `ragdollSeconds`.
 - `animation` does not currently have `blendSeconds`.
 - A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
 
@@ -46,7 +46,7 @@ Standalone attack delivery types are:
 - `grab`: starts that enemy's `downedFinisher` QTE on a target inside `hitRange`. Consequently, an enemy containing a grab must also define the finisher module.
 - `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, `ragdollSeconds`, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
 
-An original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, and the knockdown counts as a KO in the status cards and diary. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target.
+**Experimental:** an original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, after its damage and knockback, and the knockdown counts as a KO in the status cards and diary. A stage without its own value inherits the attack's; a projectile carries it to its impact. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target. A hit that ragdolls the player by itself, a grabbed or dead player, and a player in labor are not knocked down again.
 
 ### Enemy animation events
 

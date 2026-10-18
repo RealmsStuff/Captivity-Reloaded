@@ -195,6 +195,7 @@ Schema form: object.
 | `damage` | number | no |  | min: `0`; max: `100000` |
 | `knockbackX` | number | no |  | min: `0`; max: `1000` |
 | `knockbackY` | number | no |  | min: `0`; max: `1000` |
+| `ragdollSeconds` | number | no |  | min: `0`; max: `30` |
 | `cooldownSeconds` | number | no |  | min: `0`; max: `600` |
 | `initiateRange` | number | no |  | min: `0`; max: `1000` |
 | `hitRange` | number | no |  | min: `0`; max: `1000` |
@@ -220,6 +221,7 @@ Schema form: object.
 | `damage` | number | no |  | min: `0`; max: `100000` |
 | `knockbackX` | number | no |  | min: `0`; max: `1000` |
 | `knockbackY` | number | no |  | min: `0`; max: `1000` |
+| `ragdollSeconds` | number | no |  | min: `0`; max: `30` |
 | `hitRange` | number | no |  | min: `0`; max: `1000` |
 | `areaRadius` | number | no |  | min: `0.05`; max: `100` |
 | `offsetX` | number | no |  | min: `-1000`; max: `1000` |

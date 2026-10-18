@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-18: per-attack knockdown for original enemies
+
+- Added optional experimental `ragdollSeconds` (0–30) to original-enemy attacks and `multiStage` stages. A landed hit knocks the player down for that long and counts as a KO; stages inherit the attack's value and projectiles carry it to their impact.
+- Inherited (Core) attack overrides reject the field with `enemy.attacks.ragdoll-inherited`.
+- Attacks without `ragdollSeconds` are unchanged.
+
 ### 2026-10-16: signal-triggered special waves and HUD identity
 
 - Added optional experimental `triggerSignal` activation for special-wave rules, connected to stage-script signals from doors, buttons, pickups, and authored sequences.
