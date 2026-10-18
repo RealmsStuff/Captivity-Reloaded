@@ -75,7 +75,12 @@
     } },
     "spawn": { "type": "object", "additionalProperties": false, "required": ["inheritTemplateSpawners"], "properties": {
       "inheritTemplateSpawners": { "type": "boolean", "x-stability": "stable" },
-      "selectionWeight": { "type": "number", "minimum": 0.001, "maximum": 1000, "default": 1, "x-stability": "experimental" }
+      "selectionWeight": { "type": "number", "minimum": 0.001, "maximum": 1000, "default": 1, "x-stability": "experimental" },
+      "joinCoreSpawners": { "type": "array", "maxItems": 32, "x-stability": "experimental", "items": { "type": "object", "additionalProperties": false, "required": ["enemy"], "properties": {
+        "enemy": { "type": "string", "pattern": "^core:enemy/[a-z0-9-]+$" },
+        "selectionWeight": { "type": "number", "minimum": 0.001, "maximum": 1000, "default": 1 },
+        "minimumWave": { "type": "integer", "minimum": 0, "maximum": 10000, "default": 0 }
+      } } }
     } },
     "attack": { "type": "object", "additionalProperties": false, "properties": {
       "index": { "type": "integer", "minimum": 0, "maximum": 31 }, "id": { "$ref": "#/$defs/name" }, "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab", "multiStage"] }, "animation": { "$ref": "#/$defs/name" },

@@ -49,7 +49,7 @@ public static class ExternalEnemyFactory
 			}
 			if (!definition.Extends.HasValue)
 			{
-				BuildOriginal(definition, pack, i_library);
+				BuildOriginal(definition, pack, i_library, i_stageManager);
 				continue;
 			}
 			if (!ModLoaderRuntime.Registry.TryGet(definition.Extends.Value, out ContentRegistration baseEntry) || !(baseEntry.RuntimeAsset is NPC template))
@@ -105,10 +105,27 @@ public static class ExternalEnemyFactory
 			Debug.Log("[ModLoader] Built external enemy " + definition.Id + " from " + definition.Extends + ".");
 			if (definition.Spawn.InheritTemplateSpawners)
 				Debug.Log("[ModLoader] Added external enemy " + definition.Id + " to " + spawners + " inherited stage spawners.");
+			JoinCoreSpawners(i_stageManager, clone, definition);
 		}
 	}
 
-	private static void BuildOriginal(EnemyDefinition i_definition, ModPack i_pack, LibraryActors i_library)
+	// spawn.joinCoreSpawners: the enemy joins every stage spawner that offers the named Core enemy, as an extra
+	// weighted choice from its minimum wave, the way an inherited variant joins its template's spawners.
+	private static void JoinCoreSpawners(ManagerStages i_stageManager, NPC i_enemy, EnemyDefinition i_definition)
+	{
+		foreach (EnemySpawnJoinDefinition join in i_definition.Spawn.JoinCoreSpawners)
+		{
+			if (!ContentId.TryParse(join.Enemy, out ContentId id) || !ModLoaderRuntime.Registry.TryGet(id, out ContentRegistration entry) || !(entry.RuntimeAsset is NPC template))
+			{
+				Report("enemy.factory-join-template", "joinCoreSpawners enemy is not bound: " + join.Enemy, i_definition.Source);
+				continue;
+			}
+			int count = AddToTemplateSpawners(i_stageManager, template, i_enemy, join.SelectionWeight ?? 1f, join.MinimumWave ?? 0);
+			Debug.Log("[ModLoader] Added " + i_definition.Id + " to " + count + " stage spawners of " + join.Enemy + " from wave " + (join.MinimumWave ?? 0) + ".");
+		}
+	}
+
+	private static void BuildOriginal(EnemyDefinition i_definition, ModPack i_pack, LibraryActors i_library, ManagerStages i_stageManager)
 	{
 		if (!RuntimePngAssetLoader.TryLoad(i_pack.RootPath, i_definition.Visual.Atlas, i_definition.Id + "/atlas",
 			FilterMode.Point, ModLoaderRuntime.LastReport, "enemy.factory-atlas", "enemy.factory-atlas-decode",
@@ -274,6 +291,7 @@ public static class ExternalEnemyFactory
 		identity.Configure(i_definition.Id, ContentCategory.Enemy);
 		ModLoaderRuntime.Registry.BindRuntimeAsset(i_definition.Id, npc, ModLoaderRuntime.LastReport);
 		Debug.Log("[ModLoader] Built fully original enemy " + i_definition.Id + ".");
+		JoinCoreSpawners(i_stageManager, npc, i_definition);
 	}
 
 	private static void ConfigureDrops(NPC i_npc, EnemyDefinition i_definition)
@@ -288,7 +306,7 @@ public static class ExternalEnemyFactory
 		if (i_definition.Drops.Chance.HasValue || i_definition.Drops.Items.Count > 0) i_npc.ConfigureModDrops(i_definition.Drops.Chance, drops);
 	}
 
-	private static int AddToTemplateSpawners(ManagerStages i_stageManager, NPC i_template, NPC i_variant, float i_selectionWeight)
+	private static int AddToTemplateSpawners(ManagerStages i_stageManager, NPC i_template, NPC i_variant, float i_selectionWeight, int i_minimumWave = 0)
 	{
 		if (i_stageManager == null) return 0;
 		int count = 0;
@@ -296,7 +314,7 @@ public static class ExternalEnemyFactory
 		{
 			if (stage == null) continue;
 			foreach (Spawner spawner in stage.GetComponentsInChildren<Spawner>(true))
-				if (spawner.AddNpcVariant(i_template, i_variant, i_selectionWeight)) count++;
+				if (spawner.AddNpcVariant(i_template, i_variant, i_selectionWeight, i_minimumWave)) count++;
 		}
 		return count;
 	}

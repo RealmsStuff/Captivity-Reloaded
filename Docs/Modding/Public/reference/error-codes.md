@@ -375,6 +375,11 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.on-hit-clothing-missing` | Error | Enemy references unknown on-hit clothing:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.player-animation-ref-missing` | Error | Unknown normalized player animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.spawn-on-death-missing` | Error | Enemy references an unknown spawnOnDeath enemy:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.spawn.join-count` | Error | joinCoreSpawners accepts at most 32 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.spawn.join-duplicate` | Error | joinCoreSpawners lists  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.spawn.join-enemy` | Error | joinCoreSpawners.enemy must be a core:enemy/... ID:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.spawn.join-entry` | Error | joinCoreSpawners entries cannot be null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.spawn.join-minimum-wave` | Error | joinCoreSpawners.minimumWave must be between 0 and 10000. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.original-inherit` | Error | Original enemies cannot inherit Core template spawners; reference their ID from a stage spawner instead. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.bounty` | Error | Bounty cannot be negative. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.speed-acceleration` | Error | Acceleration must be between 0.01 and 1000. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |

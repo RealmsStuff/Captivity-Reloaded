@@ -179,6 +179,15 @@ Schema form: object.
 | --- | --- | --- | --- | --- |
 | `inheritTemplateSpawners` | boolean | yes | stable |  |
 | `selectionWeight` | number | no | experimental | min: `0.001`; max: `1000`; default: `1` |
+| `joinCoreSpawners` | array of object | no | experimental | max items: `32` |
+
+### Fields under `spawn.joinCoreSpawners[]`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `enemy` | string | yes |  | pattern: `^core:enemy/[a-z0-9-]+$` |
+| `selectionWeight` | number | no |  | min: `0.001`; max: `1000`; default: `1` |
+| `minimumWave` | integer | no |  | min: `0`; max: `10000`; default: `0` |
 
 ## Definition: `attack`
 

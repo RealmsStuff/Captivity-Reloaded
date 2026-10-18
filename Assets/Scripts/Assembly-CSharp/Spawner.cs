@@ -9,8 +9,11 @@ public class Spawner : MonoBehaviour
 	private List<NPC> m_npcsPossibleToSpawn = new List<NPC>();
 
 	private readonly List<float> m_modNpcSelectionWeights = new List<float>();
+	// Per entry, the wave from which it may be picked (Core entries and inherited variants: 0).
+	private readonly List<int> m_modNpcMinimumWaves = new List<int>();
 	private readonly List<NPC> m_waveOverrideNpcs = new List<NPC>();
 	private readonly List<float> m_waveOverrideWeights = new List<float>();
+	private readonly List<int> m_waveOverrideMinimumWaves = new List<int>();
 	private bool m_hasWaveOverride;
 	private readonly List<string> m_requiredOpenDoors = new List<string>();
 	private readonly List<string> m_requiredClosedDoors = new List<string>();
@@ -112,18 +115,12 @@ public class Spawner : MonoBehaviour
 	private void Spawn()
 	{
 		List<NPC> availableNpcs = m_hasWaveOverride ? m_waveOverrideNpcs : m_npcsPossibleToSpawn;
-		List<float> availableWeights = m_hasWaveOverride ? m_waveOverrideWeights : m_modNpcSelectionWeights;
 		if (availableNpcs.Count == 0) return;
 		if (!m_hasWaveOverride) EnsureModSelectionWeights();
-		float totalWeight = 0f;
-		foreach (float weight in availableWeights) totalWeight += weight;
-		float roll = Random.Range(0f, totalWeight);
-		int index = 0;
-		for (; index < availableWeights.Count - 1; index++)
-		{
-			roll -= availableWeights[index];
-			if (roll <= 0f) break;
-		}
+		List<float> availableWeights = m_hasWaveOverride ? m_waveOverrideWeights : m_modNpcSelectionWeights;
+		List<int> availableMinimumWaves = m_hasWaveOverride ? m_waveOverrideMinimumWaves : m_modNpcMinimumWaves;
+		ManagerWave wave = CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetManagerWave();
+		int index = SpawnSelection.Pick(availableWeights, availableMinimumWaves, wave == null ? 0 : wave.GetNumWaveCurrent(), Random.value);
 		NPC nPC = Object.Instantiate(availableNpcs[index], CommonReferences.Instance.GetManagerStages().GetStageCurrent().GetActorsParent()
 			.transform);
 			nPC.transform.position = base.transform.position;
@@ -226,11 +223,13 @@ public class Spawner : MonoBehaviour
 		{
 			m_waveOverrideNpcs.Clear();
 			m_waveOverrideWeights.Clear();
+			m_waveOverrideMinimumWaves.Clear();
 			if (i_includeOriginal)
 			{
 				EnsureModSelectionWeights();
 				m_waveOverrideNpcs.AddRange(m_npcsPossibleToSpawn);
 				m_waveOverrideWeights.AddRange(m_modNpcSelectionWeights);
+				m_waveOverrideMinimumWaves.AddRange(m_modNpcMinimumWaves);
 			}
 			if (i_npcs != null)
 			{
@@ -241,7 +240,7 @@ public class Spawner : MonoBehaviour
 					int existing = m_waveOverrideNpcs.IndexOf(npc);
 					float weight = i_weights != null && index < i_weights.Count ? Mathf.Max(0.001f, i_weights[index]) : 1f;
 					if (existing >= 0) m_waveOverrideWeights[existing] += weight;
-					else { m_waveOverrideNpcs.Add(npc); m_waveOverrideWeights.Add(weight); }
+					else { m_waveOverrideNpcs.Add(npc); m_waveOverrideWeights.Add(weight); m_waveOverrideMinimumWaves.Add(0); }
 				}
 			}
 			m_hasWaveOverride = m_waveOverrideNpcs.Count > 0;
@@ -252,9 +251,12 @@ public class Spawner : MonoBehaviour
 			m_hasWaveOverride = false;
 			m_waveOverrideNpcs.Clear();
 			m_waveOverrideWeights.Clear();
+			m_waveOverrideMinimumWaves.Clear();
 		}
 
-		public bool AddNpcVariant(NPC i_template, NPC i_variant, float i_selectionWeight = 1f)
+		// Adds i_variant as an extra choice wherever i_template is offered, weighted against the template's
+		// weight-1 entries and, with i_minimumWave, held back until that wave.
+		public bool AddNpcVariant(NPC i_template, NPC i_variant, float i_selectionWeight = 1f, int i_minimumWave = 0)
 		{
 			if (i_template == null || i_variant == null || m_npcsPossibleToSpawn.Contains(i_variant)) return false;
 			EnsureModSelectionWeights();
@@ -265,6 +267,7 @@ public class Spawner : MonoBehaviour
 				{
 					m_npcsPossibleToSpawn.Add(i_variant);
 					m_modNpcSelectionWeights.Add(Mathf.Max(0.001f, i_selectionWeight));
+					m_modNpcMinimumWaves.Add(Mathf.Max(0, i_minimumWave));
 					return true;
 				}
 			}
@@ -275,6 +278,7 @@ public class Spawner : MonoBehaviour
 		{
 			m_npcsPossibleToSpawn = i_enemies ?? new List<NPC>();
 			m_modNpcSelectionWeights.Clear();
+			m_modNpcMinimumWaves.Clear();
 			EnsureModSelectionWeights();
 			m_spawnChance01 = i_definition.SelectionWeight;
 			m_numWaveBeforeCanSpawn = i_definition.MinimumWave;
@@ -294,6 +298,8 @@ public class Spawner : MonoBehaviour
 		{
 			m_modNpcSelectionWeights.Clear();
 			m_modNpcSelectionWeights.AddRange(i_source.m_modNpcSelectionWeights);
+			m_modNpcMinimumWaves.Clear();
+			m_modNpcMinimumWaves.AddRange(i_source.m_modNpcMinimumWaves);
 			m_requiredOpenDoors.Clear();
 			m_requiredOpenDoors.AddRange(i_source.m_requiredOpenDoors);
 			m_requiredClosedDoors.Clear();
@@ -356,6 +362,9 @@ public class Spawner : MonoBehaviour
 			if (m_modNpcSelectionWeights.Count > m_npcsPossibleToSpawn.Count)
 				m_modNpcSelectionWeights.RemoveRange(m_npcsPossibleToSpawn.Count,
 					m_modNpcSelectionWeights.Count - m_npcsPossibleToSpawn.Count);
+			while (m_modNpcMinimumWaves.Count < m_npcsPossibleToSpawn.Count) m_modNpcMinimumWaves.Add(0);
+			if (m_modNpcMinimumWaves.Count > m_npcsPossibleToSpawn.Count)
+				m_modNpcMinimumWaves.RemoveRange(m_npcsPossibleToSpawn.Count, m_modNpcMinimumWaves.Count - m_npcsPossibleToSpawn.Count);
 		}
 
 		private int GetAvailableNpcCount()

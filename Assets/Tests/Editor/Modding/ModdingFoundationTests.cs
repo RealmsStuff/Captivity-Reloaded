@@ -1095,6 +1095,27 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_AcceptsJoinCoreSpawnersAndRejectsBadEntries()
+		{
+			string json = ValidEnemy.Replace("'visual': {",
+				"'spawn': { 'inheritTemplateSpawners': false, 'joinCoreSpawners': [ { 'enemy': 'core:enemy/abby', 'selectionWeight': 0.5, 'minimumWave': 4 }, { 'enemy': 'core:enemy/jacky' } ] }, 'visual': {");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.True, string.Join("\n", result.Report.Issues.Select(issue => issue.ToString())));
+			Assert.That(result.Definition.Spawn.JoinCoreSpawners.Select(join => join.Enemy), Is.EqualTo(new[] { "core:enemy/abby", "core:enemy/jacky" }));
+			Assert.That(result.Definition.Spawn.JoinCoreSpawners[0].SelectionWeight, Is.EqualTo(0.5f));
+			Assert.That(result.Definition.Spawn.JoinCoreSpawners[0].MinimumWave, Is.EqualTo(4));
+			Assert.That(result.Definition.Spawn.JoinCoreSpawners[1].MinimumWave, Is.Null);
+			Assert.That(result.Definition.Spawn.JoinCoreSpawners[1].SelectionWeight, Is.Null);
+			string Codes(string i_json) => string.Join(",", EnemyDefinitionParser.Parse(i_json, "example.enemies", "enemy.json").Report.Issues.Select(issue => issue.Code));
+			Assert.That(Codes(json.Replace("'core:enemy/jacky'", "'example.enemies:enemy/other'")), Does.Contain("enemy.spawn.join-enemy"));
+			Assert.That(Codes(json.Replace("'core:enemy/jacky'", "'core:enemy/abby'")), Does.Contain("enemy.spawn.join-duplicate"));
+			Assert.That(Codes(json.Replace("'minimumWave': 4", "'minimumWave': -1")), Does.Contain("enemy.spawn.join-minimum-wave"));
+			Assert.That(Codes(json.Replace("'selectionWeight': 0.5", "'selectionWeight': 0")), Does.Contain("enemy.stats.spawn-join-selection-weight"));
+			// An enemy without the field keeps an empty list.
+			Assert.That(EnemyDefinitionParser.Parse(ValidEnemy, "example.enemies", "enemy.json").Definition.Spawn.JoinCoreSpawners, Is.Empty);
+		}
+
+		[Test]
 		public void Parse_RejectsForeignNamespaceAndUnsafeAtlas()
 		{
 			string json = ValidEnemy

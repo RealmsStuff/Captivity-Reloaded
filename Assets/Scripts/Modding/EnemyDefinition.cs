@@ -101,6 +101,18 @@ namespace CaptivityReloaded.Modding
 
 		[JsonProperty("selectionWeight")]
 		public float? SelectionWeight { get; set; }
+
+		// Core stage spawners this enemy joins as an extra choice, named by a Core enemy they already offer.
+		[JsonProperty("joinCoreSpawners")]
+		public List<EnemySpawnJoinDefinition> JoinCoreSpawners { get; set; } = new List<EnemySpawnJoinDefinition>();
+	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemySpawnJoinDefinition
+	{
+		[JsonProperty("enemy", Required = Required.Always)] public string Enemy { get; set; }
+		[JsonProperty("selectionWeight")] public float? SelectionWeight { get; set; }
+		[JsonProperty("minimumWave")] public int? MinimumWave { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -454,7 +466,10 @@ namespace CaptivityReloaded.Modding
 		private static void ValidateGameplay(EnemyDefinitionDocument i_document, bool i_original, ValidationReport io_report, string i_source)
 		{
 			if (i_document.Spawn != null)
+			{
 				ValidateRange(i_document.Spawn.SelectionWeight, 0.001f, 1000f, "spawn-selection-weight", io_report, i_source);
+				ValidateSpawnJoins(i_document.Spawn, io_report, i_source);
+			}
 			if (i_original && i_document.Spawn != null && i_document.Spawn.InheritTemplateSpawners)
 				io_report.Add(ValidationSeverity.Error, "enemy.spawn.original-inherit", "Original enemies cannot inherit Core template spawners; reference their ID from a stage spawner instead.", i_source);
 			HashSet<int> attackIndexes = new HashSet<int>();
@@ -1142,6 +1157,26 @@ namespace CaptivityReloaded.Modding
 		}
 
 		private static bool IsFinite(float i_value) { return !float.IsNaN(i_value) && !float.IsInfinity(i_value); }
+
+		// joinCoreSpawners: each entry names a Core enemy whose stage spawners this enemy joins, with a bounded
+		// weight and minimum wave; at most 32 entries, each Core enemy once.
+		private static void ValidateSpawnJoins(EnemySpawnDefinition i_spawn, ValidationReport io_report, string i_source)
+		{
+			List<EnemySpawnJoinDefinition> joins = i_spawn.JoinCoreSpawners ?? new List<EnemySpawnJoinDefinition>();
+			if (joins.Count > 32) io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-count", "joinCoreSpawners accepts at most 32 entries.", i_source);
+			HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
+			foreach (EnemySpawnJoinDefinition join in joins)
+			{
+				if (join == null) { io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-entry", "joinCoreSpawners entries cannot be null.", i_source); continue; }
+				if (!ContentId.TryParse(join.Enemy, out ContentId enemy) || enemy.Namespace != "core" || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal))
+					io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-enemy", "joinCoreSpawners.enemy must be a core:enemy/... ID: " + join.Enemy, i_source);
+				else if (!seen.Add(enemy.ToString()))
+					io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-duplicate", "joinCoreSpawners lists " + join.Enemy + " more than once.", i_source);
+				ValidateRange(join.SelectionWeight, 0.001f, 1000f, "spawn-join-selection-weight", io_report, i_source);
+				if (join.MinimumWave.HasValue && (join.MinimumWave.Value < 0 || join.MinimumWave.Value > 10000))
+					io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-minimum-wave", "joinCoreSpawners.minimumWave must be between 0 and 10000.", i_source);
+			}
+		}
 
 		private static void ValidateRange(float? i_value, float i_min, float i_max, string i_name, ValidationReport io_report, string i_source)
 		{

@@ -6,8 +6,8 @@ Inherited enemies extend a stable Core enemy ID. They can currently override bou
 
 Only use properties listed for their exact object in the [enemy API reference](../reference/api/enemy.md). Enemy JSON is closed to unknown fields. In particular:
 
-- `spawn` currently contains `inheritTemplateSpawners` and optional `selectionWeight`; there is no `joinCoreSpawners` list.
-- Original enemies cannot join selected Core spawners through `spawn`; place their content ID in authored stage spawners.
+- `spawn` contains `inheritTemplateSpawners`, optional `selectionWeight`, and the optional experimental `joinCoreSpawners` list described under [Fully original enemies](#fully-original-enemies-experimental).
+- Original enemies join Core stage spawners only through `spawn.joinCoreSpawners`; otherwise place their content ID in authored stage spawners.
 - Enemy attacks do not currently have `ragdollSeconds`. The property with that name belongs to supported Tiled interactions.
 - `animation` does not currently have `blendSeconds`.
 - A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
@@ -81,7 +81,7 @@ The shared scheduler keeps gameplay timing in data without importing arbitrary U
 
 Reviewed standalone AI types are `groundChase`, `flyingChase`, and `holdPosition`. Chasers face and approach the player, maintain `preferredRange`, and select configured attacks; optional `retreatRange` makes them back away when the player gets too close. Flying chase uses gravity-free two-axis movement. A stationary enemy can still select attacks inside its initiate range. `reactionSeconds` bounds how often each AI makes a new decision. Ground enemies use the stage navigation graph to reach higher platforms through directed `climb` links. When pursuing a player below, they leave the platform and fall naturally instead of climbing downward. Authors should provide links in every direction that an enemy is expected to travel.
 
-Original enemies cannot set `spawn.inheritTemplateSpawners`, because there is no template whose spawn list can be inherited. Reference their full content ID from a data-driven stage spawner instead. The format remains experimental while custom rigs receive gameplay testing.
+Original enemies cannot set `spawn.inheritTemplateSpawners`, because there is no template whose spawn list can be inherited. To appear in Core stages, list the Core enemies whose spawners to join in experimental `spawn.joinCoreSpawners`: each entry names a `core:enemy/...` ID with an optional `selectionWeight` (default `1`, weighed against the spawner's existing weight-1 choices exactly as inherited variants are) and `minimumWave` (default `0`), from which the enemy may be picked there. The enemy joins every stage spawner that offers that Core enemy, wherever it is in the game; a spawner is joined once even if several of its enemies are listed. For example, `[{ "enemy": "core:enemy/abby", "minimumWave": 4 }]` puts an original enemy in Furry Entertainment Robotics' Abby spawners from wave 4. Inherited enemies may use the same field to join spawners beyond their template's. A special wave that keeps a spawner's own roster keeps each joined entry's minimum wave; one that replaces the roster does not include it. A data-driven stage spawner can still reference the enemy's full content ID directly. The format remains experimental while custom rigs receive gameplay testing.
 
 Published behavior modules currently include regeneration, low-health berserk, lifesteal, reflected `thorns` damage, `onHitRagdoll`, `onHitEquipClothing`, content-ID-based `spawnOnDeath`, and periodic `speedPulse` movement bursts. Modules are bounded and composable; inherited attack entries can separately override damage, chance, ranges, timing, knockback, and whether the enemy moves during the attack.
 

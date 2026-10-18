@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-10-18: original enemies in Core stage spawners
+
+- Added optional experimental `spawn.joinCoreSpawners`: up to 32 entries, each naming a `core:enemy/...` ID with an optional `selectionWeight` (default `1`) and `minimumWave` (default `0`). The enemy joins every stage spawner that offers that Core enemy as an extra weighted choice from its minimum wave, the way inherited variants join their template's spawners.
+- New validation codes `enemy.spawn.join-enemy`, `enemy.spawn.join-duplicate`, `enemy.spawn.join-minimum-wave` and `enemy.stats.spawn-join-selection-weight`; an entry whose Core enemy is not loaded is reported as `enemy.factory-join-template` at load.
+- Spawners pick among entries that have reached their minimum wave; Core entries and inherited variants are never gated. Enemies without the field are unchanged.
+
 ### 2026-10-16: signal-triggered special waves and HUD identity
 
 - Added optional experimental `triggerSignal` activation for special-wave rules, connected to stage-script signals from doors, buttons, pickups, and authored sequences.
