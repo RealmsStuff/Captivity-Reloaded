@@ -12,6 +12,12 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - New validation codes `enemy.spawn.join-enemy`, `enemy.spawn.join-duplicate`, `enemy.spawn.join-minimum-wave` and `enemy.stats.spawn-join-selection-weight`; an entry whose Core enemy is not loaded is reported as `enemy.factory-join-template` at load.
 - Spawners pick among entries that have reached their minimum wave; Core entries and inherited variants are never gated. Enemies without the field are unchanged.
 
+### 2026-10-18: per-attack knockdown for original enemies
+
+- Added optional experimental `ragdollSeconds` (0–30) to original-enemy attacks and `multiStage` stages. A landed hit knocks the player down for that long and counts as a KO; stages inherit the attack's value and projectiles carry it to their impact.
+- Inherited (Core) attack overrides reject the field with `enemy.attacks.ragdoll-inherited`.
+- Attacks without `ragdollSeconds` are unchanged.
+
 ### 2026-10-16: signal-triggered special waves and HUD identity
 
 - Added optional experimental `triggerSignal` activation for special-wave rules, connected to stage-script signals from doors, buttons, pickups, and authored sequences.

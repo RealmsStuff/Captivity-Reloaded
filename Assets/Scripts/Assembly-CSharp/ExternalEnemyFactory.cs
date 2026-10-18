@@ -1005,6 +1005,7 @@ public sealed class ModularEnemy : Walker
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
 		projectileObject.AddComponent<ModularEnemyProjectile>().Configure(this, damage, knockbackX, knockbackY,
+			Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f),
 			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
 	}
 
@@ -1014,13 +1015,25 @@ public sealed class ModularEnemy : Walker
 		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		ApplyProjectileHit(i_player, damage, knockbackX, knockbackY);
+		ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
 	}
 
-	public void ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY)
+	public void ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
 	{
 		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return;
+		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
 		i_player.TakeConfiguredHit(this, i_damage, i_knockbackX, i_knockbackY);
+		// Per-attack knockdown. A hit that already ragdolled the player counted its KO in TakeConfiguredHit.
+		if (i_ragdollSeconds > 0f && !wasDown && !i_player.IsDead() && !i_player.GetIsBeingRaped()
+			&& i_player.GetStateActorCurrent() != StateActor.Ragdoll && i_player.GetStatePlayerCurrent() != StatePlayer.Labor)
+		{
+			i_player.Ragdoll(i_ragdollSeconds);
+			if (i_player.GetStateActorCurrent() == StateActor.Ragdoll)
+			{
+				CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().AddStatusKO(this);
+				ManagerDB.KO(this);
+			}
+		}
 		NotifyDirectAttackHit(i_player);
 	}
 
@@ -1056,10 +1069,12 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 	private float m_damage;
 	private float m_knockbackX;
 	private float m_knockbackY;
+	private float m_ragdollSeconds;
 	private bool m_spent;
 
-	public void Configure(ModularEnemy i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_lifetime)
+	public void Configure(ModularEnemy i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime)
 	{
+		m_ragdollSeconds = i_ragdollSeconds;
 		m_owner = i_owner;
 		m_body = GetComponent<Rigidbody2D>();
 		m_damage = i_damage;
@@ -1081,7 +1096,7 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 		if (player != null)
 		{
 			m_spent = true;
-			if (m_owner != null) m_owner.ApplyProjectileHit(player, m_damage, m_knockbackX, m_knockbackY);
+			if (m_owner != null) m_owner.ApplyProjectileHit(player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds);
 			UnityEngine.Object.Destroy(gameObject);
 			return;
 		}

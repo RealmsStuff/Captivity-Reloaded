@@ -313,6 +313,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.id` | Error | Attack IDs must be unique lowercase semantic names. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.index` | Error | Inherited attack indexes must be unique values from 0 through 31. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.projectile-region` | Error | Projectile attacks require projectileRegion to reference an atlas region. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.ragdoll-inherited` | Error | ragdollSeconds is supported only on original-enemy attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.required` | Error | Original enemies require at least one attack. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.stage-events` | Error | multiStage attacks require exactly one ordered attackHit animation event per stage. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.stage-type` | Error | Each attack stage must use melee, hitscan, projectile, area, or grab. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

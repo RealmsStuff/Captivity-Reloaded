@@ -85,7 +85,7 @@
     "attack": { "type": "object", "additionalProperties": false, "properties": {
       "index": { "type": "integer", "minimum": 0, "maximum": 31 }, "id": { "$ref": "#/$defs/name" }, "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab", "multiStage"] }, "animation": { "$ref": "#/$defs/name" },
       "hitTimeSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "chance": { "type": "number", "minimum": 0, "maximum": 1 },
-      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "ragdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
       "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "initiateRange": { "type": "number", "minimum": 0, "maximum": 1000 }, "hitRange": { "type": "number", "minimum": 0, "maximum": 1000 },
       "movesDuringAttack": { "type": "boolean" }, "durationSeconds": { "type": "number", "minimum": 0.01, "maximum": 600 },
       "areaRadius": { "type": "number", "minimum": 0.05, "maximum": 100 }, "offsetX": { "type": "number", "minimum": -1000, "maximum": 1000 }, "offsetY": { "type": "number", "minimum": -1000, "maximum": 1000 },
@@ -100,7 +100,7 @@
     ] },
     "attackStage": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
       "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab"] },
-      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 },
+      "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "ragdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
       "hitRange": { "type": "number", "minimum": 0, "maximum": 1000 }, "areaRadius": { "type": "number", "minimum": 0.05, "maximum": 100 },
       "offsetX": { "type": "number", "minimum": -1000, "maximum": 1000 }, "offsetY": { "type": "number", "minimum": -1000, "maximum": 1000 },
       "projectileRegion": { "$ref": "#/$defs/name" }, "projectileSpeed": { "type": "number", "minimum": 0.05, "maximum": 1000 },

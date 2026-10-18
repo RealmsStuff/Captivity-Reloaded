@@ -127,6 +127,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("damage")] public float? Damage { get; set; }
 		[JsonProperty("knockbackX")] public float? KnockbackX { get; set; }
 		[JsonProperty("knockbackY")] public float? KnockbackY { get; set; }
+		[JsonProperty("ragdollSeconds")] public float? RagdollSeconds { get; set; }
 		[JsonProperty("cooldownSeconds")] public float? CooldownSeconds { get; set; }
 		[JsonProperty("initiateRange")] public float? InitiateRange { get; set; }
 		[JsonProperty("hitRange")] public float? HitRange { get; set; }
@@ -150,6 +151,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("damage")] public float? Damage { get; set; }
 		[JsonProperty("knockbackX")] public float? KnockbackX { get; set; }
 		[JsonProperty("knockbackY")] public float? KnockbackY { get; set; }
+		[JsonProperty("ragdollSeconds")] public float? RagdollSeconds { get; set; }
 		[JsonProperty("hitRange")] public float? HitRange { get; set; }
 		[JsonProperty("areaRadius")] public float? AreaRadius { get; set; }
 		[JsonProperty("offsetX")] public float? OffsetX { get; set; }
@@ -504,6 +506,9 @@ namespace CaptivityReloaded.Modding
 				ValidateRange(attack.Damage, 0f, 100000f, "attack-damage", io_report, i_source);
 				ValidateRange(attack.KnockbackX, 0f, 1000f, "attack-knockback-x", io_report, i_source);
 				ValidateRange(attack.KnockbackY, 0f, 1000f, "attack-knockback-y", io_report, i_source);
+				ValidateRange(attack.RagdollSeconds, 0f, 30f, "attack-ragdoll", io_report, i_source);
+				if (!i_original && attack.RagdollSeconds.HasValue)
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.ragdoll-inherited", "ragdollSeconds is supported only on original-enemy attacks.", i_source);
 				ValidateRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
 				ValidateRange(attack.InitiateRange, 0f, 1000f, "attack-initiate-range", io_report, i_source);
 				ValidateRange(attack.HitRange, 0f, 1000f, "attack-hit-range", io_report, i_source);
@@ -607,6 +612,7 @@ namespace CaptivityReloaded.Modding
 					}
 					ValidateRange(stage.OffsetX, -1000f, 1000f, "attack-stage-offset-x", io_report, i_source);
 					ValidateRange(stage.OffsetY, -1000f, 1000f, "attack-stage-offset-y", io_report, i_source);
+					ValidateRange(stage.RagdollSeconds, 0f, 30f, "attack-stage-ragdoll", io_report, i_source);
 					ValidateAttackDeliveryFields(stage.Type, stage.Damage ?? i_attack.Damage, stage.KnockbackX ?? i_attack.KnockbackX,
 						stage.KnockbackY ?? i_attack.KnockbackY, stage.HitRange ?? i_attack.HitRange, stage.AreaRadius ?? i_attack.AreaRadius,
 						stage.ProjectileRegion ?? i_attack.ProjectileRegion, stage.ProjectileSpeed ?? i_attack.ProjectileSpeed,
