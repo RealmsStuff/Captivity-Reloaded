@@ -16,3 +16,5 @@ Arbitrary Unity animation events will not be accepted from external packs. Event
 Full-frame LibreSprite animations may be explored later as an experimental visual mode. They are not the primary rig format because flattening the actor would discard the current body-part hitboxes, physics, clothing attachments, and dismemberment behavior.
 
 The raw catalog exporter is implemented under **Captivity Reloaded > Modding > Export Core Animation Catalog**. The graphical preview, normalized player-rig/animation reference exporter, Core enemy semantic rig exporter, source-versus-JSON comparison, and bounded runtime importers are implemented. The enemy rig and animation schema version 1 is frozen after review across all 21 Core enemies. The player animation format and a general Animator-controller importer remain separate future work.
+
+Standalone builds carry the normalized Core reference (every Core rig, its clips and a sprite atlas per rig) in `StreamingAssets/CoreAnimationReference`, so tools outside Unity can preview Core motion with the real art. The format is described in `ModSDK/AnimationReference/README.md` under "In game builds".

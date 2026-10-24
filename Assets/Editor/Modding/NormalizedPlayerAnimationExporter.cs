@@ -342,7 +342,7 @@ namespace CaptivityReloaded.Editor.Modding
 			return null;
 		}
 
-		private static string NormalizeBone(string i_name)
+		internal static string NormalizeBone(string i_name)
 		{
 			return i_name != null && BoneNames.TryGetValue(i_name, out string value) ? value : null;
 		}
