@@ -37,3 +37,17 @@ Semantic names and rig maps are exported for every Core enemy and have been roun
 Choose **Captivity Reloaded > Modding > Export Normalized Player Reference** to export the stable semantic player-bone hierarchy and representative player tracks. See [NORMALIZED-FORMAT.md](NORMALIZED-FORMAT.md) for the frozen names, coordinate rules, and stable-versus-experimental boundary. External normalized player and enemy animation documents are registered runtime content. Complete Core enemy exports are also packaged and registered, while the copies under this SDK remain editable authoring references. Vanilla enemies retain their original Animator controller as a compatibility fallback until attacks and specialized AI can be moved without changing gameplay.
 
 For a complete external-authoring bundle, choose **Captivity Reloaded > Modding > Export Every Core Character to DragonBones**. It exports the 21 combat enemies plus the Betsy NPC and Alex player. Betsy's normalized source is kept under `NormalizedNpcs/betsy` and is authoring-only; it does not register Betsy as a combat enemy. The DragonBones batch keeps legacy enemy folders at `DragonBonesExports/core-enemies/<enemy-id>` and places the additional actors under `npcs/betsy` and `players/alex`.
+
+## In game builds
+
+Every standalone build (Windows, Linux, macOS) carries a read-only copy of this reference in `StreamingAssets/CoreAnimationReference`, so tools outside Unity, such as an animation editor pointed at a game install, can show Core enemies and the player with their real art. **Captivity Reloaded > Modding > Export Core Animation Reference...** writes the same folder anywhere. Nothing in the game reads it.
+
+| Path | Contents |
+| --- | --- |
+| `index.json` | `"type": "coreAnimationReference"`, `formatVersion` (1), the game version, and each enemy's `id`, `rig`, `folder`, clip and sprite counts; `player` likewise. |
+| `enemies/<enemy>/rig.json` | The enemy's `enemyRigReference` from `NormalizedEnemies/<enemy>/rig.json`. |
+| `enemies/<enemy>/clips/*.json` | Its packaged normalized clips from `Assets/Resources/Modding/Core/Content/Animations/<enemy>`. |
+| `player/rig.json`, `player/clips/*.json` | The `playerRig` (`core:player-rig/alex`) and the player clips under `Normalized/`. |
+| `*/sprites.png`, `*/sprites.json` | One atlas per rig with every sprite its rig or clips name. |
+
+`sprites.json` lists each sprite by the `asset` and `name` that rigs and sprite-swap keys use, with its rectangle in `sprites.png` (`x`, `y`, `width`, `height` in pixels from the image's bottom-left, like a pack's atlas regions), its `pivotX`/`pivotY` (0..1 within that rectangle) and `pixelsPerUnit`. The player's file also maps each bone to the sprite it draws by default (`bones`). Sprites that could not be read are listed under `missing`.
