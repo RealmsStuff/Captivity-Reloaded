@@ -132,7 +132,7 @@ public class XAIWalker : XAI
 			{
 				StopCoroutine(m_coroutineWaitForClimb);
 			}
-			m_coroutineWaitForClimb = StartCoroutine(CoroutineWaitForClimb(pos));
+			m_coroutineWaitForClimb = StartCoroutine(CoroutineWaitForClimb());
 			break;
 		}
 		case NodeConnectionType.Move:
@@ -141,12 +141,17 @@ public class XAIWalker : XAI
 		}
 	}
 
-	private IEnumerator CoroutineWaitForClimb(Vector2 i_posClimb)
+	private IEnumerator CoroutineWaitForClimb()
 	{
 		yield return new WaitForSeconds(0.5f);
-		if (m_npc.GetStateActorCurrent() != StateActor.Climbing)
+		// A short climb clip can finish before this recovery delay expires. A
+		// completed attempt has already cleared the pending flag and must be left
+		// alone. If the attempt never began, cancel it so the pathfinder can retry
+		// instead of teleporting the actor vertically to the destination node and
+		// skipping intermediate ledges.
+		if (m_npc.GetStateActorCurrent() != StateActor.Climbing && m_walker.IsTryingToClimb())
 		{
-			m_npc.PlaceHeadOnPos(i_posClimb);
+			m_walker.CancelPendingClimb();
 		}
 	}
 

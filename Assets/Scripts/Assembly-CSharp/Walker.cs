@@ -324,6 +324,11 @@ public class Walker : NPC
 		return m_isTryingToClimb;
 	}
 
+	public void CancelPendingClimb()
+	{
+		m_isTryingToClimb = false;
+	}
+
 	public override void StartRape()
 	{
 		if (m_coroutineClimb != null)
