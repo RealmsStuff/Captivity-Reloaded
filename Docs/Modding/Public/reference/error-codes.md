@@ -276,6 +276,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.animation-refs.name` | Error | animationRefs keys must be semantic clip names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.attack-hit-fields` | Error | attackHit does not accept amount or impulse fields. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.base-clips` | Error | Original animation sets require idle and move clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.animation.blend-inherited` | Error | animation.blendSeconds is supported only on original enemies. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.camera-shake` | Error | cameraShake amount must be between 0 and 1. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.camera-shake-fields` | Error | cameraShake contains fields belonging to another event type. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation.clip` | Error | Clips need a semantic name, bounded duration, and 1..256 frames. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

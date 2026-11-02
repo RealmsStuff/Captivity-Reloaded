@@ -6,6 +6,15 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-02: clip and finisher phase blending
+
+- Added optional experimental `animation.blendSeconds` (0 to 1) for original enemies: each newly started clip cross-fades from the pose the enemy is drawn in. Inherited enemies reject it with `enemy.animation.blend-inherited`.
+- Added optional experimental `downedFinisher.phaseBlendSeconds` (0 to 2), which cross-fades the player's pose into each phase's player clip.
+- Added the optional experimental phase field `blendSeconds` (0 to 2). The change into that phase takes that long: the player's pose fades over it instead of `phaseBlendSeconds`, and the enemy's and participants' clips over it instead of their `animation.blendSeconds`.
+- An original enemy whose clips all come from `animationRefs` may give an `animation` object without `clips`.
+- New range checks `enemy.stats.animation-blend`, `enemy.stats.finisher-phase-blend` and `enemy.stats.finisher-phase-entry-blend`.
+- Enemies and finishers without these fields still cut between clips as before.
+
 ### 2026-10-24: Core animation reference in builds
 
 - Standalone builds now include `StreamingAssets/CoreAnimationReference`: each Core enemy's `enemyRigReference` and packaged normalized clips, the `playerRig` and its reference clips, and one sprite atlas per rig (`sprites.png` with `sprites.json`). See `ModSDK/AnimationReference/README.md`.

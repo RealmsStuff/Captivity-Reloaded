@@ -1090,6 +1090,15 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_RejectsBlendSecondsOnInheritedEnemies()
+		{
+			string json = ValidEnemy.Replace("'visual': {", "'animation': { 'blendSeconds': 0.2 }, 'visual': {");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.animation.blend-inherited"), Is.True);
+		}
+
+		[Test]
 		public void Parse_AcceptsBoundedInheritedSpawnerSelectionWeight()
 		{
 			string json = ValidEnemy.Replace("'visual': {",

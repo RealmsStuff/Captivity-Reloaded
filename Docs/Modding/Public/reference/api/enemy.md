@@ -41,13 +41,18 @@
 | --- | --- | --- | --- | --- |
 | `visual` | schema | yes |  |  |
 | `attacks` | schema | yes |  | min items: `1` |
-| `animation` | schema | no |  |  |
 
 ### Fields under `root (oneOf 2).visual`
 
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `type` | const: `originalSkeletonAtlas` | no |  |  |
+
+### Fields for `root (oneOf 2) (anyOf 1)`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `animation` | schema | yes |  |  |
 
 ## Definition: `enemyId`
 
@@ -357,6 +362,7 @@ Schema form: object.
 | `successOutcome` | ref: `finisherOutcome` | no |  |  |
 | `failureOutcome` | ref: `finisherOutcome` | no |  |  |
 | `statuses` | ref: `finisherStatuses` | no |  |  |
+| `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherStatuses`
 
@@ -402,6 +408,7 @@ Schema form: object.
 | `inputPattern` | enum: `adaptive`, `alternate`, `rotate`, `tap` | no |  |  |
 | `decayPerSecond` | number | no |  | min: `0`; max: `10000` |
 | `participantAnimations` | object map of ref: `name` | no |  | max properties: `3` |
+| `blendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherParticipant`
 
@@ -528,6 +535,7 @@ Schema form: object.
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `speedMultiplier` | number | no |  | min: `0.01`; max: `10` |
+| `blendSeconds` | number | no | experimental | min: `0`; max: `1` |
 | `clips` | object map of ref: `clip` | no |  | max properties: `32` |
 
 ## Definition: `clip`

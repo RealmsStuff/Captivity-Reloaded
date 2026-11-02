@@ -9,7 +9,7 @@ Only use properties listed for their exact object in the [enemy API reference](.
 - `spawn` contains `inheritTemplateSpawners`, optional `selectionWeight`, and the optional experimental `joinCoreSpawners` list described under [Fully original enemies](#fully-original-enemies-experimental).
 - Original enemies join Core stage spawners only through `spawn.joinCoreSpawners`; otherwise place their content ID in authored stage spawners.
 - Only original-enemy attacks and their stages have `ragdollSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it. Tiled interactions have their own, unrelated `ragdollSeconds`.
-- `animation` does not currently have `blendSeconds`.
+- Only original enemies have `animation.blendSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited enemies reject it.
 - A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
 
 These names may be reasonable future feature requests, but adding them to a document before the schema and runtime implement them invalidates the pack.
@@ -35,7 +35,9 @@ After importing from DragonBones, inspect the hierarchy before packaging. `hips`
 
 `animation.clips` contains named procedural clips. Each clip has an ordered list of frames; a frame supplies an atlas `region`, absolute local position, rotation, or scale values for any subset of bones. Sprite regions switch at the authored frame while transforms interpolate between frames. `idle` and `move` are required. Attack definitions reference another clip by name and specify the exact hit time, total duration, ranges, damage, knockback, chance, and cooldown.
 
-Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton. Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name.
+Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton. Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name. An enemy whose clips all come from `animationRefs` may still give an `animation` object (for `speedMultiplier` or `blendSeconds`) without `clips`.
+
+**Experimental:** `animation.blendSeconds` (0 to 1, default 0) cross-fades an original enemy's bones from the pose they are drawn in into each newly started clip, so switching between idle, move, attack and finisher clips does not snap. Bones the new clip does not animate fade to their rest pose. Events and sprite swaps still start on the new clip's own timeline. A ragdolled enemy gets up from its rest pose without a fade.
 
 Standalone attack delivery types are:
 
@@ -151,6 +153,8 @@ On Android, a connected gamepad takes priority after the player uses it, even wh
 For a reusable curve-based animation, put a `playerAnimation` document in a content root and replace the inline object with `"playerAnimationRef": "your.pack:player-animation/example"`. Normalized position, rotation, and scale tracks are sampled through their authored linear or Hermite curves and converted into the same safe finisher player. A reference may be used on the top-level finisher or an individual phase. Missing IDs invalidate the pack, and an entry cannot define both `playerAnimation` and `playerAnimationRef`. Runtime v1 accepts the `core:player-rig/alex` rig. See `ExampleMods/prey-green-zombie/content/stalker-restraint.player-animation.json`.
 
 For an ordered finisher, replace the single presentation with 2–8 `phases`. Each phase requires a unique `id`, its own `durationSeconds`, and an enemy `animation`; it may also provide a separate `playerAnimation`, `inputPattern`, `inputPower`, and `decayPerSecond`. The struggle meter persists between phases, while the prompt and input gesture may change. Phase animations restart at each transition, and enemy/player events use time relative to that phase. Reaching `meterMax` succeeds immediately; reaching the end of the last phase fails. Combined phase duration is capped at 300 seconds.
+
+**Experimental:** phase changes cut by default. `phaseBlendSeconds` (0 to 2) on the `downedFinisher` cross-fades the player's pose from the pose it is drawn in into each phase's player clip, the first phase included (from the game's own pose). A phase's own `blendSeconds` (0 to 2) sets how long the change into that phase takes, for two poses far apart: the player's pose cross-fades over it instead of `phaseBlendSeconds`, and the enemy's clip and any participants' clips cross-fade over it instead of their `animation.blendSeconds`. A bone whose pose turns the other way round (its scale flips sign) turns at once instead of shrinking through zero.
 
 ### Independent NPC participants
 
