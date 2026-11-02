@@ -152,6 +152,31 @@ For a reusable curve-based animation, put a `playerAnimation` document in a cont
 
 For an ordered finisher, replace the single presentation with 2–8 `phases`. Each phase requires a unique `id`, its own `durationSeconds`, and an enemy `animation`; it may also provide a separate `playerAnimation`, `inputPattern`, `inputPower`, and `decayPerSecond`. The struggle meter persists between phases, while the prompt and input gesture may change. Phase animations restart at each transition, and enemy/player events use time relative to that phase. Reaching `meterMax` succeeds immediately; reaching the end of the last phase fails. Combined phase duration is capped at 300 seconds.
 
+#### Riding the player (attachment, experimental)
+
+By default the finisher stands the enemy beside the player. A small enemy that climbs onto the player instead gives the finisher an `attachment`. While it is attached, the runtime carries the enemy's root on a frame on one of the player's bones. That frame is the bone's pivot plus `offsetX`/`offsetY` in the bone's own frame, turning with the bone. The frame's +x is the way the enemy faces and +y is up, in rig units, so enemy clips for attached phases are authored with the root at `rootX`/`rootY` in that frame. From the catch, the root eases from where the enemy was onto that point over `settleSeconds` (0 to 5, default 0.3). `followRotation` (0 to 1, default 1) sets how much the enemy turns with the bone. The usual side-by-side alignment does not run.
+
+```json
+"attachment": {
+  "target": "spine", "offsetY": 0.27, "rootX": -0.55, "rootY": -0.6, "followRotation": 1, "settleSeconds": 0.3,
+  "contacts": [
+    { "bone": "hand-left", "x": -0.045, "y": 0.065 },
+    { "bone": "foot-left", "target": "hips", "x": -0.16, "y": -0.1 }
+  ],
+  "sortingOrders": { "foot-left": 36, "head": 25 },
+  "playerSortingOrders": { "arm-right-upper": 28 }
+}
+```
+
+`contacts` keep the ends of limbs on the player whatever either clip does. Each contact names an enemy end bone (`bone`, which needs a parent and a grandparent: hand, lower arm, upper arm). It also gives a point (`x`, `y`, within 20), either in the attachment frame or, with `target`, in the frame of another player bone. After both clips are drawn, two-bone IK turns the end bone's grandparent and parent so the end sits on that point. `angle` also sets the end bone's angle in that frame. `bend` (`1` or `-1`) picks the side the elbow or knee folds to; without it, the joint keeps the side the clip bends it to. `sortingOrders` (enemy bones) and `playerSortingOrders` (player bones) interleave the two actors' sprites while the finisher runs. Valid player bone names are `hips`, `butt`, `spine`, `chest`, `neck`, `head`, `ear`, `face`, and `arm-`/`leg-` `left`/`right` `-upper`/`-lower` with `hand-` and `foot-` `left`/`right`.
+
+Each phase can change what the enemy holds for that phase:
+
+- `contacts` replaces the attachment's contacts while the phase plays. An empty list lets every limb go. A limb that starts or stops holding eases in or out over `settleSeconds`. A limb that moves to a new point eases there, and a knee or elbow whose side changes swings across instead of flipping.
+- `attached: false` lets go: the root stops following and the contacts ease off. `attached: true` holds on again. Without `attached`, a phase keeps the previous phase's state.
+
+Phases may set `attached` and `contacts` only when the finisher has an `attachment`. When the finisher ends, the enemy is released where its clip last drew it, and physics takes over from there.
+
 ### Independent NPC participants
 
 A phased `downedFinisher` may reserve up to three real secondary original-enemy instances. Each entry in `participants` defines a stable slot ID, the required enemy content ID, its join policy, ranges, pair offset, facing, and optional fallback animation. Phase-specific animations are selected through `participantAnimations` on each phase.

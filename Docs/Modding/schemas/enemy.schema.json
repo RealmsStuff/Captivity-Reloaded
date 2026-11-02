@@ -137,8 +137,25 @@
       "phases": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "$ref": "#/$defs/finisherPhase" } },
       "participants": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/finisherParticipant" } },
       "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
-      "statuses": { "$ref": "#/$defs/finisherStatuses" }
+      "statuses": { "$ref": "#/$defs/finisherStatuses" },
+      "attachment": { "$ref": "#/$defs/finisherAttachment" }
     } },
+    "finisherAttachment": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["target"], "properties": {
+      "target": { "$ref": "#/$defs/playerBone" },
+      "offsetX": { "type": "number", "minimum": -20, "maximum": 20 }, "offsetY": { "type": "number", "minimum": -20, "maximum": 20 },
+      "rootX": { "type": "number", "minimum": -20, "maximum": 20 }, "rootY": { "type": "number", "minimum": -20, "maximum": 20 },
+      "followRotation": { "type": "number", "minimum": 0, "maximum": 1 }, "settleSeconds": { "type": "number", "minimum": 0, "maximum": 5 },
+      "contacts": { "$ref": "#/$defs/finisherContacts" },
+      "sortingOrders": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "type": "integer", "minimum": -32768, "maximum": 32767 } },
+      "playerSortingOrders": { "type": "object", "propertyNames": { "$ref": "#/$defs/playerBone" }, "additionalProperties": { "type": "integer", "minimum": -32768, "maximum": 32767 } }
+    } },
+    "finisherContacts": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["bone"], "properties": {
+      "bone": { "$ref": "#/$defs/name" }, "target": { "$ref": "#/$defs/playerBone" },
+      "x": { "type": "number", "minimum": -20, "maximum": 20 }, "y": { "type": "number", "minimum": -20, "maximum": 20 },
+      "angle": { "type": "number" }, "bend": { "enum": [-1, 1] }
+    } } },
+    "playerBone": { "enum": ["hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left",
+      "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face"] },
 	"finisherStatuses": { "type": "object", "additionalProperties": false, "properties": {
 	  "active": { "$ref": "#/$defs/finisherStatusText" }, "mating": { "$ref": "#/$defs/finisherStatusText" },
 	  "infusion": { "$ref": "#/$defs/finisherStatusText" }, "succumbed": { "$ref": "#/$defs/finisherStatusText" },
@@ -157,7 +174,8 @@
       "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
       "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
       "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 },
-      "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 }
+      "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 },
+      "attached": { "type": "boolean", "x-stability": "experimental" }, "contacts": { "$ref": "#/$defs/finisherContacts", "x-stability": "experimental" }
     } },
     "finisherParticipant": { "type": "object", "additionalProperties": false, "required": ["id", "enemy"], "properties": {
       "id": { "$ref": "#/$defs/name" }, "enemy": { "$ref": "#/$defs/enemyId" },

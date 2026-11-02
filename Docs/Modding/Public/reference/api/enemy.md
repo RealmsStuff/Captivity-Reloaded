@@ -357,6 +357,40 @@ Schema form: object.
 | `successOutcome` | ref: `finisherOutcome` | no |  |  |
 | `failureOutcome` | ref: `finisherOutcome` | no |  |  |
 | `statuses` | ref: `finisherStatuses` | no |  |  |
+| `attachment` | ref: `finisherAttachment` | no |  |  |
+
+## Definition: `finisherAttachment`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `target` | ref: `playerBone` | yes |  |  |
+| `offsetX` | number | no |  | min: `-20`; max: `20` |
+| `offsetY` | number | no |  | min: `-20`; max: `20` |
+| `rootX` | number | no |  | min: `-20`; max: `20` |
+| `rootY` | number | no |  | min: `-20`; max: `20` |
+| `followRotation` | number | no |  | min: `0`; max: `1` |
+| `settleSeconds` | number | no |  | min: `0`; max: `5` |
+| `contacts` | ref: `finisherContacts` | no |  |  |
+| `sortingOrders` | object map of integer | no |  |  |
+| `playerSortingOrders` | object map of integer | no |  |  |
+
+## Definition: `finisherContacts`
+
+Schema form: array of object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+
+## Definition: `playerBone`
+
+Schema form: enum: `hips`, `butt`, `spine`, `chest`, `neck`, `head`, `arm-right-upper`, `arm-right-lower`, `hand-right`, `arm-left-upper`, `arm-left-lower`, `hand-left`, `leg-right-upper`, `leg-right-lower`, `foot-right`, `leg-left-upper`, `leg-left-lower`, `foot-left`, `ear`, `face`.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
 
 ## Definition: `finisherStatuses`
 
@@ -402,6 +436,8 @@ Schema form: object.
 | `inputPattern` | enum: `adaptive`, `alternate`, `rotate`, `tap` | no |  |  |
 | `decayPerSecond` | number | no |  | min: `0`; max: `10000` |
 | `participantAnimations` | object map of ref: `name` | no |  | max properties: `3` |
+| `attached` | boolean | no | experimental |  |
+| `contacts` | ref: `finisherContacts` | no | experimental |  |
 
 ## Definition: `finisherParticipant`
 
