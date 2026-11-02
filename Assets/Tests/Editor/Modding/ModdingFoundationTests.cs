@@ -1090,6 +1090,15 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Parse_RejectsMissAnimationOnInheritedAttacks()
+		{
+			string json = ValidEnemy.Replace("'visual': {", "'attacks': [{ 'index': 0, 'damage': 8, 'missAnimation': 'idle' }], 'visual': {");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False);
+			Assert.That(result.Report.Issues.Any(issue => issue.Code == "enemy.attacks.miss-animation-inherited"), Is.True);
+		}
+
+		[Test]
 		public void Parse_AcceptsBoundedInheritedSpawnerSelectionWeight()
 		{
 			string json = ValidEnemy.Replace("'visual': {",

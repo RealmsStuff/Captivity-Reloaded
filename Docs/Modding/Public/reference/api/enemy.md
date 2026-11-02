@@ -199,6 +199,7 @@ Schema form: object.
 | `id` | ref: `name` | no |  |  |
 | `type` | enum: `melee`, `hitscan`, `projectile`, `area`, `grab`, `multiStage` | no |  |  |
 | `animation` | ref: `name` | no |  |  |
+| `missAnimation` | ref: `name` | no | experimental |  |
 | `hitTimeSeconds` | number | no |  | min: `0`; max: `600` |
 | `chance` | number | no |  | min: `0`; max: `1` |
 | `damage` | number | no |  | min: `0`; max: `100000` |
