@@ -913,7 +913,7 @@ public sealed class ModularEnemy : Walker
 		return PerformConfiguredAttack(i_targetActor, i_definition, null, i_startCooldown);
 	}
 
-	// Whether the attack reached the player (a projectile counts once it is fired).
+	// Whether the attack's hit landed on the player (a projectile counts once it is fired).
 	private bool PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition,
 		EnemyAttackStageDefinition i_stage, bool i_startCooldown)
 	{
@@ -939,8 +939,7 @@ public sealed class ModularEnemy : Walker
 		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
 		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
-		ApplyConfiguredHit(i_player, i_definition, i_stage);
-		return true;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
 	private bool PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -962,8 +961,7 @@ public sealed class ModularEnemy : Walker
 			UnityEngine.Object.Destroy(line.gameObject, 0.15f);
 		}
 		if (Vector2.Distance(origin, target) > Resolve(i_stage?.HitRange, i_definition.HitRange, 1f)) return false;
-		ApplyConfiguredHit(i_player, i_definition, i_stage);
-		return true;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
 	private bool PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -974,8 +972,7 @@ public sealed class ModularEnemy : Walker
 		Vector2 center = GetPos() + new Vector2(x, Resolve(i_stage?.OffsetY, i_definition.OffsetY, 0f));
 		float radius = Resolve(i_stage?.AreaRadius, i_definition.AreaRadius, 1f);
 		if (Vector2.Distance(center, i_player.GetPosHips()) > radius) return false;
-		ApplyConfiguredHit(i_player, i_definition, i_stage);
-		return true;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
 	private bool PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -1032,18 +1029,20 @@ public sealed class ModularEnemy : Walker
 			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
 	}
 
-	private void ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	// Whether the hit landed. A player who can't be attacked right now takes no damage, so the attack missed.
+	private bool ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || !i_player.GetIsCanBeAttacked()) return;
+		if (i_player == null || !i_player.GetIsCanBeAttacked()) return false;
 		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
+		return ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
 	}
 
-	public void ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
+	// Whether the player took the hit.
+	public bool ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
 	{
-		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return;
+		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return false;
 		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
 		i_player.TakeConfiguredHit(this, i_damage, i_knockbackX, i_knockbackY);
 		// Per-attack knockdown. A hit that already ragdolled the player counted its KO in TakeConfiguredHit.
@@ -1058,6 +1057,7 @@ public sealed class ModularEnemy : Walker
 			}
 		}
 		NotifyDirectAttackHit(i_player);
+		return true;
 	}
 
 	private static float Resolve(float? i_stageValue, float? i_attackValue, float i_fallback)

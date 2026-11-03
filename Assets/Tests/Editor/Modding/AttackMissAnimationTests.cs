@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace CaptivityReloaded.Modding.Tests
 {
@@ -59,6 +61,46 @@ namespace CaptivityReloaded.Modding.Tests
 			EnemyDefinitionLoadResult result = Parse(Enemy.Replace(i_find, i_replace));
 			Assert.That(result.Report.IsValid, Is.False);
 			Assert.That(result.Report.Issues.Any(i_issue => i_issue.Code == "enemy.attacks.miss-animation-missing"), Is.True, Issues(result));
+		}
+
+		// The review case: the player is in range but can't be attacked right now (invulnerable).
+		// No damage lands, so the hit check must report a miss and the miss clip plays. The full melee path also needs a
+		// player skeleton for its range check, so this calls the hit step it returns directly.
+		[Test]
+		public void BlockedHit_ReportsAMiss()
+		{
+			System.Type enemyType = System.Type.GetType("ModularEnemy, Assembly-CSharp");
+			System.Type playerType = System.Type.GetType("Player, Assembly-CSharp");
+			Assert.That(enemyType, Is.Not.Null);
+			Assert.That(playerType, Is.Not.Null);
+			MethodInfo configuredHit = enemyType.GetMethod("ApplyConfiguredHit", BindingFlags.Instance | BindingFlags.NonPublic);
+			MethodInfo projectileHit = enemyType.GetMethod("ApplyProjectileHit", BindingFlags.Instance | BindingFlags.Public);
+			Assert.That(configuredHit, Is.Not.Null);
+			Assert.That(projectileHit, Is.Not.Null);
+			Assert.That(configuredHit.ReturnType, Is.EqualTo(typeof(bool)), "The melee, hitscan and area checks return whether the hit landed.");
+			Assert.That(projectileHit.ReturnType, Is.EqualTo(typeof(bool)));
+
+			EnemyDefinitionLoadResult result = Parse(Enemy);
+			Assert.That(result.Report.IsValid, Is.True, Issues(result));
+			EnemyAttackDefinition leap = result.Definition.Attacks.Single(i_attack => i_attack.Id == "leap");
+
+			GameObject enemyObject = new GameObject("miss-test enemy");
+			GameObject playerObject = new GameObject("miss-test player");
+			try
+			{
+				Component enemy = enemyObject.AddComponent(enemyType);
+				Component player = playerObject.AddComponent(playerType);
+				Assert.That((bool)playerType.GetMethod("GetIsCanBeAttacked").Invoke(player, null), Is.False,
+					"Fixture: an un-started player can't be attacked.");
+				Assert.That((bool)configuredHit.Invoke(enemy, new object[] { player, leap, null }), Is.False,
+					"A hit on a player who can't be attacked is a miss.");
+				Assert.That((bool)projectileHit.Invoke(enemy, new object[] { player, 6f, 0f, 0f, 0f }), Is.False);
+			}
+			finally
+			{
+				Object.DestroyImmediate(enemyObject);
+				Object.DestroyImmediate(playerObject);
+			}
 		}
 	}
 }
