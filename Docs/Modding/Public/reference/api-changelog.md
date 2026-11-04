@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-02: miss animations for original-enemy attacks
+
+- Added optional experimental `missAnimation` to original-enemy attacks. When the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now), that clip takes over from the same point in its timeline and the attack runs until the clip ends; the attack's cooldown starts then.
+- New validation codes `enemy.attacks.miss-animation-missing` (the clip is not one of the enemy's) and `enemy.attacks.miss-animation-inherited` (inherited Core attack overrides reject the field).
+- Attacks without `missAnimation` are unchanged.
+
 ### 2026-10-24: Core animation reference in builds
 
 - Standalone builds now include `StreamingAssets/CoreAnimationReference`: each Core enemy's `enemyRigReference` and packaged normalized clips, the `playerRig` and its reference clips, and one sprite atlas per rig (`sprites.png` with `sprites.json`). See `ModSDK/AnimationReference/README.md`.

@@ -541,6 +541,8 @@ public sealed class ModularEnemy : Walker
 	private int m_animationAttackHitsRemaining;
 	private int m_animationAttackStageIndex;
 	private bool m_animationAttackCooldownStarted;
+	// When the running attack ends: its durationSeconds, or the end of its missAnimation once that takes over.
+	private float m_animationAttackEndsAt;
 	private Path m_navigationPath;
 	private NavNode m_navigationStart;
 	private Platform m_navigationEnemyPlatform;
@@ -850,16 +852,16 @@ public sealed class ModularEnemy : Walker
 		m_modAnimation?.Play(definition.Animation, true);
 		bool eventDrivenHit = m_modAnimation != null && m_modAnimation.HasEvent(definition.Animation, "attackHit");
 		m_animationAttackHitsRemaining = eventDrivenHit ? m_modAnimation.CountEvents(definition.Animation, "attackHit") : 1;
-		float elapsed = 0f;
+		float started = Time.time;
+		m_animationAttackEndsAt = started + (definition.DurationSeconds ?? 0f);
 		if (!eventDrivenHit)
 		{
 			float hitTime = definition.HitTimeSeconds ?? 0f;
 			if (hitTime > 0f) yield return new WaitForSeconds(hitTime);
-			elapsed = hitTime;
-			PerformConfiguredAttack(i_targetActor, definition, true);
+			m_animationAttackEndsAt = Mathf.Max(m_animationAttackEndsAt, started + hitTime);
+			if (!PerformConfiguredAttack(i_targetActor, definition, true)) PlayMissAnimation(definition, hitTime);
 		}
-		float remaining = Mathf.Max(0f, (definition.DurationSeconds ?? elapsed) - elapsed);
-		if (remaining > 0f) yield return new WaitForSeconds(remaining);
+		while (Time.time < m_animationAttackEndsAt) yield return null;
 		m_attackCurrent.HandleAttackEnd();
 		m_animationAttackTarget = null;
 		m_animationAttackDefinition = null;
@@ -879,7 +881,9 @@ public sealed class ModularEnemy : Walker
 			if (m_animationAttackDefinition != null && m_animationAttackDefinition.Type == "multiStage"
 				&& m_animationAttackDefinition.Stages != null && m_animationAttackStageIndex < m_animationAttackDefinition.Stages.Count)
 				stage = m_animationAttackDefinition.Stages[m_animationAttackStageIndex++];
-			PerformConfiguredAttack(m_animationAttackTarget, m_animationAttackDefinition, stage, m_animationAttackHitsRemaining == 0);
+			EnemyAttackDefinition definition = m_animationAttackDefinition;
+			if (!PerformConfiguredAttack(m_animationAttackTarget, definition, stage, m_animationAttackHitsRemaining == 0) && stage == null)
+				PlayMissAnimation(definition, i_event.Time);
 		}
 		else if (i_event.Type == "impulse")
 		{
@@ -891,41 +895,56 @@ public sealed class ModularEnemy : Walker
 		}
 	}
 
-	private void PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition, bool i_startCooldown)
+	// The attack's hit missed: its missAnimation (a leap that lands short) takes over from the same moment, and the
+	// attack runs until that clip ends. Attacks without a missAnimation are unchanged.
+	private void PlayMissAnimation(EnemyAttackDefinition i_definition, float i_clipSeconds)
 	{
-		PerformConfiguredAttack(i_targetActor, i_definition, null, i_startCooldown);
+		if (i_definition == null || string.IsNullOrEmpty(i_definition.MissAnimation) || m_modAnimation == null || m_isDead
+			|| !m_modAnimation.HasClip(i_definition.MissAnimation)) return;
+		m_modAnimation.Play(i_definition.MissAnimation, true, i_clipSeconds);
+		// The clip it replaces may still hold the attackHit that would have started the cooldown.
+		if (!m_animationAttackCooldownStarted) { m_animationAttackCooldownStarted = true; StartAttackCooldown(); }
+		float speed = Mathf.Max(0.01f, m_definition?.Animation?.SpeedMultiplier ?? 1f);
+		m_animationAttackEndsAt = Time.time + Mathf.Max(0f, m_modAnimation.GetClipSeconds(i_definition.MissAnimation) - i_clipSeconds / speed);
 	}
 
-	private void PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition,
+	private bool PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition, bool i_startCooldown)
+	{
+		return PerformConfiguredAttack(i_targetActor, i_definition, null, i_startCooldown);
+	}
+
+	// Whether the attack's hit landed on the player (a projectile counts once it is fired).
+	private bool PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition,
 		EnemyAttackStageDefinition i_stage, bool i_startCooldown)
 	{
 		Player player = i_targetActor as Player;
 		if (i_definition == null || i_targetActor == null || player == null || m_isDead || player.IsDead()
 			|| player.GetIsBeingRaped()
-			|| player.GetStatePlayerCurrent() == StatePlayer.Labor) return;
+			|| player.GetStatePlayerCurrent() == StatePlayer.Labor) return false;
 		if (i_startCooldown && !m_animationAttackCooldownStarted)
 		{
 			m_animationAttackCooldownStarted = true;
 			StartAttackCooldown();
 		}
 		string type = i_stage == null ? i_definition.Type : i_stage.Type;
-		if (type == "hitscan") PerformHitscanAttack(player, i_definition, i_stage);
-		else if (type == "projectile") SpawnProjectileAttack(player, i_definition, i_stage);
-		else if (type == "area") PerformAreaAttack(player, i_definition, i_stage);
-		else if (type == "grab") PerformGrabAttack(player, i_definition, i_stage);
-		else PerformMeleeAttack(player, i_definition, i_stage);
+		if (type == "hitscan") return PerformHitscanAttack(player, i_definition, i_stage);
+		if (type == "projectile") { SpawnProjectileAttack(player, i_definition, i_stage); return true; }
+		if (type == "area") return PerformAreaAttack(player, i_definition, i_stage);
+		if (type == "grab") return PerformGrabAttack(player, i_definition, i_stage);
+		return PerformMeleeAttack(player, i_definition, i_stage);
 	}
 
-	private void PerformMeleeAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformMeleeAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
-		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) <= range) ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || i_player.GetStateActorCurrent() == StateActor.Ragdoll || !IsHasLineOfSightToPlayerRaycast()) return;
+		if (i_player == null || i_player.GetStateActorCurrent() == StateActor.Ragdoll || !IsHasLineOfSightToPlayerRaycast()) return false;
 		Vector2 origin = GetSkeletonActor() == null ? GetPos() : (Vector2)GetSkeletonActor().GetBoneHead().transform.position;
 		Vector2 target = i_player.GetPosHips();
 		if (ResourceContainer.Resources != null && ResourceContainer.Resources.m_lineShoot != null)
@@ -941,26 +960,27 @@ public sealed class ModularEnemy : Walker
 			line.enabled = true;
 			UnityEngine.Object.Destroy(line.gameObject, 0.15f);
 		}
-		if (Vector2.Distance(origin, target) <= Resolve(i_stage?.HitRange, i_definition.HitRange, 1f))
-			ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(origin, target) > Resolve(i_stage?.HitRange, i_definition.HitRange, 1f)) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
 		float x = Resolve(i_stage?.OffsetX, i_definition.OffsetX, 0f);
 		if (GetIsFacingLeft()) x = -x;
 		Vector2 center = GetPos() + new Vector2(x, Resolve(i_stage?.OffsetY, i_definition.OffsetY, 0f));
 		float radius = Resolve(i_stage?.AreaRadius, i_definition.AreaRadius, 1f);
-		if (Vector2.Distance(center, i_player.GetPosHips()) <= radius) ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(center, i_player.GetPosHips()) > radius) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
-		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return;
+		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
 		ModularEnemyFinisher finisher = GetComponent<ModularEnemyFinisher>();
-		if (finisher != null) finisher.TryBeginFromAttack(i_player);
+		return finisher != null && finisher.TryBeginFromAttack(i_player);
 	}
 
 	private void SpawnProjectileAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -1009,18 +1029,20 @@ public sealed class ModularEnemy : Walker
 			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
 	}
 
-	private void ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	// Whether the hit landed. A player who can't be attacked right now takes no damage, so the attack missed.
+	private bool ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || !i_player.GetIsCanBeAttacked()) return;
+		if (i_player == null || !i_player.GetIsCanBeAttacked()) return false;
 		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
+		return ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
 	}
 
-	public void ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
+	// Whether the player took the hit.
+	public bool ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
 	{
-		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return;
+		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return false;
 		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
 		i_player.TakeConfiguredHit(this, i_damage, i_knockbackX, i_knockbackY);
 		// Per-attack knockdown. A hit that already ragdolled the player counted its KO in TakeConfiguredHit.
@@ -1035,6 +1057,7 @@ public sealed class ModularEnemy : Walker
 			}
 		}
 		NotifyDirectAttackHit(i_player);
+		return true;
 	}
 
 	private static float Resolve(float? i_stageValue, float? i_attackValue, float i_fallback)
@@ -2472,6 +2495,34 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 		m_nextEffectTrigger = 0;
 		m_effectTriggerCycle = 0;
 		ResetPose();
+	}
+
+	// Starts a clip i_startSeconds (clip time) in, as if it had been playing since then: the events and effect
+	// triggers before that point are not raised.
+	public void Play(string i_clip, bool i_restart, float i_startSeconds)
+	{
+		Play(i_clip, i_restart);
+		if (m_clipName != i_clip || i_startSeconds <= 0f || !m_animation.Clips.TryGetValue(i_clip, out EnemyAnimationClipDefinition clip)) return;
+		m_started -= i_startSeconds / Mathf.Max(0.01f, m_animation.SpeedMultiplier ?? 1f);
+		List<EnemyAnimationEventDefinition> events = clip.Events;
+		while (events != null && m_eventCycle == 0 && m_nextEvent < events.Count && events[m_nextEvent].Time <= i_startSeconds)
+			if (++m_nextEvent == events.Count) { m_nextEvent = 0; m_eventCycle = 1; }
+		IReadOnlyList<NormalizedEffectTrigger> triggers = clip.NormalizedPresentation?.EffectTriggers;
+		while (triggers != null && m_effectTriggerCycle == 0 && m_nextEffectTrigger < triggers.Count && triggers[m_nextEffectTrigger].Time <= i_startSeconds)
+			if (++m_nextEffectTrigger == triggers.Count) { m_nextEffectTrigger = 0; m_effectTriggerCycle = 1; }
+	}
+
+	public bool HasClip(string i_clip)
+	{
+		if (m_animation == null) Resolve();
+		return m_animation?.Clips != null && m_animation.Clips.ContainsKey(i_clip);
+	}
+
+	// Playback length of a clip (DurationSeconds over the definition's speed multiplier), or -1.
+	public float GetClipSeconds(string i_clip)
+	{
+		if (!HasClip(i_clip)) return -1f;
+		return m_animation.Clips[i_clip].DurationSeconds / Mathf.Max(0.01f, m_animation.SpeedMultiplier ?? 1f);
 	}
 
 	public bool HasEvent(string i_clip, string i_type)
