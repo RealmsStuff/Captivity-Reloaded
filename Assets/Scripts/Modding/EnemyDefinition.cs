@@ -122,6 +122,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("id")] public string Id { get; set; }
 		[JsonProperty("type")] public string Type { get; set; }
 		[JsonProperty("animation")] public string Animation { get; set; }
+		// Original enemies: the clip that takes over at the hit when the hit misses (a leap that lands short). It
+		// continues from the same time and the attack lasts until it ends.
+		[JsonProperty("missAnimation")] public string MissAnimation { get; set; }
 		[JsonProperty("hitTimeSeconds")] public float? HitTimeSeconds { get; set; }
 		[JsonProperty("chance")] public float? Chance { get; set; }
 		[JsonProperty("damage")] public float? Damage { get; set; }
@@ -516,6 +519,8 @@ namespace CaptivityReloaded.Modding
 				ValidateRange(attack.RagdollSeconds, 0f, 30f, "attack-ragdoll", io_report, i_source);
 				if (!i_original && attack.RagdollSeconds.HasValue)
 					io_report.Add(ValidationSeverity.Error, "enemy.attacks.ragdoll-inherited", "ragdollSeconds is supported only on original-enemy attacks.", i_source);
+				if (!i_original && attack.MissAnimation != null)
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.miss-animation-inherited", "missAnimation is supported only on original-enemy attacks.", i_source);
 				ValidateRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
 				ValidateRange(attack.InitiateRange, 0f, 1000f, "attack-initiate-range", io_report, i_source);
 				ValidateRange(attack.HitRange, 0f, 1000f, "attack-hit-range", io_report, i_source);
@@ -554,6 +559,8 @@ namespace CaptivityReloaded.Modding
 				foreach (EnemyAttackDefinition attack in i_document.Attacks ?? new List<EnemyAttackDefinition>())
 				{
 					if (attack == null || string.IsNullOrWhiteSpace(attack.Animation)) continue;
+					if (attack.MissAnimation != null && (!IsSemanticName(attack.MissAnimation) || !HasAnimation(i_document, attack.MissAnimation)))
+						io_report.Add(ValidationSeverity.Error, "enemy.attacks.miss-animation-missing", "Attack references an unknown missAnimation clip: " + attack.MissAnimation, i_source);
 					if (i_document.Animation?.Clips == null || !i_document.Animation.Clips.TryGetValue(attack.Animation, out EnemyAnimationClipDefinition attackClip))
 					{
 						if (!HasAnimation(i_document, attack.Animation))

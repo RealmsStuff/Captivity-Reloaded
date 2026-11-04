@@ -9,7 +9,8 @@ Only use properties listed for their exact object in the [enemy API reference](.
 - `spawn` contains `inheritTemplateSpawners`, optional `selectionWeight`, and the optional experimental `joinCoreSpawners` list described under [Fully original enemies](#fully-original-enemies-experimental).
 - Original enemies join Core stage spawners only through `spawn.joinCoreSpawners`; otherwise place their content ID in authored stage spawners.
 - Only original-enemy attacks and their stages have `ragdollSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it. Tiled interactions have their own, unrelated `ragdollSeconds`.
-- Only original enemies have `animation.blendSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited enemies reject it.
+- Only original-enemy attacks have `missAnimation` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it.
+- `animation` does not currently have `blendSeconds`.
 - A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
 
 These names may be reasonable future feature requests, but adding them to a document before the schema and runtime implement them invalidates the pack.
@@ -49,6 +50,8 @@ Standalone attack delivery types are:
 - `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, `ragdollSeconds`, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
 
 **Experimental:** an original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, after its damage and knockback, and the knockdown counts as a KO in the status cards and diary. A stage without its own value inherits the attack's; a projectile carries it to its impact. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target. A hit that ragdolls the player by itself, a grabbed or dead player, and a player in labor are not knocked down again.
+
+**Experimental:** an original attack can name a `missAnimation`: another of the enemy's clips that takes over when the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now, such as while invulnerable: no damage lands, so it counts as a miss). The miss clip starts from the same point in its own timeline that the attack clip had reached at the hit (the `attackHit` event's time, or `hitTimeSeconds`), so a leap that misses carries on into a landing instead of finishing a catch on empty air. Events and effect triggers before that point are skipped. The attack then lasts until the miss clip ends instead of `durationSeconds`, and its cooldown starts. A grab misses when the finisher cannot start; a projectile never misses once it is fired; `multiStage` stages never switch to it. Attacks without `missAnimation` are unchanged.
 
 ### Enemy animation events
 

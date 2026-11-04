@@ -313,6 +313,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.hit-timing` | Error | Original attacks require hitTimeSeconds or an attackHit event in their animation clip. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.id` | Error | Attack IDs must be unique lowercase semantic names. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.index` | Error | Inherited attack indexes must be unique values from 0 through 31. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.miss-animation-inherited` | Error | missAnimation is supported only on original-enemy attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.miss-animation-missing` | Error | Attack references an unknown missAnimation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.projectile-region` | Error | Projectile attacks require projectileRegion to reference an atlas region. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.ragdoll-inherited` | Error | ragdollSeconds is supported only on original-enemy attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.required` | Error | Original enemies require at least one attack. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

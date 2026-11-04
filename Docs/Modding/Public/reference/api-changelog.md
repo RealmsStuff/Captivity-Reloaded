@@ -6,14 +6,11 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
-### 2026-11-02: clip and finisher phase blending
+### 2026-11-02: miss animations for original-enemy attacks
 
-- Added optional experimental `animation.blendSeconds` (0 to 1) for original enemies: each newly started clip cross-fades from the pose the enemy is drawn in. Inherited enemies reject it with `enemy.animation.blend-inherited`.
-- Added optional experimental `downedFinisher.phaseBlendSeconds` (0 to 2), which cross-fades the player's pose into each phase's player clip.
-- Added the optional experimental phase field `blendSeconds` (0 to 2). The change into that phase takes that long: the player's pose fades over it instead of `phaseBlendSeconds`, and the enemy's and participants' clips over it instead of their `animation.blendSeconds`.
-- An original enemy whose clips all come from `animationRefs` may give an `animation` object without `clips`.
-- New range checks `enemy.stats.animation-blend`, `enemy.stats.finisher-phase-blend` and `enemy.stats.finisher-phase-entry-blend`.
-- Enemies and finishers without these fields still cut between clips as before.
+- Added optional experimental `missAnimation` to original-enemy attacks. When the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now), that clip takes over from the same point in its timeline and the attack runs until the clip ends; the attack's cooldown starts then.
+- New validation codes `enemy.attacks.miss-animation-missing` (the clip is not one of the enemy's) and `enemy.attacks.miss-animation-inherited` (inherited Core attack overrides reject the field).
+- Attacks without `missAnimation` are unchanged.
 
 ### 2026-10-24: Core animation reference in builds
 
