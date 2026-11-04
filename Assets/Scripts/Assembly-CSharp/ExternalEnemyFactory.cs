@@ -1147,6 +1147,11 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private KeyCode m_keyExpected = KeyCode.A;
 	private bool m_waitForPlayerRecovery;
 	private readonly Dictionary<string, Transform> m_playerBones = new Dictionary<string, Transform>(StringComparer.Ordinal);
+	// phaseBlendSeconds: the player's pose when the current phase started, faded out into its clip.
+	private readonly Dictionary<string, Vector3> m_playerBlendPositions = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, Vector3> m_playerBlendScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_playerBlendRotations = new Dictionary<string, float>(StringComparer.Ordinal);
+	private float m_playerBlendStartedAt, m_playerBlendSeconds;
 	private readonly Dictionary<string, Vector3> m_playerBasePositions = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Vector3> m_playerBaseScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, float> m_playerBaseRotations = new Dictionary<string, float>(StringComparer.Ordinal);
@@ -1430,13 +1435,23 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_keyExpected = KeyCode.A;
 		m_directionInputReady = true;
 		m_circleGesture.Reset();
+		CapturePlayerBlend();
 		ResetPlayerPose();
 		string animation = GetCurrentPhase()?.Animation ?? m_definition.Animation;
-		m_npc.GetComponent<ModularEnemyAnimationController>()?.Play(
-			string.IsNullOrEmpty(animation) ? "finisher" : animation, true);
+		float? blend = GetCurrentPhase()?.BlendSeconds;
+		PlayPhaseClip(m_npc.GetComponent<ModularEnemyAnimationController>(), string.IsNullOrEmpty(animation) ? "finisher" : animation, blend);
 		foreach (ActiveFinisherParticipant participant in m_participants)
 			if (participant.Started && participant.Controller != null)
-				participant.Controller.Play(GetParticipantAnimation(participant.Definition), true);
+				PlayPhaseClip(participant.Controller, GetParticipantAnimation(participant.Definition), blend);
+	}
+
+	// Restarts an actor's clip for a phase, fading into it over the phase's blendSeconds when it sets one
+	// (otherwise over the actor's animation.blendSeconds).
+	private static void PlayPhaseClip(ModularEnemyAnimationController i_controller, string i_clip, float? i_blendSeconds)
+	{
+		if (i_controller == null) return;
+		if (i_blendSeconds.HasValue) i_controller.CrossFade(i_clip, i_blendSeconds.Value);
+		else i_controller.Play(i_clip, true);
 	}
 
 	private void EndFinisher(bool i_success, bool i_applyOutcome)
@@ -2037,6 +2052,45 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void UpdatePlayerAnimation()
 	{
+		ApplyPlayerAnimation();
+		ApplyPlayerBlend();
+	}
+
+	// phaseBlendSeconds (or the phase's own blendSeconds): remembers the pose the player is drawn in as a phase
+	// starts (the game's own pose for the first), so the new phase's clip fades in from it instead of cutting.
+	private void CapturePlayerBlend()
+	{
+		m_playerBlendPositions.Clear(); m_playerBlendScales.Clear(); m_playerBlendRotations.Clear();
+		m_playerBlendSeconds = GetCurrentPhase()?.BlendSeconds ?? m_definition?.PhaseBlendSeconds ?? 0f;
+		if (m_playerBlendSeconds <= 0f) return;
+		foreach (KeyValuePair<string, Transform> pair in m_playerBones)
+		{
+			if (pair.Value == null) continue;
+			m_playerBlendPositions[pair.Key] = pair.Value.localPosition;
+			m_playerBlendScales[pair.Key] = pair.Value.localScale;
+			m_playerBlendRotations[pair.Key] = pair.Value.localEulerAngles.z;
+		}
+		m_playerBlendStartedAt = Time.time;
+	}
+
+	private void ApplyPlayerBlend()
+	{
+		if (m_playerBlendRotations.Count == 0) return;
+		float weight = Mathf.SmoothStep(0f, 1f, (Time.time - m_playerBlendStartedAt) / m_playerBlendSeconds);
+		if (weight >= 1f) { m_playerBlendPositions.Clear(); m_playerBlendScales.Clear(); m_playerBlendRotations.Clear(); return; }
+		foreach (KeyValuePair<string, float> pair in m_playerBlendRotations)
+		{
+			if (!m_playerBones.TryGetValue(pair.Key, out Transform bone) || bone == null) continue;
+			Vector3 from = m_playerBlendScales[pair.Key], to = bone.localScale;
+			// A pose drawn the other way round turns at once; scaling through zero would collapse it.
+			if (Mathf.Sign(from.x) == Mathf.Sign(to.x)) bone.localScale = Vector3.Lerp(from, to, weight);
+			bone.localPosition = Vector3.Lerp(m_playerBlendPositions[pair.Key], bone.localPosition, weight);
+			bone.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(pair.Value, bone.localEulerAngles.z, weight));
+		}
+	}
+
+	private void ApplyPlayerAnimation()
+	{
 		EnemyAnimationClipDefinition clip = GetCurrentPlayerAnimation();
 		if (clip == null) return;
 		float totalElapsed = Time.time - (HasPhases() ? m_phaseStartedAt : m_startedAt);
@@ -2478,16 +2532,39 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private int m_eventCycle;
 	private int m_nextEffectTrigger;
 	private int m_effectTriggerCycle;
+	// animation.blendSeconds: the pose each bone had when the clip started, faded out over m_blendSeconds.
+	private readonly Dictionary<string, Vector3> m_blendPosition = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, Vector3> m_blendScale = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_blendRotation = new Dictionary<string, float>(StringComparer.Ordinal);
+	private float m_blendSeconds;
+	// Whether the bones hold a pose Update drew. Play resets them to the rest pose, so a second Play before
+	// the next Update (two physics steps in one frame) must keep fading from the pose that was drawn.
+	private bool m_isPoseDrawn;
 
 	public void Configure(string i_definitionId) { m_definitionId = i_definitionId; Resolve(); }
 	public string GetCurrentClipName() { return m_clipName; }
 
-	private void OnEnable() { Resolve(); CacheBones(); Play("idle", true); }
+	private void OnEnable() { Resolve(); CacheBones(); ClearBlend(); Play("idle", true); }
 
-	public void Play(string i_clip, bool i_restart = false)
+	public void Play(string i_clip, bool i_restart = false) { StartClip(i_clip, i_restart, null); }
+
+	// Restarts a clip, fading into it from the pose drawn now over i_blendSeconds instead of animation.blendSeconds.
+	public void CrossFade(string i_clip, float i_blendSeconds) { StartClip(i_clip, true, i_blendSeconds); }
+
+	private void StartClip(string i_clip, bool i_restart, float? i_blendSeconds)
 	{
 		if (!i_restart && m_clipName == i_clip) return;
 		if (m_animation?.Clips == null || !m_animation.Clips.ContainsKey(i_clip)) return;
+		m_blendSeconds = string.IsNullOrEmpty(m_clipName) ? 0f : i_blendSeconds ?? m_animation.BlendSeconds ?? 0f;
+		if (m_blendSeconds <= 0f) { m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear(); }
+		else if (m_isPoseDrawn)
+			foreach (KeyValuePair<string, Transform> pair in m_bones)
+			{
+				m_blendPosition[pair.Key] = pair.Value.localPosition;
+				m_blendScale[pair.Key] = pair.Value.localScale;
+				m_blendRotation[pair.Key] = pair.Value.localEulerAngles.z;
+			}
+		m_isPoseDrawn = false;
 		m_clipName = i_clip;
 		m_started = Time.time;
 		m_nextEvent = 0;
@@ -2495,6 +2572,20 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 		m_nextEffectTrigger = 0;
 		m_effectTriggerCycle = 0;
 		ResetPose();
+		// Until Update draws the new clip, keep showing the pose it fades from rather than the rest pose.
+		foreach (KeyValuePair<string, float> pair in m_blendRotation)
+		{
+			if (!m_bones.TryGetValue(pair.Key, out Transform bone) || bone == null) continue;
+			bone.localPosition = m_blendPosition[pair.Key];
+			bone.localScale = m_blendScale[pair.Key];
+			bone.localRotation = Quaternion.Euler(0f, 0f, pair.Value);
+		}
+	}
+
+	private void ClearBlend()
+	{
+		m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear();
+		m_isPoseDrawn = false;
 	}
 
 	// Starts a clip i_startSeconds (clip time) in, as if it had been playing since then: the events and effect
@@ -2542,7 +2633,8 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private void Update()
 	{
 		NPC owner = GetComponent<NPC>();
-		if (owner != null && owner.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		// Physics owns the bones while ragdolled; getting up starts from the rest pose rather than fading from a stale one.
+		if (owner != null && owner.GetStateActorCurrent() == StateActor.Ragdoll) { ClearBlend(); return; }
 		if (m_animation?.Clips == null || string.IsNullOrEmpty(m_clipName) || !m_animation.Clips.TryGetValue(m_clipName, out EnemyAnimationClipDefinition clip)) return;
 		float elapsed = (Time.time - m_started) * (m_animation.SpeedMultiplier ?? 1f);
 		ApplyEvents(clip, elapsed, owner);
@@ -2584,6 +2676,28 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 				visual.color = Color.Lerp(colorA, colorB, blend);
 				visual.sortingOrder = Mathf.RoundToInt(Mathf.Lerp(a.RuntimeSortingOrder ?? m_baseSortingOrders[bone], b.RuntimeSortingOrder ?? m_baseSortingOrders[bone], blend));
 			}
+		}
+		ApplyBlendIn(animated);
+		m_isPoseDrawn = true;
+	}
+
+	// Fades from the pose captured when the clip started into the clip; bones the clip does not animate
+	// fade into their rest pose.
+	private void ApplyBlendIn(HashSet<string> i_animated)
+	{
+		if (m_blendSeconds <= 0f || m_blendRotation.Count == 0) return;
+		float weight = Mathf.SmoothStep(0f, 1f, (Time.time - m_started) / m_blendSeconds);
+		if (weight >= 1f) { m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear(); return; }
+		foreach (KeyValuePair<string, float> pair in m_blendRotation)
+		{
+			if (!m_bones.TryGetValue(pair.Key, out Transform target) || target == null) continue;
+			bool animated = i_animated.Contains(pair.Key);
+			Vector3 position = animated ? target.localPosition : m_basePosition[pair.Key];
+			Vector3 scale = animated ? target.localScale : m_baseScale[pair.Key];
+			float rotation = animated ? target.localEulerAngles.z : m_baseRotation[pair.Key];
+			target.localPosition = Vector3.Lerp(m_blendPosition[pair.Key], position, weight);
+			target.localScale = Vector3.Lerp(m_blendScale[pair.Key], scale, weight);
+			target.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(pair.Value, rotation, weight));
 		}
 	}
 

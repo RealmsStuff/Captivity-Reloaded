@@ -34,11 +34,10 @@
     {
       "not": { "required": ["extends"] },
       "required": ["stats", "visual", "ai", "attacks"],
-	  "anyOf": [{ "required": ["animation"] }, { "required": ["animationRefs"] }],
+	  "anyOf": [{ "required": ["animation"], "properties": { "animation": { "required": ["clips"] } } }, { "required": ["animationRefs"] }],
       "properties": {
         "visual": { "required": ["bones", "hitZones", "bodyWidth", "bodyHeight"], "properties": { "type": { "const": "originalSkeletonAtlas" } } },
-        "attacks": { "minItems": 1, "items": { "required": ["id", "type", "animation", "chance", "damage", "cooldownSeconds", "initiateRange", "hitRange", "durationSeconds"] } },
-        "animation": { "required": ["clips"] }
+        "attacks": { "minItems": 1, "items": { "required": ["id", "type", "animation", "chance", "damage", "cooldownSeconds", "initiateRange", "hitRange", "durationSeconds"] } }
       }
     }
   ],
@@ -138,7 +137,8 @@
       "phases": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "$ref": "#/$defs/finisherPhase" } },
       "participants": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/finisherParticipant" } },
       "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
-      "statuses": { "$ref": "#/$defs/finisherStatuses" }
+      "statuses": { "$ref": "#/$defs/finisherStatuses" },
+      "phaseBlendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" }
     } },
 	"finisherStatuses": { "type": "object", "additionalProperties": false, "properties": {
 	  "active": { "$ref": "#/$defs/finisherStatusText" }, "mating": { "$ref": "#/$defs/finisherStatusText" },
@@ -158,7 +158,8 @@
       "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
       "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
       "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 },
-      "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 }
+      "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 },
+      "blendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" }
     } },
     "finisherParticipant": { "type": "object", "additionalProperties": false, "required": ["id", "enemy"], "properties": {
       "id": { "$ref": "#/$defs/name" }, "enemy": { "$ref": "#/$defs/enemyId" },
@@ -204,6 +205,7 @@
     } },
     "animation": { "type": "object", "additionalProperties": false, "properties": {
       "speedMultiplier": { "type": "number", "minimum": 0.01, "maximum": 10 },
+      "blendSeconds": { "type": "number", "minimum": 0, "maximum": 1, "x-stability": "experimental" },
       "clips": { "type": "object", "maxProperties": 32, "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/clip" } }
     } },
     "clip": { "type": "object", "additionalProperties": false, "required": ["durationSeconds", "frames"], "properties": {
