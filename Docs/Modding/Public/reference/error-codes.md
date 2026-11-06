@@ -325,6 +325,13 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.unexpected-stages` | Error | Only multiStage attacks may define stages. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.weight-total` | Error | At least one attack must have a selection weight greater than zero. | `Assets/Scripts/Modding/EnemyAttackAuthoring.cs` |
 | `enemy.behavior.finisher-animation` | Error | downedFinisher animation must be a semantic clip name. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-attachment-phase` | Error | Finisher phase  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-attachment-player-sorting` | Error | Finisher attachment playerSortingOrders names an unknown player bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-attachment-sorting` | Error | Finisher attachment sortingOrders names an unknown bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-attachment-target` | Error | Finisher attachment target must be a player bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-contact-bone` | Error | Each finisher contact needs a distinct enemy bone with a parent and grandparent:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-contact-target` | Error | Finisher contact target must be a player bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-contact-value` | Error | Finisher contact  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-draft` | Error | The starter finisher requires the DragonBones project and paired-player draft options. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |
 | `enemy.behavior.finisher-original` | Error | downedFinisher is currently supported only by fully original enemies. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-participant-animation` | Error | Participant animation must be a semantic clip name. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

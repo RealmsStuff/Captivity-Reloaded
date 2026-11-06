@@ -207,6 +207,47 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("successOutcome")] public EnemyFinisherOutcomeDefinition SuccessOutcome { get; set; }
 		[JsonProperty("failureOutcome")] public EnemyFinisherOutcomeDefinition FailureOutcome { get; set; }
 		[JsonProperty("statuses")] public Dictionary<string, EnemyFinisherStatusTextDefinition> Statuses { get; set; } = new Dictionary<string, EnemyFinisherStatusTextDefinition>();
+		// The enemy rides on the player instead of standing beside them; see EnemyFinisherAttachmentDefinition.
+		[JsonProperty("attachment")] public EnemyFinisherAttachmentDefinition Attachment { get; set; }
+	}
+
+	// A finisher in which the enemy holds on to the player (a small enemy clinging to their torso). Its actor root
+	// follows a frame on one of the player's bones: the bone's pivot plus offsetX/Y, turning with the bone. The
+	// frame's +x is the way the enemy faces and +y is up, in rig units, so enemy clips for an attached phase are
+	// authored with their root at rootX/Y in that frame. From the catch the root eases there over settleSeconds;
+	// contacts then keep the ends of limbs (hands, feet) on points of the frame, or of other player bones, with
+	// two-bone IK after the clips, so they stay on the player whatever either clip does. sortingOrders and
+	// playerSortingOrders interleave the two actors' sprites while the finisher runs.
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherAttachmentDefinition
+	{
+		[JsonProperty("target", Required = Required.Always)] public string Target { get; set; }
+		[JsonProperty("offsetX")] public float? OffsetX { get; set; }
+		[JsonProperty("offsetY")] public float? OffsetY { get; set; }
+		[JsonProperty("rootX")] public float? RootX { get; set; }
+		[JsonProperty("rootY")] public float? RootY { get; set; }
+		// 0..1: how much the enemy turns with the target bone.
+		[JsonProperty("followRotation")] public float? FollowRotation { get; set; }
+		[JsonProperty("settleSeconds")] public float? SettleSeconds { get; set; }
+		[JsonProperty("contacts")] public List<EnemyFinisherContactDefinition> Contacts { get; set; } = new List<EnemyFinisherContactDefinition>();
+		[JsonProperty("sortingOrders")] public Dictionary<string, int> SortingOrders { get; set; } = new Dictionary<string, int>();
+		[JsonProperty("playerSortingOrders")] public Dictionary<string, int> PlayerSortingOrders { get; set; } = new Dictionary<string, int>();
+	}
+
+	// One limb end held on the player. bone is the enemy's end bone (its parent and grandparent are the two links
+	// IK turns); x/y is the point in the attachment frame, or in the frame of the player bone named by target
+	// (that bone's pivot, turning with it). angle, when given, sets the end bone's angle in that frame; without it
+	// the end keeps the angle its clip gives it relative to its parent. bend 1 or -1 picks the elbow/knee side;
+	// without it the side the clip bends it to is kept.
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherContactDefinition
+	{
+		[JsonProperty("bone", Required = Required.Always)] public string Bone { get; set; }
+		[JsonProperty("target")] public string Target { get; set; }
+		[JsonProperty("x")] public float X { get; set; }
+		[JsonProperty("y")] public float Y { get; set; }
+		[JsonProperty("angle")] public float? Angle { get; set; }
+		[JsonProperty("bend")] public int? Bend { get; set; }
 		// Seconds the player's pose cross-fades from one phase's clip into the next (0: phases cut).
 		[JsonProperty("phaseBlendSeconds")] public float? PhaseBlendSeconds { get; set; }
 	}
@@ -230,6 +271,12 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("inputPattern")] public string InputPattern { get; set; }
 		[JsonProperty("decayPerSecond")] public float? DecayPerSecond { get; set; }
 		[JsonProperty("participantAnimations")] public Dictionary<string, string> ParticipantAnimations { get; set; } = new Dictionary<string, string>();
+		// With a finisher attachment: false lets go (the root stops following and the contacts ease off over
+		// settleSeconds), true holds on again. Omitted, a phase keeps the previous phase's state.
+		[JsonProperty("attached")] public bool? Attached { get; set; }
+		// The contacts held during this phase, by enemy end bone, instead of the attachment's (an empty list lets
+		// every limb go). Contacts that start or stop ease in or out over settleSeconds.
+		[JsonProperty("contacts")] public List<EnemyFinisherContactDefinition> Contacts { get; set; }
 		// How long the change into this phase takes: the player's pose cross-fades over it instead of phaseBlendSeconds,
 		// and the enemy's and participants' clips instead of their animation.blendSeconds.
 		[JsonProperty("blendSeconds")] public float? BlendSeconds { get; set; }
@@ -555,6 +602,7 @@ namespace CaptivityReloaded.Modding
 							&& !HasAnimation(i_document, phase.Animation))
 							io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-animation-missing",
 								"Finisher phase references an unknown enemy animation clip: " + phase.Animation, i_source);
+					ValidateFinisherAttachment(module, i_document.Visual, io_report, i_source);
 				}
 				foreach (EnemyAttackDefinition attack in i_document.Attacks ?? new List<EnemyAttackDefinition>())
 				{
@@ -772,6 +820,64 @@ namespace CaptivityReloaded.Modding
 					io_report.Add(ValidationSeverity.Error, "enemy.behavior.module-type", "Unsupported behavior module: " + module.Type, i_source);
 					break;
 				}
+			}
+		}
+
+		// The player bones a finisher attachment can follow, as player clips name them.
+		public static readonly string[] PlayerBoneNames = { "hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right",
+			"arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face" };
+
+		private static void ValidateFinisherAttachment(EnemyBehaviorModuleDefinition i_module, EnemyVisualDefinition i_visual,
+			ValidationReport io_report, string i_source)
+		{
+			EnemyFinisherAttachmentDefinition attachment = i_module.Attachment;
+			if (attachment == null)
+			{
+				foreach (EnemyFinisherPhaseDefinition phase in i_module.Phases ?? new List<EnemyFinisherPhaseDefinition>())
+					if (phase != null && (phase.Attached.HasValue || phase.Contacts != null))
+						io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-attachment-phase", "Finisher phase " + phase.Id + " sets attached or contacts without a finisher attachment.", i_source);
+				return;
+			}
+			Dictionary<string, EnemyBoneDefinition> bones = new Dictionary<string, EnemyBoneDefinition>(StringComparer.Ordinal);
+			foreach (EnemyBoneDefinition bone in i_visual?.Bones ?? new List<EnemyBoneDefinition>())
+				if (bone != null && !string.IsNullOrEmpty(bone.Id)) bones[bone.Id] = bone;
+			if (Array.IndexOf(PlayerBoneNames, attachment.Target) < 0)
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-attachment-target", "Finisher attachment target must be a player bone: " + attachment.Target, i_source);
+			foreach (float? value in new[] { attachment.OffsetX, attachment.OffsetY, attachment.RootX, attachment.RootY })
+				ValidateRange(value, -20f, 20f, "finisher-attachment-offset", io_report, i_source);
+			ValidateRange(attachment.FollowRotation, 0f, 1f, "finisher-attachment-follow-rotation", io_report, i_source);
+			ValidateRange(attachment.SettleSeconds, 0f, 5f, "finisher-attachment-settle", io_report, i_source);
+			ValidateFinisherContacts(attachment.Contacts, bones, io_report, i_source);
+			foreach (EnemyFinisherPhaseDefinition phase in i_module.Phases ?? new List<EnemyFinisherPhaseDefinition>())
+				if (phase?.Contacts != null) ValidateFinisherContacts(phase.Contacts, bones, io_report, i_source);
+			foreach (KeyValuePair<string, int> order in attachment.SortingOrders ?? new Dictionary<string, int>())
+				if (!bones.ContainsKey(order.Key))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-attachment-sorting", "Finisher attachment sortingOrders names an unknown bone: " + order.Key, i_source);
+			foreach (KeyValuePair<string, int> order in attachment.PlayerSortingOrders ?? new Dictionary<string, int>())
+				if (Array.IndexOf(PlayerBoneNames, order.Key) < 0)
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-attachment-player-sorting", "Finisher attachment playerSortingOrders names an unknown player bone: " + order.Key, i_source);
+		}
+
+		private static void ValidateFinisherContacts(List<EnemyFinisherContactDefinition> i_contacts, Dictionary<string, EnemyBoneDefinition> i_bones,
+			ValidationReport io_report, string i_source)
+		{
+			HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
+			foreach (EnemyFinisherContactDefinition contact in i_contacts ?? new List<EnemyFinisherContactDefinition>())
+			{
+				// The end bone and the two links above it, which the IK turns.
+				EnemyBoneDefinition end = null, lower = null;
+				bool chain = contact != null && i_bones.TryGetValue(contact.Bone ?? "", out end) && end.Parent != null
+					&& i_bones.TryGetValue(end.Parent, out lower) && lower.Parent != null && i_bones.ContainsKey(lower.Parent);
+				if (!chain || !seen.Add(contact.Bone))
+				{
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-contact-bone", "Each finisher contact needs a distinct enemy bone with a parent and grandparent: " + contact?.Bone, i_source);
+					continue;
+				}
+				if (contact.Target != null && Array.IndexOf(PlayerBoneNames, contact.Target) < 0)
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-contact-target", "Finisher contact target must be a player bone: " + contact.Target, i_source);
+				if (!IsFinite(contact.X) || !IsFinite(contact.Y) || Mathf.Abs(contact.X) > 20f || Mathf.Abs(contact.Y) > 20f
+					|| (contact.Angle.HasValue && !IsFinite(contact.Angle.Value)) || (contact.Bend.HasValue && Mathf.Abs(contact.Bend.Value) != 1))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-contact-value", "Finisher contact " + contact.Bone + " needs finite x/y within 20, a finite angle and bend 1 or -1.", i_source);
 			}
 		}
 

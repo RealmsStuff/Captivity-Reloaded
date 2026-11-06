@@ -6,6 +6,13 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-02: finisher attachment and per-phase contacts
+
+- Added the optional experimental `downedFinisher.attachment` block for original enemies. While attached, the runtime holds the enemy's root at `rootX`/`rootY` in a frame on a player bone (`target`, offset by `offsetX`/`offsetY`, turning with the bone by `followRotation`), easing in and out over `settleSeconds`. The finisher's usual side-by-side alignment does not run while an attachment is set.
+- Attachment `contacts` hold an enemy hand or foot on a point in the attachment frame, or in a named player bone's frame, with two-bone IK after the clips play. `sortingOrders` and `playerSortingOrders` interleave the two actors' parts while the finisher runs.
+- Finisher phases accept `attached` (`false` lets go, `true` holds on again) and their own `contacts`, which replace the attachment's for that phase. Contacts that start, stop or move ease over `settleSeconds`, and a knee or elbow whose bend changes while held swings across instead of flipping. When the finisher ends, the enemy is released where its clip drew it.
+- New validation codes: the range checks `enemy.stats.finisher-attachment-offset`, `enemy.stats.finisher-attachment-follow-rotation` and `enemy.stats.finisher-attachment-settle`; `enemy.behavior.finisher-attachment-target`, `-sorting`, `-player-sorting` and `-phase` (a phase sets `attached` or `contacts` without an attachment); and `enemy.behavior.finisher-contact-bone`, `-target` and `-value`.
+- Finishers without `attachment` are unchanged.
 ### 2026-11-02: miss animations for original-enemy attacks
 
 - Added optional experimental `missAnimation` to original-enemy attacks. When the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now), that clip takes over from the same point in its timeline and the attack runs until the clip ends; the attack's cooldown starts then.

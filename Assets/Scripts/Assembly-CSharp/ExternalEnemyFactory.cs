@@ -1177,6 +1177,26 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private bool m_hasPlayerFacingSnapshot;
 	private Vector2 m_playerLockedPosition;
 	private Vector2 m_enemyLockedPosition;
+	// The attachment (EnemyFinisherAttachmentDefinition). m_attachWeight runs 0..1 over settleSeconds towards
+	// whether the enemy holds on; the root eases from where it was caught (m_attachCaught, in the target frame)
+	// to rootX/Y while it takes hold, and from the target frame to where it let go (m_attachReleased) as it lets go.
+	private bool m_attached;
+	private float m_attachWeight;
+	private Vector2 m_attachCaught;
+	private Vector2 m_attachReleased;
+	private readonly Dictionary<string, float> m_contactWeights = new Dictionary<string, float>(StringComparer.Ordinal);
+	private readonly Dictionary<string, EnemyFinisherContactDefinition> m_contactsHeld = new Dictionary<string, EnemyFinisherContactDefinition>(StringComparer.Ordinal);
+	// A phase that moves a limb's contact while the limb is held eases it from the old point (m_contactsFrom) to the
+	// new over settleSeconds (m_contactMoves 0..1). A knee or elbow whose bend side changes while held swings across
+	// over the same time (m_contactSides -1..1) instead of flipping in one frame.
+	private readonly Dictionary<string, EnemyFinisherContactDefinition> m_contactsFrom = new Dictionary<string, EnemyFinisherContactDefinition>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_contactMoves = new Dictionary<string, float>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_contactSides = new Dictionary<string, float>(StringComparer.Ordinal);
+	// The hips' pose before the attachment turned it, and the pose it drew: a clip that does not key the hips
+	// leaves them as drawn, and the turn must not pile up frame after frame.
+	private Vector3 m_attachHipsSource, m_attachHipsDrawn;
+	private float m_attachHipsSourceRotation, m_attachHipsDrawnRotation;
+	private bool m_attachHipsTurned;
 	private int m_nextPlayerAnimationEvent;
 	private int m_playerAnimationEventCycle;
 	private int m_nextPresentationTrigger;
@@ -1239,7 +1259,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void LateUpdate()
 	{
-		if (m_isActive) MaintainActorPhysicsLock();
+		if (!m_isActive) return;
+		UpdateAttachment();
+		MaintainActorPhysicsLock();
+		ApplyAttachmentPose();
 	}
 
 	public bool ShouldApproachDownedPlayer(Player i_player)
@@ -1303,7 +1326,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_player.HideEquippedWeapon();
 		if (m_player.GetStateActorCurrent() == StateActor.Ragdoll) m_player.DisableRagdoll();
 		AlignPlayerToFinisherFloor();
-		AlignEnemyToPlayerForFinisher();
+		// An attached enemy is carried from where it caught the player (BeginAttachment) instead.
+		if (m_definition.Attachment == null) AlignEnemyToPlayerForFinisher();
 		SynchronizePlayerFacingForFinisher();
 		m_player.SetIsExposing(false);
 		m_player.SetIsCrouching(false);
@@ -1321,6 +1345,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		BeginPairedSorting();
 		BeginReservedParticipantControl();
 		BeginPlayerAnimation();
+		BeginAttachment();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(true);
 		PlayCurrentPhase();
 		try { hud.ShowHudSmasher(this); }
@@ -1437,7 +1462,12 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_circleGesture.Reset();
 		CapturePlayerBlend();
 		ResetPlayerPose();
+		SetAttached(GetCurrentPhase()?.Attached ?? m_attached);
 		string animation = GetCurrentPhase()?.Animation ?? m_definition.Animation;
+		ModularEnemyAnimationController controller = m_npc.GetComponent<ModularEnemyAnimationController>();
+		// The clip starts from the pose it drew, without the attachment's turn, which is added again on top.
+		if (controller != null) UnturnEnemy(controller.GetBone("hips"));
+		controller?.Play(string.IsNullOrEmpty(animation) ? "finisher" : animation, true);
 		float? blend = GetCurrentPhase()?.BlendSeconds;
 		PlayPhaseClip(m_npc.GetComponent<ModularEnemyAnimationController>(), string.IsNullOrEmpty(animation) ? "finisher" : animation, blend);
 		foreach (ActiveFinisherParticipant participant in m_participants)
@@ -1464,6 +1494,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		ManagerHudRapeGames hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames();
 		if (hud != null) hud.HideHudSmasher();
 		EndPlayerAnimation();
+		EndAttachmentWhereDrawn();
 		EndParticipantControl();
 		EndPairedSorting();
 		RestorePlayerFacingAfterFinisher();
@@ -2401,6 +2432,251 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		return m_definition?.Phases != null && m_definition.Phases.Count > 0;
 	}
 
+	// ---------------------------------------------------------------- attachment
+
+	// The frame a finisher attachment follows: a player bone's pivot, plus an offset in the bone's frame, turning
+	// with the bone. Frames are worked in the enemy's facing (+x the way it faces), so authored offsets need no
+	// mirroring; o_turn is the bone's tilt from upright in that facing.
+	private bool TryGetPlayerFrame(string i_bone, float i_offsetX, float i_offsetY, out Vector2 o_origin, out float o_turn)
+	{
+		o_origin = Vector2.zero; o_turn = 0f;
+		Transform bone = null;
+		if (!m_playerBones.TryGetValue(i_bone ?? "", out bone) && TryGetPlayerBoneType(i_bone, out BoneTypePlayer type))
+			bone = m_player?.GetSkeletonPlayer()?.GetBone(type)?.transform;
+		if (bone == null) return false;
+		Vector2 up = FacingSpace(bone.TransformVector(Vector3.up));
+		o_turn = Mathf.Atan2(-up.x, up.y) * Mathf.Rad2Deg;
+		o_origin = (Vector2)bone.position + FacingSpace(Rotate(new Vector2(i_offsetX, i_offsetY), o_turn));
+		return true;
+	}
+
+	private float FacingSign() { return m_npc != null && m_npc.GetIsFacingLeft() ? -1f : 1f; }
+	// The enemy's facing space and world space differ only by mirroring x, so one map goes both ways.
+	private Vector2 FacingSpace(Vector2 i_vector) { return new Vector2(i_vector.x * FacingSign(), i_vector.y); }
+	private static Vector2 Rotate(Vector2 i_vector, float i_degrees)
+	{
+		float radians = i_degrees * Mathf.Deg2Rad, cos = Mathf.Cos(radians), sin = Mathf.Sin(radians);
+		return new Vector2(i_vector.x * cos - i_vector.y * sin, i_vector.x * sin + i_vector.y * cos);
+	}
+
+	private void BeginAttachment()
+	{
+		m_attached = false; m_attachWeight = 0f; m_attachHipsTurned = false;
+		ClearContacts();
+		if (m_definition.Attachment == null) return;
+		// Held from the catch on; the first phase may still say otherwise.
+		SetAttached(true);
+	}
+
+	private void SetAttached(bool i_attached)
+	{
+		EnemyFinisherAttachmentDefinition attachment = m_definition.Attachment;
+		if (attachment == null || i_attached == m_attached) return;
+		m_attached = i_attached;
+		if (!TryGetPlayerFrame(attachment.Target, attachment.OffsetX ?? 0f, attachment.OffsetY ?? 0f, out Vector2 origin, out float turn)) return;
+		Vector2 root = m_enemyBody != null ? m_enemyLockedPosition : (Vector2)m_npc.transform.position;
+		if (i_attached) m_attachCaught = Rotate(FacingSpace(root - origin), -turn);
+		else m_attachReleased = root;
+	}
+
+	private static float Smooth(float i_value) { return Mathf.SmoothStep(0f, 1f, i_value); }
+
+	// How long the attachment's eases take.
+	private static float GetSettleSeconds(EnemyFinisherAttachmentDefinition i_attachment)
+	{
+		return i_attachment.SettleSeconds ?? 0.3f;
+	}
+
+	// Moves the root with the target frame (or out of it) and eases the weights; run before the lock is applied.
+	private void UpdateAttachment()
+	{
+		EnemyFinisherAttachmentDefinition attachment = m_definition?.Attachment;
+		if (attachment == null || m_npc == null) return;
+		float settle = GetSettleSeconds(attachment), step = settle <= 0f ? 1f : Time.deltaTime / settle;
+		m_attachWeight = Mathf.MoveTowards(m_attachWeight, m_attached ? 1f : 0f, step);
+		List<EnemyFinisherContactDefinition> contacts = m_attached ? GetCurrentPhase()?.Contacts ?? attachment.Contacts : null;
+		HashSet<string> holding = new HashSet<string>(StringComparer.Ordinal);
+		foreach (EnemyFinisherContactDefinition contact in contacts ?? new List<EnemyFinisherContactDefinition>())
+		{
+			holding.Add(contact.Bone);
+			if (m_contactsHeld.TryGetValue(contact.Bone, out EnemyFinisherContactDefinition previous) && !SameContact(previous, contact)
+				&& m_contactWeights.TryGetValue(contact.Bone, out float heldWeight) && heldWeight > 0f)
+			{
+				m_contactsFrom[contact.Bone] = previous;
+				m_contactMoves[contact.Bone] = 0f;
+			}
+			m_contactsHeld[contact.Bone] = contact;
+		}
+		foreach (string bone in m_contactsHeld.Keys)
+		{
+			m_contactWeights.TryGetValue(bone, out float weight);
+			m_contactWeights[bone] = Mathf.MoveTowards(weight, holding.Contains(bone) ? 1f : 0f, step);
+			// Let go entirely: the next hold starts from the side the clip draws.
+			if (m_contactWeights[bone] <= 0f) m_contactSides.Remove(bone);
+		}
+		foreach (string bone in new List<string>(m_contactMoves.Keys))
+		{
+			m_contactMoves[bone] = Mathf.MoveTowards(m_contactMoves[bone], 1f, step);
+			if (m_contactMoves[bone] >= 1f) { m_contactMoves.Remove(bone); m_contactsFrom.Remove(bone); }
+		}
+		if (!TryGetPlayerFrame(attachment.Target, attachment.OffsetX ?? 0f, attachment.OffsetY ?? 0f, out Vector2 origin, out float turn)) return;
+		Vector2 rest = new Vector2(attachment.RootX ?? 0f, attachment.RootY ?? 0f);
+		float weight01 = Smooth(m_attachWeight);
+		Vector2 held = origin + FacingSpace(Rotate(m_attached ? Vector2.Lerp(m_attachCaught, rest, weight01) : rest, turn));
+		Vector2 root = m_attached ? held : Vector2.Lerp(m_attachReleased, held, weight01);
+		if (m_enemyBody != null) m_enemyLockedPosition = root;
+		else m_npc.transform.position = new Vector3(root.x, root.y, m_npc.transform.position.z);
+	}
+
+	// After both actors' clips: turns the enemy with the target, puts held limbs on their contacts and
+	// interleaves the two actors' sprites.
+	private void ApplyAttachmentPose()
+	{
+		EnemyFinisherAttachmentDefinition attachment = m_definition?.Attachment;
+		if (attachment == null || m_npc == null) return;
+		ModularEnemyAnimationController animation = m_npc.GetComponent<ModularEnemyAnimationController>();
+		if (animation == null) return;
+		if (TryGetPlayerFrame(attachment.Target, attachment.OffsetX ?? 0f, attachment.OffsetY ?? 0f, out Vector2 origin, out float turn))
+		{
+			TurnEnemy(animation.GetBone("hips"), turn * (attachment.FollowRotation ?? 1f) * Smooth(m_attachWeight));
+			float settle = GetSettleSeconds(attachment), sideStep = settle <= 0f ? 2f : 2f * Time.deltaTime / settle;
+			// While the root is still settling onto the frame, each contact is placed on him where it will be once he is
+			// held, so it eases in within his own reach rather than straightening a limb towards a point his body has
+			// not reached yet (and bending it back at once as he arrives).
+			float unsettled = m_attached ? (1f - Smooth(m_attachWeight)) * turn * (attachment.FollowRotation ?? 1f) : 0f;
+			Vector2 heldAt = origin + FacingSpace(Rotate(new Vector2(attachment.RootX ?? 0f, attachment.RootY ?? 0f), turn)), rootAt = m_npc.transform.position;
+			bool settling = m_attached && m_attachWeight < 1f;
+			foreach (KeyValuePair<string, float> pair in m_contactWeights)
+			{
+				if (pair.Value <= 0f || !m_contactsHeld.TryGetValue(pair.Key, out EnemyFinisherContactDefinition contact)) continue;
+				if (!TryGetContactGoal(contact, origin, turn, out Vector2 goal, out float goalTurn)) continue;
+				if (m_contactsFrom.TryGetValue(pair.Key, out EnemyFinisherContactDefinition from) && TryGetContactGoal(from, origin, turn, out Vector2 fromGoal, out float fromTurn))
+				{
+					float move = Smooth(m_contactMoves[pair.Key]);
+					goal = Vector2.Lerp(fromGoal, goal, move);
+					goalTurn = Mathf.LerpAngle(fromTurn, goalTurn, move);
+				}
+				if (settling)
+				{
+					goal = rootAt + Rotate(goal - heldAt, -unsettled * FacingSign());
+					goalTurn -= unsettled;
+				}
+				HoldContact(pair.Key, animation.GetBone(pair.Key), contact, goal, goalTurn, Smooth(pair.Value), sideStep);
+			}
+		}
+		foreach (KeyValuePair<string, int> order in attachment.SortingOrders ?? new Dictionary<string, int>())
+		{
+			SpriteRenderer renderer = animation.GetBone(order.Key)?.GetComponentInChildren<SpriteRenderer>(true);
+			if (renderer != null) renderer.sortingOrder = order.Value;
+		}
+		foreach (KeyValuePair<string, int> order in attachment.PlayerSortingOrders ?? new Dictionary<string, int>())
+		{
+			if (m_playerBodyParts.TryGetValue(order.Key, out BodyPartPlayer bodyPart)) bodyPart.SetSortingOrder(order.Value);
+			else if (m_playerRenderers.TryGetValue(order.Key, out SpriteRenderer renderer)) renderer.sortingOrder = order.Value;
+		}
+	}
+
+	// Turns the whole enemy about its root by turning its top bone.
+	private void TurnEnemy(Transform i_hips, float i_degrees)
+	{
+		if (i_hips == null || i_hips.parent == null) return;
+		UnturnEnemy(i_hips);
+		m_attachHipsSource = i_hips.localPosition;
+		m_attachHipsSourceRotation = i_hips.localEulerAngles.z;
+		Vector3 scale = i_hips.parent.lossyScale;
+		float mirror = Mathf.Sign(scale.x * scale.y), world = i_degrees * FacingSign();
+		Vector2 pivot = m_npc.transform.position;
+		Vector2 position = pivot + Rotate((Vector2)i_hips.position - pivot, world);
+		i_hips.position = new Vector3(position.x, position.y, i_hips.position.z);
+		i_hips.localRotation = Quaternion.Euler(0f, 0f, m_attachHipsSourceRotation + world * mirror);
+		m_attachHipsDrawn = i_hips.localPosition;
+		m_attachHipsDrawnRotation = i_hips.localEulerAngles.z;
+		m_attachHipsTurned = true;
+	}
+
+	// Puts the top bone back where the clip drew it, unless the clip has drawn it again since it was turned.
+	private void UnturnEnemy(Transform i_hips)
+	{
+		if (i_hips == null || !m_attachHipsTurned || i_hips.localPosition != m_attachHipsDrawn
+			|| !Mathf.Approximately(i_hips.localEulerAngles.z, m_attachHipsDrawnRotation)) return;
+		i_hips.localPosition = m_attachHipsSource;
+		i_hips.localRotation = Quaternion.Euler(0f, 0f, m_attachHipsSourceRotation);
+	}
+
+	// Where a contact puts its limb: in the attachment frame, or in the frame of the player bone it names.
+	private bool TryGetContactGoal(EnemyFinisherContactDefinition i_contact, Vector2 i_origin, float i_turn, out Vector2 o_goal, out float o_turn)
+	{
+		if (i_contact.Target != null) return TryGetPlayerFrame(i_contact.Target, i_contact.X, i_contact.Y, out o_goal, out o_turn);
+		o_goal = i_origin + FacingSpace(Rotate(new Vector2(i_contact.X, i_contact.Y), i_turn));
+		o_turn = i_turn;
+		return true;
+	}
+
+	private static bool SameContact(EnemyFinisherContactDefinition i_a, EnemyFinisherContactDefinition i_b)
+	{
+		return ReferenceEquals(i_a, i_b) || (i_a.Target == i_b.Target && i_a.X == i_b.X && i_a.Y == i_b.Y && i_a.Angle == i_b.Angle && i_a.Bend == i_b.Bend);
+	}
+
+	private void ClearContacts()
+	{
+		m_contactWeights.Clear(); m_contactsHeld.Clear(); m_contactsFrom.Clear(); m_contactMoves.Clear(); m_contactSides.Clear();
+	}
+
+	// Two-bone IK (end bone, its parent and grandparent) towards the contact, weighted. The elbow or knee keeps
+	// the side the clip bends it to unless the contact names one; when that side changes while the limb is held,
+	// the joint swings across at i_sideStep a frame (through straight) rather than flipping. The end keeps its
+	// angle to its parent unless the contact gives one.
+	private void HoldContact(string i_bone, Transform i_end, EnemyFinisherContactDefinition i_contact, Vector2 i_goal, float i_goalTurn, float i_weight, float i_sideStep)
+	{
+		Transform lower = i_end == null ? null : i_end.parent, upper = lower == null ? null : lower.parent, parent = upper == null ? null : upper.parent;
+		if (parent == null) return;
+		Vector2 first = lower.localPosition, second = i_end.localPosition;
+		float a = first.magnitude, b = second.magnitude;
+		if (a < 0.00001f || b < 0.00001f) return;
+		Vector2 root = upper.localPosition;
+		Vector2 drawnElbow = (Vector2)parent.InverseTransformPoint(lower.position) - root, drawnEnd = (Vector2)parent.InverseTransformPoint(i_end.position) - root;
+		// 1: the elbow or knee on the anticlockwise side of the line from shoulder or hip to the goal.
+		float wanted = i_contact.Bend ?? (drawnElbow.x * drawnEnd.y - drawnElbow.y * drawnEnd.x > 0f ? -1 : 1);
+		float swing = m_contactSides.TryGetValue(i_bone, out float was) ? Mathf.MoveTowards(was, wanted, i_sideStep) : wanted;
+		m_contactSides[i_bone] = swing;
+		Vector2 goal = Vector2.Lerp(i_end.position, i_goal, i_weight);
+		Vector2 delta = (Vector2)parent.InverseTransformPoint(goal) - root;
+		float distance = delta.magnitude;
+		float reach = Mathf.Clamp(distance, Mathf.Abs(a - b) + 0.0001f, a + b - 0.0001f);
+		// The triangle's angles at the shoulder or hip (inner) and at the goal: the lower bone turns from the upper
+		// by their sum, away from the side the joint is on.
+		float inner = Mathf.Acos(Mathf.Clamp((a * a + reach * reach - b * b) / (2f * a * reach), -1f, 1f));
+		float bend = inner + Mathf.Acos(Mathf.Clamp((b * b + reach * reach - a * a) / (2f * b * reach), -1f, 1f));
+		// At a side of -1 or 1 the limb reaches the goal exactly; mid-swing both angles ease through zero, so the limb
+		// passes through straight (towards the goal) however far the joint is folded.
+		float side = Smooth((swing + 1f) * 0.5f) * 2f - 1f;
+		float direction = Mathf.Atan2(delta.y, delta.x) + side * inner;
+		upper.localRotation = Quaternion.Euler(0f, 0f, (direction - Mathf.Atan2(first.y, first.x)) * Mathf.Rad2Deg);
+		lower.localRotation = Quaternion.Euler(0f, 0f, (-side * bend + Mathf.Atan2(first.y, first.x) - Mathf.Atan2(second.y, second.x)) * Mathf.Rad2Deg);
+		if (!i_contact.Angle.HasValue) return;
+		Vector2 along = FacingSpace(Rotate(Vector2.right, i_goalTurn + i_contact.Angle.Value));
+		Vector2 local = lower.InverseTransformVector(along);
+		float angle = Mathf.Atan2(local.y, local.x) * Mathf.Rad2Deg;
+		i_end.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(i_end.localEulerAngles.z, angle, i_weight));
+	}
+
+	// The enemy is let go where its clip last drew it: its root moves so its top bone stays put once the rest
+	// pose is back, and from there the physics the lock held off takes over (it drops if it is still in the air).
+	private void EndAttachmentWhereDrawn()
+	{
+		if (m_definition?.Attachment == null || m_npc == null) return;
+		ModularEnemyAnimationController animation = m_npc.GetComponent<ModularEnemyAnimationController>();
+		Transform hips = animation?.GetBone("hips");
+		m_attached = false; m_attachWeight = 0f; m_attachHipsTurned = false;
+		ClearContacts();
+		if (hips == null || hips.parent == null || !animation.TryGetRestPose("hips", out Vector3 restPosition, out float _)) return;
+		Vector2 shift = (Vector2)hips.position - (Vector2)hips.parent.TransformPoint(restPosition);
+		if (m_enemyBody != null && m_actorPhysicsLocked) { m_enemyLockedPosition += shift; MaintainActorPhysicsLock(); }
+		else m_npc.transform.position += (Vector3)shift;
+		// With the hips back on their rest spot the root's move does not show.
+		hips.localPosition = restPosition;
+	}
+
 	private EnemyFinisherPhaseDefinition GetCurrentPhase()
 	{
 		return HasPhases() && m_phaseIndex >= 0 && m_phaseIndex < m_definition.Phases.Count
@@ -2615,6 +2891,15 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 		if (!HasClip(i_clip)) return -1f;
 		return m_animation.Clips[i_clip].DurationSeconds / Mathf.Max(0.01f, m_animation.SpeedMultiplier ?? 1f);
 	}
+
+	// A bone's rest transform, local to its parent.
+	public bool TryGetRestPose(string i_bone, out Vector3 o_position, out float o_rotation)
+	{
+		o_rotation = m_baseRotation.TryGetValue(i_bone, out float rotation) ? rotation : 0f;
+		return m_basePosition.TryGetValue(i_bone, out o_position);
+	}
+
+	public Transform GetBone(string i_bone) { return m_bones.TryGetValue(i_bone, out Transform bone) ? bone : null; }
 
 	public bool HasEvent(string i_clip, string i_type)
 	{
