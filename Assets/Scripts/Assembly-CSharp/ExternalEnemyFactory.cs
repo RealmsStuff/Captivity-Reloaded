@@ -541,6 +541,8 @@ public sealed class ModularEnemy : Walker
 	private int m_animationAttackHitsRemaining;
 	private int m_animationAttackStageIndex;
 	private bool m_animationAttackCooldownStarted;
+	// When the running attack ends: its durationSeconds, or the end of its missAnimation once that takes over.
+	private float m_animationAttackEndsAt;
 	private Path m_navigationPath;
 	private NavNode m_navigationStart;
 	private Platform m_navigationEnemyPlatform;
@@ -850,16 +852,16 @@ public sealed class ModularEnemy : Walker
 		m_modAnimation?.Play(definition.Animation, true);
 		bool eventDrivenHit = m_modAnimation != null && m_modAnimation.HasEvent(definition.Animation, "attackHit");
 		m_animationAttackHitsRemaining = eventDrivenHit ? m_modAnimation.CountEvents(definition.Animation, "attackHit") : 1;
-		float elapsed = 0f;
+		float started = Time.time;
+		m_animationAttackEndsAt = started + (definition.DurationSeconds ?? 0f);
 		if (!eventDrivenHit)
 		{
 			float hitTime = definition.HitTimeSeconds ?? 0f;
 			if (hitTime > 0f) yield return new WaitForSeconds(hitTime);
-			elapsed = hitTime;
-			PerformConfiguredAttack(i_targetActor, definition, true);
+			m_animationAttackEndsAt = Mathf.Max(m_animationAttackEndsAt, started + hitTime);
+			if (!PerformConfiguredAttack(i_targetActor, definition, true)) PlayMissAnimation(definition, hitTime);
 		}
-		float remaining = Mathf.Max(0f, (definition.DurationSeconds ?? elapsed) - elapsed);
-		if (remaining > 0f) yield return new WaitForSeconds(remaining);
+		while (Time.time < m_animationAttackEndsAt) yield return null;
 		m_attackCurrent.HandleAttackEnd();
 		m_animationAttackTarget = null;
 		m_animationAttackDefinition = null;
@@ -879,7 +881,9 @@ public sealed class ModularEnemy : Walker
 			if (m_animationAttackDefinition != null && m_animationAttackDefinition.Type == "multiStage"
 				&& m_animationAttackDefinition.Stages != null && m_animationAttackStageIndex < m_animationAttackDefinition.Stages.Count)
 				stage = m_animationAttackDefinition.Stages[m_animationAttackStageIndex++];
-			PerformConfiguredAttack(m_animationAttackTarget, m_animationAttackDefinition, stage, m_animationAttackHitsRemaining == 0);
+			EnemyAttackDefinition definition = m_animationAttackDefinition;
+			if (!PerformConfiguredAttack(m_animationAttackTarget, definition, stage, m_animationAttackHitsRemaining == 0) && stage == null)
+				PlayMissAnimation(definition, i_event.Time);
 		}
 		else if (i_event.Type == "impulse")
 		{
@@ -891,41 +895,56 @@ public sealed class ModularEnemy : Walker
 		}
 	}
 
-	private void PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition, bool i_startCooldown)
+	// The attack's hit missed: its missAnimation (a leap that lands short) takes over from the same moment, and the
+	// attack runs until that clip ends. Attacks without a missAnimation are unchanged.
+	private void PlayMissAnimation(EnemyAttackDefinition i_definition, float i_clipSeconds)
 	{
-		PerformConfiguredAttack(i_targetActor, i_definition, null, i_startCooldown);
+		if (i_definition == null || string.IsNullOrEmpty(i_definition.MissAnimation) || m_modAnimation == null || m_isDead
+			|| !m_modAnimation.HasClip(i_definition.MissAnimation)) return;
+		m_modAnimation.Play(i_definition.MissAnimation, true, i_clipSeconds);
+		// The clip it replaces may still hold the attackHit that would have started the cooldown.
+		if (!m_animationAttackCooldownStarted) { m_animationAttackCooldownStarted = true; StartAttackCooldown(); }
+		float speed = Mathf.Max(0.01f, m_definition?.Animation?.SpeedMultiplier ?? 1f);
+		m_animationAttackEndsAt = Time.time + Mathf.Max(0f, m_modAnimation.GetClipSeconds(i_definition.MissAnimation) - i_clipSeconds / speed);
 	}
 
-	private void PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition,
+	private bool PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition, bool i_startCooldown)
+	{
+		return PerformConfiguredAttack(i_targetActor, i_definition, null, i_startCooldown);
+	}
+
+	// Whether the attack's hit landed on the player (a projectile counts once it is fired).
+	private bool PerformConfiguredAttack(Actor i_targetActor, EnemyAttackDefinition i_definition,
 		EnemyAttackStageDefinition i_stage, bool i_startCooldown)
 	{
 		Player player = i_targetActor as Player;
 		if (i_definition == null || i_targetActor == null || player == null || m_isDead || player.IsDead()
 			|| player.GetIsBeingRaped()
-			|| player.GetStatePlayerCurrent() == StatePlayer.Labor) return;
+			|| player.GetStatePlayerCurrent() == StatePlayer.Labor) return false;
 		if (i_startCooldown && !m_animationAttackCooldownStarted)
 		{
 			m_animationAttackCooldownStarted = true;
 			StartAttackCooldown();
 		}
 		string type = i_stage == null ? i_definition.Type : i_stage.Type;
-		if (type == "hitscan") PerformHitscanAttack(player, i_definition, i_stage);
-		else if (type == "projectile") SpawnProjectileAttack(player, i_definition, i_stage);
-		else if (type == "area") PerformAreaAttack(player, i_definition, i_stage);
-		else if (type == "grab") PerformGrabAttack(player, i_definition, i_stage);
-		else PerformMeleeAttack(player, i_definition, i_stage);
+		if (type == "hitscan") return PerformHitscanAttack(player, i_definition, i_stage);
+		if (type == "projectile") { SpawnProjectileAttack(player, i_definition, i_stage); return true; }
+		if (type == "area") return PerformAreaAttack(player, i_definition, i_stage);
+		if (type == "grab") return PerformGrabAttack(player, i_definition, i_stage);
+		return PerformMeleeAttack(player, i_definition, i_stage);
 	}
 
-	private void PerformMeleeAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformMeleeAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
-		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) <= range) ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || i_player.GetStateActorCurrent() == StateActor.Ragdoll || !IsHasLineOfSightToPlayerRaycast()) return;
+		if (i_player == null || i_player.GetStateActorCurrent() == StateActor.Ragdoll || !IsHasLineOfSightToPlayerRaycast()) return false;
 		Vector2 origin = GetSkeletonActor() == null ? GetPos() : (Vector2)GetSkeletonActor().GetBoneHead().transform.position;
 		Vector2 target = i_player.GetPosHips();
 		if (ResourceContainer.Resources != null && ResourceContainer.Resources.m_lineShoot != null)
@@ -941,26 +960,27 @@ public sealed class ModularEnemy : Walker
 			line.enabled = true;
 			UnityEngine.Object.Destroy(line.gameObject, 0.15f);
 		}
-		if (Vector2.Distance(origin, target) <= Resolve(i_stage?.HitRange, i_definition.HitRange, 1f))
-			ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(origin, target) > Resolve(i_stage?.HitRange, i_definition.HitRange, 1f)) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
 		float x = Resolve(i_stage?.OffsetX, i_definition.OffsetX, 0f);
 		if (GetIsFacingLeft()) x = -x;
 		Vector2 center = GetPos() + new Vector2(x, Resolve(i_stage?.OffsetY, i_definition.OffsetY, 0f));
 		float radius = Resolve(i_stage?.AreaRadius, i_definition.AreaRadius, 1f);
-		if (Vector2.Distance(center, i_player.GetPosHips()) <= radius) ApplyConfiguredHit(i_player, i_definition, i_stage);
+		if (Vector2.Distance(center, i_player.GetPosHips()) > radius) return false;
+		return ApplyConfiguredHit(i_player, i_definition, i_stage);
 	}
 
-	private void PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private bool PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
-		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return;
+		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
 		ModularEnemyFinisher finisher = GetComponent<ModularEnemyFinisher>();
-		if (finisher != null) finisher.TryBeginFromAttack(i_player);
+		return finisher != null && finisher.TryBeginFromAttack(i_player);
 	}
 
 	private void SpawnProjectileAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -1009,18 +1029,20 @@ public sealed class ModularEnemy : Walker
 			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
 	}
 
-	private void ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	// Whether the hit landed. A player who can't be attacked right now takes no damage, so the attack missed.
+	private bool ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || !i_player.GetIsCanBeAttacked()) return;
+		if (i_player == null || !i_player.GetIsCanBeAttacked()) return false;
 		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
+		return ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
 	}
 
-	public void ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
+	// Whether the player took the hit.
+	public bool ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
 	{
-		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return;
+		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return false;
 		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
 		i_player.TakeConfiguredHit(this, i_damage, i_knockbackX, i_knockbackY);
 		// Per-attack knockdown. A hit that already ragdolled the player counted its KO in TakeConfiguredHit.
@@ -1035,6 +1057,7 @@ public sealed class ModularEnemy : Walker
 			}
 		}
 		NotifyDirectAttackHit(i_player);
+		return true;
 	}
 
 	private static float Resolve(float? i_stageValue, float? i_attackValue, float i_fallback)
@@ -1124,6 +1147,11 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private KeyCode m_keyExpected = KeyCode.A;
 	private bool m_waitForPlayerRecovery;
 	private readonly Dictionary<string, Transform> m_playerBones = new Dictionary<string, Transform>(StringComparer.Ordinal);
+	// phaseBlendSeconds: the player's pose when the current phase started, faded out into its clip.
+	private readonly Dictionary<string, Vector3> m_playerBlendPositions = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, Vector3> m_playerBlendScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_playerBlendRotations = new Dictionary<string, float>(StringComparer.Ordinal);
+	private float m_playerBlendStartedAt, m_playerBlendSeconds;
 	private readonly Dictionary<string, Vector3> m_playerBasePositions = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Vector3> m_playerBaseScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, float> m_playerBaseRotations = new Dictionary<string, float>(StringComparer.Ordinal);
@@ -1432,6 +1460,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_keyExpected = KeyCode.A;
 		m_directionInputReady = true;
 		m_circleGesture.Reset();
+		CapturePlayerBlend();
 		ResetPlayerPose();
 		SetAttached(GetCurrentPhase()?.Attached ?? m_attached);
 		string animation = GetCurrentPhase()?.Animation ?? m_definition.Animation;
@@ -1439,9 +1468,20 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		// The clip starts from the pose it drew, without the attachment's turn, which is added again on top.
 		if (controller != null) UnturnEnemy(controller.GetBone("hips"));
 		controller?.Play(string.IsNullOrEmpty(animation) ? "finisher" : animation, true);
+		float? blend = GetCurrentPhase()?.BlendSeconds;
+		PlayPhaseClip(m_npc.GetComponent<ModularEnemyAnimationController>(), string.IsNullOrEmpty(animation) ? "finisher" : animation, blend);
 		foreach (ActiveFinisherParticipant participant in m_participants)
 			if (participant.Started && participant.Controller != null)
-				participant.Controller.Play(GetParticipantAnimation(participant.Definition), true);
+				PlayPhaseClip(participant.Controller, GetParticipantAnimation(participant.Definition), blend);
+	}
+
+	// Restarts an actor's clip for a phase, fading into it over the phase's blendSeconds when it sets one
+	// (otherwise over the actor's animation.blendSeconds).
+	private static void PlayPhaseClip(ModularEnemyAnimationController i_controller, string i_clip, float? i_blendSeconds)
+	{
+		if (i_controller == null) return;
+		if (i_blendSeconds.HasValue) i_controller.CrossFade(i_clip, i_blendSeconds.Value);
+		else i_controller.Play(i_clip, true);
 	}
 
 	private void EndFinisher(bool i_success, bool i_applyOutcome)
@@ -2042,6 +2082,45 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	}
 
 	private void UpdatePlayerAnimation()
+	{
+		ApplyPlayerAnimation();
+		ApplyPlayerBlend();
+	}
+
+	// phaseBlendSeconds (or the phase's own blendSeconds): remembers the pose the player is drawn in as a phase
+	// starts (the game's own pose for the first), so the new phase's clip fades in from it instead of cutting.
+	private void CapturePlayerBlend()
+	{
+		m_playerBlendPositions.Clear(); m_playerBlendScales.Clear(); m_playerBlendRotations.Clear();
+		m_playerBlendSeconds = GetCurrentPhase()?.BlendSeconds ?? m_definition?.PhaseBlendSeconds ?? 0f;
+		if (m_playerBlendSeconds <= 0f) return;
+		foreach (KeyValuePair<string, Transform> pair in m_playerBones)
+		{
+			if (pair.Value == null) continue;
+			m_playerBlendPositions[pair.Key] = pair.Value.localPosition;
+			m_playerBlendScales[pair.Key] = pair.Value.localScale;
+			m_playerBlendRotations[pair.Key] = pair.Value.localEulerAngles.z;
+		}
+		m_playerBlendStartedAt = Time.time;
+	}
+
+	private void ApplyPlayerBlend()
+	{
+		if (m_playerBlendRotations.Count == 0) return;
+		float weight = Mathf.SmoothStep(0f, 1f, (Time.time - m_playerBlendStartedAt) / m_playerBlendSeconds);
+		if (weight >= 1f) { m_playerBlendPositions.Clear(); m_playerBlendScales.Clear(); m_playerBlendRotations.Clear(); return; }
+		foreach (KeyValuePair<string, float> pair in m_playerBlendRotations)
+		{
+			if (!m_playerBones.TryGetValue(pair.Key, out Transform bone) || bone == null) continue;
+			Vector3 from = m_playerBlendScales[pair.Key], to = bone.localScale;
+			// A pose drawn the other way round turns at once; scaling through zero would collapse it.
+			if (Mathf.Sign(from.x) == Mathf.Sign(to.x)) bone.localScale = Vector3.Lerp(from, to, weight);
+			bone.localPosition = Vector3.Lerp(m_playerBlendPositions[pair.Key], bone.localPosition, weight);
+			bone.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(pair.Value, bone.localEulerAngles.z, weight));
+		}
+	}
+
+	private void ApplyPlayerAnimation()
 	{
 		EnemyAnimationClipDefinition clip = GetCurrentPlayerAnimation();
 		if (clip == null) return;
@@ -2729,16 +2808,39 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private int m_eventCycle;
 	private int m_nextEffectTrigger;
 	private int m_effectTriggerCycle;
+	// animation.blendSeconds: the pose each bone had when the clip started, faded out over m_blendSeconds.
+	private readonly Dictionary<string, Vector3> m_blendPosition = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, Vector3> m_blendScale = new Dictionary<string, Vector3>(StringComparer.Ordinal);
+	private readonly Dictionary<string, float> m_blendRotation = new Dictionary<string, float>(StringComparer.Ordinal);
+	private float m_blendSeconds;
+	// Whether the bones hold a pose Update drew. Play resets them to the rest pose, so a second Play before
+	// the next Update (two physics steps in one frame) must keep fading from the pose that was drawn.
+	private bool m_isPoseDrawn;
 
 	public void Configure(string i_definitionId) { m_definitionId = i_definitionId; Resolve(); }
 	public string GetCurrentClipName() { return m_clipName; }
 
-	private void OnEnable() { Resolve(); CacheBones(); Play("idle", true); }
+	private void OnEnable() { Resolve(); CacheBones(); ClearBlend(); Play("idle", true); }
 
-	public void Play(string i_clip, bool i_restart = false)
+	public void Play(string i_clip, bool i_restart = false) { StartClip(i_clip, i_restart, null); }
+
+	// Restarts a clip, fading into it from the pose drawn now over i_blendSeconds instead of animation.blendSeconds.
+	public void CrossFade(string i_clip, float i_blendSeconds) { StartClip(i_clip, true, i_blendSeconds); }
+
+	private void StartClip(string i_clip, bool i_restart, float? i_blendSeconds)
 	{
 		if (!i_restart && m_clipName == i_clip) return;
 		if (m_animation?.Clips == null || !m_animation.Clips.ContainsKey(i_clip)) return;
+		m_blendSeconds = string.IsNullOrEmpty(m_clipName) ? 0f : i_blendSeconds ?? m_animation.BlendSeconds ?? 0f;
+		if (m_blendSeconds <= 0f) { m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear(); }
+		else if (m_isPoseDrawn)
+			foreach (KeyValuePair<string, Transform> pair in m_bones)
+			{
+				m_blendPosition[pair.Key] = pair.Value.localPosition;
+				m_blendScale[pair.Key] = pair.Value.localScale;
+				m_blendRotation[pair.Key] = pair.Value.localEulerAngles.z;
+			}
+		m_isPoseDrawn = false;
 		m_clipName = i_clip;
 		m_started = Time.time;
 		m_nextEvent = 0;
@@ -2746,6 +2848,48 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 		m_nextEffectTrigger = 0;
 		m_effectTriggerCycle = 0;
 		ResetPose();
+		// Until Update draws the new clip, keep showing the pose it fades from rather than the rest pose.
+		foreach (KeyValuePair<string, float> pair in m_blendRotation)
+		{
+			if (!m_bones.TryGetValue(pair.Key, out Transform bone) || bone == null) continue;
+			bone.localPosition = m_blendPosition[pair.Key];
+			bone.localScale = m_blendScale[pair.Key];
+			bone.localRotation = Quaternion.Euler(0f, 0f, pair.Value);
+		}
+	}
+
+	private void ClearBlend()
+	{
+		m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear();
+		m_isPoseDrawn = false;
+	}
+
+	// Starts a clip i_startSeconds (clip time) in, as if it had been playing since then: the events and effect
+	// triggers before that point are not raised.
+	public void Play(string i_clip, bool i_restart, float i_startSeconds)
+	{
+		Play(i_clip, i_restart);
+		if (m_clipName != i_clip || i_startSeconds <= 0f || !m_animation.Clips.TryGetValue(i_clip, out EnemyAnimationClipDefinition clip)) return;
+		m_started -= i_startSeconds / Mathf.Max(0.01f, m_animation.SpeedMultiplier ?? 1f);
+		List<EnemyAnimationEventDefinition> events = clip.Events;
+		while (events != null && m_eventCycle == 0 && m_nextEvent < events.Count && events[m_nextEvent].Time <= i_startSeconds)
+			if (++m_nextEvent == events.Count) { m_nextEvent = 0; m_eventCycle = 1; }
+		IReadOnlyList<NormalizedEffectTrigger> triggers = clip.NormalizedPresentation?.EffectTriggers;
+		while (triggers != null && m_effectTriggerCycle == 0 && m_nextEffectTrigger < triggers.Count && triggers[m_nextEffectTrigger].Time <= i_startSeconds)
+			if (++m_nextEffectTrigger == triggers.Count) { m_nextEffectTrigger = 0; m_effectTriggerCycle = 1; }
+	}
+
+	public bool HasClip(string i_clip)
+	{
+		if (m_animation == null) Resolve();
+		return m_animation?.Clips != null && m_animation.Clips.ContainsKey(i_clip);
+	}
+
+	// Playback length of a clip (DurationSeconds over the definition's speed multiplier), or -1.
+	public float GetClipSeconds(string i_clip)
+	{
+		if (!HasClip(i_clip)) return -1f;
+		return m_animation.Clips[i_clip].DurationSeconds / Mathf.Max(0.01f, m_animation.SpeedMultiplier ?? 1f);
 	}
 
 	// A bone's rest transform, local to its parent.
@@ -2774,7 +2918,8 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private void Update()
 	{
 		NPC owner = GetComponent<NPC>();
-		if (owner != null && owner.GetStateActorCurrent() == StateActor.Ragdoll) return;
+		// Physics owns the bones while ragdolled; getting up starts from the rest pose rather than fading from a stale one.
+		if (owner != null && owner.GetStateActorCurrent() == StateActor.Ragdoll) { ClearBlend(); return; }
 		if (m_animation?.Clips == null || string.IsNullOrEmpty(m_clipName) || !m_animation.Clips.TryGetValue(m_clipName, out EnemyAnimationClipDefinition clip)) return;
 		float elapsed = (Time.time - m_started) * (m_animation.SpeedMultiplier ?? 1f);
 		ApplyEvents(clip, elapsed, owner);
@@ -2816,6 +2961,28 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 				visual.color = Color.Lerp(colorA, colorB, blend);
 				visual.sortingOrder = Mathf.RoundToInt(Mathf.Lerp(a.RuntimeSortingOrder ?? m_baseSortingOrders[bone], b.RuntimeSortingOrder ?? m_baseSortingOrders[bone], blend));
 			}
+		}
+		ApplyBlendIn(animated);
+		m_isPoseDrawn = true;
+	}
+
+	// Fades from the pose captured when the clip started into the clip; bones the clip does not animate
+	// fade into their rest pose.
+	private void ApplyBlendIn(HashSet<string> i_animated)
+	{
+		if (m_blendSeconds <= 0f || m_blendRotation.Count == 0) return;
+		float weight = Mathf.SmoothStep(0f, 1f, (Time.time - m_started) / m_blendSeconds);
+		if (weight >= 1f) { m_blendPosition.Clear(); m_blendScale.Clear(); m_blendRotation.Clear(); return; }
+		foreach (KeyValuePair<string, float> pair in m_blendRotation)
+		{
+			if (!m_bones.TryGetValue(pair.Key, out Transform target) || target == null) continue;
+			bool animated = i_animated.Contains(pair.Key);
+			Vector3 position = animated ? target.localPosition : m_basePosition[pair.Key];
+			Vector3 scale = animated ? target.localScale : m_baseScale[pair.Key];
+			float rotation = animated ? target.localEulerAngles.z : m_baseRotation[pair.Key];
+			target.localPosition = Vector3.Lerp(m_blendPosition[pair.Key], position, weight);
+			target.localScale = Vector3.Lerp(m_blendScale[pair.Key], scale, weight);
+			target.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(pair.Value, rotation, weight));
 		}
 	}
 

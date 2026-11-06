@@ -41,13 +41,18 @@
 | --- | --- | --- | --- | --- |
 | `visual` | schema | yes |  |  |
 | `attacks` | schema | yes |  | min items: `1` |
-| `animation` | schema | no |  |  |
 
 ### Fields under `root (oneOf 2).visual`
 
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `type` | const: `originalSkeletonAtlas` | no |  |  |
+
+### Fields for `root (oneOf 2) (anyOf 1)`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `animation` | schema | yes |  |  |
 
 ## Definition: `enemyId`
 
@@ -199,6 +204,7 @@ Schema form: object.
 | `id` | ref: `name` | no |  |  |
 | `type` | enum: `melee`, `hitscan`, `projectile`, `area`, `grab`, `multiStage` | no |  |  |
 | `animation` | ref: `name` | no |  |  |
+| `missAnimation` | ref: `name` | no | experimental |  |
 | `hitTimeSeconds` | number | no |  | min: `0`; max: `600` |
 | `chance` | number | no |  | min: `0`; max: `1` |
 | `damage` | number | no |  | min: `0`; max: `100000` |
@@ -391,6 +397,7 @@ Schema form: enum: `hips`, `butt`, `spine`, `chest`, `neck`, `head`, `arm-right-
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+| `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherStatuses`
 
@@ -438,6 +445,7 @@ Schema form: object.
 | `participantAnimations` | object map of ref: `name` | no |  | max properties: `3` |
 | `attached` | boolean | no | experimental |  |
 | `contacts` | ref: `finisherContacts` | no | experimental |  |
+| `blendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherParticipant`
 
@@ -564,6 +572,7 @@ Schema form: object.
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `speedMultiplier` | number | no |  | min: `0.01`; max: `10` |
+| `blendSeconds` | number | no | experimental | min: `0`; max: `1` |
 | `clips` | object map of ref: `clip` | no |  | max properties: `32` |
 
 ## Definition: `clip`

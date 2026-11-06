@@ -13,6 +13,11 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - Finisher phases accept `attached` (`false` lets go, `true` holds on again) and their own `contacts`, which replace the attachment's for that phase. Contacts that start, stop or move ease over `settleSeconds`, and a knee or elbow whose bend changes while held swings across instead of flipping. When the finisher ends, the enemy is released where its clip drew it.
 - New validation codes: the range checks `enemy.stats.finisher-attachment-offset`, `enemy.stats.finisher-attachment-follow-rotation` and `enemy.stats.finisher-attachment-settle`; `enemy.behavior.finisher-attachment-target`, `-sorting`, `-player-sorting` and `-phase` (a phase sets `attached` or `contacts` without an attachment); and `enemy.behavior.finisher-contact-bone`, `-target` and `-value`.
 - Finishers without `attachment` are unchanged.
+### 2026-11-02: miss animations for original-enemy attacks
+
+- Added optional experimental `missAnimation` to original-enemy attacks. When the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now), that clip takes over from the same point in its timeline and the attack runs until the clip ends; the attack's cooldown starts then.
+- New validation codes `enemy.attacks.miss-animation-missing` (the clip is not one of the enemy's) and `enemy.attacks.miss-animation-inherited` (inherited Core attack overrides reject the field).
+- Attacks without `missAnimation` are unchanged.
 
 ### 2026-10-24: Core animation reference in builds
 

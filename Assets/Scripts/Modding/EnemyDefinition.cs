@@ -122,6 +122,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("id")] public string Id { get; set; }
 		[JsonProperty("type")] public string Type { get; set; }
 		[JsonProperty("animation")] public string Animation { get; set; }
+		// Original enemies: the clip that takes over at the hit when the hit misses (a leap that lands short). It
+		// continues from the same time and the attack lasts until it ends.
+		[JsonProperty("missAnimation")] public string MissAnimation { get; set; }
 		[JsonProperty("hitTimeSeconds")] public float? HitTimeSeconds { get; set; }
 		[JsonProperty("chance")] public float? Chance { get; set; }
 		[JsonProperty("damage")] public float? Damage { get; set; }
@@ -245,6 +248,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("y")] public float Y { get; set; }
 		[JsonProperty("angle")] public float? Angle { get; set; }
 		[JsonProperty("bend")] public int? Bend { get; set; }
+		// Seconds the player's pose cross-fades from one phase's clip into the next (0: phases cut).
+		[JsonProperty("phaseBlendSeconds")] public float? PhaseBlendSeconds { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -272,6 +277,9 @@ namespace CaptivityReloaded.Modding
 		// The contacts held during this phase, by enemy end bone, instead of the attachment's (an empty list lets
 		// every limb go). Contacts that start or stop ease in or out over settleSeconds.
 		[JsonProperty("contacts")] public List<EnemyFinisherContactDefinition> Contacts { get; set; }
+		// How long the change into this phase takes: the player's pose cross-fades over it instead of phaseBlendSeconds,
+		// and the enemy's and participants' clips instead of their animation.blendSeconds.
+		[JsonProperty("blendSeconds")] public float? BlendSeconds { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -306,6 +314,8 @@ namespace CaptivityReloaded.Modding
 	public sealed class EnemyAnimationDefinition
 	{
 		[JsonProperty("speedMultiplier")] public float? SpeedMultiplier { get; set; }
+		// Original enemies: seconds to cross-fade from the current pose into a newly started clip.
+		[JsonProperty("blendSeconds")] public float? BlendSeconds { get; set; }
 		[JsonProperty("clips")] public Dictionary<string, EnemyAnimationClipDefinition> Clips { get; set; } = new Dictionary<string, EnemyAnimationClipDefinition>();
 	}
 
@@ -556,6 +566,8 @@ namespace CaptivityReloaded.Modding
 				ValidateRange(attack.RagdollSeconds, 0f, 30f, "attack-ragdoll", io_report, i_source);
 				if (!i_original && attack.RagdollSeconds.HasValue)
 					io_report.Add(ValidationSeverity.Error, "enemy.attacks.ragdoll-inherited", "ragdollSeconds is supported only on original-enemy attacks.", i_source);
+				if (!i_original && attack.MissAnimation != null)
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.miss-animation-inherited", "missAnimation is supported only on original-enemy attacks.", i_source);
 				ValidateRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
 				ValidateRange(attack.InitiateRange, 0f, 1000f, "attack-initiate-range", io_report, i_source);
 				ValidateRange(attack.HitRange, 0f, 1000f, "attack-hit-range", io_report, i_source);
@@ -595,6 +607,8 @@ namespace CaptivityReloaded.Modding
 				foreach (EnemyAttackDefinition attack in i_document.Attacks ?? new List<EnemyAttackDefinition>())
 				{
 					if (attack == null || string.IsNullOrWhiteSpace(attack.Animation)) continue;
+					if (attack.MissAnimation != null && (!IsSemanticName(attack.MissAnimation) || !HasAnimation(i_document, attack.MissAnimation)))
+						io_report.Add(ValidationSeverity.Error, "enemy.attacks.miss-animation-missing", "Attack references an unknown missAnimation clip: " + attack.MissAnimation, i_source);
 					if (i_document.Animation?.Clips == null || !i_document.Animation.Clips.TryGetValue(attack.Animation, out EnemyAnimationClipDefinition attackClip))
 					{
 						if (!HasAnimation(i_document, attack.Animation))
@@ -778,12 +792,14 @@ namespace CaptivityReloaded.Modding
 							ValidateRange(phase.InputPower, 0.01f, 10000f, "finisher-phase-input-power", io_report, i_source);
 							ValidateFinisherInputPattern(phase.InputPattern, "finisher-phase-input-pattern", io_report, i_source);
 							ValidateRange(phase.DecayPerSecond, 0f, 10000f, "finisher-phase-decay", io_report, i_source);
+							ValidateRange(phase.BlendSeconds, 0f, 2f, "finisher-phase-entry-blend", io_report, i_source);
 							ValidatePlayerFinisherAnimationSource(phase.PlayerAnimation, phase.PlayerAnimationReference, io_report, i_source);
 						}
 						if (totalDuration > 300f)
 							io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-total", "Combined finisher phase duration cannot exceed 300 seconds.", i_source);
 					}
 					else ValidateRequiredRange(module.DurationSeconds, 1f, 60f, "finisher-duration", io_report, i_source);
+					ValidateRange(module.PhaseBlendSeconds, 0f, 2f, "finisher-phase-blend", io_report, i_source);
 					ValidateRequiredRange(module.MeterMax, 1f, 10000f, "finisher-meter-max", io_report, i_source);
 					ValidateRequiredRange(module.InputPower, 0.01f, 10000f, "finisher-input-power", io_report, i_source);
 					ValidateFinisherInputPattern(module.InputPattern, "finisher-input-pattern", io_report, i_source);
@@ -1137,6 +1153,9 @@ namespace CaptivityReloaded.Modding
 			ValidationReport io_report, string i_source)
 		{
 			ValidateRange(i_animation.SpeedMultiplier, 0.01f, 10f, "animation-speed", io_report, i_source);
+			ValidateRange(i_animation.BlendSeconds, 0f, 1f, "animation-blend", io_report, i_source);
+			if (!i_original && i_animation.BlendSeconds.HasValue)
+				io_report.Add(ValidationSeverity.Error, "enemy.animation.blend-inherited", "animation.blendSeconds is supported only on original enemies.", i_source);
 			if (!i_original) return;
 			HashSet<string> bones = new HashSet<string>((i_visual?.Bones ?? new List<EnemyBoneDefinition>()).ConvertAll(item => item?.Id ?? string.Empty), StringComparer.Ordinal);
 			if ((i_animation.Clips == null || !i_animation.Clips.ContainsKey("idle")) && (i_animationReferences == null || !i_animationReferences.ContainsKey("idle"))

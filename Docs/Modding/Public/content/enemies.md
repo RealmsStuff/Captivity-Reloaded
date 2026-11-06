@@ -9,6 +9,7 @@ Only use properties listed for their exact object in the [enemy API reference](.
 - `spawn` contains `inheritTemplateSpawners`, optional `selectionWeight`, and the optional experimental `joinCoreSpawners` list described under [Fully original enemies](#fully-original-enemies-experimental).
 - Original enemies join Core stage spawners only through `spawn.joinCoreSpawners`; otherwise place their content ID in authored stage spawners.
 - Only original-enemy attacks and their stages have `ragdollSeconds` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it. Tiled interactions have their own, unrelated `ragdollSeconds`.
+- Only original-enemy attacks have `missAnimation` (see [Fully original enemies](#fully-original-enemies-experimental)); inherited attack overrides reject it.
 - `animation` does not currently have `blendSeconds`.
 - A `downedFinisher` uses the documented top-level or per-phase `playerAnimation`/`playerAnimationRef`; it does not have `pairing` or `playerStruggleAnimationRef` fields.
 
@@ -35,7 +36,9 @@ After importing from DragonBones, inspect the hierarchy before packaging. `hips`
 
 `animation.clips` contains named procedural clips. Each clip has an ordered list of frames; a frame supplies an atlas `region`, absolute local position, rotation, or scale values for any subset of bones. Sprite regions switch at the authored frame while transforms interpolate between frames. `idle` and `move` are required. Attack definitions reference another clip by name and specify the exact hit time, total duration, ranges, damage, knockback, chance, and cooldown.
 
-Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton. Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name.
+Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton. Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name. An enemy whose clips all come from `animationRefs` may still give an `animation` object (for `speedMultiplier` or `blendSeconds`) without `clips`.
+
+**Experimental:** `animation.blendSeconds` (0 to 1, default 0) cross-fades an original enemy's bones from the pose they are drawn in into each newly started clip, so switching between idle, move, attack and finisher clips does not snap. Bones the new clip does not animate fade to their rest pose. Events and sprite swaps still start on the new clip's own timeline. A ragdolled enemy gets up from its rest pose without a fade.
 
 Standalone attack delivery types are:
 
@@ -47,6 +50,8 @@ Standalone attack delivery types are:
 - `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, `ragdollSeconds`, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
 
 **Experimental:** an original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, after its damage and knockback, and the knockdown counts as a KO in the status cards and diary. A stage without its own value inherits the attack's; a projectile carries it to its impact. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target. A hit that ragdolls the player by itself, a grabbed or dead player, and a player in labor are not knocked down again.
+
+**Experimental:** an original attack can name a `missAnimation`: another of the enemy's clips that takes over when the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now, such as while invulnerable: no damage lands, so it counts as a miss). The miss clip starts from the same point in its own timeline that the attack clip had reached at the hit (the `attackHit` event's time, or `hitTimeSeconds`), so a leap that misses carries on into a landing instead of finishing a catch on empty air. Events and effect triggers before that point are skipped. The attack then lasts until the miss clip ends instead of `durationSeconds`, and its cooldown starts. A grab misses when the finisher cannot start; a projectile never misses once it is fired; `multiStage` stages never switch to it. Attacks without `missAnimation` are unchanged.
 
 ### Enemy animation events
 
@@ -176,6 +181,7 @@ Each phase can change what the enemy holds for that phase:
 - `attached: false` lets go: the root stops following and the contacts ease off. `attached: true` holds on again. Without `attached`, a phase keeps the previous phase's state.
 
 Phases may set `attached` and `contacts` only when the finisher has an `attachment`. When the finisher ends, the enemy is released where its clip last drew it, and physics takes over from there.
+**Experimental:** phase changes cut by default. `phaseBlendSeconds` (0 to 2) on the `downedFinisher` cross-fades the player's pose from the pose it is drawn in into each phase's player clip, the first phase included (from the game's own pose). A phase's own `blendSeconds` (0 to 2) sets how long the change into that phase takes, for two poses far apart: the player's pose cross-fades over it instead of `phaseBlendSeconds`, and the enemy's clip and any participants' clips cross-fade over it instead of their `animation.blendSeconds`. A bone whose pose turns the other way round (its scale flips sign) turns at once instead of shrinking through zero.
 
 ### Independent NPC participants
 
