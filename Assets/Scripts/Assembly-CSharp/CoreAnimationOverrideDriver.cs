@@ -16,7 +16,9 @@ using UnityEngine.Networking;
 // grab it does the same for the player's side of the current finisher-phase-N, timed by the player's Animator.
 // Properties an override wrote are put back to their rest values in Update, before the Animator runs, so nothing
 // the Animator does not drive stays bent once the override stops.
-[DefaultExecutionOrder(-50)]
+// Late, so the pose it writes comes after the game's own LateUpdate writers (such as the player's skin tint);
+// CoreAnimationOverrideRestorer puts the previous frame's values back early, before the game's Updates read them.
+[DefaultExecutionOrder(10000)]
 public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 {
 	private sealed class Bone
@@ -66,7 +68,9 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 	// on enemies without overrides.
 	public static void Attach(NPC i_npc)
 	{
-		if (i_npc != null && i_npc.GetComponent<CoreAnimationOverrideDriver>() == null) i_npc.gameObject.AddComponent<CoreAnimationOverrideDriver>();
+		if (i_npc == null || i_npc.GetComponent<CoreAnimationOverrideDriver>() != null) return;
+		i_npc.gameObject.AddComponent<CoreAnimationOverrideDriver>();
+		i_npc.gameObject.AddComponent<CoreAnimationOverrideRestorer>();
 	}
 
 	private void Start()
@@ -132,10 +136,16 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 		};
 	}
 
+	// Called early by CoreAnimationOverrideRestorer; Unity's own call here, late in the frame, then finds nothing left.
 	private void Update()
 	{
 		Rest(m_bones);
 		Rest(m_playerBones);
+	}
+
+	internal void RestNow()
+	{
+		if (isActiveAndEnabled) Update();
 	}
 
 	private void LateUpdate()
@@ -393,5 +403,19 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 			yield return request.SendWebRequest();
 			if (request.result == UnityWebRequest.Result.Success) s_audio[i_key] = DownloadHandlerAudioClip.GetContent(request);
 		}
+	}
+}
+
+// Puts back what CoreAnimationOverrideDriver wrote last frame before the game's Updates run.
+[DefaultExecutionOrder(-1000)]
+public sealed class CoreAnimationOverrideRestorer : MonoBehaviour
+{
+	private CoreAnimationOverrideDriver m_driver;
+
+	private void Update()
+	{
+		if (m_driver == null) m_driver = GetComponent<CoreAnimationOverrideDriver>();
+		if (m_driver == null || !m_driver.enabled) { enabled = false; return; }
+		m_driver.RestNow();
 	}
 }
