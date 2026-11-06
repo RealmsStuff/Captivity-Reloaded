@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace CaptivityReloaded.Modding.Tests
 {
@@ -16,7 +18,7 @@ namespace CaptivityReloaded.Modding.Tests
         'sortingOrders': { 'hand': 30 }, 'playerSortingOrders': { 'arm-right-upper': 28 } },
       'phases': [
         { 'id': 'cling', 'durationSeconds': 2, 'animation': 'idle' },
-        { 'id': 'grip', 'durationSeconds': 2, 'animation': 'idle', 'contacts': [{ 'bone': 'hand', 'target': 'chest', 'x': 0.1, 'y': 0.02, 'angle': 15, 'bend': -1 }] },
+        { 'id': 'grip', 'durationSeconds': 2, 'animation': 'idle', 'blendSeconds': 0.2, 'contacts': [{ 'bone': 'hand', 'target': 'chest', 'x': 0.1, 'y': 0.02, 'angle': 15, 'bend': -1 }] },
         { 'id': 'free', 'durationSeconds': 2, 'animation': 'idle', 'contacts': [] },
         { 'id': 'drop', 'durationSeconds': 1, 'animation': 'idle', 'attached': false }
       ] }
@@ -70,6 +72,36 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(grip.Bend, Is.EqualTo(-1));
 			Assert.That(finisher.Phases[2].Contacts, Is.Empty, "An empty list lets every limb go.");
 			Assert.That(finisher.Phases[3].Attached, Is.False);
+		}
+
+		[Test]
+		public void PhaseBlendSeconds_OverridesAttachmentSettleTime()
+		{
+			EnemyDefinitionLoadResult result = Parse(Enemy);
+			Assert.That(result.Report.IsValid, Is.True, Issues(result));
+			EnemyBehaviorModuleDefinition finisher = Finisher(result);
+			GameObject host = new GameObject("finisher-attachment-blend-test");
+			try
+			{
+				ModularEnemyFinisher runtime = host.AddComponent<ModularEnemyFinisher>();
+				System.Type type = typeof(ModularEnemyFinisher);
+				type.GetField("m_definition", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(runtime, finisher);
+				FieldInfo phaseIndex = type.GetField("m_phaseIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+				MethodInfo settleSeconds = type.GetMethod("GetSettleSeconds", BindingFlags.Instance | BindingFlags.NonPublic);
+				Assert.That(phaseIndex, Is.Not.Null);
+				Assert.That(settleSeconds, Is.Not.Null);
+
+				phaseIndex.SetValue(runtime, 0);
+				Assert.That((float)settleSeconds.Invoke(runtime, new object[] { finisher.Attachment }), Is.EqualTo(0.4f),
+					"A phase without blendSeconds keeps attachment.settleSeconds.");
+				phaseIndex.SetValue(runtime, 1);
+				Assert.That((float)settleSeconds.Invoke(runtime, new object[] { finisher.Attachment }), Is.EqualTo(0.2f),
+					"A phase blend controls its attachment and contact easing too.");
+			}
+			finally
+			{
+				Object.DestroyImmediate(host);
+			}
 		}
 
 		[Test]

@@ -138,7 +138,7 @@
       "participants": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/finisherParticipant" } },
       "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
       "statuses": { "$ref": "#/$defs/finisherStatuses" },
-      "attachment": { "$ref": "#/$defs/finisherAttachment" }
+      "attachment": { "$ref": "#/$defs/finisherAttachment" },
       "phaseBlendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" }
     } },
     "finisherAttachment": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["target"], "properties": {
@@ -176,7 +176,7 @@
       "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
       "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 },
       "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 },
-      "attached": { "type": "boolean", "x-stability": "experimental" }, "contacts": { "$ref": "#/$defs/finisherContacts", "x-stability": "experimental" }
+      "attached": { "type": "boolean", "x-stability": "experimental" }, "contacts": { "$ref": "#/$defs/finisherContacts", "x-stability": "experimental" },
       "blendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" }
     } },
     "finisherParticipant": { "type": "object", "additionalProperties": false, "required": ["id", "enemy"], "properties": {

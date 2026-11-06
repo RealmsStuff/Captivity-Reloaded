@@ -1467,9 +1467,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		ModularEnemyAnimationController controller = m_npc.GetComponent<ModularEnemyAnimationController>();
 		// The clip starts from the pose it drew, without the attachment's turn, which is added again on top.
 		if (controller != null) UnturnEnemy(controller.GetBone("hips"));
-		controller?.Play(string.IsNullOrEmpty(animation) ? "finisher" : animation, true);
 		float? blend = GetCurrentPhase()?.BlendSeconds;
-		PlayPhaseClip(m_npc.GetComponent<ModularEnemyAnimationController>(), string.IsNullOrEmpty(animation) ? "finisher" : animation, blend);
+		PlayPhaseClip(controller, string.IsNullOrEmpty(animation) ? "finisher" : animation, blend);
 		foreach (ActiveFinisherParticipant participant in m_participants)
 			if (participant.Started && participant.Controller != null)
 				PlayPhaseClip(participant.Controller, GetParticipantAnimation(participant.Definition), blend);
@@ -2482,9 +2481,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private static float Smooth(float i_value) { return Mathf.SmoothStep(0f, 1f, i_value); }
 
 	// How long the attachment's eases take.
-	private static float GetSettleSeconds(EnemyFinisherAttachmentDefinition i_attachment)
+	private float GetSettleSeconds(EnemyFinisherAttachmentDefinition i_attachment)
 	{
-		return i_attachment.SettleSeconds ?? 0.3f;
+		return GetCurrentPhase()?.BlendSeconds ?? i_attachment.SettleSeconds ?? 0.3f;
 	}
 
 	// Moves the root with the target frame (or out of it) and eases the weights; run before the lock is applied.

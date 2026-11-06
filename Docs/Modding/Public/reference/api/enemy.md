@@ -364,6 +364,7 @@ Schema form: object.
 | `failureOutcome` | ref: `finisherOutcome` | no |  |  |
 | `statuses` | ref: `finisherStatuses` | no |  |  |
 | `attachment` | ref: `finisherAttachment` | no |  |  |
+| `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherAttachment`
 
@@ -397,7 +398,6 @@ Schema form: enum: `hips`, `butt`, `spine`, `chest`, `neck`, `head`, `arm-right-
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | _No named properties_ | | | | This definition is composed through references or conditional schemas. |
-| `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
 
 ## Definition: `finisherStatuses`
 
