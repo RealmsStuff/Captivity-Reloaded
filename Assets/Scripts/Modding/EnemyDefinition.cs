@@ -145,6 +145,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("projectileRadius")] public float? ProjectileRadius { get; set; }
 		[JsonProperty("projectileGravityScale")] public float? ProjectileGravityScale { get; set; }
 		[JsonProperty("stages")] public List<EnemyAttackStageDefinition> Stages { get; set; } = new List<EnemyAttackStageDefinition>();
+		// Original enemies: the id of the downedFinisher a grab starts. Without it a grab picks one by weight.
+		[JsonProperty("finisher")] public string Finisher { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -178,6 +180,10 @@ namespace CaptivityReloaded.Modding
 	public sealed class EnemyBehaviorModuleDefinition
 	{
 		[JsonProperty("type", Required = Required.Always)] public string Type { get; set; }
+		// downedFinisher: an enemy may have several, each with a unique id (required when there is more than one),
+		// picked by weight (default 1) when a grab or a downed player does not name one.
+		[JsonProperty("id")] public string Id { get; set; }
+		[JsonProperty("weight")] public float? Weight { get; set; }
 		[JsonProperty("amount")] public float? Amount { get; set; }
 		[JsonProperty("intervalSeconds")] public float? IntervalSeconds { get; set; }
 		[JsonProperty("healthThreshold")] public float? HealthThreshold { get; set; }
@@ -639,6 +645,15 @@ namespace CaptivityReloaded.Modding
 			if (i_original && usesGrab && (i_document.Behavior?.Modules == null
 				|| !i_document.Behavior.Modules.Exists(module => module != null && module.Type == "downedFinisher")))
 				io_report.Add(ValidationSeverity.Error, "enemy.attacks.grab-finisher", "Grab attacks require a downedFinisher behavior module.", i_source);
+			foreach (EnemyAttackDefinition attack in i_document.Attacks ?? new List<EnemyAttackDefinition>())
+			{
+				if (attack?.Finisher == null) continue;
+				bool grabs = attack.Type == "grab" || (attack.Stages ?? new List<EnemyAttackStageDefinition>()).Exists(stage => stage != null && stage.Type == "grab");
+				if (!i_original || !grabs)
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.finisher", "Only an original enemy's grab attack (or an attack with a grab stage) can name a finisher.", i_source);
+				else if (i_document.Behavior?.Modules == null || !i_document.Behavior.Modules.Exists(module => module != null && module.Type == "downedFinisher" && module.Id == attack.Finisher))
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.finisher-missing", "Attack " + attack.Id + " names finisher '" + attack.Finisher + "', which is not one of the enemy's downedFinisher ids.", i_source);
+			}
 			if (i_document.Behavior != null)
 			{
 				ValidateRange(i_document.Behavior.VisionRange, 0.1f, 10000f, "vision-range", io_report, i_source);
@@ -791,18 +806,36 @@ namespace CaptivityReloaded.Modding
 			return i_type == "melee" || i_type == "hitscan" || i_type == "projectile" || i_type == "area" || i_type == "grab";
 		}
 
+		// Several downedFinisher modules each need a unique semantic id; one alone may omit it. weight: 0.001..1000.
+		private static void ValidateFinisherIds(List<EnemyBehaviorModuleDefinition> i_modules, ValidationReport io_report, string i_source)
+		{
+			List<EnemyBehaviorModuleDefinition> finishers = i_modules.FindAll(module => module != null && module.Type == "downedFinisher");
+			HashSet<string> ids = new HashSet<string>(StringComparer.Ordinal);
+			foreach (EnemyBehaviorModuleDefinition finisher in finishers)
+			{
+				if (finisher.Id == null ? finishers.Count > 1 : !IsSemanticName(finisher.Id) || !ids.Add(finisher.Id))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-id",
+						"Each downedFinisher needs a unique semantic id when an enemy has more than one.", i_source);
+				ValidateRange(finisher.Weight, 0.001f, 1000f, "finisher-weight", io_report, i_source);
+			}
+		}
+
 		private static void ValidateBehaviorModules(List<EnemyBehaviorModuleDefinition> i_modules, bool i_original, ValidationReport io_report, string i_source)
 		{
 			if (i_modules == null) return;
 			if (i_modules.Count > 8) io_report.Add(ValidationSeverity.Error, "enemy.behavior.modules", "At most 8 behavior modules are supported.", i_source);
+			ValidateFinisherIds(i_modules, io_report, i_source);
 			HashSet<string> types = new HashSet<string>(StringComparer.Ordinal);
 			foreach (EnemyBehaviorModuleDefinition module in i_modules)
 			{
-				if (module == null || !types.Add(module.Type ?? string.Empty))
+				// An enemy may have several downedFinisher modules (told apart by id); every other type appears once.
+				if (module == null || (!types.Add(module.Type ?? string.Empty) && module.Type != "downedFinisher"))
 				{
-					io_report.Add(ValidationSeverity.Error, "enemy.behavior.module", "Behavior modules must be non-null and have unique types.", i_source);
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.module", "Behavior modules must be non-null and have unique types (only downedFinisher may repeat).", i_source);
 					continue;
 				}
+				if (module.Type != "downedFinisher" && (module.Id != null || module.Weight.HasValue))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.module-id", "Only downedFinisher modules have an id and a weight.", i_source);
 				switch (module.Type)
 				{
 				case "regeneration":

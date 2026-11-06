@@ -458,7 +458,10 @@ namespace CaptivityReloaded.Editor.Modding
 				JArray existingPhases = existingFinishers.FirstOrDefault()?["phases"] as JArray;
 				if (!m_finisherUsePhases && m_preserveExistingAdditionalPhases && (existingPhases?.Count ?? 0) > 0)
 					throw new InvalidOperationException("This enemy already has a phased finisher. Keep phased editing enabled, or explicitly disable phase preservation before replacing the complete phase list.");
-				foreach (JObject existing in existingFinishers) existing.Remove();
+				// The wizard edits an enemy's first finisher and keeps any others it has (several are told apart by id).
+				JObject edited = existingFinishers.FirstOrDefault();
+				int editedIndex = edited == null ? -1 : modules.IndexOf(edited);
+				edited?.Remove();
 				JObject finisher = new JObject { ["type"] = "downedFinisher", ["triggerRange"] = m_finisherTriggerRange, ["startDelaySeconds"] = m_finisherStartDelay,
 					["meterMax"] = m_finisherMeterMax, ["inputPower"] = m_finisherInputPower, ["decayPerSecond"] = m_finisherDecay, ["cooldownSeconds"] = m_finisherCooldown,
 					["successOutcome"] = new JObject { ["healthRecovery"] = m_finisherSuccessRecovery, ["enemyStunSeconds"] = m_finisherSuccessStun },
@@ -483,7 +486,9 @@ namespace CaptivityReloaded.Editor.Modding
 					finisher["durationSeconds"] = m_finisherDuration; finisher["animation"] = enemyClip.Semantic; finisher["playerAnimationRef"] = playerClip.Id;
 					finisher["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(m_finisherInputPattern, 0, FinisherInputPatterns.Length - 1)];
 				}
-				modules.Add(finisher); string candidate = enemy.ToString(Formatting.Indented);
+				if (edited?["id"] != null) finisher["id"] = edited["id"];
+				if (edited?["weight"] != null) finisher["weight"] = edited["weight"];
+				if (editedIndex >= 0) modules.Insert(editedIndex, finisher); else modules.Add(finisher); string candidate = enemy.ToString(Formatting.Indented);
 				EnemyDefinitionLoadResult definitionValidation = EnemyDefinitionParser.Parse(candidate, packId, m_finisherEnemyPath);
 				if (!definitionValidation.Report.IsValid) throw new InvalidDataException(string.Join("\n", definitionValidation.Report.Issues.Where(i_issue => i_issue.Severity == ValidationSeverity.Error).Take(8).Select(i_issue => i_issue.Message).ToArray()));
 
@@ -909,7 +914,7 @@ namespace CaptivityReloaded.Editor.Modding
 			HashSet<string> moduleTypes = new HashSet<string>(StringComparer.Ordinal);
 			foreach (BehaviorDraft module in m_behaviorDrafts)
 			{
-				if (module == null || !moduleTypes.Add(module.Type ?? string.Empty)) { report.Add(ValidationSeverity.Error, "enemy.behavior.module", "Behavior modules must have unique types."); continue; }
+				if (module == null || (!moduleTypes.Add(module.Type ?? string.Empty) && module.Type != "downedFinisher")) { report.Add(ValidationSeverity.Error, "enemy.behavior.module", "Behavior modules must have unique types (only downedFinisher may repeat)."); continue; }
 				switch (module.Type)
 				{
 					case "regeneration": ValidateDraftRange(module.Amount, .01f, 100000f, "Regeneration amount", report); ValidateDraftRange(module.Interval, .05f, 600f, "Regeneration interval", report); break;
