@@ -248,5 +248,36 @@ namespace CaptivityReloaded.Modding.Tests
 			}
 			finally { UnityEngine.Object.DestroyImmediate(zombie); }
 		}
+
+		[Test]
+		public void Driver_PutsBackTheGamesOwnValueNotTheOneFromWhenItStarted()
+		{
+			// A tint on the head: the game fades the enemy in after the driver starts, and the restore must not undo that.
+			string tint = Clip("tint", Zombie, 4f, "head", "", 0.35f).Replace("\"bone/head\", \"property\": \"rotation.z\"", "\"sprite/head\", \"property\": \"color.g\"");
+			Resolve(new[] { EnemyClip(tint) }, new[] { PatchOf(Patch("tint", "'animations': { 'idle': 'example.zombies:enemy-animation/tint' }")) });
+			Assert.That(CoreAnimationOverrides.TryGet(Zombie, out CoreAnimationOverrideSet set), Is.True, Issues(m_report));
+			CoreAnimationRuntimeMap.Load().TryGet(Zombie, out CoreAnimationRuntimeEnemy rig);
+			rig.TryGetBone("head", out CoreAnimationRuntimeBone head);
+			GameObject zombie = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Actors/Npcs/npc_zombie1.prefab"));
+			try
+			{
+				Animator animator = zombie.GetComponentsInChildren<Animator>(true).First(i_animator => i_animator.runtimeAnimatorController != null);
+				SpriteRenderer headRenderer = animator.transform.Find(head.Renderer).GetComponent<SpriteRenderer>();
+				Type driverType = Type.GetType("CoreAnimationOverrideDriver, Assembly-CSharp");
+				Component driver = zombie.AddComponent(driverType);
+				headRenderer.color = new Color(1f, 1f, 1f, 0.1f);
+				Assert.That((bool)driverType.GetMethod("Configure", new[] { typeof(CoreAnimationOverrideSet), typeof(CoreAnimationRuntimeEnemy) }).Invoke(driver, new object[] { set, rig }), Is.True);
+				animator.Rebind();
+				animator.Play("Idle", 0, 0f);
+				animator.Update(0.5f);
+				headRenderer.color = new Color(1f, 1f, 1f, 0.6f);
+				driverType.GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(driver, null);
+				Assert.That(headRenderer.color.g, Is.EqualTo(0.35f).Within(0.001f));
+				Assert.That(headRenderer.color.a, Is.EqualTo(0.6f).Within(0.001f), "Channels the clip leaves alone keep the game's value.");
+				driverType.GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(driver, null);
+				Assert.That(headRenderer.color, Is.EqualTo(new Color(1f, 1f, 1f, 0.6f)), "The restore puts back the value from just before the write.");
+			}
+			finally { UnityEngine.Object.DestroyImmediate(zombie); }
+		}
 	}
 }

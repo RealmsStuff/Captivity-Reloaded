@@ -248,42 +248,49 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 			Transform target = bone.Transform;
 			if (pose.X.HasValue || pose.Y.HasValue)
 			{
-				bone.Written |= Touched.Position;
 				Vector3 position = target.localPosition;
+				if ((bone.Written & Touched.Position) == 0) bone.Position = position;
+				bone.Written |= Touched.Position;
 				target.localPosition = new Vector3(pose.X ?? position.x, pose.Y ?? position.y, position.z);
 			}
 			if (pose.Rotation.HasValue)
 			{
-				bone.Written |= Touched.Rotation;
 				Vector3 euler = target.localEulerAngles;
+				if ((bone.Written & Touched.Rotation) == 0) bone.Euler = euler;
+				bone.Written |= Touched.Rotation;
 				target.localEulerAngles = new Vector3(euler.x, euler.y, pose.Rotation.Value);
 			}
 			if (pose.ScaleX.HasValue || pose.ScaleY.HasValue)
 			{
-				bone.Written |= Touched.Scale;
 				Vector3 scale = target.localScale;
+				if ((bone.Written & Touched.Scale) == 0) bone.Scale = scale;
+				bone.Written |= Touched.Scale;
 				target.localScale = new Vector3(pose.ScaleX ?? scale.x, pose.ScaleY ?? scale.y, scale.z);
 			}
 			SpriteRenderer renderer = bone.Renderer;
 			if (renderer == null) continue;
 			if (pose.ColorR.HasValue || pose.ColorG.HasValue || pose.ColorB.HasValue || pose.ColorA.HasValue)
 			{
-				bone.Written |= Touched.Color;
 				Color color = renderer.color;
+				if ((bone.Written & Touched.Color) == 0) bone.Color = color;
+				bone.Written |= Touched.Color;
 				renderer.color = new Color(pose.ColorR ?? color.r, pose.ColorG ?? color.g, pose.ColorB ?? color.b, pose.ColorA ?? color.a);
 			}
 			if (pose.RuntimeSortingOrder.HasValue)
 			{
+				if ((bone.Written & Touched.Sorting) == 0) bone.Sorting = bone.BodyPart != null ? bone.BodyPart.GetSortingOrder() : renderer.sortingOrder;
 				bone.Written |= Touched.Sorting;
 				if (bone.BodyPart != null) bone.BodyPart.SetSortingOrder(pose.RuntimeSortingOrder.Value);
 				else renderer.sortingOrder = pose.RuntimeSortingOrder.Value;
 			}
+			if ((pose.RuntimeSprite != null || !string.IsNullOrEmpty(pose.RuntimeSpriteName)) && (bone.Written & Touched.Sprite) == 0) bone.Sprite = renderer.sprite;
 			if (pose.RuntimeSprite != null) { renderer.sprite = pose.RuntimeSprite; bone.Written |= Touched.Sprite; }
 			else if (!string.IsNullOrEmpty(pose.RuntimeSpriteName) && TryFindSprite(pose.RuntimeSpriteName, out Sprite sprite)) { renderer.sprite = sprite; bone.Written |= Touched.Sprite; }
 		}
 	}
 
-	// Back to the captured rest pose, for whatever an override wrote last frame; the Animator then poses what it drives.
+	// Back to what each property held just before the override wrote it last frame (the Animator's or the game's own
+	// value, such as a spawn fade-in), so the game carries on from there and the Animator poses what it drives.
 	private static void Rest(Dictionary<string, Bone> i_bones)
 	{
 		foreach (Bone bone in i_bones.Values)
