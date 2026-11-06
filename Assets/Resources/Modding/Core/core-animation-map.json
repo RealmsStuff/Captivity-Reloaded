@@ -1,0 +1,4527 @@
+{
+  "schemaVersion": 1,
+  "type": "coreAnimationRuntimeMap",
+  "enemies": [
+    {
+      "id": "core:enemy/abby",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-android",
+          "path": "SkeletonAndroid"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonAndroid/hips",
+          "renderer": "SkeletonAndroid/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonAndroid/hips/butt",
+          "renderer": "SkeletonAndroid/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonAndroid/hips/lLegUpper",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-rod",
+          "path": "SkeletonAndroid/hips/penisRod",
+          "renderer": "SkeletonAndroid/hips/penisRod/bp_penisRod"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonAndroid/hips/rLegUpper",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonAndroid/hips/spine",
+          "renderer": "SkeletonAndroid/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonAndroid/hips/spine/chest",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "l-foot-base",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase"
+        },
+        {
+          "name": "penis-end",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd"
+        },
+        {
+          "name": "r-foot-base",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase"
+        },
+        {
+          "name": "breast",
+          "path": "SkeletonAndroid/hips/spine/chest/breast",
+          "renderer": "SkeletonAndroid/hips/spine/chest/breast/bp_breast"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonAndroid/hips/spine/chest/neck",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-foot-end",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd"
+        },
+        {
+          "name": "r-foot-end",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd"
+        },
+        {
+          "name": "breast-bg",
+          "path": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "l-ear",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head/lEar",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head/lEar"
+        },
+        {
+          "name": "r-ear",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head/rEar",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head/rEar"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.1667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.4167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4",
+          "semantic": "finisher-phase-4",
+          "seconds": 0.2833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.2833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6",
+          "semantic": "finisher-phase-6",
+          "seconds": 2.5
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Abby1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Abby2",
+          "playerSeconds": 0.4167
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Abby3",
+          "playerSeconds": 0.1667
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Abby4",
+          "playerSeconds": 0.2833
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Abby5",
+          "playerSeconds": 0.2833
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Abby6",
+          "playerSeconds": 2.5
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/death-hound",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-death-hound",
+          "path": "SkeletonDeathHound"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonDeathHound/hips",
+          "renderer": "SkeletonDeathHound/hips/bp_hips"
+        },
+        {
+          "name": "l-leg-back-upper",
+          "path": "SkeletonDeathHound/hips/lLegBackUpper",
+          "renderer": "SkeletonDeathHound/hips/lLegBackUpper/bp_lLegBackUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonDeathHound/hips/penis",
+          "renderer": "SkeletonDeathHound/hips/penis/bp_penis"
+        },
+        {
+          "name": "r-leg-back-upper",
+          "path": "SkeletonDeathHound/hips/rLegBackUpper",
+          "renderer": "SkeletonDeathHound/hips/rLegBackUpper/bp_rLegBackUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonDeathHound/hips/spine",
+          "renderer": "SkeletonDeathHound/hips/spine/bp_spine"
+        },
+        {
+          "name": "tail",
+          "path": "SkeletonDeathHound/hips/tail",
+          "renderer": "SkeletonDeathHound/hips/tail/bp_tail"
+        },
+        {
+          "name": "l-leg-back-middle",
+          "path": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle",
+          "renderer": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/bp_lLegBackMiddle"
+        },
+        {
+          "name": "r-leg-back-middle",
+          "path": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle",
+          "renderer": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/bp_rLegBackMiddle"
+        },
+        {
+          "name": "l-leg-front-upper",
+          "path": "SkeletonDeathHound/hips/spine/lLegFrontUpper",
+          "renderer": "SkeletonDeathHound/hips/spine/lLegFrontUpper/bp_lLegFrontUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonDeathHound/hips/spine/neck",
+          "renderer": "SkeletonDeathHound/hips/spine/neck/bp_neck"
+        },
+        {
+          "name": "r-leg-front-upper",
+          "path": "SkeletonDeathHound/hips/spine/rLegFrontUpper",
+          "renderer": "SkeletonDeathHound/hips/spine/rLegFrontUpper/bp_rLegFrontUpper"
+        },
+        {
+          "name": "l-leg-back-lower",
+          "path": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower",
+          "renderer": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/bp_lLegBackLower"
+        },
+        {
+          "name": "r-leg-back-lower",
+          "path": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower",
+          "renderer": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/bp_rLegBackLower"
+        },
+        {
+          "name": "l-leg-front-lower",
+          "path": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower",
+          "renderer": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/bp_lLegFrontLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonDeathHound/hips/spine/neck/head",
+          "renderer": "SkeletonDeathHound/hips/spine/neck/head/bp_head"
+        },
+        {
+          "name": "r-leg-front-lower",
+          "path": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower",
+          "renderer": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/bp_rLegFrontLower"
+        },
+        {
+          "name": "l-foot-back",
+          "path": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack",
+          "renderer": "SkeletonDeathHound/hips/lLegBackUpper/lLegBackMiddle/lLegBackLower/lFootBack/bp_lFootBack"
+        },
+        {
+          "name": "r-foot-back",
+          "path": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack",
+          "renderer": "SkeletonDeathHound/hips/rLegBackUpper/rLegBackMiddle/rLegBackLower/rFootBack/bp_rFootBack"
+        },
+        {
+          "name": "l-foot-front",
+          "path": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront",
+          "renderer": "SkeletonDeathHound/hips/spine/lLegFrontUpper/lLegFrontLower/lFootFront/bp_lFootFront"
+        },
+        {
+          "name": "jaw",
+          "path": "SkeletonDeathHound/hips/spine/neck/head/jaw",
+          "renderer": "SkeletonDeathHound/hips/spine/neck/head/jaw/bp_jaw"
+        },
+        {
+          "name": "r-foot-front",
+          "path": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront",
+          "renderer": "SkeletonDeathHound/hips/spine/rLegFrontUpper/rLegFrontLower/rFootFront/bp_rFootFront"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.6111
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Attack",
+          "semantic": "attack-primary",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Leap",
+          "semantic": "attack-leap",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "ChargePrepare",
+          "semantic": "attack-charge-prepare",
+          "seconds": 2.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_1",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_1",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_1",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_0",
+          "semantic": "finisher-phase-4",
+          "seconds": 0.2167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_0",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.5833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_0",
+          "semantic": "finisher-phase-6",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7",
+          "semantic": "finisher-phase-7",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape8",
+          "semantic": "finisher-phase-8",
+          "seconds": 0.6667
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "DeathHound1",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "DeathHound2",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "DeathHound3",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "DeathHound4",
+          "playerSeconds": 0.2167
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "DeathHound5",
+          "playerSeconds": 0.5833
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "DeathHound6",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "DeathHound7",
+          "playerSeconds": 1.5
+        },
+        {
+          "semantic": "finisher-phase-8",
+          "playerClip": "DeathHound8",
+          "playerSeconds": 0.4167
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/fly",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-fly",
+          "path": "SkeletonFly"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonFly/hips",
+          "renderer": "SkeletonFly/hips/bp_hips"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonFly/hips/chest",
+          "renderer": "SkeletonFly/hips/chest/bp_chest"
+        },
+        {
+          "name": "leg-back-upper",
+          "path": "SkeletonFly/hips/legBackUpper",
+          "renderer": "SkeletonFly/hips/legBackUpper/bp_legBackUpper"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonFly/hips/penisBase",
+          "renderer": "SkeletonFly/hips/penisBase/bp_penisBase"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonFly/hips/chest/head",
+          "renderer": "SkeletonFly/hips/chest/head/bp_head"
+        },
+        {
+          "name": "leg-front-upper",
+          "path": "SkeletonFly/hips/chest/legFrontUpper",
+          "renderer": "SkeletonFly/hips/chest/legFrontUpper/bp_legFrontUpper"
+        },
+        {
+          "name": "leg-mid-upper",
+          "path": "SkeletonFly/hips/chest/legMidUpper",
+          "renderer": "SkeletonFly/hips/chest/legMidUpper/bp_legMidUpper"
+        },
+        {
+          "name": "wing",
+          "path": "SkeletonFly/hips/chest/wing",
+          "renderer": "SkeletonFly/hips/chest/wing/bp_wing"
+        },
+        {
+          "name": "leg-back-mid",
+          "path": "SkeletonFly/hips/legBackUpper/legBackMid",
+          "renderer": "SkeletonFly/hips/legBackUpper/legBackMid/bp_legBackMid"
+        },
+        {
+          "name": "penis-mid",
+          "path": "SkeletonFly/hips/penisBase/penisMid",
+          "renderer": "SkeletonFly/hips/penisBase/penisMid/bp_penisMid"
+        },
+        {
+          "name": "leg-front-mid",
+          "path": "SkeletonFly/hips/chest/legFrontUpper/legFrontMid",
+          "renderer": "SkeletonFly/hips/chest/legFrontUpper/legFrontMid/bp_legFrontMid"
+        },
+        {
+          "name": "leg-mid-mid",
+          "path": "SkeletonFly/hips/chest/legMidUpper/legMidMid",
+          "renderer": "SkeletonFly/hips/chest/legMidUpper/legMidMid/bp_legMidMid"
+        },
+        {
+          "name": "leg-back-lower",
+          "path": "SkeletonFly/hips/legBackUpper/legBackMid/legBackLower",
+          "renderer": "SkeletonFly/hips/legBackUpper/legBackMid/legBackLower/bp_legBackLower"
+        },
+        {
+          "name": "penis-tip",
+          "path": "SkeletonFly/hips/penisBase/penisMid/penisTip",
+          "renderer": "SkeletonFly/hips/penisBase/penisMid/penisTip/bp_penisTip"
+        },
+        {
+          "name": "leg-front-lower",
+          "path": "SkeletonFly/hips/chest/legFrontUpper/legFrontMid/legFrontLower",
+          "renderer": "SkeletonFly/hips/chest/legFrontUpper/legFrontMid/legFrontLower/bp_legFrontLower"
+        },
+        {
+          "name": "leg-mid-lower",
+          "path": "SkeletonFly/hips/chest/legMidUpper/legMidMid/legMidLower",
+          "renderer": "SkeletonFly/hips/chest/legMidUpper/legMidMid/legMidLower/bp_legMidLower"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "PrepareCharge",
+          "semantic": "attack-charge-prepare",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_2",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_2",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_2",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_1",
+          "semantic": "finisher-phase-4",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_1",
+          "semantic": "finisher-phase-5",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackCharge",
+          "semantic": "attack-charge",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Wings",
+          "path": "Idle",
+          "semantic": "wings-idle",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Wings",
+          "path": "Active",
+          "semantic": "wings-active",
+          "seconds": 0.1
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Fly1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Fly2",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Fly3",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Fly4",
+          "playerSeconds": 1.5
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Fly5",
+          "playerSeconds": 2.0
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/goblin-marksman",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-goblin",
+          "path": "SkeletonGoblin"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonGoblin/hips",
+          "renderer": "SkeletonGoblin/hips/bp_hips"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonGoblin/hips/lLegUpper",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonGoblin/hips/penis",
+          "renderer": "SkeletonGoblin/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonGoblin/hips/rLegUpper",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonGoblin/hips/spine",
+          "renderer": "SkeletonGoblin/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonGoblin/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonGoblin/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonGoblin/hips/spine/chest",
+          "renderer": "SkeletonGoblin/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonGoblin/hips/spine/chest/neck",
+          "renderer": "SkeletonGoblin/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonGoblin/hips/spine/chest/neck/head",
+          "renderer": "SkeletonGoblin/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "l-weapon",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon"
+        },
+        {
+          "name": "r-weapon",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_11",
+          "semantic": "finisher-phase-1",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.0833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_11",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_10",
+          "semantic": "finisher-phase-3",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Shoot",
+          "semantic": "attack-shoot",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.8333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Marksman1",
+          "playerSeconds": 3.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Marksman2",
+          "playerSeconds": 0.9167
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Marksman3",
+          "playerSeconds": 4.0
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/goblin-trapper",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-goblin",
+          "path": "SkeletonGoblin"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonGoblin/hips",
+          "renderer": "SkeletonGoblin/hips/bp_hips"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonGoblin/hips/lLegUpper",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonGoblin/hips/penis",
+          "renderer": "SkeletonGoblin/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonGoblin/hips/rLegUpper",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonGoblin/hips/spine",
+          "renderer": "SkeletonGoblin/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonGoblin/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonGoblin/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonGoblin/hips/spine/chest",
+          "renderer": "SkeletonGoblin/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonGoblin/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonGoblin/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonGoblin/hips/spine/chest/neck",
+          "renderer": "SkeletonGoblin/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonGoblin/hips/spine/chest/neck/head",
+          "renderer": "SkeletonGoblin/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "l-weapon",
+          "path": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "renderer": "SkeletonGoblin/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon"
+        },
+        {
+          "name": "r-weapon",
+          "path": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "renderer": "SkeletonGoblin/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_16",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_16",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_15",
+          "semantic": "finisher-phase-3",
+          "seconds": 5.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "PlaceTrap",
+          "semantic": "attack-place-trap",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.8333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Attack",
+          "path": "Idle",
+          "semantic": "attack-idle",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Attack",
+          "path": "AttackDefault",
+          "semantic": "attack-attack-primary",
+          "seconds": 1.4167
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Trapper1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Trapper2",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Trapper3",
+          "playerSeconds": 5.9167
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/gremlin",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-goblin-minor",
+          "path": "SkeletonGoblinMinor"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonGoblinMinor/hips",
+          "renderer": "SkeletonGoblinMinor/hips/bp_hips"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonGoblinMinor/hips/lLegUpper",
+          "renderer": "SkeletonGoblinMinor/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonGoblinMinor/hips/penis",
+          "renderer": "SkeletonGoblinMinor/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonGoblinMinor/hips/rLegUpper",
+          "renderer": "SkeletonGoblinMinor/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonGoblinMinor/hips/spine",
+          "renderer": "SkeletonGoblinMinor/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonGoblinMinor/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonGoblinMinor/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonGoblinMinor/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonGoblinMinor/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonGoblinMinor/hips/spine/chest",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonGoblinMinor/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonGoblinMinor/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonGoblinMinor/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonGoblinMinor/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/neck",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/neck/head",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "l-weapon",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/lArmUpper/lArmLower/lHand/lWeapon"
+        },
+        {
+          "name": "r-weapon",
+          "path": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon",
+          "renderer": "SkeletonGoblinMinor/hips/spine/chest/rArmUpper/rArmLower/rHand/rWeapon"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_3",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_3",
+          "semantic": "finisher-phase-2",
+          "seconds": 3.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_3",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.1667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_2",
+          "semantic": "finisher-phase-4",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_2",
+          "semantic": "finisher-phase-5",
+          "seconds": 2.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_1",
+          "semantic": "finisher-phase-6",
+          "seconds": 2.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7_0",
+          "semantic": "finisher-phase-7",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape8_0",
+          "semantic": "finisher-phase-8",
+          "seconds": 0.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape9",
+          "semantic": "finisher-phase-9",
+          "seconds": 0.1667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape10",
+          "semantic": "finisher-phase-10",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape11",
+          "semantic": "finisher-phase-11",
+          "seconds": 9.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "GetUp",
+          "semantic": "get-up",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.5
+        },
+        {
+          "layer": "SyringeAttack",
+          "path": "None",
+          "semantic": "internal-syringe-attack-empty",
+          "seconds": 1.0
+        },
+        {
+          "layer": "SyringeAttack",
+          "path": "AttackSyringe",
+          "semantic": "attack-syringe",
+          "seconds": 0.8333
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "GoblinMinor1",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "GoblinMinor2",
+          "playerSeconds": 3.3333
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "GoblinMinor3",
+          "playerSeconds": 0.1667
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "GoblinMinor4",
+          "playerSeconds": 1.6667
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "GoblinMinor5",
+          "playerSeconds": 2.3333
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "GoblinMinor6",
+          "playerSeconds": 2.3333
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "GoblinMinor7",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-8",
+          "playerClip": "GoblinMinor8",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-9",
+          "playerClip": "GoblinMinor9",
+          "playerSeconds": 0.1667
+        },
+        {
+          "semantic": "finisher-phase-10",
+          "playerClip": "GoblinMinor10",
+          "playerSeconds": 3.0
+        },
+        {
+          "semantic": "finisher-phase-11",
+          "playerClip": "GoblinMinor11",
+          "playerSeconds": 9.9167
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/head-humper",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-head-humper",
+          "path": "SkeletonHeadHumper"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonHeadHumper/hips",
+          "renderer": "SkeletonHeadHumper/hips/bp_hips"
+        },
+        {
+          "name": "l-leg-back-base",
+          "path": "SkeletonHeadHumper/hips/lLegBackBase",
+          "renderer": "SkeletonHeadHumper/hips/lLegBackBase/bp_lLegBackBase"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonHeadHumper/hips/penisBase",
+          "renderer": "SkeletonHeadHumper/hips/penisBase/bp_penisBase"
+        },
+        {
+          "name": "r-leg-back-base",
+          "path": "SkeletonHeadHumper/hips/rLegBackBase",
+          "renderer": "SkeletonHeadHumper/hips/rLegBackBase/bp_rLegBackBase"
+        },
+        {
+          "name": "sack",
+          "path": "SkeletonHeadHumper/hips/sack",
+          "renderer": "SkeletonHeadHumper/hips/sack/bp_sack"
+        },
+        {
+          "name": "torso-front",
+          "path": "SkeletonHeadHumper/hips/torsoFront",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/bp_torsoFront"
+        },
+        {
+          "name": "torso-back",
+          "path": "SkeletonHeadHumper/hips/bp_hips/bp_torsoBack",
+          "renderer": "SkeletonHeadHumper/hips/bp_hips/bp_torsoBack"
+        },
+        {
+          "name": "l-leg-back-mid",
+          "path": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid",
+          "renderer": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/bp_lLegBackMid"
+        },
+        {
+          "name": "penis1",
+          "path": "SkeletonHeadHumper/hips/penisBase/penis1",
+          "renderer": "SkeletonHeadHumper/hips/penisBase/penis1/bp_penis1"
+        },
+        {
+          "name": "r-leg-back-mid",
+          "path": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid",
+          "renderer": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/bp_rLegBackMid"
+        },
+        {
+          "name": "l-leg-front-base",
+          "path": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/bp_lLegFrontBase"
+        },
+        {
+          "name": "r-leg-front-base",
+          "path": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/bp_rLegFrontBase"
+        },
+        {
+          "name": "l-leg-back-lower",
+          "path": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower",
+          "renderer": "SkeletonHeadHumper/hips/lLegBackBase/lLegBackMid/lLegBackLower/bp_lLegBackLower"
+        },
+        {
+          "name": "penis2",
+          "path": "SkeletonHeadHumper/hips/penisBase/penis1/penis2",
+          "renderer": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/bp_penis2"
+        },
+        {
+          "name": "r-leg-back-lower",
+          "path": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower",
+          "renderer": "SkeletonHeadHumper/hips/rLegBackBase/rLegBackMid/rLegBackLower/bp_rLegBackLower"
+        },
+        {
+          "name": "l-leg-front-mid",
+          "path": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/bp_lLegFrontMid"
+        },
+        {
+          "name": "r-leg-front-mid",
+          "path": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/bp_rLegFrontMid"
+        },
+        {
+          "name": "penis3",
+          "path": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3",
+          "renderer": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/bp_penis3"
+        },
+        {
+          "name": "l-leg-front-lower",
+          "path": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/lLegFrontBase/lLegFrontMid/lLegFrontLower/bp_lLegFrontLower"
+        },
+        {
+          "name": "r-leg-front-lower",
+          "path": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower",
+          "renderer": "SkeletonHeadHumper/hips/torsoFront/rLegFrontBase/rLegFrontMid/rLegFrontLower/bp_rLegFrontLower"
+        },
+        {
+          "name": "penis-tip",
+          "path": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip",
+          "renderer": "SkeletonHeadHumper/hips/penisBase/penis1/penis2/penis3/penisTip/bp_penisTip"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackLeap",
+          "semantic": "attack-leap",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "HeadHugging",
+          "semantic": "head-hugging",
+          "seconds": 3.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_4",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_4",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.0833
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "HeadHumper1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "HeadHumper2",
+          "playerSeconds": 0.0833
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/hunter",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "hips",
+          "path": "hips",
+          "renderer": "hips/bp_hip"
+        },
+        {
+          "name": "balls",
+          "path": "hips/balls",
+          "renderer": "hips/balls/bp_balls"
+        },
+        {
+          "name": "chest",
+          "path": "hips/chest",
+          "renderer": "hips/chest/bp_chest"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "hips/legUpperL",
+          "renderer": "hips/legUpperL/bp_legUpperL"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "hips/legUpperR",
+          "renderer": "hips/legUpperR/bp_legUpperR"
+        },
+        {
+          "name": "penis",
+          "path": "hips/penis",
+          "renderer": "hips/penis/bp_penis"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "hips/chest/armUpperL",
+          "renderer": "hips/chest/armUpperL/bp_armUpperL"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "hips/chest/armUpperR",
+          "renderer": "hips/chest/armUpperR/bp_armUpperR"
+        },
+        {
+          "name": "neck",
+          "path": "hips/chest/neck",
+          "renderer": "hips/chest/neck/bp_neck"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "hips/legUpperL/legLowerL",
+          "renderer": "hips/legUpperL/legLowerL/bp_legLowerR"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "hips/legUpperR/legLowerR",
+          "renderer": "hips/legUpperR/legLowerR/bp_legLowerR"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "hips/chest/armUpperL/armLowerL",
+          "renderer": "hips/chest/armUpperL/armLowerL/bp_armLowerL"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "hips/chest/armUpperR/armLowerR",
+          "renderer": "hips/chest/armUpperR/armLowerR/bp_armLowerR"
+        },
+        {
+          "name": "head",
+          "path": "hips/chest/neck/head",
+          "renderer": "hips/chest/neck/head/bp_head"
+        },
+        {
+          "name": "foot-left",
+          "path": "hips/legUpperL/legLowerL/footL",
+          "renderer": "hips/legUpperL/legLowerL/footL/bp_footL"
+        },
+        {
+          "name": "foot-right",
+          "path": "hips/legUpperR/legLowerR/footR",
+          "renderer": "hips/legUpperR/legLowerR/footR/bp_footR"
+        },
+        {
+          "name": "hand-left",
+          "path": "hips/chest/armUpperL/armLowerL/handL",
+          "renderer": "hips/chest/armUpperL/armLowerL/handL/bp_handL"
+        },
+        {
+          "name": "hand-right",
+          "path": "hips/chest/armUpperR/armLowerR/handR",
+          "renderer": "hips/chest/armUpperR/armLowerR/handR/bp_handR"
+        },
+        {
+          "name": "antenna-l",
+          "path": "hips/chest/neck/head/antennaL",
+          "renderer": "hips/chest/neck/head/antennaL/bp_antennaL"
+        },
+        {
+          "name": "antenna-r",
+          "path": "hips/chest/neck/head/antennaR",
+          "renderer": "hips/chest/neck/head/antennaR/bp_antennaR"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "RunAway",
+          "semantic": "retreat",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackLeap",
+          "semantic": "attack-leap",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_6",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_6",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.15
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_5",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.15
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Prowling",
+          "semantic": "prowl",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_4",
+          "semantic": "finisher-phase-4",
+          "seconds": 4.5667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 1.75
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 0.8333
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Hunter1",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Hunter2",
+          "playerSeconds": 0.15
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Hunter3",
+          "playerSeconds": 0.15
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Hunter4",
+          "playerSeconds": 4.5667
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/jacky",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-android",
+          "path": "SkeletonAndroid"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonAndroid/hips",
+          "renderer": "SkeletonAndroid/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonAndroid/hips/butt",
+          "renderer": "SkeletonAndroid/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonAndroid/hips/lLegUpper",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-rod",
+          "path": "SkeletonAndroid/hips/penisRod",
+          "renderer": "SkeletonAndroid/hips/penisRod/bp_penisRod"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonAndroid/hips/rLegUpper",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonAndroid/hips/spine",
+          "renderer": "SkeletonAndroid/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonAndroid/hips/spine/chest",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "l-foot-base",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase"
+        },
+        {
+          "name": "penis-end",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd"
+        },
+        {
+          "name": "r-foot-base",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase"
+        },
+        {
+          "name": "breast",
+          "path": "SkeletonAndroid/hips/spine/chest/breast",
+          "renderer": "SkeletonAndroid/hips/spine/chest/breast/bp_breast"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonAndroid/hips/spine/chest/neck",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-foot-end",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd"
+        },
+        {
+          "name": "r-foot-end",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd"
+        },
+        {
+          "name": "breast-bg",
+          "path": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "knife",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/knife",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/knife"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Scare",
+          "semantic": "scare",
+          "seconds": 1.2167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_7",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_7",
+          "semantic": "finisher-phase-2",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_6",
+          "semantic": "finisher-phase-3",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_4",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.4167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_5",
+          "semantic": "finisher-phase-4",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_2",
+          "semantic": "finisher-phase-6",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7_1",
+          "semantic": "finisher-phase-7",
+          "seconds": 1.85
+        },
+        {
+          "layer": "Stab",
+          "path": "New State",
+          "semantic": "internal-stab-empty",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Stab",
+          "path": "AttackDefault",
+          "semantic": "stab-attack-primary",
+          "seconds": 0.5833
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Jacky1",
+          "playerSeconds": 1.5
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Jacky2",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Jacky3",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Jacky4",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Jacky5",
+          "playerSeconds": 0.4167
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Jacky6",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "Jacky7",
+          "playerSeconds": 1.85
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/jenny",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-android",
+          "path": "SkeletonAndroid"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonAndroid/hips",
+          "renderer": "SkeletonAndroid/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonAndroid/hips/butt",
+          "renderer": "SkeletonAndroid/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonAndroid/hips/lLegUpper",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-rod",
+          "path": "SkeletonAndroid/hips/penisRod",
+          "renderer": "SkeletonAndroid/hips/penisRod/bp_penisRod"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonAndroid/hips/rLegUpper",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonAndroid/hips/spine",
+          "renderer": "SkeletonAndroid/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonAndroid/hips/spine/chest",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "l-foot-base",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase"
+        },
+        {
+          "name": "penis-end",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd"
+        },
+        {
+          "name": "r-foot-base",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase"
+        },
+        {
+          "name": "breast",
+          "path": "SkeletonAndroid/hips/spine/chest/breast",
+          "renderer": "SkeletonAndroid/hips/spine/chest/breast/bp_breast"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonAndroid/hips/spine/chest/neck",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-foot-end",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd"
+        },
+        {
+          "name": "r-foot-end",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd"
+        },
+        {
+          "name": "breast-bg",
+          "path": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackHeel",
+          "semantic": "attack-heel",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_8",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_8",
+          "semantic": "finisher-phase-2",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_7",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_6",
+          "semantic": "finisher-phase-4",
+          "seconds": 0.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_5",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.75
+        },
+        {
+          "layer": "AttackSlap",
+          "path": "New State",
+          "semantic": "internal-attack-slap-empty",
+          "seconds": 0.0
+        },
+        {
+          "layer": "AttackSlap",
+          "path": "AttackDefault",
+          "semantic": "attack-slap-attack-primary",
+          "seconds": 0.9167
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Jenny1",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Jenny2",
+          "playerSeconds": 1.25
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Jenny3",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Jenny4",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Jenny5",
+          "playerSeconds": 0.75
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/litigant",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-litigant",
+          "path": "SkeletonLitigant"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonLitigant/hips",
+          "renderer": "SkeletonLitigant/hips/bp_hips"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonLitigant/hips/lLegUpper",
+          "renderer": "SkeletonLitigant/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonLitigant/hips/penisBase",
+          "renderer": "SkeletonLitigant/hips/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonLitigant/hips/rLegUpper",
+          "renderer": "SkeletonLitigant/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonLitigant/hips/spine",
+          "renderer": "SkeletonLitigant/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonLitigant/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonLitigant/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis1",
+          "path": "SkeletonLitigant/hips/penisBase/penis1",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/bp_penis1"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonLitigant/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonLitigant/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonLitigant/hips/spine/chest",
+          "renderer": "SkeletonLitigant/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "penis2",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/bp_penis2"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonLitigant/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonLitigant/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonLitigant/hips/spine/chest/neck",
+          "renderer": "SkeletonLitigant/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonLitigant/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonLitigant/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-toe",
+          "path": "SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot/lToe",
+          "renderer": "SkeletonLitigant/hips/lLegUpper/lLegLower/lFoot/lToe/bp_lToe"
+        },
+        {
+          "name": "penis3",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/bp_penis3"
+        },
+        {
+          "name": "r-toe",
+          "path": "SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot/rToe",
+          "renderer": "SkeletonLitigant/hips/rLegUpper/rLegLower/rFoot/rToe/bp_rToe"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonLitigant/hips/spine/chest/neck/head",
+          "renderer": "SkeletonLitigant/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "penis4",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/bp_penis4"
+        },
+        {
+          "name": "l-hand-base",
+          "path": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase",
+          "renderer": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase/bp_lHandBase"
+        },
+        {
+          "name": "r-hand-base",
+          "path": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase",
+          "renderer": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase/bp_rHandBase"
+        },
+        {
+          "name": "penis5",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/bp_penis5"
+        },
+        {
+          "name": "l-hand-end",
+          "path": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase/lHandEnd",
+          "renderer": "SkeletonLitigant/hips/spine/chest/lArmUpper/lArmLower/lHandBase/lHandEnd/bp_lHandEnd"
+        },
+        {
+          "name": "r-hand-end",
+          "path": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase/rHandEnd",
+          "renderer": "SkeletonLitigant/hips/spine/chest/rArmUpper/rArmLower/rHandBase/rHandEnd/bp_rHandEnd"
+        },
+        {
+          "name": "penis6",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6/bp_penis6"
+        },
+        {
+          "name": "penis-tip",
+          "path": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6/penisTip",
+          "renderer": "SkeletonLitigant/hips/penisBase/penis1/penis2/penis3/penis4/penis5/penis6/penisTip/bp_penisTip"
+        }
+      ],
+      "states": [
+        {
+          "layer": "UpperBody",
+          "path": "Idle",
+          "semantic": "upper-body-idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "AttackClaw",
+          "semantic": "attack-claw",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "UpperBody",
+          "path": "AttackDefault",
+          "semantic": "upper-body-attack-primary",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Move",
+          "semantic": "upper-body-move",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Rape1_9",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Rape2_9",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.8333
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Rape3_8",
+          "semantic": "finisher-phase-3",
+          "seconds": 1.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Rape4_7",
+          "semantic": "finisher-phase-4",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Rape5_6",
+          "semantic": "finisher-phase-5",
+          "seconds": 5.6667
+        },
+        {
+          "layer": "LowerBody",
+          "path": "New State",
+          "semantic": "internal-lower-body-empty",
+          "seconds": 0.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Move",
+          "semantic": "lower-body-move",
+          "seconds": 0.6667
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Litigant1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Litigant2",
+          "playerSeconds": 0.8333
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Litigant3",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Litigant4",
+          "playerSeconds": 0.6667
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Litigant5",
+          "playerSeconds": 5.6667
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/maggot",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-maggot",
+          "path": "SkeletonMaggot"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonMaggot/hips",
+          "renderer": "SkeletonMaggot/hips/bp_hips"
+        },
+        {
+          "name": "back",
+          "path": "SkeletonMaggot/hips/back",
+          "renderer": "SkeletonMaggot/hips/back/bp_back"
+        },
+        {
+          "name": "front",
+          "path": "SkeletonMaggot/hips/front",
+          "renderer": "SkeletonMaggot/hips/front/bp_front"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_10",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_10",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.1667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_9",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackLeap",
+          "semantic": "attack-leap",
+          "seconds": 2.1667
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Maggot1",
+          "playerSeconds": 0.3333
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Maggot2",
+          "playerSeconds": 0.1667
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Maggot3",
+          "playerSeconds": 0.9167
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/musca",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-musca",
+          "path": "SkeletonMusca"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonMusca/hips",
+          "renderer": "SkeletonMusca/hips/bp_hips"
+        },
+        {
+          "name": "arm-bottom-upper",
+          "path": "SkeletonMusca/hips/armBottomUpper",
+          "renderer": "SkeletonMusca/hips/armBottomUpper/bp_armBottomUpper"
+        },
+        {
+          "name": "balls",
+          "path": "SkeletonMusca/hips/balls",
+          "renderer": "SkeletonMusca/hips/balls/bp_balls"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonMusca/hips/penisBase",
+          "renderer": "SkeletonMusca/hips/penisBase/bp_penisBase"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonMusca/hips/spine",
+          "renderer": "SkeletonMusca/hips/spine/bp_spine"
+        },
+        {
+          "name": "arm-bottom-lower",
+          "path": "SkeletonMusca/hips/armBottomUpper/armBottomLower",
+          "renderer": "SkeletonMusca/hips/armBottomUpper/armBottomLower/bp_armBottomLower"
+        },
+        {
+          "name": "penis-mid",
+          "path": "SkeletonMusca/hips/penisBase/penisMid",
+          "renderer": "SkeletonMusca/hips/penisBase/penisMid/bp_penisMid"
+        },
+        {
+          "name": "arm-mid-upper",
+          "path": "SkeletonMusca/hips/spine/armMidUpper",
+          "renderer": "SkeletonMusca/hips/spine/armMidUpper/bp_armMidUpper"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonMusca/hips/spine/chest",
+          "renderer": "SkeletonMusca/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "hand-bottom",
+          "path": "SkeletonMusca/hips/armBottomUpper/armBottomLower/handBottom",
+          "renderer": "SkeletonMusca/hips/armBottomUpper/armBottomLower/handBottom/bp_handBottom"
+        },
+        {
+          "name": "penis-tip",
+          "path": "SkeletonMusca/hips/penisBase/penisMid/penisTip",
+          "renderer": "SkeletonMusca/hips/penisBase/penisMid/penisTip/bp_penisTip"
+        },
+        {
+          "name": "arm-mid-lower",
+          "path": "SkeletonMusca/hips/spine/armMidUpper/armMidLower",
+          "renderer": "SkeletonMusca/hips/spine/armMidUpper/armMidLower/bp_armMidLower"
+        },
+        {
+          "name": "arm-top-upper",
+          "path": "SkeletonMusca/hips/spine/chest/armTopUpper",
+          "renderer": "SkeletonMusca/hips/spine/chest/armTopUpper/bp_armTopUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonMusca/hips/spine/chest/neck",
+          "renderer": "SkeletonMusca/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "wings",
+          "path": "SkeletonMusca/hips/spine/chest/wings",
+          "renderer": "SkeletonMusca/hips/spine/chest/wings/bp_wings"
+        },
+        {
+          "name": "hand-mid",
+          "path": "SkeletonMusca/hips/spine/armMidUpper/armMidLower/handMid",
+          "renderer": "SkeletonMusca/hips/spine/armMidUpper/armMidLower/handMid/bp_handMid"
+        },
+        {
+          "name": "arm-top-lower",
+          "path": "SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower",
+          "renderer": "SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower/bp_armTopLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonMusca/hips/spine/chest/neck/head",
+          "renderer": "SkeletonMusca/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "hand-top",
+          "path": "SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower/handTop",
+          "renderer": "SkeletonMusca/hips/spine/chest/armTopUpper/armTopLower/handTop/bp_handTop"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.75
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_12",
+          "semantic": "finisher-phase-1",
+          "seconds": 3.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_12",
+          "semantic": "finisher-phase-2",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_11",
+          "semantic": "finisher-phase-3",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_8",
+          "semantic": "finisher-phase-4",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_7",
+          "semantic": "finisher-phase-5",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_3",
+          "semantic": "finisher-phase-6",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Carry",
+          "semantic": "carry",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Wings",
+          "path": "WingsIdle",
+          "semantic": "wings-idle",
+          "seconds": 0.0
+        },
+        {
+          "layer": "Wings",
+          "path": "WingsActive",
+          "semantic": "wings-active",
+          "seconds": 0.1
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Musca1",
+          "playerSeconds": 3.25
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Musca2",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Musca3",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Musca4",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Musca5",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Musca6",
+          "playerSeconds": 2.0
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/orc",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-orc",
+          "path": "SkeletonOrc"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonOrc/hips",
+          "renderer": "SkeletonOrc/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonOrc/hips/butt",
+          "renderer": "SkeletonOrc/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonOrc/hips/lLegUpper",
+          "renderer": "SkeletonOrc/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonOrc/hips/penisBase",
+          "renderer": "SkeletonOrc/hips/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonOrc/hips/rLegUpper",
+          "renderer": "SkeletonOrc/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonOrc/hips/spine",
+          "renderer": "SkeletonOrc/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonOrc/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonOrc/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis-mid",
+          "path": "SkeletonOrc/hips/penisBase/penisMid",
+          "renderer": "SkeletonOrc/hips/penisBase/penisMid/bp_penisMid"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonOrc/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonOrc/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonOrc/hips/spine/chest",
+          "renderer": "SkeletonOrc/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonOrc/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonOrc/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "penis-tip",
+          "path": "SkeletonOrc/hips/penisBase/penisMid/penisTip",
+          "renderer": "SkeletonOrc/hips/penisBase/penisMid/penisTip/bp_penisTip"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonOrc/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonOrc/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonOrc/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonOrc/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonOrc/hips/spine/chest/neck",
+          "renderer": "SkeletonOrc/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonOrc/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonOrc/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonOrc/hips/spine/chest/neck/head",
+          "renderer": "SkeletonOrc/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        },
+        {
+          "name": "shield",
+          "path": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_shield",
+          "renderer": "SkeletonOrc/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_shield"
+        },
+        {
+          "name": "machete",
+          "path": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand/machete",
+          "renderer": "SkeletonOrc/hips/spine/chest/rArmUpper/rArmLower/rHand/machete"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.4833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.4167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_13",
+          "semantic": "finisher-phase-1",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_13",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_12",
+          "semantic": "finisher-phase-3",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_9",
+          "semantic": "finisher-phase-4",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_8",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_4",
+          "semantic": "finisher-phase-6",
+          "seconds": 2.1667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7_2",
+          "semantic": "finisher-phase-7",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape8_1",
+          "semantic": "finisher-phase-8",
+          "seconds": 3.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 2.8333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Shield",
+          "path": "ShieldRaised",
+          "semantic": "shield-raised",
+          "seconds": 0.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Orc1",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Orc2",
+          "playerSeconds": 0.6667
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Orc3",
+          "playerSeconds": 1.5
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Orc4",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Orc5",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Orc6",
+          "playerSeconds": 2.1667
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "Orc7",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-8",
+          "playerClip": "Orc8",
+          "playerSeconds": 3.5
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/spider-mother",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-humper-mother",
+          "path": "SkeletonHumperMother"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonHumperMother/hips",
+          "renderer": "SkeletonHumperMother/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonHumperMother/hips/butt",
+          "renderer": "SkeletonHumperMother/hips/butt/bp_butt"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonHumperMother/hips/chest",
+          "renderer": "SkeletonHumperMother/hips/chest/bp_chest"
+        },
+        {
+          "name": "l-leg-front-base",
+          "path": "SkeletonHumperMother/hips/lLegFrontBase",
+          "renderer": "SkeletonHumperMother/hips/lLegFrontBase/bp_lLegFrontBase"
+        },
+        {
+          "name": "r-leg-front-base",
+          "path": "SkeletonHumperMother/hips/rLegFrontBase",
+          "renderer": "SkeletonHumperMother/hips/rLegFrontBase/bp_rLegFrontBase"
+        },
+        {
+          "name": "l-leg-back-base",
+          "path": "SkeletonHumperMother/hips/butt/lLegBackBase",
+          "renderer": "SkeletonHumperMother/hips/butt/lLegBackBase/bp_lLegBackBase"
+        },
+        {
+          "name": "r-leg-back-base",
+          "path": "SkeletonHumperMother/hips/butt/rLegBackBase",
+          "renderer": "SkeletonHumperMother/hips/butt/rLegBackBase/bp_rLegBackBase"
+        },
+        {
+          "name": "breast",
+          "path": "SkeletonHumperMother/hips/chest/breast",
+          "renderer": "SkeletonHumperMother/hips/chest/breast/bp_breast"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonHumperMother/hips/chest/lArmUpper",
+          "renderer": "SkeletonHumperMother/hips/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonHumperMother/hips/chest/neck",
+          "renderer": "SkeletonHumperMother/hips/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonHumperMother/hips/chest/rArmUpper",
+          "renderer": "SkeletonHumperMother/hips/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-leg-front-upper",
+          "path": "SkeletonHumperMother/hips/lLegFrontBase/lLegFrontUpper",
+          "renderer": "SkeletonHumperMother/hips/lLegFrontBase/lLegFrontUpper/bp_lLegFrontUpper"
+        },
+        {
+          "name": "r-leg-front-upper",
+          "path": "SkeletonHumperMother/hips/rLegFrontBase/rLegFrontUpper",
+          "renderer": "SkeletonHumperMother/hips/rLegFrontBase/rLegFrontUpper/bp_rLegFrontUpper"
+        },
+        {
+          "name": "l-leg-back-upper",
+          "path": "SkeletonHumperMother/hips/butt/lLegBackBase/lLegBackUpper",
+          "renderer": "SkeletonHumperMother/hips/butt/lLegBackBase/lLegBackUpper/bp_lLegBackUpper"
+        },
+        {
+          "name": "r-leg-back-upper",
+          "path": "SkeletonHumperMother/hips/butt/rLegBackBase/rLegBackUpper",
+          "renderer": "SkeletonHumperMother/hips/butt/rLegBackBase/rLegBackUpper/bp_rLegBackUpper"
+        },
+        {
+          "name": "chest-inner",
+          "path": "SkeletonHumperMother/hips/chest/bp_chest/bp_chestInner",
+          "renderer": "SkeletonHumperMother/hips/chest/bp_chest/bp_chestInner"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonHumperMother/hips/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonHumperMother/hips/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonHumperMother/hips/chest/neck/head",
+          "renderer": "SkeletonHumperMother/hips/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonHumperMother/hips/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonHumperMother/hips/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonHumperMother/hips/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonHumperMother/hips/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonHumperMother/hips/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonHumperMother/hips/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "LowerBody",
+          "path": "Idle",
+          "semantic": "lower-body-idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Move",
+          "semantic": "lower-body-move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "AttackSpiderStab",
+          "semantic": "attack-spider-stab-lower",
+          "seconds": 1.9667
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Rape1_5",
+          "semantic": "finisher-phase-1",
+          "seconds": 2.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Rape3_4",
+          "semantic": "finisher-phase-3",
+          "seconds": 2.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Rape5_3",
+          "semantic": "finisher-phase-5",
+          "seconds": 1.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Rape2_5",
+          "semantic": "finisher-phase-2",
+          "seconds": 2.0
+        },
+        {
+          "layer": "LowerBody",
+          "path": "Rape4_3",
+          "semantic": "finisher-phase-4",
+          "seconds": 1.8333
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Idle",
+          "semantic": "upper-body-idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "Move",
+          "semantic": "upper-body-move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "AttackDefault",
+          "semantic": "upper-body-attack-primary",
+          "seconds": 1.0
+        },
+        {
+          "layer": "UpperBody",
+          "path": "AttackSpiderStab",
+          "semantic": "attack-spider-stab-upper",
+          "seconds": 1.9667
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "HumperMother1",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "HumperMother2",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "HumperMother3",
+          "playerSeconds": 2.0
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "HumperMother4",
+          "playerSeconds": 1.8333
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "HumperMother5",
+          "playerSeconds": 1.0
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/sqoid",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-sqoid",
+          "path": "SkeletonSqoid"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonSqoid/hips",
+          "renderer": "SkeletonSqoid/hips/bp_hips"
+        },
+        {
+          "name": "background",
+          "path": "SkeletonSqoid/hips/bp_hips/bg",
+          "renderer": "SkeletonSqoid/hips/bp_hips/bg"
+        },
+        {
+          "name": "brain",
+          "path": "SkeletonSqoid/hips/bp_hips/brain",
+          "renderer": "SkeletonSqoid/hips/bp_hips/brain"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackEnergyBlast",
+          "semantic": "attack-energy-blast",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_14",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_14",
+          "semantic": "finisher-phase-2",
+          "seconds": 7.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_13",
+          "semantic": "finisher-phase-3",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_10",
+          "semantic": "finisher-phase-4",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_9",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.75
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_5",
+          "semantic": "finisher-phase-6",
+          "seconds": 1.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7_3",
+          "semantic": "finisher-phase-7",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape8_2",
+          "semantic": "finisher-phase-8",
+          "seconds": 0.2
+        },
+        {
+          "layer": "Hover",
+          "path": "Hover",
+          "semantic": "hover",
+          "seconds": 2.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Sqoid1",
+          "playerSeconds": 0.6667
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Sqoid2",
+          "playerSeconds": 7.0
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Sqoid3",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Sqoid4",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Sqoid5",
+          "playerSeconds": 0.75
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Sqoid6",
+          "playerSeconds": 1.9167
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "Sqoid7",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-8",
+          "playerClip": "Sqoid8",
+          "playerSeconds": 0.2
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/sunny",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-android",
+          "path": "SkeletonAndroid"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonAndroid/hips",
+          "renderer": "SkeletonAndroid/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonAndroid/hips/butt",
+          "renderer": "SkeletonAndroid/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonAndroid/hips/lLegUpper",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis-rod",
+          "path": "SkeletonAndroid/hips/penisRod",
+          "renderer": "SkeletonAndroid/hips/penisRod/bp_penisRod"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonAndroid/hips/rLegUpper",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonAndroid/hips/spine",
+          "renderer": "SkeletonAndroid/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "penis-base",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/bp_penisBase"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonAndroid/hips/spine/chest",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "l-foot-base",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/bp_lFootBase"
+        },
+        {
+          "name": "penis-end",
+          "path": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd",
+          "renderer": "SkeletonAndroid/hips/penisRod/penisBase/penisEnd/bp_penisEnd"
+        },
+        {
+          "name": "r-foot-base",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/bp_rFootBase"
+        },
+        {
+          "name": "skirt",
+          "path": "SkeletonAndroid/hips/spine/bp_spine/skirt",
+          "renderer": "SkeletonAndroid/hips/spine/bp_spine/skirt"
+        },
+        {
+          "name": "breast",
+          "path": "SkeletonAndroid/hips/spine/chest/breast",
+          "renderer": "SkeletonAndroid/hips/spine/chest/breast/bp_breast"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonAndroid/hips/spine/chest/neck",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "l-foot-end",
+          "path": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd",
+          "renderer": "SkeletonAndroid/hips/lLegUpper/lLegLower/lFootBase/lFootEnd/bp_lFootEnd"
+        },
+        {
+          "name": "r-foot-end",
+          "path": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd",
+          "renderer": "SkeletonAndroid/hips/rLegUpper/rLegLower/rFootBase/rFootEnd/bp_rFootEnd"
+        },
+        {
+          "name": "breast-bg",
+          "path": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg",
+          "renderer": "SkeletonAndroid/hips/spine/chest/bp_chest/breastBg"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonAndroid/hips/spine/chest/neck/head",
+          "renderer": "SkeletonAndroid/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonAndroid/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackCrotchKick",
+          "semantic": "attack-crotch-kick",
+          "seconds": 1.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.1167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Dodge",
+          "semantic": "dodge",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_15",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_15",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.4167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_14",
+          "semantic": "finisher-phase-3",
+          "seconds": 2.3333
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Sunny1",
+          "playerSeconds": 0.6667
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Sunny2",
+          "playerSeconds": 0.4167
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Sunny3",
+          "playerSeconds": 1.8333
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-1",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-zombie",
+          "path": "SkeletonZombie"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonZombie/hips",
+          "renderer": "SkeletonZombie/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonZombie/hips/butt",
+          "renderer": "SkeletonZombie/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonZombie/hips/lLegUpper",
+          "renderer": "SkeletonZombie/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonZombie/hips/penis",
+          "renderer": "SkeletonZombie/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonZombie/hips/rLegUpper",
+          "renderer": "SkeletonZombie/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonZombie/hips/spine",
+          "renderer": "SkeletonZombie/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonZombie/hips/spine/chest",
+          "renderer": "SkeletonZombie/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonZombie/hips/spine/chest/neck",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonZombie/hips/spine/chest/neck/head",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_17",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_17",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_16",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_11",
+          "semantic": "finisher-phase-4",
+          "seconds": 0.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_10",
+          "semantic": "finisher-phase-5",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_6",
+          "semantic": "finisher-phase-6",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape7_4",
+          "semantic": "finisher-phase-7",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape8_3",
+          "semantic": "finisher-phase-8",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Chase",
+          "semantic": "chase",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "GetUp",
+          "semantic": "get-up",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Zombie1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Zombie2",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "Zombie3",
+          "playerSeconds": 0.6667
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Zombie4",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Zombie5",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Zombie6",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-7",
+          "playerClip": "Zombie7",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-8",
+          "playerClip": "Zombie8",
+          "playerSeconds": 0.6667
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-2",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-zombie",
+          "path": "SkeletonZombie"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonZombie/hips",
+          "renderer": "SkeletonZombie/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonZombie/hips/butt",
+          "renderer": "SkeletonZombie/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonZombie/hips/lLegUpper",
+          "renderer": "SkeletonZombie/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonZombie/hips/penis",
+          "renderer": "SkeletonZombie/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonZombie/hips/rLegUpper",
+          "renderer": "SkeletonZombie/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonZombie/hips/spine",
+          "renderer": "SkeletonZombie/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonZombie/hips/spine/chest",
+          "renderer": "SkeletonZombie/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonZombie/hips/spine/chest/neck",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonZombie/hips/spine/chest/neck/head",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "AttackDefault",
+          "semantic": "attack-primary",
+          "seconds": 1.3333
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Chase",
+          "semantic": "chase",
+          "seconds": 0.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "GetUp",
+          "semantic": "get-up",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_18",
+          "semantic": "finisher-phase-1",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_18",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.5833
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_17",
+          "semantic": "finisher-phase-3",
+          "seconds": 2.0833
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "ZombieTwo1",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "ZombieTwo2",
+          "playerSeconds": 0.5833
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "ZombieTwo3",
+          "playerSeconds": 2.0833
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-3",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-zombie",
+          "path": "SkeletonZombie"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonZombie/hips",
+          "renderer": "SkeletonZombie/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonZombie/hips/butt",
+          "renderer": "SkeletonZombie/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonZombie/hips/lLegUpper",
+          "renderer": "SkeletonZombie/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonZombie/hips/penis",
+          "renderer": "SkeletonZombie/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonZombie/hips/rLegUpper",
+          "renderer": "SkeletonZombie/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonZombie/hips/spine",
+          "renderer": "SkeletonZombie/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonZombie/hips/spine/chest",
+          "renderer": "SkeletonZombie/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonZombie/hips/spine/chest/neck",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonZombie/hips/spine/chest/neck/head",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "GetUp",
+          "semantic": "get-up",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_19",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_19",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_12",
+          "semantic": "finisher-phase-4",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_11",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_7",
+          "semantic": "finisher-phase-6",
+          "seconds": 1.5
+        },
+        {
+          "layer": "AttackDefault",
+          "path": "New State",
+          "semantic": "internal-attack-default-empty",
+          "seconds": 0.0
+        },
+        {
+          "layer": "AttackDefault",
+          "path": "AttackDefault",
+          "semantic": "attack-default-attack-primary",
+          "seconds": 1.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "Zombie1",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "Zombie2",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "Zombie4",
+          "playerSeconds": 0.25
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "Zombie5",
+          "playerSeconds": 1.0
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "Zombie6",
+          "playerSeconds": 1.0
+        }
+      ]
+    },
+    {
+      "id": "core:enemy/zombie-grabber",
+      "bones": [
+        {
+          "name": "root",
+          "path": ""
+        },
+        {
+          "name": "skeleton-zombie",
+          "path": "SkeletonZombie"
+        },
+        {
+          "name": "hips",
+          "path": "SkeletonZombie/hips",
+          "renderer": "SkeletonZombie/hips/bp_hips"
+        },
+        {
+          "name": "butt",
+          "path": "SkeletonZombie/hips/butt",
+          "renderer": "SkeletonZombie/hips/butt/bp_butt"
+        },
+        {
+          "name": "leg-left-upper",
+          "path": "SkeletonZombie/hips/lLegUpper",
+          "renderer": "SkeletonZombie/hips/lLegUpper/bp_lLegUpper"
+        },
+        {
+          "name": "penis",
+          "path": "SkeletonZombie/hips/penis",
+          "renderer": "SkeletonZombie/hips/penis/bp_penis"
+        },
+        {
+          "name": "leg-right-upper",
+          "path": "SkeletonZombie/hips/rLegUpper",
+          "renderer": "SkeletonZombie/hips/rLegUpper/bp_rLegUpper"
+        },
+        {
+          "name": "spine",
+          "path": "SkeletonZombie/hips/spine",
+          "renderer": "SkeletonZombie/hips/spine/bp_spine"
+        },
+        {
+          "name": "leg-left-lower",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/bp_lLegLower"
+        },
+        {
+          "name": "leg-right-lower",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/bp_rLegLower"
+        },
+        {
+          "name": "chest",
+          "path": "SkeletonZombie/hips/spine/chest",
+          "renderer": "SkeletonZombie/hips/spine/chest/bp_chest"
+        },
+        {
+          "name": "foot-left",
+          "path": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot",
+          "renderer": "SkeletonZombie/hips/lLegUpper/lLegLower/lFoot/bp_lFoot"
+        },
+        {
+          "name": "foot-right",
+          "path": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot",
+          "renderer": "SkeletonZombie/hips/rLegUpper/rLegLower/rFoot/bp_rFoot"
+        },
+        {
+          "name": "arm-left-upper",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/bp_lArmUpper"
+        },
+        {
+          "name": "neck",
+          "path": "SkeletonZombie/hips/spine/chest/neck",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/bp_neck"
+        },
+        {
+          "name": "arm-right-upper",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/bp_rArmUpper"
+        },
+        {
+          "name": "arm-left-lower",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/bp_lArmLower"
+        },
+        {
+          "name": "head",
+          "path": "SkeletonZombie/hips/spine/chest/neck/head",
+          "renderer": "SkeletonZombie/hips/spine/chest/neck/head/bp_head"
+        },
+        {
+          "name": "arm-right-lower",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/bp_rArmLower"
+        },
+        {
+          "name": "hand-left",
+          "path": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/lArmUpper/lArmLower/lHand/bp_lHand"
+        },
+        {
+          "name": "hand-right",
+          "path": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand",
+          "renderer": "SkeletonZombie/hips/spine/chest/rArmUpper/rArmLower/rHand/bp_rHand"
+        }
+      ],
+      "states": [
+        {
+          "layer": "Base Layer",
+          "path": "Idle",
+          "semantic": "idle",
+          "seconds": 4.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Move",
+          "semantic": "move",
+          "seconds": 2.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Await",
+          "semantic": "await",
+          "seconds": 2.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "GetUp",
+          "semantic": "get-up",
+          "seconds": 1.25
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Climb",
+          "semantic": "climb",
+          "seconds": 1.6667
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Jump",
+          "semantic": "jump",
+          "seconds": 1.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape1_19",
+          "semantic": "finisher-phase-1",
+          "seconds": 1.9167
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape2_19",
+          "semantic": "finisher-phase-2",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape3_18",
+          "semantic": "finisher-phase-3",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape4_12",
+          "semantic": "finisher-phase-4",
+          "seconds": 3.0
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape5_11",
+          "semantic": "finisher-phase-5",
+          "seconds": 0.5
+        },
+        {
+          "layer": "Base Layer",
+          "path": "Rape6_7",
+          "semantic": "finisher-phase-6",
+          "seconds": 1.5
+        },
+        {
+          "layer": "AttackDefault",
+          "path": "New State",
+          "semantic": "internal-attack-default-empty",
+          "seconds": 0.0
+        },
+        {
+          "layer": "AttackDefault",
+          "path": "AttackDefault",
+          "semantic": "attack-default-attack-primary",
+          "seconds": 1.0
+        }
+      ],
+      "phases": [
+        {
+          "semantic": "finisher-phase-1",
+          "playerClip": "ZombieGrabber1",
+          "playerSeconds": 1.9167
+        },
+        {
+          "semantic": "finisher-phase-2",
+          "playerClip": "ZombieGrabber2",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-3",
+          "playerClip": "ZombieGrabber3",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-4",
+          "playerClip": "ZombieGrabber4",
+          "playerSeconds": 3.0
+        },
+        {
+          "semantic": "finisher-phase-5",
+          "playerClip": "ZombieGrabber5",
+          "playerSeconds": 0.5
+        },
+        {
+          "semantic": "finisher-phase-6",
+          "playerClip": "ZombieGrabber6",
+          "playerSeconds": 1.5
+        }
+      ]
+    }
+  ]
+}

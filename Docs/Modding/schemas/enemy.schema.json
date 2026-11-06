@@ -20,6 +20,7 @@
     "behavior": { "$ref": "#/$defs/behavior", "x-stability": "experimental" },
     "animation": { "$ref": "#/$defs/animation", "x-stability": "experimental" },
     "animationRefs": { "type": "object", "maxProperties": 64, "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/enemyAnimationId" }, "x-stability": "experimental" },
+    "playerAnimationRefs": { "description": "Inherited enemies only: finisher-phase-N -> playerAnimation for the player's side of the template's grab phase.", "type": "object", "maxProperties": 32, "propertyNames": { "type": "string", "pattern": "^finisher-phase-[1-9][0-9]?$" }, "additionalProperties": { "$ref": "#/$defs/playerAnimationId" }, "x-stability": "experimental" },
     "ai": { "$ref": "#/$defs/ai", "x-stability": "experimental" },
     "drops": { "$ref": "#/$defs/drops", "x-stability": "experimental" }
   },
@@ -32,7 +33,7 @@
       }
     },
     {
-      "not": { "required": ["extends"] },
+      "not": { "anyOf": [{ "required": ["extends"] }, { "required": ["playerAnimationRefs"] }] },
       "required": ["stats", "visual", "ai", "attacks"],
 	  "anyOf": [{ "required": ["animation"], "properties": { "animation": { "required": ["clips"] } } }, { "required": ["animationRefs"] }],
       "properties": {

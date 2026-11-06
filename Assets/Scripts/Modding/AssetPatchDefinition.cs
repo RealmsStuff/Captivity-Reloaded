@@ -21,8 +21,16 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("target", Required = Required.Always)]
 		public string Target { get; set; }
 
-		[JsonProperty("replacements", Required = Required.Always)]
+		[JsonProperty("replacements")]
 		public Dictionary<string, string> Replacements { get; set; }
+
+		// Experimental: replace a Core enemy's clips. Semantic clip name -> enemyAnimation content ID.
+		[JsonProperty("animations")]
+		public Dictionary<string, string> Animations { get; set; }
+
+		// Experimental: replace the player's side of a Core enemy's grab. finisher-phase-N -> playerAnimation content ID.
+		[JsonProperty("playerAnimations")]
+		public Dictionary<string, string> PlayerAnimations { get; set; }
 	}
 
 	public sealed class AssetReplacementDefinition
@@ -44,15 +52,26 @@ namespace CaptivityReloaded.Modding
 		public string PackId { get; }
 		public string Source { get; }
 		public IReadOnlyList<AssetReplacementDefinition> Replacements { get; }
+		public IReadOnlyDictionary<string, ContentId> Animations { get; }
+		public IReadOnlyDictionary<string, ContentId> PlayerAnimations { get; }
 
 		public AssetPatchDefinition(ContentId i_id, ContentId i_target, string i_packId, string i_source,
 			IReadOnlyList<AssetReplacementDefinition> i_replacements)
+			: this(i_id, i_target, i_packId, i_source, i_replacements, null, null)
+		{
+		}
+
+		public AssetPatchDefinition(ContentId i_id, ContentId i_target, string i_packId, string i_source,
+			IReadOnlyList<AssetReplacementDefinition> i_replacements, IReadOnlyDictionary<string, ContentId> i_animations,
+			IReadOnlyDictionary<string, ContentId> i_playerAnimations)
 		{
 			Id = i_id;
 			Target = i_target;
 			PackId = i_packId;
 			Source = i_source;
-			Replacements = i_replacements;
+			Replacements = i_replacements ?? new List<AssetReplacementDefinition>();
+			Animations = i_animations ?? new Dictionary<string, ContentId>();
+			PlayerAnimations = i_playerAnimations ?? new Dictionary<string, ContentId>();
 		}
 	}
 
@@ -98,11 +117,32 @@ namespace CaptivityReloaded.Modding
 				result.Report.Add(ValidationSeverity.Error, "asset-patch.target-id", "Patch target is not a valid public ID.", i_source);
 
 			List<AssetReplacementDefinition> replacements = new List<AssetReplacementDefinition>();
-			if (document.Replacements == null || document.Replacements.Count == 0)
+			Dictionary<string, ContentId> animations = new Dictionary<string, ContentId>(StringComparer.Ordinal);
+			Dictionary<string, ContentId> playerAnimations = new Dictionary<string, ContentId>(StringComparer.Ordinal);
+			bool hasAnimations = (document.Animations?.Count ?? 0) > 0 || (document.PlayerAnimations?.Count ?? 0) > 0;
+			if ((document.Replacements == null || document.Replacements.Count == 0) && !hasAnimations)
 			{
-				result.Report.Add(ValidationSeverity.Error, "asset-patch.replacements", "At least one replacement is required.", i_source);
+				result.Report.Add(ValidationSeverity.Error, "asset-patch.replacements", "At least one replacement, animation or player animation is required.", i_source);
 			}
-			else if (!string.IsNullOrEmpty(target.ToString()))
+			if (hasAnimations && (target.Namespace != "core" || target.Path == null || !target.Path.StartsWith("enemy/", StringComparison.Ordinal)))
+				result.Report.Add(ValidationSeverity.Error, "asset-patch.animation-target", "animations and playerAnimations can only patch a Core enemy (core:enemy/...).", i_source);
+			foreach (KeyValuePair<string, string> animation in document.Animations ?? new Dictionary<string, string>())
+			{
+				if (!IsSemanticName(animation.Key))
+					result.Report.Add(ValidationSeverity.Error, "asset-patch.animation-name", "animations keys must be semantic clip names: " + animation.Key, i_source);
+				else if (!ContentId.TryParse(animation.Value, out ContentId animationId) || !animationId.Path.StartsWith("enemy-animation/", StringComparison.Ordinal))
+					result.Report.Add(ValidationSeverity.Error, "asset-patch.animation-id", "animations values must be enemy-animation content IDs: " + animation.Value, i_source);
+				else animations[animation.Key] = animationId;
+			}
+			foreach (KeyValuePair<string, string> animation in document.PlayerAnimations ?? new Dictionary<string, string>())
+			{
+				if (!IsFinisherPhaseName(animation.Key))
+					result.Report.Add(ValidationSeverity.Error, "asset-patch.player-animation-name", "playerAnimations keys must be finisher-phase-N: " + animation.Key, i_source);
+				else if (!ContentId.TryParse(animation.Value, out ContentId animationId) || !animationId.Path.StartsWith("player-animation/", StringComparison.Ordinal))
+					result.Report.Add(ValidationSeverity.Error, "asset-patch.player-animation-id", "playerAnimations values must be player-animation content IDs: " + animation.Value, i_source);
+				else playerAnimations[animation.Key] = animationId;
+			}
+			if (document.Replacements != null && document.Replacements.Count > 0 && !string.IsNullOrEmpty(target.ToString()))
 			{
 				foreach (KeyValuePair<string, string> replacement in document.Replacements)
 				{
@@ -120,8 +160,24 @@ namespace CaptivityReloaded.Modding
 				}
 			}
 
-			if (result.Report.IsValid) result.Definition = new AssetPatchDefinition(patchId, target, i_packId, i_source, replacements);
+			if (result.Report.IsValid) result.Definition = new AssetPatchDefinition(patchId, target, i_packId, i_source, replacements, animations, playerAnimations);
 			return result;
+		}
+
+		// Lowercase words joined by hyphens, as the Core catalog's semantic clip names (idle, attack-primary, finisher-phase-3).
+		public static bool IsSemanticName(string i_value)
+		{
+			if (string.IsNullOrEmpty(i_value) || i_value.Length > 64 || i_value[0] == '-' || i_value[i_value.Length - 1] == '-') return false;
+			foreach (char character in i_value)
+				if (!((character >= 'a' && character <= 'z') || (character >= '0' && character <= '9') || character == '-')) return false;
+			return !i_value.Contains("--");
+		}
+
+		public static bool IsFinisherPhaseName(string i_value)
+		{
+			const string prefix = "finisher-phase-";
+			return i_value != null && i_value.StartsWith(prefix, StringComparison.Ordinal) && int.TryParse(i_value.Substring(prefix.Length), out int phase)
+				&& phase >= 1 && phase <= 32 && phase.ToString() == i_value.Substring(prefix.Length);
 		}
 
 		private static bool IsSafeSlotSuffix(string i_value)

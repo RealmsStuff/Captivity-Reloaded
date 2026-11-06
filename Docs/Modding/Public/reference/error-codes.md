@@ -20,15 +20,21 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 
 | Code | Severity | Message prefix | Source |
 | --- | --- | --- | --- |
+| `asset-patch.animation-id` | Error | animations values must be enemy-animation content IDs:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.animation-name` | Error | animations keys must be semantic clip names:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.animation-target` | Error | animations and playerAnimations can only patch a Core enemy (core:enemy/...). | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.asset-path` | Error | Replacement must reference a safe relative PNG path:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.conflict` | Error | Conflicting animation patches without an explicit override; Core animation retained:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
 | `asset-patch.content-root` | Warning | Content root does not exist or escapes its pack. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.definition-size` | Error | Content JSON must be between 1 byte and 1 MiB. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.id` | Error | Patch ID must use the defining pack namespace and a patch/ path. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.namespace` | Error | Patch ID namespace must match its defining pack:  | `Assets/Scripts/Modding/AssetSlotRegistry.cs` |
 | `asset-patch.null` | Error | Asset patch resolved to null. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
-| `asset-patch.override` | Warning | Pack ' | `Assets/Scripts/Modding/AssetSlotRegistry.cs` |
+| `asset-patch.override` | Warning | Pack ' | `Assets/Scripts/Modding/AssetSlotRegistry.cs, Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
 | `asset-patch.pack` | Error | Defining pack is not loaded:  | `Assets/Scripts/Modding/RuntimeSpritePatchLoader.cs` |
-| `asset-patch.replacements` | Error | At least one replacement is required. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.player-animation-id` | Error | playerAnimations values must be player-animation content IDs:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.player-animation-name` | Error | playerAnimations keys must be finisher-phase-N:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
+| `asset-patch.replacements` | Error | At least one replacement, animation or player animation is required. | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.runtime-type` | Error | PNG replacement requires a Sprite slot:  | `Assets/Scripts/Modding/RuntimeSpritePatchLoader.cs` |
 | `asset-patch.schema-version` | Error | Unsupported schemaVersion  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
 | `asset-patch.slot` | Error | Replacement key is not a safe slot path:  | `Assets/Scripts/Modding/AssetPatchDefinition.cs` |
@@ -148,6 +154,20 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `content.definition-size` | Error | Content JSON must be between 1 byte and 1 MiB. | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
 | `content.root` | Warning | Content root does not exist or escapes its pack. | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
 | `content.type` | Error | Unsupported or missing content definition type:  | `Assets/Scripts/Modding/ModContentDiscovery.cs` |
+
+## `core-animation.*`
+
+| Code | Severity | Message prefix | Source |
+| --- | --- | --- | --- |
+| `core-animation.audio-file` | Error | Override sound is missing or outside its pack:  | `Assets/Scripts/Assembly-CSharp/CoreAnimationOverrideDriver.cs` |
+| `core-animation.bone` | Error | Not a bone of the Core rig  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.enemy` | Error | Animation patch targets an enemy the game has no Core rig for:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.event` | Error | A Core enemy's clip keeps its own gameplay; an override may only carry sound, cameraShake and cue events (not  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.length` | Warning | The override lasts  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.owner` | Error | Animation  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.phase` | Error | Not one of the Core enemy's grab phases:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.player-events` | Warning | A Core grab keeps its own pleasure and damage; this player clip's events are ignored:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-animation.semantic` | Error | Not one of the Core enemy's clips:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
 
 ## `core-challenge.*`
 
@@ -269,7 +289,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.ai.retreat-range` | Error | retreatRange cannot be greater than preferredRange. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |
 | `enemy.ai.type` | Error | Original enemy AI type must be groundChase, flyingChase, or holdPosition. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |
 | `enemy.animation-ref-duplicate` | Error | Animation clip is defined inline and by reference:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.animation-ref-missing` | Error | Unknown normalized enemy animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.animation-ref-missing` | Error | Unknown normalized enemy animation:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs, Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.animation-ref-owner` | Error | Normalized animation  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.animation-refs.id` | Error | animationRefs values must be enemy-animation content IDs. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.animation-refs.limit` | Error | animationRefs supports at most 64 clips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -388,7 +408,11 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.finisher-clothing-missing` | Error | Enemy finisher references unknown clothing:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.null` | Error | Enemy definition resolved to null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.on-hit-clothing-missing` | Error | Enemy references unknown on-hit clothing:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
-| `enemy.player-animation-ref-missing` | Error | Unknown normalized player animation:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.player-animation-ref-missing` | Error | Unknown normalized player animation:  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs, Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.player-animation-refs.id` | Error | playerAnimationRefs values must be player-animation content IDs. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.player-animation-refs.limit` | Error | playerAnimationRefs supports at most 32 phases. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.player-animation-refs.name` | Error | playerAnimationRefs keys must be finisher-phase-N. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.player-animation-refs.original` | Error | playerAnimationRefs is for inherited enemies; original enemies name the player's clips in their finisher phases. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn-on-death-missing` | Error | Enemy references an unknown spawnOnDeath enemy:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.spawn.join-count` | Error | joinCoreSpawners accepts at most 32 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.join-duplicate` | Error | joinCoreSpawners lists  | `Assets/Scripts/Modding/EnemyDefinition.cs` |

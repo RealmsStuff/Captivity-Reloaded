@@ -99,6 +99,8 @@ public static class CoreContentAdapter
 				if (definition.Id != i_id) continue;
 				npc.ConfigureCoreEnemy(definition.DisplayName, definition.Description, definition.Stats, definition.Behavior);
 				CoreAssetSlotBinder.RegisterCoreEnemySlots(npc, definition.Id);
+				// Plays mod clips in place of its Animator states when a pack replaces them or a variant adds its own.
+				CoreAnimationOverrideDriver.Attach(npc);
 				return;
 			}
 		}

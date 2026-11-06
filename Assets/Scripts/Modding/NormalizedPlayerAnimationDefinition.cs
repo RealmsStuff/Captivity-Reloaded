@@ -333,6 +333,16 @@ namespace CaptivityReloaded.Modding
 			Tracks = i_document.Tracks; Events = i_document.Events;
 		}
 
+		public IReadOnlyList<NormalizedObjectTrack> ObjectTracks => m_document.ObjectTracks ?? new List<NormalizedObjectTrack>();
+
+		// Samples the clip straight from its curves, for playing it on the player during a Core grab.
+		public AnimationCurveSampler CreateSampler()
+		{
+			return new AnimationCurveSampler(m_document.Tracks.Where(IsRuntimeTrack), m_document.ObjectTracks, m_document.DurationSeconds, null, m_runtimeSprites);
+		}
+
+		public NormalizedAnimationPresentation CreatePresentation() { return new NormalizedAnimationPresentation(m_document); }
+
 		internal void LoadRuntimeSprites(string i_packRoot, ValidationReport io_report)
 		{
 			foreach (NormalizedObjectTrack track in m_document.ObjectTracks ?? new List<NormalizedObjectTrack>())

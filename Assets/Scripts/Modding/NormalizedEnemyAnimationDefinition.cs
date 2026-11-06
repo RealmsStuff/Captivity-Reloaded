@@ -36,10 +36,31 @@ namespace CaptivityReloaded.Modding
 		private readonly NormalizedEnemyAnimationDocument m_document;
 		private readonly Dictionary<string, Sprite> m_runtimeSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
 
+		public float DurationSeconds => m_document.DurationSeconds;
+		public bool Loop => m_document.Loop;
+		public IReadOnlyList<NormalizedNumericTrack> Tracks => m_document.Tracks ?? new List<NormalizedNumericTrack>();
+		public IReadOnlyList<NormalizedObjectTrack> ObjectTracks => m_document.ObjectTracks ?? new List<NormalizedObjectTrack>();
+		public IReadOnlyList<EnemyAnimationEventDefinition> Events => m_document.Events ?? new List<EnemyAnimationEventDefinition>();
+		public IReadOnlyList<NormalizedEffectDefinition> Effects => m_document.Effects ?? new List<NormalizedEffectDefinition>();
+
 		internal NormalizedEnemyAnimationDefinition(ContentId i_id, ContentId i_enemy, string i_packId,
 			string i_source, NormalizedEnemyAnimationDocument i_document)
 		{
 			Id = i_id; Enemy = i_enemy; PackId = i_packId; Source = i_source; m_document = i_document;
+		}
+
+		// Samples the clip straight from its curves, for playing it on a Core enemy's own bones.
+		public AnimationCurveSampler CreateSampler()
+		{
+			return new AnimationCurveSampler(m_document.Tracks, m_document.ObjectTracks, m_document.DurationSeconds, null, m_runtimeSprites);
+		}
+
+		public NormalizedAnimationPresentation CreatePresentation()
+		{
+			return new NormalizedAnimationPresentation(new NormalizedPlayerAnimationDocument
+			{
+				Tracks = m_document.Tracks, ObjectTracks = m_document.ObjectTracks, Effects = m_document.Effects, EffectTriggers = m_document.EffectTriggers
+			});
 		}
 
 		internal void LoadRuntimeSprites(string i_packRoot, ValidationReport io_report)
@@ -190,7 +211,8 @@ namespace CaptivityReloaded.Modding
 			if (document.SchemaVersion != 1) Error(result, "schema-version", "Unsupported schemaVersion.", i_source);
 			if (document.Type != "enemyAnimation") Error(result, "type", "Definition type must be 'enemyAnimation'.", i_source);
 			if (!ContentId.TryParse(document.Id, out ContentId id) || id.Namespace != i_packId || !id.Path.StartsWith("enemy-animation/", StringComparison.Ordinal)) Error(result, "id", "ID must use the defining pack namespace and an enemy-animation/ path.", i_source);
-			if (!ContentId.TryParse(document.Enemy, out ContentId enemy) || enemy.Namespace != i_packId || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal)) Error(result, "enemy", "enemy must reference an enemy in the defining pack.", i_source);
+			// A pack may also animate a Core enemy (core:enemy/...), for an asset patch that replaces one of its clips.
+			if (!ContentId.TryParse(document.Enemy, out ContentId enemy) || (enemy.Namespace != i_packId && enemy.Namespace != "core") || !enemy.Path.StartsWith("enemy/", StringComparison.Ordinal)) Error(result, "enemy", "enemy must reference an enemy in the defining pack or a Core enemy.", i_source);
 			if (string.IsNullOrWhiteSpace(document.DisplayName) || document.DisplayName.Length > 100) Error(result, "display-name", "displayName must contain 1..100 characters.", i_source);
 			if (!Finite(document.DurationSeconds) || document.DurationSeconds <= 0f || document.DurationSeconds > 60f) Error(result, "duration", "durationSeconds must be greater than 0 and at most 60.", i_source);
 			if (!Finite(document.FrameRate) || document.FrameRate <= 0f || document.FrameRate > 240f) Error(result, "frame-rate", "frameRate must be greater than 0 and at most 240.", i_source);

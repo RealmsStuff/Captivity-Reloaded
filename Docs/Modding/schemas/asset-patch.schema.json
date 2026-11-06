@@ -5,7 +5,8 @@
   "x-stability": "stable",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "type", "id", "target", "replacements"],
+  "required": ["schemaVersion", "type", "id", "target"],
+  "anyOf": [{ "required": ["replacements"] }, { "required": ["animations"] }, { "required": ["playerAnimations"] }],
   "properties": {
     "schemaVersion": { "const": 1, "x-stability": "stable" },
     "type": { "const": "assetPatch", "x-stability": "stable" },
@@ -16,10 +17,26 @@
       "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" },
       "additionalProperties": { "$ref": "#/$defs/pngPath" },
       "x-stability": "stable"
+    },
+    "animations": {
+      "description": "Core enemy targets only: semantic clip name -> enemyAnimation that plays in place of that Animator state.",
+      "type": "object", "minProperties": 1, "maxProperties": 64,
+      "propertyNames": { "$ref": "#/$defs/semanticName" },
+      "additionalProperties": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:enemy-animation/[a-z0-9][a-z0-9._/-]*$" },
+      "x-stability": "experimental"
+    },
+    "playerAnimations": {
+      "description": "Core enemy targets only: finisher-phase-N -> playerAnimation for the player's side of that grab phase.",
+      "type": "object", "minProperties": 1, "maxProperties": 32,
+      "propertyNames": { "$ref": "#/$defs/finisherPhase" },
+      "additionalProperties": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:player-animation/[a-z0-9][a-z0-9._/-]*$" },
+      "x-stability": "experimental"
     }
   },
   "$defs": {
     "contentId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*$" },
+    "semanticName": { "type": "string", "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "finisherPhase": { "type": "string", "pattern": "^finisher-phase-[1-9][0-9]?$" },
     "pngPath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.[pP][nN][gG]$" }
   }
 }

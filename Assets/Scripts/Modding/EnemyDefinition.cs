@@ -478,6 +478,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("behavior")] public EnemyBehaviorDefinition Behavior { get; set; }
 		[JsonProperty("animation")] public EnemyAnimationDefinition Animation { get; set; }
 		[JsonProperty("animationRefs")] public Dictionary<string, string> AnimationReferences { get; set; } = new Dictionary<string, string>();
+		// Experimental, inherited enemies only: the player's side of the template's grab phases, finisher-phase-N -> playerAnimation ID.
+		[JsonProperty("playerAnimationRefs")] public Dictionary<string, string> PlayerAnimationReferences { get; set; }
 		[JsonProperty("ai")] public EnemyAiDefinition Ai { get; set; }
 		[JsonProperty("drops")] public EnemyDropsDefinition Drops { get; set; }
 	}
@@ -497,6 +499,7 @@ namespace CaptivityReloaded.Modding
 		public EnemyBehaviorDefinition Behavior { get; }
 		public EnemyAnimationDefinition Animation { get; }
 		public IReadOnlyDictionary<string, string> AnimationReferences { get; }
+		public IReadOnlyDictionary<string, string> PlayerAnimationReferences { get; }
 		public EnemyAiDefinition Ai { get; }
 		public EnemyDropsDefinition Drops { get; }
 
@@ -515,6 +518,7 @@ namespace CaptivityReloaded.Modding
 			Behavior = i_document.Behavior ?? new EnemyBehaviorDefinition();
 			Animation = i_document.Animation ?? new EnemyAnimationDefinition();
 			AnimationReferences = i_document.AnimationReferences ?? new Dictionary<string, string>();
+			PlayerAnimationReferences = i_document.PlayerAnimationReferences ?? new Dictionary<string, string>();
 			Ai = i_document.Ai;
 			Drops = i_document.Drops ?? new EnemyDropsDefinition();
 		}
@@ -641,6 +645,7 @@ namespace CaptivityReloaded.Modding
 				ValidateBehaviorModules(i_document.Behavior.Modules, i_original, io_report, i_source);
 			}
 			ValidateAnimationReferences(i_document.AnimationReferences, io_report, i_source);
+			ValidatePlayerAnimationReferences(i_document.PlayerAnimationReferences, i_original, io_report, i_source);
 			if (i_document.Animation != null) ValidateAnimation(i_document.Animation, i_document.AnimationReferences, i_original, i_document.Visual,
 				i_document.Attacks, i_document.Behavior?.Modules, io_report, i_source);
 			else if (i_original && (i_document.AnimationReferences == null || i_document.AnimationReferences.Count == 0))
@@ -704,6 +709,23 @@ namespace CaptivityReloaded.Modding
 				if (!IsSemanticName(pair.Key)) io_report.Add(ValidationSeverity.Error, "enemy.animation-refs.name", "animationRefs keys must be semantic clip names.", i_source);
 				if (!ContentId.TryParse(pair.Value, out ContentId id) || !id.Path.StartsWith("enemy-animation/", StringComparison.Ordinal))
 					io_report.Add(ValidationSeverity.Error, "enemy.animation-refs.id", "animationRefs values must be enemy-animation content IDs.", i_source);
+			}
+		}
+
+		private static void ValidatePlayerAnimationReferences(Dictionary<string, string> i_references, bool i_original, ValidationReport io_report, string i_source)
+		{
+			if (i_references == null || i_references.Count == 0) return;
+			if (i_original)
+			{
+				io_report.Add(ValidationSeverity.Error, "enemy.player-animation-refs.original", "playerAnimationRefs is for inherited enemies; original enemies name the player's clips in their finisher phases.", i_source);
+				return;
+			}
+			if (i_references.Count > 32) io_report.Add(ValidationSeverity.Error, "enemy.player-animation-refs.limit", "playerAnimationRefs supports at most 32 phases.", i_source);
+			foreach (KeyValuePair<string, string> pair in i_references)
+			{
+				if (!AssetPatchParser.IsFinisherPhaseName(pair.Key)) io_report.Add(ValidationSeverity.Error, "enemy.player-animation-refs.name", "playerAnimationRefs keys must be finisher-phase-N.", i_source);
+				if (!ContentId.TryParse(pair.Value, out ContentId id) || !id.Path.StartsWith("player-animation/", StringComparison.Ordinal))
+					io_report.Add(ValidationSeverity.Error, "enemy.player-animation-refs.id", "playerAnimationRefs values must be player-animation content IDs.", i_source);
 			}
 		}
 

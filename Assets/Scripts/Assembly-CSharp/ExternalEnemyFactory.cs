@@ -2935,7 +2935,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		return new[] { "hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face" };
 	}
 
-	private static bool TryGetPlayerBoneType(string i_name, out BoneTypePlayer o_type)
+	internal static bool TryGetPlayerBoneType(string i_name, out BoneTypePlayer o_type)
 	{
 		switch (i_name)
 		{

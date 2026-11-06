@@ -152,6 +152,7 @@ namespace CaptivityReloaded.Modding
 			ResolvePlayerAnimationReferences(content.Enemies, report);
 			ResolveEnemyAnimationReferences(content.Enemies, report);
 			ValidateFinisherParticipantReferences(content.Enemies, report);
+			CoreAnimationOverrides.Resolve(content.AssetPatches, content.Enemies, LoadedPacks, CoreAnimationRuntimeMap.Load(), report);
 			RegisterExternalClothing(content.Clothing, report);
 			RegisterExternalWeapons(content.Weapons, report);
 			RegisterExternalUsables(content.Usables, report);
@@ -236,6 +237,8 @@ namespace CaptivityReloaded.Modding
 		{
 			foreach (EnemyDefinition enemy in i_enemies ?? new EnemyDefinition[0])
 			{
+				// An inherited enemy's refs play on its Core template's rig (CoreAnimationOverrides).
+				if (enemy.Extends.HasValue) continue;
 				HashSet<string> bones = new HashSet<string>(System.StringComparer.Ordinal);
 				foreach (EnemyBoneDefinition bone in enemy.Visual?.Bones ?? new List<EnemyBoneDefinition>()) bones.Add(bone.Id);
 				HashSet<string> regions = new HashSet<string>(System.StringComparer.Ordinal);
