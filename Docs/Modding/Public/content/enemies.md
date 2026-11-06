@@ -177,11 +177,11 @@ By default the finisher stands the enemy beside the player. A small enemy that c
 
 Each phase can change what the enemy holds for that phase:
 
-- `contacts` replaces the attachment's contacts while the phase plays. An empty list lets every limb go. A limb that starts or stops holding eases in or out over `settleSeconds`. A limb that moves to a new point eases there, and a knee or elbow whose side changes swings across instead of flipping.
+- `contacts` replaces the attachment's contacts while the phase plays. An empty list lets every limb go. A limb that starts or stops holding eases in or out over the phase's `blendSeconds` when set, otherwise over `settleSeconds`. A limb that moves to a new point eases there, and a knee or elbow whose side changes swings across instead of flipping.
 - `attached: false` lets go: the root stops following and the contacts ease off. `attached: true` holds on again. Without `attached`, a phase keeps the previous phase's state.
 
 Phases may set `attached` and `contacts` only when the finisher has an `attachment`. When the finisher ends, the enemy is released where its clip last drew it, and physics takes over from there.
-**Experimental:** phase changes cut by default. `phaseBlendSeconds` (0 to 2) on the `downedFinisher` cross-fades the player's pose from the pose it is drawn in into each phase's player clip, the first phase included (from the game's own pose). A phase's own `blendSeconds` (0 to 2) sets how long the change into that phase takes, for two poses far apart: the player's pose cross-fades over it instead of `phaseBlendSeconds`, and the enemy's clip and any participants' clips cross-fade over it instead of their `animation.blendSeconds`. A bone whose pose turns the other way round (its scale flips sign) turns at once instead of shrinking through zero.
+**Experimental:** phase changes cut by default. `phaseBlendSeconds` (0 to 2) on the `downedFinisher` cross-fades the player's pose from the pose it is drawn in into each phase's player clip, the first phase included (from the game's own pose). A phase's own `blendSeconds` (0 to 2) sets how long the change into that phase takes, for two poses far apart: the player's pose cross-fades over it instead of `phaseBlendSeconds`, the enemy's clip and any participants' clips cross-fade over it instead of their `animation.blendSeconds`, and attachment/contact changes ease over it instead of `attachment.settleSeconds`. A bone whose pose turns the other way round (its scale flips sign) turns at once instead of shrinking through zero.
 
 ### Independent NPC participants
 
