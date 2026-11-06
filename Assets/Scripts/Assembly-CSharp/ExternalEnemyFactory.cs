@@ -1141,7 +1141,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	// They share one cooldown: after any of them ends, none starts until that one's cooldownSeconds have passed.
 	private EnemyBehaviorModuleDefinition m_definition;
 	private readonly List<EnemyBehaviorModuleDefinition> m_definitions = new List<EnemyBehaviorModuleDefinition>();
-	private float m_inRangeSince = -1f;
+	private float m_inRangeSince = -1f, m_closestDistance, m_closerAt;
 	private Player m_player;
 	private bool m_isActive;
 	private float m_meter;
@@ -1264,16 +1264,23 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 		if (m_downedAt < 0f) m_downedAt = Time.time;
 		// The finishers whose start delay has passed and whose triggerRange reaches the player. The enemy walks in until
-		// every finisher reaches (ShouldApproachDownedPlayer); when one cannot get that close, the ones in range get
-		// half a second, then one of them is picked by weight. One finisher alone starts exactly as before.
+		// every finisher reaches (ShouldApproachDownedPlayer). While some cannot start yet, it waits as long as it is
+		// still getting closer or one in range is still in its start delay, at most 3 seconds; then one of the ready
+		// finishers is picked by weight. One finisher alone starts exactly as before.
 		float distance = Vector2.Distance(m_npc.GetPosFeet(), m_player.GetPosHips());
-		List<EnemyBehaviorModuleDefinition> ready = m_definitions.FindAll(item => Time.time - m_downedAt >= (item.StartDelaySeconds ?? 0.2f)
-			&& distance <= item.TriggerRange.Value);
+		List<EnemyBehaviorModuleDefinition> ready = new List<EnemyBehaviorModuleDefinition>();
+		bool delayed = false;
+		foreach (EnemyBehaviorModuleDefinition item in m_definitions)
+		{
+			if (distance > item.TriggerRange.Value) continue;
+			if (Time.time - m_downedAt >= (item.StartDelaySeconds ?? 0.2f)) ready.Add(item); else delayed = true;
+		}
 		if (ready.Count == 0) { m_inRangeSince = -1f; return; }
 		if (ready.Count < m_definitions.Count)
 		{
-			if (m_inRangeSince < 0f) m_inRangeSince = Time.time;
-			if (Time.time - m_inRangeSince < 0.5f) return;
+			if (m_inRangeSince < 0f) { m_inRangeSince = m_closerAt = Time.time; m_closestDistance = distance; }
+			if (distance < m_closestDistance - 0.02f) { m_closestDistance = distance; m_closerAt = Time.time; }
+			if ((delayed || Time.time - m_closerAt < 0.5f) && Time.time - m_inRangeSince < 3f) return;
 		}
 		m_inRangeSince = -1f;
 		m_definition = PickByWeight(ready);
