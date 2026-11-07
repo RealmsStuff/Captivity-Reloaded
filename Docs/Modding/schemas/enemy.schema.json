@@ -194,6 +194,7 @@
       "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
       "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },
       "decayPerSecond": { "type": "number", "minimum": 0, "maximum": 10000 },
+      "struggle": { "type": "boolean", "x-stability": "experimental" },
       "participantAnimations": { "type": "object", "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/name" }, "maxProperties": 3 },
       "attached": { "type": "boolean", "x-stability": "experimental" }, "contacts": { "$ref": "#/$defs/finisherContacts", "x-stability": "experimental" },
       "blendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" },
