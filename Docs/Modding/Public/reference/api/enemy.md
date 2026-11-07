@@ -94,6 +94,16 @@ Constraints: pattern: `^[a-z0-9][a-z0-9._-]*:item/[a-z0-9][a-z0-9._/-]*$`.
 | --- | --- | --- | --- | --- |
 | _No named properties_ | | | | This definition is composed through references or conditional schemas. |
 
+## Definition: `audioPath`
+
+Schema form: string.
+
+Constraints: pattern: `^(?!/)(?!.*(?:^\|/)\.\.(?:/\|$))(?!.*\\).+\.(?:[wW][aA][vV]\|[oO][gG][gG])$`.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+
 ## Definition: `pngPath`
 
 Schema form: string.
@@ -367,6 +377,54 @@ Schema form: object.
 | `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
 | `startFreezeSeconds` | number | no | experimental | min: `0`; max: `1` |
 
+## Definition: `finisherReactions`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `oral` | boolean | no |  |  |
+| `mutePlayer` | boolean | no |  |  |
+| `camera` | enum: `player`, `enemyHips` | no |  |  |
+| `thrust` | ref: `finisherThrust` | no |  |  |
+| `cumThrust` | ref: `finisherThrust` | no |  |  |
+| `playerVoice` | ref: `finisherSoundSet` | no |  |  |
+| `enemyVoice` | ref: `finisherSoundSet` | no |  |  |
+| `layers` | array of ref: `finisherSoundSet` | no |  | max items: `8` |
+| `uniqueSounds` | ref: `finisherSounds` | no |  |  |
+
+## Definition: `finisherThrust`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `pleasure` | number | no |  | min: `0`; max: `10` |
+| `libido` | number | no |  | min: `0`; max: `10` |
+| `struggleDamage` | number | no |  | min: `0`; max: `100000` |
+| `sounds` | ref: `finisherSounds` | no |  |  |
+| `volume` | number | no |  | min: `0`; max: `1` |
+
+## Definition: `finisherSoundSet`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `chance` | number | no |  | min: `0`; max: `1` |
+| `sounds` | ref: `finisherSounds` | no |  |  |
+| `volume` | number | no |  | min: `0`; max: `1` |
+
+## Definition: `finisherSounds`
+
+Schema form: array of ref: `audioPath`.
+
+Constraints: max items: `32`.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+
 ## Definition: `finisherAttachment`
 
 Schema form: object.
@@ -447,6 +505,7 @@ Schema form: object.
 | `attached` | boolean | no | experimental |  |
 | `contacts` | ref: `finisherContacts` | no | experimental |  |
 | `blendSeconds` | number | no | experimental | min: `0`; max: `2` |
+| `reactions` | ref: `finisherReactions` | no |  |  |
 
 ## Definition: `finisherParticipant`
 

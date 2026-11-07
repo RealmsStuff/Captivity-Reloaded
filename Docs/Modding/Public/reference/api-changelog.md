@@ -6,6 +6,13 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-07: grab reactions for finisher phases
+
+- Added the optional experimental phase field `reactions` to `downedFinisher` phases. It gives a phase what a Core grab animation sets up for its thrusts: thrust and cum-thrust gains, struggle knock-back, sounds, player and enemy voice lines and sound layers rolled by chance, the oral mouth, muting the player and a camera on the enemy's hips. See [Grab reactions](../content/enemies.md#grab-reactions-experimental).
+- In a phase with `reactions`, the phase's clips (the enemy's and its participants') act on the cues `finisher.thrust` and `finisher.cum-thrust` (`amount` is the power, 0 to 3, which picks the Core camera shake), `audio.player-voice-random`, `audio.enemy-voice-random`, `audio.unique` (`index`) and `finisher.ko`. Each thrust also opens the player's mouth and flushes the screen as a Core thrust does. Cues stay inert in phases without `reactions`, so existing packs are unchanged.
+- Reaction sounds are validated like `sound` event files (pack-relative WAV or OGG, at most 32 per list, at most 8 layers) and loaded with the enemy.
+- New validation codes: `enemy.behavior.finisher-reactions-camera`, `enemy.behavior.finisher-reactions-layers`, the `enemy.behavior.finisher-reactions-<list>-sound` and `-sound-count` checks, and the `enemy.stats.finisher-reactions-<set>-pleasure`, `-libido`, `-struggle-damage`, `-chance` and `-volume` range checks.
+
 ### 2026-11-07: finisher start freeze
 
 - Added optional experimental `downedFinisher.startFreezeSeconds` (0 to 1). When an original enemy's finisher starts, the game holds still for that long, like the half second before a Core grab.

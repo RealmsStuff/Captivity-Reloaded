@@ -365,6 +365,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-player-events` | Error | playerAnimation supports at most 64 timed events. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-frame` | Error | playerAnimation frame times must be ordered within the clip and include bone poses. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-region` | Error | playerAnimation cannot replace player sprite regions. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-reactions-camera` | Error | Finisher reactions camera must be player or enemyHips. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-reactions-layers` | Error | Finisher reactions support at most 8 sound layers. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-description` | Error | Finisher status descriptions support at most 256 characters. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-empty` | Error | Finisher status  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-key` | Error | Unsupported finisher status:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |

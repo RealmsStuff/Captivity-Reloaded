@@ -51,6 +51,11 @@ public class ManagerPlayerMouth : MonoBehaviour
 
 	private bool m_isHeadHumping;
 
+	// A data-driven grab (ModularEnemyFinisher with reactions) drives the same mouth reactions as a Raper.
+	private bool m_isModularGrab;
+
+	private bool m_isModularGrabOral;
+
 	private Coroutine m_coroutineChangeMouthToIdle;
 
 	private Dictionary<string, List<Action<Sprite>>> m_coreMouthBindings;
@@ -148,9 +153,80 @@ public class ManagerPlayerMouth : MonoBehaviour
 		m_raper = null;
 	}
 
+	public void BeginModularGrab()
+	{
+		if (m_isModularGrab)
+		{
+			return;
+		}
+		m_isModularGrab = true;
+		m_isModularGrabOral = false;
+		m_player = CommonReferences.Instance.GetPlayer();
+		m_player.OnOrgasm += OnOrgasm;
+	}
+
+	public void EndModularGrab()
+	{
+		if (!m_isModularGrab)
+		{
+			return;
+		}
+		m_isModularGrab = false;
+		m_player.OnOrgasm -= OnOrgasm;
+		SetModularGrabOral(false);
+	}
+
+	// Like a Raper animation's oral flag: the oral mouth stays on while the phase is oral.
+	public void SetModularGrabOral(bool i_isOral)
+	{
+		bool wasOral = m_isModularGrabOral;
+		m_isModularGrabOral = i_isOral && m_isModularGrab;
+		if (m_isModularGrabOral)
+		{
+			m_mouth.sprite = m_mouthsOral[0];
+		}
+		else if (wasOral && !m_isKO && !m_isHeadHumping)
+		{
+			m_mouth.sprite = GetMouthIdle();
+		}
+	}
+
+	public void ModularGrabThrust()
+	{
+		if (m_isModularGrab)
+		{
+			OnThrust();
+		}
+	}
+
+	public void ModularGrabCumThrust()
+	{
+		if (m_isModularGrab)
+		{
+			OnCumThrust();
+		}
+	}
+
+	public void ModularGrabVoice()
+	{
+		if (m_isModularGrab)
+		{
+			OnPlayerVoice();
+		}
+	}
+
+	private bool IsOral()
+	{
+		if (m_raper != null)
+		{
+			return m_raper.GetIsHasOral();
+		}
+		return m_isModularGrabOral;
+	}
+
 	private void OnPlayerVoice()
 	{
-		if (m_raper.GetIsHasOral())
+		if (IsOral())
 		{
 			m_mouth.sprite = m_mouthsOral[0];
 		}
@@ -162,7 +238,7 @@ public class ManagerPlayerMouth : MonoBehaviour
 
 	private void OnThrust()
 	{
-		if (m_raper.GetIsHasOral())
+		if (IsOral())
 		{
 			m_mouth.sprite = m_mouthsOral[0];
 			return;
@@ -185,7 +261,7 @@ public class ManagerPlayerMouth : MonoBehaviour
 
 	private void OnCumThrust()
 	{
-		if (m_raper.GetIsHasOral())
+		if (IsOral())
 		{
 			m_mouth.sprite = m_mouthsOral[0];
 			return;
@@ -208,7 +284,7 @@ public class ManagerPlayerMouth : MonoBehaviour
 
 	private void OnOrgasm()
 	{
-		if (m_raper.GetIsHasOral())
+		if (IsOral())
 		{
 			m_mouth.sprite = m_mouthsOral[0];
 			return;
