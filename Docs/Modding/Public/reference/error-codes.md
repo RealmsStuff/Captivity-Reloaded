@@ -204,6 +204,15 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `core-enemy.legacy-duplicate` | Error | Duplicate Core enemy legacyId:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `core-enemy.legacy-id` | Error | Core enemy legacyId does not match the adapter catalog:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 
+## `core-extra-attack.*`
+
+| Code | Severity | Message prefix | Source |
+| --- | --- | --- | --- |
+| `core-extra-attack.event-after-attack` | Error | Animation event at  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-extra-attack.hit-timing` | Error | Additional attack  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-extra-attack.projectile-region` | Error | On a Core enemy, projectileRegion names a bone of its rig (the projectile shows that bone's sprite):  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+| `core-extra-attack.stage-events` | Error | multiStage attack  | `Assets/Scripts/Modding/CoreAnimationOverrides.cs` |
+
 ## `core-item.*`
 
 | Code | Severity | Message prefix | Source |
@@ -285,6 +294,16 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 
 | Code | Severity | Message prefix | Source |
 | --- | --- | --- | --- |
+| `enemy.additional-attacks.animation` | Error | An additional attack's animation must be a clip name from this enemy's animationRefs:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.entry` | Error | Additional attack entries cannot be null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.grab` | Error | A Core enemy's grab starts from its own logic, so additional attacks cannot grab:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.hit-time` | Error | hitTimeSeconds cannot exceed durationSeconds. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.id` | Error | Additional attack IDs must be unique semantic names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.index` | Error | Additional attacks are new attacks: they have an id, not an index. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.limit` | Error | additionalAttacks supports at most 8 attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.miss-animation` | Error | An additional attack's missAnimation must be a clip name from this enemy's animationRefs:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.original` | Error | additionalAttacks is for inherited enemies; original enemies list every attack under attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.additional-attacks.type` | Error | Additional attacks support melee, hitscan, projectile, area, or multiStage. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.ai.attack-range-gap` | Error | preferredRange cannot exceed every attack's initiateRange or the enemy can stop outside attack range. | `Assets/Scripts/Modding/EnemyAttackAuthoring.cs` |
 | `enemy.ai.retreat-range` | Error | retreatRange cannot be greater than preferredRange. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |
 | `enemy.ai.type` | Error | Original enemy AI type must be groundChase, flyingChase, or holdPosition. | `Assets/Scripts/Modding/EnemyAiAuthoring.cs` |

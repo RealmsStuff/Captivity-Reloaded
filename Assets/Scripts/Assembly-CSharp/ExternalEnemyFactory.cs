@@ -927,52 +927,14 @@ public sealed class ModularEnemy : Walker
 			StartAttackCooldown();
 		}
 		string type = i_stage == null ? i_definition.Type : i_stage.Type;
-		if (type == "hitscan") return PerformHitscanAttack(player, i_definition, i_stage);
-		if (type == "projectile") { SpawnProjectileAttack(player, i_definition, i_stage); return true; }
-		if (type == "area") return PerformAreaAttack(player, i_definition, i_stage);
 		if (type == "grab") return PerformGrabAttack(player, i_definition, i_stage);
-		return PerformMeleeAttack(player, i_definition, i_stage);
+		return ConfiguredAttackDelivery.Perform(this, player, i_definition, i_stage, ProjectileSprite);
 	}
 
-	private bool PerformMeleeAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	private Sprite ProjectileSprite(string i_region)
 	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
-		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
-		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
-		return ApplyConfiguredHit(i_player, i_definition, i_stage);
-	}
-
-	private bool PerformHitscanAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
-	{
-		if (i_player == null || i_player.GetStateActorCurrent() == StateActor.Ragdoll || !IsHasLineOfSightToPlayerRaycast()) return false;
-		Vector2 origin = GetSkeletonActor() == null ? GetPos() : (Vector2)GetSkeletonActor().GetBoneHead().transform.position;
-		Vector2 target = i_player.GetPosHips();
-		if (ResourceContainer.Resources != null && ResourceContainer.Resources.m_lineShoot != null)
-		{
-			SpriteRenderer line = UnityEngine.Object.Instantiate(ResourceContainer.Resources.m_lineShoot,
-				CommonReferences.Instance.GetManagerStages().GetStageCurrent().transform);
-			Vector2 direction = target - origin;
-			line.transform.position = origin;
-			line.transform.right = direction;
-			line.transform.localScale = new Vector3(direction.magnitude * 32f, 1f, 1f);
-			line.color = new Color(1f, 0.35f, 0.2f, 1f);
-			line.gameObject.SetActive(true);
-			line.enabled = true;
-			UnityEngine.Object.Destroy(line.gameObject, 0.15f);
-		}
-		if (Vector2.Distance(origin, target) > Resolve(i_stage?.HitRange, i_definition.HitRange, 1f)) return false;
-		return ApplyConfiguredHit(i_player, i_definition, i_stage);
-	}
-
-	private bool PerformAreaAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
-	{
-		if (i_player.GetStateActorCurrent() == StateActor.Ragdoll) return false;
-		float x = Resolve(i_stage?.OffsetX, i_definition.OffsetX, 0f);
-		if (GetIsFacingLeft()) x = -x;
-		Vector2 center = GetPos() + new Vector2(x, Resolve(i_stage?.OffsetY, i_definition.OffsetY, 0f));
-		float radius = Resolve(i_stage?.AreaRadius, i_definition.AreaRadius, 1f);
-		if (Vector2.Distance(center, i_player.GetPosHips()) > radius) return false;
-		return ApplyConfiguredHit(i_player, i_definition, i_stage);
+		ModularEnemySpriteSet sprites = GetComponent<ModularEnemySpriteSet>();
+		return sprites != null && sprites.TryGetEvent(i_region, out Sprite sprite) ? sprite : null;
 	}
 
 	private bool PerformGrabAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -983,81 +945,16 @@ public sealed class ModularEnemy : Walker
 		return finisher != null && finisher.TryBeginFromAttack(i_player, i_definition.Finisher);
 	}
 
-	private void SpawnProjectileAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
-	{
-		Vector2 origin = GetSkeletonActor() == null ? GetPos() : (Vector2)GetSkeletonActor().GetBoneHead().transform.position;
-		Vector2 displacement = i_player.GetPosHips() - origin;
-		Vector2 direction = displacement.normalized;
-		if (direction.sqrMagnitude <= 0.001f) direction = GetIsFacingLeft() ? Vector2.left : Vector2.right;
-		string region = i_stage?.ProjectileRegion ?? i_definition.ProjectileRegion;
-		ModularEnemySpriteSet sprites = GetComponent<ModularEnemySpriteSet>();
-		if (sprites == null || !sprites.TryGetEvent(region, out Sprite sprite)) return;
-		GameObject projectileObject = new GameObject("mod-enemy-projectile_" + i_definition.Id);
-		projectileObject.layer = LayerMask.NameToLayer("Projectile");
-		Stage stage = CommonReferences.Instance.GetManagerStages().GetStageCurrent();
-		projectileObject.transform.SetParent(stage == null ? null : stage.transform, true);
-		projectileObject.transform.position = origin;
-		projectileObject.transform.right = direction;
-		SpriteRenderer renderer = projectileObject.AddComponent<SpriteRenderer>();
-		renderer.sprite = sprite;
-		renderer.sortingLayerName = "Actor";
-		renderer.sortingOrder = 100;
-		Rigidbody2D body = projectileObject.AddComponent<Rigidbody2D>();
-		float gravityScale = Resolve(i_stage?.ProjectileGravityScale, i_definition.ProjectileGravityScale, 0f);
-		float projectileSpeed = Resolve(i_stage?.ProjectileSpeed, i_definition.ProjectileSpeed, 8f);
-		body.gravityScale = gravityScale;
-		body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-		if (Mathf.Abs(gravityScale) > 0.001f)
-		{
-			// Compensate the launch velocity so gravity creates a visible arc that
-			// still passes through a stationary target's firing-time position.
-			float travelSeconds = Mathf.Clamp(displacement.magnitude / projectileSpeed, 0.1f,
-				Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
-			Vector2 gravity = Physics2D.gravity * gravityScale;
-			body.velocity = displacement / travelSeconds - gravity * (0.5f * travelSeconds);
-			projectileObject.transform.right = body.velocity.normalized;
-		}
-		else body.velocity = direction * projectileSpeed;
-		CircleCollider2D collider = projectileObject.AddComponent<CircleCollider2D>();
-		collider.isTrigger = true;
-		collider.radius = Resolve(i_stage?.ProjectileRadius, i_definition.ProjectileRadius, 0.15f);
-		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
-		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
-		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		projectileObject.AddComponent<ModularEnemyProjectile>().Configure(this, damage, knockbackX, knockbackY,
-			Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f),
-			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f));
-	}
-
 	// Whether the hit landed. A player who can't be attacked right now takes no damage, so the attack missed.
 	private bool ApplyConfiguredHit(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
 	{
-		if (i_player == null || !i_player.GetIsCanBeAttacked()) return false;
-		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * GetStat("DamageMultiplier").GetValueTotal();
-		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * GetStat("KnockbackXMultiplier").GetValueTotal();
-		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * GetStat("KnockbackYMultiplier").GetValueTotal();
-		return ApplyProjectileHit(i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f));
+		return ConfiguredAttackDelivery.ApplyConfiguredHit(this, i_player, i_definition, i_stage);
 	}
 
 	// Whether the player took the hit.
 	public bool ApplyProjectileHit(Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds = 0f)
 	{
-		if (i_player == null || m_isDead || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return false;
-		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
-		i_player.TakeConfiguredHit(this, i_damage, i_knockbackX, i_knockbackY);
-		// Per-attack knockdown. A hit that already ragdolled the player counted its KO in TakeConfiguredHit.
-		if (i_ragdollSeconds > 0f && !wasDown && !i_player.IsDead() && !i_player.GetIsBeingRaped()
-			&& i_player.GetStateActorCurrent() != StateActor.Ragdoll && i_player.GetStatePlayerCurrent() != StatePlayer.Labor)
-		{
-			i_player.Ragdoll(i_ragdollSeconds);
-			if (i_player.GetStateActorCurrent() == StateActor.Ragdoll)
-			{
-				CommonReferences.Instance.GetManagerHud().GetStatusPlayerHud().AddStatusKO(this);
-				ManagerDB.KO(this);
-			}
-		}
-		NotifyDirectAttackHit(i_player);
-		return true;
+		return ConfiguredAttackDelivery.ApplyHit(this, i_player, i_damage, i_knockbackX, i_knockbackY, i_ragdollSeconds);
 	}
 
 	private static float Resolve(float? i_stageValue, float? i_attackValue, float i_fallback)
@@ -1087,7 +984,8 @@ public sealed class ModularEnemy : Walker
 
 public sealed class ModularEnemyProjectile : MonoBehaviour
 {
-	private ModularEnemy m_owner;
+	private NPC m_owner;
+	private bool m_isCoreAttack = true;
 	private Rigidbody2D m_body;
 	private float m_damage;
 	private float m_knockbackX;
@@ -1095,8 +993,9 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 	private float m_ragdollSeconds;
 	private bool m_spent;
 
-	public void Configure(ModularEnemy i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime)
+	public void Configure(NPC i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime, bool i_isCoreAttack = true)
 	{
+		m_isCoreAttack = i_isCoreAttack;
 		m_ragdollSeconds = i_ragdollSeconds;
 		m_owner = i_owner;
 		m_body = GetComponent<Rigidbody2D>();
@@ -1119,7 +1018,7 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 		if (player != null)
 		{
 			m_spent = true;
-			if (m_owner != null) m_owner.ApplyProjectileHit(player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds);
+			if (m_owner != null) ConfiguredAttackDelivery.ApplyHit(m_owner, player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds, m_isCoreAttack);
 			UnityEngine.Object.Destroy(gameObject);
 			return;
 		}

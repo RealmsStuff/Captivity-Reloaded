@@ -379,9 +379,11 @@ public abstract class NPC : Actor
 		StartCoroutine(CoroutineAttackCooldown());
 	}
 
-	protected void NotifyDirectAttackHit(Actor i_targetActor)
+	// i_isCoreAttack: the hit is the enemy's current Core attack landing (its on-hit interaction runs); false for a
+	// Core enemy's additional attack, which only raises OnHit.
+	public void NotifyDirectAttackHit(Actor i_targetActor, bool i_isCoreAttack = true)
 	{
-		m_attackCurrent?.HandleAttackHit();
+		if (i_isCoreAttack) m_attackCurrent?.HandleAttackHit();
 		OnHit?.Invoke(this, i_targetActor);
 	}
 

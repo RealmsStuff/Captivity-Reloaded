@@ -16,6 +16,7 @@
 | `visual` | ref: `visual` | no | stable |  |
 | `spawn` | ref: `spawn` | no | experimental |  |
 | `attacks` | array of ref: `attack` | no | experimental | max items: `32` |
+| `additionalAttacks` | array of ref: `additionalAttack` | no | experimental | min items: `1`; max items: `8`; Inherited enemies only: new attacks in the original-enemy format, played on the Core rig with a clip from animationRefs. No grab. |
 | `behavior` | ref: `behavior` | no | experimental |  |
 | `animation` | ref: `animation` | no | experimental |  |
 | `animationRefs` | object map of ref: `enemyAnimationId` | no | experimental | max properties: `64` |
@@ -237,6 +238,27 @@ Schema form: object.
 | `projectileRadius` | number | no |  | min: `0.01`; max: `10` |
 | `projectileGravityScale` | number | no |  | min: `-10`; max: `10` |
 | `stages` | array of ref: `attackStage` | no |  | min items: `2`; max items: `16` |
+
+## Definition: `additionalAttack`
+
+Schema form: allOf.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| _No named properties_ | | | | This definition is composed through references or conditional schemas. |
+
+### Fields for `additionalAttack (allOf 4)`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `type` | enum: `melee`, `hitscan`, `projectile`, `area`, `multiStage` | no |  |  |
+| `stages` | schema | no |  |  |
+
+### Fields under `additionalAttack (allOf 4).stages[]`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `type` | enum: `melee`, `hitscan`, `projectile`, `area` | no |  |  |
 
 ## Definition: `attackStage`
 

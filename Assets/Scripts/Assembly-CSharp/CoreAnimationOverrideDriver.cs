@@ -53,6 +53,10 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 	private Dictionary<int, string>[] m_layerSemantics;
 	private Playback[] m_layers;
 	private readonly Playback m_playerPlayback = new Playback();
+	// An additional attack's clip (CoreExtraAttackController): played on top of the Animator by time, not by state.
+	private readonly Playback m_extraPlayback = new Playback();
+	private float m_extraSeconds;
+	private Action<EnemyAnimationEventDefinition> m_extraEvents;
 	private Player m_player;
 	private readonly Dictionary<string, Bone> m_playerBones = new Dictionary<string, Bone>(StringComparer.Ordinal);
 	private AudioSource m_audio;
@@ -63,6 +67,56 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 	public string CurrentSemantic { get; private set; }
 	public bool IsOverriding { get; private set; }
 	public bool IsOverridingPlayer { get; private set; }
+	public bool IsPlayingExtra => m_extraPlayback.Clip != null;
+	public string ExtraClipName { get; private set; }
+
+	public bool HasClip(string i_name)
+	{
+		return m_set != null && i_name != null && m_set.Enemy.ContainsKey(i_name);
+	}
+
+	public float GetClipSeconds(string i_name)
+	{
+		return HasClip(i_name) ? m_set.Enemy[i_name].DurationSeconds : 0f;
+	}
+
+	// Plays one of this enemy's clips by name from i_startSeconds on top of whatever the Animator plays, until
+	// StopExtra (a non-looping clip holds its last pose). Its attackHit and impulse events go to i_onEvent; sound,
+	// cameraShake and effects play as usual. Events before i_startSeconds are skipped.
+	public bool PlayExtra(string i_name, Action<EnemyAnimationEventDefinition> i_onEvent, float i_startSeconds = 0f)
+	{
+		if (!HasClip(i_name)) return false;
+		CoreAnimationOverrideClip clip = m_set.Enemy[i_name];
+		ExtraClipName = i_name;
+		m_extraEvents = i_onEvent;
+		m_extraSeconds = Mathf.Max(0f, i_startSeconds);
+		m_extraPlayback.Clip = clip;
+		m_extraPlayback.Cursor = clip.Sampler.CreateCursor();
+		m_extraPlayback.Cycle = 0;
+		m_extraPlayback.Time = m_extraSeconds <= 0f ? -0.0001f : m_extraSeconds;
+		m_extraPlayback.NextEvent = 0;
+		m_extraPlayback.NextTrigger = 0;
+		if (m_extraSeconds > 0f)
+		{
+			while (m_extraPlayback.NextEvent < clip.Events.Count && clip.Events[m_extraPlayback.NextEvent].Time <= m_extraSeconds) m_extraPlayback.NextEvent++;
+			IReadOnlyList<NormalizedEffectTrigger> triggers = clip.Presentation?.EffectTriggers;
+			while (triggers != null && m_extraPlayback.NextTrigger < triggers.Count && triggers[m_extraPlayback.NextTrigger].Time <= m_extraSeconds) m_extraPlayback.NextTrigger++;
+		}
+		return true;
+	}
+
+	public void StopExtra()
+	{
+		m_extraPlayback.Clip = null;
+		m_extraEvents = null;
+		ExtraClipName = null;
+	}
+
+	// The sprite a bone of the Core rig shows right now (an additional attack's projectile looks like it).
+	public Sprite GetBoneSprite(string i_bone)
+	{
+		return i_bone != null && m_bones.TryGetValue(i_bone, out Bone bone) && bone.Renderer != null ? bone.Renderer.sprite : null;
+	}
 
 	// Puts the driver on a Core enemy template (spawned copies and inherited clones carry it). It turns itself off
 	// on enemies without overrides.
@@ -172,7 +226,19 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 			Advance(playback, clip, info.normalizedTime, m_bones, false);
 			IsOverriding = true;
 		}
+		AdvanceExtra(Time.deltaTime);
 		UpdatePlayer();
+	}
+
+	// The additional attack's clip, i_seconds further on.
+	private void AdvanceExtra(float i_seconds)
+	{
+		if (m_extraPlayback.Clip == null) return;
+		m_extraSeconds += i_seconds;
+		// A missAnimation can take over from an attackHit; pose the new clip in the same frame.
+		for (int attempt = 0; attempt < 3 && m_extraPlayback.Clip != null; attempt++)
+			if (Advance(m_extraPlayback, m_extraPlayback.Clip, m_extraSeconds / Mathf.Max(0.0001f, m_extraPlayback.Clip.DurationSeconds), m_bones, false)) break;
+		IsOverriding = m_extraPlayback.Clip != null || IsOverriding;
 	}
 
 	private void UpdatePlayer()
@@ -213,7 +279,8 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 
 	// Seconds into the override for the state's normalizedTime, events and effects passed since the last frame,
 	// then the pose.
-	private void Advance(Playback io_playback, CoreAnimationOverrideClip i_clip, float i_normalizedTime, Dictionary<string, Bone> i_bones, bool i_player)
+	// False when an event's callback stopped or swapped the clip part way (nothing was posed).
+	private bool Advance(Playback io_playback, CoreAnimationOverrideClip i_clip, float i_normalizedTime, Dictionary<string, Bone> i_bones, bool i_player)
 	{
 		float duration = Mathf.Max(0.0001f, i_clip.DurationSeconds);
 		int cycle;
@@ -233,20 +300,33 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 		while (io_playback.Cycle < cycle)
 		{
 			FireUpTo(io_playback, duration + 1f, i_player);
+			if (io_playback.Clip != i_clip) return false;
 			io_playback.Cycle++;
 			io_playback.NextEvent = 0;
 			io_playback.NextTrigger = 0;
 		}
 		FireUpTo(io_playback, time, i_player);
+		if (io_playback.Clip != i_clip) return false;
 		io_playback.Time = time;
 		Apply(i_clip.Sampler.Sample(time, io_playback.Cursor), i_bones);
+		return true;
 	}
 
 	private void FireUpTo(Playback io_playback, float i_time, bool i_player)
 	{
 		IReadOnlyList<EnemyAnimationEventDefinition> events = io_playback.Clip.Events;
 		while (io_playback.NextEvent < events.Count && events[io_playback.NextEvent].Time <= i_time)
-			HandleEvent(io_playback.Clip, events[io_playback.NextEvent++]);
+		{
+			EnemyAnimationEventDefinition animationEvent = events[io_playback.NextEvent++];
+			if (io_playback == m_extraPlayback && (animationEvent.Type == "attackHit" || animationEvent.Type == "impulse"))
+			{
+				// The callback may stop or swap the clip (a missAnimation takes over from the same moment).
+				Action<EnemyAnimationEventDefinition> callback = m_extraEvents;
+				callback?.Invoke(animationEvent);
+				if (io_playback.Clip == null || io_playback.Clip.Events != events) return;
+			}
+			else HandleEvent(io_playback.Clip, animationEvent);
+		}
 		IReadOnlyList<NormalizedEffectTrigger> triggers = io_playback.Clip.Presentation?.EffectTriggers;
 		if (triggers == null) return;
 		while (io_playback.NextTrigger < triggers.Count && triggers[io_playback.NextTrigger].Time <= i_time)

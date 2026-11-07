@@ -2,7 +2,7 @@
 
 `spawn.inheritTemplateSpawners: true` adds a variant anywhere its Core template already spawns. The optional experimental `spawn.selectionWeight` controls its relative frequency and defaults to `1`. Existing Core choices each have weight `1`; one variant with weight `0.25` therefore has a `0.25 / (1 + 0.25)`, or 20%, share when competing with one matching Core enemy. Multiple variants add their weights to the denominator.
 
-Inherited enemies extend a stable Core enemy ID. They can currently override bounded statistics, inherited attacks, selected behavior modules, drop rules, animation speed, spawning behavior, published rig sprites, and (experimental) any of the template's animation clips, including the player's side of its grab (see [Animating a Core enemy](#animating-a-core-enemy-experimental)).
+Inherited enemies extend a stable Core enemy ID. They can currently override bounded statistics, inherited attacks, selected behavior modules, drop rules, animation speed, spawning behavior, published rig sprites, and (experimental) any of the template's animation clips, including the player's side of its grab (see [Animating a Core enemy](#animating-a-core-enemy-experimental)). They can also add new attacks with `additionalAttacks` (see [Extra attacks on a Core enemy](#extra-attacks-on-a-core-enemy-experimental)).
 
 Only use properties listed for their exact object in the [enemy API reference](../reference/api/enemy.md). Enemy JSON is closed to unknown fields. In particular:
 
@@ -42,6 +42,34 @@ A variant's `enemyAnimation` sets `enemy` to the variant itself or to its Core t
 The enemy's Animator still runs it: states, transitions, attack hits and grab steps are unchanged, and the original clips' Unity events still fire. After the Animator each frame, the new clip is sampled at the state's normalized time scaled to its own length (wrapped when it loops, clamped when it does not) and its bones' position, rotation, scale, sprite, sorting order and colour are written over the Animator's pose. Bones and properties it does not animate keep the Animator's pose. A clip may carry cosmetic `sound` and `cameraShake` events and normalized effects, but not `attackHit`, `impulse` or `spriteEffect` (`core-animation.event`); player clips' events are ignored. A clip whose length differs from the original state's by more than 5% gets the warning `core-animation.length` and is stretched to the state's timing.
 
 Packs that animate a Core enemy need a game build with this feature and do not load on 2.2.2.
+
+### Extra attacks on a Core enemy (experimental)
+
+An inherited enemy can add new attacks to its Core template with `additionalAttacks`: up to 8 attacks in the same format as an [original enemy's attacks](#fully-original-enemies-experimental) (`melee`, `hitscan`, `projectile`, `area` or `multiStage`, with `id`, `animation`, `chance`, `damage`, `cooldownSeconds`, `initiateRange`, `hitRange`, `durationSeconds`, and optional `hitTimeSeconds`, knockback, `ragdollSeconds`, `missAnimation`, `movesDuringAttack`, area and projectile fields). Each `animation` (and `missAnimation`) is a clip name from the enemy's own `animationRefs`; pick a new name such as `slam` so it is not one of the Core states.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "your.pack:enemy/zombie-1-brawler",
+  "displayName": "Brawler Zombie",
+  "extends": "core:enemy/zombie-1",
+  "spawn": { "inheritTemplateSpawners": true, "selectionWeight": 0.5 },
+  "animationRefs": { "slam": "your.pack:enemy-animation/brawler-slam" },
+  "additionalAttacks": [
+    { "id": "slam", "type": "area", "animation": "slam", "chance": 0.5, "damage": 12, "knockbackX": 6, "knockbackY": 3,
+      "cooldownSeconds": 4, "initiateRange": 1.4, "hitRange": 1.4, "areaRadius": 1.2, "offsetX": 0.6, "durationSeconds": 1.3 }
+  ]
+}
+```
+
+- The clip is a normal `enemyAnimation` on the Core rig. Unlike a clip that replaces a Core state, an attack's own clip may carry `attackHit` and `impulse` events. Hits land at `hitTimeSeconds` or at each `attackHit` event, as for original enemies; a `multiStage` attack needs exactly one `attackHit` per stage, and no event may come after `durationSeconds`.
+- `projectileRegion` names a bone of the Core rig (for example `r-weapon` on the Goblin Marksman): the projectile looks like that bone's current sprite, including your sprite replacements.
+- `grab` is not supported here (`enemy.additional-attacks.grab`): a Core enemy's grab starts from its own logic.
+- The Core AI keeps running its own attacks. While the enemy is ready to attack it picks, at most once a second, between its Core attack and the additional attacks whose cooldown is over and whose `initiateRange` reaches the player (`hitscan` and `projectile` also need a line of sight). Each counts with its `chance`; the Core attack counts with its own chance when the player is in its range, otherwise carrying on counts as 1.
+- During an additional attack the enemy stops thinking and moving (unless `movesDuringAttack`), faces the player and plays the clip on top of its Animator. When `durationSeconds` is up it carries on as before. `cooldownSeconds` counts from the first hit and holds every attack, Core or additional. Being knocked down, killed or starting a grab ends the attack at once.
+- A Death Hound does not start an additional attack while it prepares or runs its charge, and a Goblin Marksman not while it is shooting. Other Core enemies have no such exception; Zombie I, the Goblin Marksman and the Death Hound are the ones tested.
+- Validation: `enemy.additional-attacks.*` for the attack entries, and when the clips load `core-extra-attack.hit-timing`, `core-extra-attack.stage-events`, `core-extra-attack.event-after-attack` and `core-extra-attack.projectile-region`. An attack with an error is left out; the rest of the enemy still loads.
 
 ## Fully original enemies (experimental)
 
