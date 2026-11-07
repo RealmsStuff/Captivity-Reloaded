@@ -1152,6 +1152,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private readonly Dictionary<string, Vector3> m_playerBlendScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, float> m_playerBlendRotations = new Dictionary<string, float>(StringComparer.Ordinal);
 	private float m_playerBlendStartedAt, m_playerBlendSeconds;
+	private Coroutine m_startFreeze;
 	private readonly Dictionary<string, Vector3> m_playerBasePositions = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Vector3> m_playerBaseScales = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, float> m_playerBaseRotations = new Dictionary<string, float>(StringComparer.Ordinal);
@@ -1357,6 +1358,40 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame().GetCameraXGameCurrent();
 		if (camera != null) camera.ZoomToFOV(camera.GetFOVOriginal() / 2f, 0.25f);
+		BeginStartFreeze();
+	}
+
+	// Raper.CoroutineFreezeBeforeStartRape: a Core grab holds the game still for half a second as it lands.
+	// startFreezeSeconds gives an original enemy's finisher the same beat.
+	private void BeginStartFreeze()
+	{
+		float seconds = m_definition?.StartFreezeSeconds ?? 0f;
+		if (seconds <= 0f) return;
+		EndStartFreeze();
+		m_startFreeze = StartCoroutine(CoroutineStartFreeze(seconds));
+	}
+
+	private IEnumerator CoroutineStartFreeze(float i_seconds)
+	{
+		Time.timeScale = 0f;
+		yield return new WaitForSecondsRealtime(i_seconds);
+		m_startFreeze = null;
+		ResumeAfterStartFreeze();
+	}
+
+	private void EndStartFreeze()
+	{
+		if (m_startFreeze == null) return;
+		StopCoroutine(m_startFreeze);
+		m_startFreeze = null;
+		ResumeAfterStartFreeze();
+	}
+
+	private static void ResumeAfterStartFreeze()
+	{
+		// The pause screen owns the time scale while it is open.
+		ScreenGame screen = CommonReferences.Instance?.GetManagerScreens()?.GetScreenGame();
+		if (screen == null || !screen.IsPaused()) Time.timeScale = 1f;
 	}
 
 	private void AlignPlayerToFinisherFloor()
@@ -1487,6 +1522,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	{
 		if (!m_isActive) return;
 		m_isActive = false;
+		EndStartFreeze();
 		m_lastOutcome = !i_applyOutcome ? "cancelled" : i_success ? "success" : "failure";
 		m_nextAllowed = Time.time + (m_definition.CooldownSeconds ?? 2f);
 		m_downedAt = -1f;
@@ -1563,6 +1599,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void OnDisable()
 	{
+		// A finisher torn down mid-freeze (its enemy removed, the stage closed) must not leave the game stopped.
+		EndStartFreeze();
 		if (m_isActive && CommonReferences.Instance != null && m_player != null) EndFinisher(false, false);
 		if (!m_actorPhysicsLocked) return;
 		EndPlayerAnimation();

@@ -365,6 +365,7 @@ Schema form: object.
 | `statuses` | ref: `finisherStatuses` | no |  |  |
 | `attachment` | ref: `finisherAttachment` | no |  |  |
 | `phaseBlendSeconds` | number | no | experimental | min: `0`; max: `2` |
+| `startFreezeSeconds` | number | no | experimental | min: `0`; max: `1` |
 
 ## Definition: `finisherAttachment`
 
