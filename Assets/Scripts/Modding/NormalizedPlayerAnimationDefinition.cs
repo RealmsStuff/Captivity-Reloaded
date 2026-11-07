@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace CaptivityReloaded.Modding
@@ -561,12 +562,15 @@ namespace CaptivityReloaded.Modding
 				if (!Finite(effect.DecalPixelsPerUnit) || effect.DecalPixelsPerUnit < 1f || effect.DecalPixelsPerUnit > 1024f) Error(io_result, "effect-decal", "Decal pixelsPerUnit must be between 1 and 1024.", i_source);
 				if (kind == "decal" && string.IsNullOrEmpty(effect.Texture)) Error(io_result, "effect-decal-texture", "Decal effects require a pack-local texture.", i_source);
 				if (!NormalizedParticlePresentationValidator.TryValidate(effect, out string advancedError)) Error(io_result, "effect-particle-modules", advancedError, i_source);
+				if (!IsEffectTriggerName(effect.Trigger)) Error(io_result, "effect-trigger-name", "Effect trigger must be a name such as thrust, cumThrust, unique, drip or sweat: a lowercase letter, then letters, digits or hyphens, at most 40.", i_source);
+				if (!IsEffectSource(effect.Source)) Error(io_result, "effect-source", "Effect source must be { unityPrefab, hierarchyPath } for a Core export or { authoring } for a pack-authored effect.", i_source);
 			}
 			float previous = -1f;
 			foreach (NormalizedEffectTrigger trigger in i_document.EffectTriggers ?? new List<NormalizedEffectTrigger>())
 			{
 				if (trigger == null || !Finite(trigger.Time) || trigger.Time < previous || trigger.Time < 0f || trigger.Time > i_document.DurationSeconds || trigger.Effects == null || trigger.Effects.Count == 0) { Error(io_result, "effect-trigger", "Effect triggers must be ordered inside the clip and reference at least one effect.", i_source); continue; }
 				foreach (string id in trigger.Effects) if (!ids.Contains(id)) Error(io_result, "effect-reference", "Effect trigger references an unknown effect: " + id, i_source);
+				if (!IsEffectTriggerSource(trigger.Source)) Error(io_result, "effect-trigger-source", "Effect trigger source must be enemy:Thrust, enemy:CumThrust, enemy:PlayParticleUnique, or a pack label such as pip:slam or pip:slam+cum+overflow.", i_source);
 				previous = trigger.Time;
 			}
 			if ((i_document.ObjectTracks?.Count ?? 0) > 0 || (i_document.Effects?.Count ?? 0) > 0 || (i_document.EffectTriggers?.Count ?? 0) > 0)
@@ -574,6 +578,34 @@ namespace CaptivityReloaded.Modding
 		}
 
 		private static bool Finite(float i_value) { return !float.IsNaN(i_value) && !float.IsInfinity(i_value); }
+
+		// The runtime fires effects by time; trigger and source only say what an effect is and where its beat came
+		// from. Core exports name Core's own events; a pack-authored clip names its own beats.
+		private static readonly Regex EffectTriggerName = new Regex(@"^[a-z][A-Za-z0-9-]{0,39}$", RegexOptions.CultureInvariant);
+		private static readonly Regex EffectTriggerSource = new Regex(@"^(?:enemy:(?:Thrust|CumThrust|PlayParticleUnique)|[a-z0-9][a-z0-9._-]*:[a-z0-9][a-z0-9-]*(?:\+[a-z0-9][a-z0-9-]*){0,7})$", RegexOptions.CultureInvariant);
+
+		public static bool IsEffectTriggerName(string i_trigger)
+		{
+			return i_trigger != null && EffectTriggerName.IsMatch(i_trigger);
+		}
+
+		public static bool IsEffectTriggerSource(string i_source)
+		{
+			return i_source != null && i_source.Length <= 80 && EffectTriggerSource.IsMatch(i_source);
+		}
+
+		// { unityPrefab, hierarchyPath } (where a Core export was read from) or { authoring } (the file or tool a
+		// pack's own effect was made with); nothing else.
+		public static bool IsEffectSource(JObject i_source)
+		{
+			if (i_source == null) return false;
+			string[] names = i_source.Properties().Select(i_property => i_property.Name).ToArray();
+			if (names.Length == 2 && names.Contains("unityPrefab") && names.Contains("hierarchyPath"))
+				return i_source["unityPrefab"].Type == JTokenType.String && i_source["hierarchyPath"].Type == JTokenType.String;
+			if (names.Length != 1 || names[0] != "authoring" || i_source["authoring"].Type != JTokenType.String) return false;
+			string authoring = i_source["authoring"].Value<string>();
+			return authoring.Length > 0 && authoring.Length <= 260;
+		}
 		private static void Error(NormalizedPlayerAnimationLoadResult io_result, string i_code, string i_message, string i_source)
 		{
 			io_result.Report.Add(ValidationSeverity.Error, "player-animation." + i_code, i_message, i_source);

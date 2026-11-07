@@ -99,7 +99,7 @@ Schema form: object.
 | --- | --- | --- | --- | --- |
 | `id` | string | yes |  | pattern: `^[a-z0-9][a-z0-9._/-]*$` |
 | `kind` | enum: `particle`, `light`, `trail`, `decal` | no |  |  |
-| `trigger` | enum: `thrust`, `cumThrust`, `unique` | yes |  |  |
+| `trigger` | string | yes |  | max length: `40`; pattern: `^[a-z][A-Za-z0-9-]*$`; What the effect shows. Core exports use thrust, cumThrust and unique; pack-authored effects name their own, such as drip or sweat. |
 | `index` | integer | yes |  | min: `0`; max: `127` |
 | `target` | string | yes |  | pattern: `^(?:bone/(?:hips\|butt\|spine\|chest\|neck\|head\|arm-right-upper\|arm-right-lower\|hand-right\|arm-left-upper\|arm-left-lower\|hand-left\|leg-right-upper\|leg-right-lower\|foot-right\|leg-left-upper\|leg-left-lower\|foot-left\|ear\|face)\|enemy-bone/[A-Za-z0-9_. -]+)$` |
 | `durationSeconds` | number | yes |  | min: `0`; max: `600` |
@@ -165,14 +165,20 @@ Schema form: object.
 | `trailWidth` | number | no |  | exclusive min: `0`; max: `20` |
 | `trailTime` | number | no |  | exclusive min: `0`; max: `30` |
 | `decalPixelsPerUnit` | number | no |  | min: `1`; max: `1024` |
-| `source` | object | yes |  |  |
+| `source` | oneOf | yes |  |  |
 
-### Fields under `effect.source`
+### Fields for `effect.source (oneOf 1)`
 
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `unityPrefab` | string | yes |  |  |
 | `hierarchyPath` | string | yes |  |  |
+
+### Fields for `effect.source (oneOf 2)`
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `authoring` | string | yes |  | min length: `1`; max length: `260` |
 
 ## Definition: `effectTrigger`
 
@@ -181,7 +187,7 @@ Schema form: object.
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `time` | number | yes |  | min: `0` |
-| `source` | enum: `enemy:Thrust`, `enemy:CumThrust`, `enemy:PlayParticleUnique` | yes |  |  |
+| `source` | string | yes |  | max length: `80`; pattern: `^(?:enemy:(?:Thrust\|CumThrust\|PlayParticleUnique)\|[a-z0-9][a-z0-9._-]*:[a-z0-9][a-z0-9-]*(?:\+[a-z0-9][a-z0-9-]*){0,7})$` |
 | `effects` | array of string | yes |  | min items: `1`; unique items |
 
 ## Definition: `color`

@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-07: pack-authored player clip effects
+
+- Player animation effects may now be the pack's own. Experimental: an effect's `source` may be `{ "authoring": "..." }` (the file or tool the pack made it with, 1 to 260 characters) instead of the Core `{ "unityPrefab", "hierarchyPath" }`; `trigger` may be any short name (a lowercase letter, then letters, digits or hyphens, at most 40) such as `drip` or `sweat`, not only `thrust`, `cumThrust` or `unique`; and an effect trigger's `source` may be a pack label with up to eight `+`-joined beat names, such as `pip:splash` or `pip:slam+cum+overflow`, not only the three `enemy:` Core events.
+- The runtime still fires effects by trigger time only; these fields are labels.
+- New validation codes `player-animation.effect-trigger-name`, `player-animation.effect-trigger-source` and `player-animation.effect-source` for values outside those shapes. The schema rejected them before, so valid packs are unaffected.
+
 ### 2026-11-07: finisher phases without struggle
 
 - Added optional experimental `struggle` on `downedFinisher` phases. `false` ends the escape window: the struggle HUD closes, the `succumbed` status card appears, and the remaining phases play out without input before the failure outcome, like a Core grab after the player has lost.
