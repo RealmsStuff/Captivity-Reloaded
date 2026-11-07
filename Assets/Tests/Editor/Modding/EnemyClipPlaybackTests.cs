@@ -65,6 +65,53 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(enemy.Definition.Animation.Clips.ContainsKey("long"), Is.True, "A warning must not drop the clip.");
 		}
 
+		[Test]
+		public void AnEventThatStartsAnotherClipEndsTheOldClipsEvents()
+		{
+			System.Type enemyType = System.Type.GetType("ModularEnemy, Assembly-CSharp");
+			System.Type controllerType = System.Type.GetType("ModularEnemyAnimationController, Assembly-CSharp");
+			Assert.That(enemyType, Is.Not.Null);
+			Assert.That(controllerType, Is.Not.Null);
+			GameObject host = new GameObject("enemy-clip-playback-test");
+			try
+			{
+				Component enemy = host.AddComponent(enemyType);
+				Component controller = host.AddComponent(controllerType);
+				List<EnemyAnimationFrameDefinition> frames = new List<EnemyAnimationFrameDefinition> { new EnemyAnimationFrameDefinition { Time = 0f } };
+				EnemyAnimationDefinition animation = new EnemyAnimationDefinition();
+				// The attack clip lands two hits; the first misses, and its missAnimation takes over from that moment.
+				animation.Clips["attack"] = new EnemyAnimationClipDefinition
+				{
+					DurationSeconds = 1f, Frames = frames,
+					Events = new List<EnemyAnimationEventDefinition>
+					{
+						new EnemyAnimationEventDefinition { Time = 0.1f, Type = "attackHit" },
+						new EnemyAnimationEventDefinition { Time = 0.2f, Type = "attackHit" }
+					}
+				};
+				animation.Clips["miss"] = new EnemyAnimationClipDefinition { DurationSeconds = 1f, Frames = frames };
+				Set(controller, "m_animation", animation);
+				Set(enemy, "m_modAnimation", controller);
+				Set(enemy, "m_isAttacking", true);
+				Set(enemy, "m_animationAttackCooldownStarted", true);
+				Set(enemy, "m_animationAttackDefinition", new EnemyAttackDefinition { Id = "hit", Type = "melee", Animation = "attack", MissAnimation = "miss" });
+				controllerType.GetMethod("Play", new[] { typeof(string), typeof(bool) }).Invoke(controller, new object[] { "attack", true });
+
+				// Both hits are due in this update. The first starts the miss clip; the second belongs to the clip
+				// that was replaced and must not run (it used to restart the miss clip from its own time).
+				MethodInfo apply = controllerType.GetMethod("ApplyEvents", BindingFlags.Instance | BindingFlags.NonPublic);
+				apply.Invoke(controller, new object[] { animation.Clips["attack"], 0.25f, enemy });
+
+				Assert.That(Get(controller, "m_clipName"), Is.EqualTo("miss"));
+				float clipTime = Time.time - (float)Get(controller, "m_started");
+				Assert.That(clipTime, Is.EqualTo(0.1f).Within(0.02f), "The miss clip starts at the first hit's time, once.");
+			}
+			finally
+			{
+				Object.DestroyImmediate(host);
+			}
+		}
+
 		private static void Set(object i_target, string i_field, object i_value)
 		{
 			for (System.Type type = i_target.GetType(); type != null; type = type.BaseType)
