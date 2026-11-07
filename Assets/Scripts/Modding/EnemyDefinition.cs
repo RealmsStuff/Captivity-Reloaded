@@ -209,6 +209,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("statuses")] public Dictionary<string, EnemyFinisherStatusTextDefinition> Statuses { get; set; } = new Dictionary<string, EnemyFinisherStatusTextDefinition>();
 		// The enemy rides on the player instead of standing beside them; see EnemyFinisherAttachmentDefinition.
 		[JsonProperty("attachment")] public EnemyFinisherAttachmentDefinition Attachment { get; set; }
+		// Seconds the player's pose cross-fades from one phase's clip into the next (0: phases cut).
+		[JsonProperty("phaseBlendSeconds")] public float? PhaseBlendSeconds { get; set; }
 	}
 
 	// A finisher in which the enemy holds on to the player (a small enemy clinging to their torso). Its actor root
@@ -248,8 +250,6 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("y")] public float Y { get; set; }
 		[JsonProperty("angle")] public float? Angle { get; set; }
 		[JsonProperty("bend")] public int? Bend { get; set; }
-		// Seconds the player's pose cross-fades from one phase's clip into the next (0: phases cut).
-		[JsonProperty("phaseBlendSeconds")] public float? PhaseBlendSeconds { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
