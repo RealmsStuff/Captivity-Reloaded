@@ -332,9 +332,9 @@
       "sourceAsset": "Assets/Clothes/Hair/cl_hairBrownPonyTail.prefab",
       "icon": {
         "resource": "Modding/Core/Clothing/hair-brown-pony-tail/icon",
-        "sourceAsset": "Assets/Sprite/HairBrownPonyTail.asset",
-        "pivotX": 0.5033193,
-        "pivotY": 0.002306372,
+        "sourceAsset": "Assets/Resources/Modding/Core/Clothing/hair-brown-pony-tail/icon.png",
+        "pivotX": 0.5,
+        "pivotY": 0.5,
         "pixelsPerUnit": 32.0
       },
       "pieces": [
@@ -343,9 +343,9 @@
           "slot": "piece/hair",
           "sprite": {
             "resource": "Modding/Core/Clothing/hair-brown-pony-tail/00-piece-hair",
-            "sourceAsset": "Assets/Sprite/HairBrownPonyTail.asset",
-            "pivotX": 0.5033193,
-            "pivotY": 0.002306372,
+            "sourceAsset": "Assets/Resources/Modding/Core/Clothing/hair-brown-pony-tail/00-piece-hair.png",
+            "pivotX": 0.47079,
+            "pivotY": 0.26789,
             "pixelsPerUnit": 32.0
           },
           "bone": "Head",
@@ -362,7 +362,47 @@
           "playRipSound": false,
           "pieceType": "standard",
           "hidesHair": false,
-          "connectedPieces": []
+          "connectedPieces": [
+            "piece-1-clp-hairtail"
+          ]
+        },
+        {
+          "id": "piece-1-clp-hairtail",
+          "slot": "piece/hair-tail",
+          "sprite": {
+            "resource": "Modding/Core/Clothing/hair-brown-pony-tail/01-piece-hair-tail",
+            "sourceAsset": "Assets/Resources/Modding/Core/Clothing/hair-brown-pony-tail/01-piece-hair-tail.png",
+            "pivotX": 0.3359375,
+            "pivotY": 0.6875,
+            "pixelsPerUnit": 32.0
+          },
+          "bone": "Head",
+          "offsetX": -0.269705,
+          "offsetY": 0.83922,
+          "rotation": 0.0,
+          "sortingOffset": -1,
+          "attachToBone": true,
+          "hideBodyPart": false,
+          "droppable": false,
+          "destroyable": false,
+          "dropOnOralThrust": false,
+          "destroyOnOralThrust": false,
+          "playRipSound": false,
+          "pieceType": "standard",
+          "hidesHair": false,
+          "connectedPieces": [
+            "piece-0-clp-hair"
+          ],
+          "physics": {
+            "mode": "sway",
+            "spring": 45.0,
+            "damping": 9.0,
+            "gravity": 0.25,
+            "motionInfluence": 1.45,
+            "maxAngle": 40.0,
+            "idleAmplitude": 2.5,
+            "idleFrequency": 0.8
+          }
         }
       ],
       "incompatibleCategories": [],
