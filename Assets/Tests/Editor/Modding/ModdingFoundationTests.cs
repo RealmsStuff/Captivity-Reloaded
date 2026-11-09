@@ -2351,6 +2351,21 @@ namespace CaptivityReloaded.Modding.Tests
 				.All(stage => stage.SpecialWaves.Count >= 2), Is.True);
 		}
 
+		// Only a stage script sends a stage signal, and a Core stage has none, so a triggerSignal rule there could never
+		// fire. It is an error instead of a special wave that silently never happens.
+		[Test]
+		public void Parse_RejectsATriggerSignalOnACoreStage()
+		{
+			string shack = Resources.Load<TextAsset>("Modding/Core/Content/stage-shack").text;
+			Assert.That(CoreStageParser.Parse(shack, "stage-shack.json").Report.IsValid, Is.True);
+			Assert.That(shack, Does.Contain("\"everyNthWave\": 7,"));
+			CoreStageLoadResult result = CoreStageParser.Parse(shack.Replace("\"everyNthWave\": 7,", "\"triggerSignal\": \"lever-pulled\","), "stage-shack.json");
+			Assert.That(result.Report.IsValid, Is.False, "A Core stage has no stage script to send the signal.");
+			ValidationIssue issue = result.Report.Issues.SingleOrDefault(i_issue => i_issue.Code == "core-stage.trigger-signal");
+			Assert.That(issue, Is.Not.Null, string.Join("\n", result.Report.Issues.Select(i_issue => i_issue.ToString())));
+			Assert.That(issue.Message, Does.Contain("grabber-night"));
+		}
+
 		[Test]
 		public void Parse_RejectsExternalIdsAndHubWaves()
 		{
