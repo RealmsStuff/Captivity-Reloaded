@@ -2807,6 +2807,8 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 	private int m_eventCycle;
 	private int m_nextEffectTrigger;
 	private int m_effectTriggerCycle;
+	// Counts clip starts, so an event whose handler starts another clip can tell the old clip is gone.
+	private int m_plays;
 	// animation.blendSeconds: the pose each bone had when the clip started, faded out over m_blendSeconds.
 	private readonly Dictionary<string, Vector3> m_blendPosition = new Dictionary<string, Vector3>(StringComparer.Ordinal);
 	private readonly Dictionary<string, Vector3> m_blendScale = new Dictionary<string, Vector3>(StringComparer.Ordinal);
@@ -2841,6 +2843,7 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 			}
 		m_isPoseDrawn = false;
 		m_clipName = i_clip;
+		m_plays++;
 		m_started = Time.time;
 		m_nextEvent = 0;
 		m_eventCycle = 0;
@@ -2921,7 +2924,11 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 		if (owner != null && owner.GetStateActorCurrent() == StateActor.Ragdoll) { ClearBlend(); return; }
 		if (m_animation?.Clips == null || string.IsNullOrEmpty(m_clipName) || !m_animation.Clips.TryGetValue(m_clipName, out EnemyAnimationClipDefinition clip)) return;
 		float elapsed = (Time.time - m_started) * (m_animation.SpeedMultiplier ?? 1f);
+		int plays = m_plays;
 		ApplyEvents(clip, elapsed, owner);
+		// An event started another clip (a grab's attackHit starts the finisher): the old clip's effects and pose
+		// are over, and the new clip draws from the next update.
+		if (plays != m_plays) return;
 		ApplyEffectTriggers(clip, elapsed);
 		if (clip.Loop) elapsed %= clip.DurationSeconds; else elapsed = Mathf.Min(elapsed, clip.DurationSeconds);
 		EnemyAnimationFrameDefinition from = clip.Frames[0], to = clip.Frames[clip.Frames.Count - 1];
@@ -3027,7 +3034,10 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 			EnemyAnimationEventDefinition animationEvent = events[m_nextEvent];
 			float occurrence = m_eventCycle * i_clip.DurationSeconds + animationEvent.Time;
 			if (occurrence > i_totalElapsed + 0.0001f) return;
+			int plays = m_plays;
 			HandleEvent(animationEvent, modularEnemy);
+			// The event started another clip, whose events begin afresh; the rest of this clip's are not raised.
+			if (plays != m_plays) return;
 			m_nextEvent++;
 			if (m_nextEvent < events.Count) continue;
 			m_nextEvent = 0;

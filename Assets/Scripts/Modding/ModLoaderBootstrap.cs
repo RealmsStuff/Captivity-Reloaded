@@ -257,11 +257,20 @@ namespace CaptivityReloaded.Modding
 						io_report.Add(ValidationSeverity.Error, "enemy.animation-ref-duplicate", "Animation clip is defined inline and by reference: " + pair.Key, enemy.Source);
 						continue;
 					}
-					int issueCount = io_report.Issues.Count;
+					// Only errors drop the clip. A warning (sample-limit: a clip with more than 256 key times, played from
+					// 256 uniform samples) still leaves a playable clip.
+					int errorCount = CountErrors(io_report);
 					EnemyAnimationClipDefinition clip = animation.CreateClip(bones, regions, io_report);
-					if (io_report.Issues.Count == issueCount) enemy.Animation.Clips.Add(pair.Key, clip);
+					if (CountErrors(io_report) == errorCount) enemy.Animation.Clips.Add(pair.Key, clip);
 				}
 			}
+		}
+
+		private static int CountErrors(ValidationReport i_report)
+		{
+			int count = 0;
+			foreach (ValidationIssue issue in i_report.Issues) if (issue.Severity == ValidationSeverity.Error) count++;
+			return count;
 		}
 
 		private static void ValidateFinisherParticipantReferences(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)
