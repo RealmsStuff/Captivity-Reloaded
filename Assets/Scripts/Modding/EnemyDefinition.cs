@@ -1521,7 +1521,12 @@ namespace CaptivityReloaded.Modding
 		// weight and minimum wave; at most 32 entries, each Core enemy once.
 		private static void ValidateSpawnJoins(EnemySpawnDefinition i_spawn, ValidationReport io_report, string i_source)
 		{
-			List<EnemySpawnJoinDefinition> joins = i_spawn.JoinCoreSpawners ?? new List<EnemySpawnJoinDefinition>();
+			if (i_spawn.JoinCoreSpawners == null)
+			{
+				io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-null", "joinCoreSpawners must be a list: write [] or leave it out.", i_source);
+				return;
+			}
+			List<EnemySpawnJoinDefinition> joins = i_spawn.JoinCoreSpawners;
 			if (joins.Count > 32) io_report.Add(ValidationSeverity.Error, "enemy.spawn.join-count", "joinCoreSpawners accepts at most 32 entries.", i_source);
 			HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
 			foreach (EnemySpawnJoinDefinition join in joins)
