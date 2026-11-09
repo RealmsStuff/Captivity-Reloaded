@@ -83,8 +83,10 @@ namespace CaptivityReloaded.Modding.Tests
 			GameObject host = new GameObject("finisher-attachment-blend-test");
 			try
 			{
-				ModularEnemyFinisher runtime = host.AddComponent<ModularEnemyFinisher>();
-				System.Type type = typeof(ModularEnemyFinisher);
+				// ModularEnemyFinisher is in Assembly-CSharp, which this test assembly cannot reference.
+				System.Type type = System.Type.GetType("ModularEnemyFinisher, Assembly-CSharp");
+				Assert.That(type, Is.Not.Null);
+				Component runtime = host.AddComponent(type);
 				type.GetField("m_definition", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(runtime, finisher);
 				FieldInfo phaseIndex = type.GetField("m_phaseIndex", BindingFlags.Instance | BindingFlags.NonPublic);
 				MethodInfo settleSeconds = type.GetMethod("GetSettleSeconds", BindingFlags.Instance | BindingFlags.NonPublic);
