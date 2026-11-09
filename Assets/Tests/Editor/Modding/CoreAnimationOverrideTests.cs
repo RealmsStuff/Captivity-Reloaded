@@ -250,6 +250,36 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
+		public void Driver_PutsThePoseBackWhenItIsSwitchedOffBeforeTheNextFrame()
+		{
+			Resolve(new[] { EnemyClip(Clip("tilt", Zombie, 4f)) }, new[] { PatchOf(Patch("tilt", "'animations': { 'idle': 'example.zombies:enemy-animation/tilt' }")) });
+			Assert.That(CoreAnimationOverrides.TryGet(Zombie, out CoreAnimationOverrideSet set), Is.True, Issues(m_report));
+			CoreAnimationRuntimeMap.Load().TryGet(Zombie, out CoreAnimationRuntimeEnemy rig);
+			rig.TryGetBone("head", out CoreAnimationRuntimeBone head);
+			GameObject zombie = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Actors/Npcs/npc_zombie1.prefab"));
+			try
+			{
+				Animator animator = zombie.GetComponentsInChildren<Animator>(true).First(i_animator => i_animator.runtimeAnimatorController != null);
+				Transform headBone = animator.transform.Find(head.Path);
+				Type driverType = Type.GetType("CoreAnimationOverrideDriver, Assembly-CSharp");
+				Component driver = zombie.AddComponent(driverType);
+				Assert.That((bool)driverType.GetMethod("Configure", new[] { typeof(CoreAnimationOverrideSet), typeof(CoreAnimationRuntimeEnemy) }).Invoke(driver, new object[] { set, rig }), Is.True);
+				animator.Rebind();
+				animator.Play("Idle", 0, 0f);
+				animator.Update(0f);
+				animator.Update(1.3f);
+				float animatorHead = Mathf.DeltaAngle(0f, headBone.localEulerAngles.z);
+				driverType.GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(driver, null);
+				Assert.That(Mathf.DeltaAngle(0f, headBone.localEulerAngles.z), Is.EqualTo(35f).Within(0.01f));
+				// The enemy is removed (or the driver turned off) before the next frame's restore runs.
+				driverType.GetMethod("OnDisable", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(driver, null);
+				Assert.That(Mathf.DeltaAngle(0f, headBone.localEulerAngles.z), Is.EqualTo(animatorHead).Within(0.01f), "The override's last pose was left on the bone.");
+				Assert.That(driverType.GetProperty("IsOverriding").GetValue(driver), Is.EqualTo(false));
+			}
+			finally { UnityEngine.Object.DestroyImmediate(zombie); }
+		}
+
+		[Test]
 		public void Driver_PutsBackTheGamesOwnValueNotTheOneFromWhenItStarted()
 		{
 			// A tint on the head: the game fades the enemy in after the driver starts, and the restore must not undo that.

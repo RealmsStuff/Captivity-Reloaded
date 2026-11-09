@@ -148,6 +148,15 @@ public sealed class CoreAnimationOverrideDriver : MonoBehaviour
 		if (isActiveAndEnabled) Update();
 	}
 
+	// Switched off or destroyed after a LateUpdate wrote (the enemy is removed during its grab): nothing would put
+	// the last pose back, and the player would keep the override's arms and legs after the grab.
+	private void OnDisable()
+	{
+		Update();
+		IsOverriding = false;
+		IsOverridingPlayer = false;
+	}
+
 	private void LateUpdate()
 	{
 		if (m_animator == null || m_layers == null || !m_animator.isActiveAndEnabled) return;
