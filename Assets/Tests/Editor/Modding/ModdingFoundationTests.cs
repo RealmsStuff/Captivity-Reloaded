@@ -1133,6 +1133,19 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(EnemyDefinitionParser.Parse(ValidEnemy, "example.enemies", "enemy.json").Definition.Spawn.JoinCoreSpawners, Is.Empty);
 		}
 
+		// "joinCoreSpawners": null used to pass validation and then throw while the game built the enemies, which stopped
+		// every enemy after it from loading. It is now an error on that one enemy, so only that enemy is left out.
+		[Test]
+		public void Parse_RejectsANullJoinCoreSpawnersList()
+		{
+			string json = ValidEnemy.Replace("'visual': {", "'spawn': { 'inheritTemplateSpawners': false, 'joinCoreSpawners': null }, 'visual': {");
+			EnemyDefinitionLoadResult result = EnemyDefinitionParser.Parse(json, "example.enemies", "enemy.json");
+			Assert.That(result.Report.IsValid, Is.False, "A null joinCoreSpawners must not reach the enemy factory.");
+			ValidationIssue issue = result.Report.Issues.SingleOrDefault(i_issue => i_issue.Code == "enemy.spawn.join-null");
+			Assert.That(issue, Is.Not.Null, string.Join("\n", result.Report.Issues.Select(i_issue => i_issue.ToString())));
+			Assert.That(issue.Message, Does.Contain("[]"), "The error says how to fix it.");
+		}
+
 		[Test]
 		public void Parse_RejectsForeignNamespaceAndUnsafeAtlas()
 		{

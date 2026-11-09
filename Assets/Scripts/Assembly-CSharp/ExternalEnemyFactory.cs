@@ -113,8 +113,10 @@ public static class ExternalEnemyFactory
 	// weighted choice from its minimum wave, the way an inherited variant joins its template's spawners.
 	private static void JoinCoreSpawners(ManagerStages i_stageManager, NPC i_enemy, EnemyDefinition i_definition)
 	{
+		if (i_definition.Spawn?.JoinCoreSpawners == null) return;
 		foreach (EnemySpawnJoinDefinition join in i_definition.Spawn.JoinCoreSpawners)
 		{
+			if (join == null) continue;
 			if (!ContentId.TryParse(join.Enemy, out ContentId id) || !ModLoaderRuntime.Registry.TryGet(id, out ContentRegistration entry) || !(entry.RuntimeAsset is NPC template))
 			{
 				Report("enemy.factory-join-template", "joinCoreSpawners enemy is not bound: " + join.Enemy, i_definition.Source);
