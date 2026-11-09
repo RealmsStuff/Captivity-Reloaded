@@ -95,7 +95,7 @@ namespace CaptivityReloaded.Modding.Tests
 		}
 
 		[Test]
-		public void CoreEnemyBatchExport_ProducesProjectForEveryCatalogEnemy()
+		public void CoreCharacterBatchExport_ProducesProjectForEveryCatalogEnemy()
 		{
 			Type bridge = FindEditorType("CaptivityReloaded.Editor.Modding.DragonBonesAnimationBridge");
 			string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -111,7 +111,7 @@ namespace CaptivityReloaded.Modding.Tests
 			string indexPath = (string)result.GetType().GetProperty("IndexPath").GetValue(result);
 			Assert.That(File.Exists(indexPath), Is.True);
 			JObject index = JObject.Parse(File.ReadAllText(indexPath));
-			Assert.That((string)index["type"], Is.EqualTo("captivityDragonBonesCoreEnemyExportIndex"));
+			Assert.That((string)index["type"], Is.EqualTo("captivityDragonBonesCoreCharacterExportIndex"));
 			Assert.That((int)index["enemyCount"], Is.EqualTo(expected));
 			foreach (JObject enemy in ((JArray)index["enemies"]).OfType<JObject>())
 			{
