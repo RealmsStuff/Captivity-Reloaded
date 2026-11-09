@@ -20,6 +20,13 @@ public static class ExternalStageFactory
 		ManagerWave sourceWave = i_source.GetManagerWave();
 		ManagerWave cloneWave = i_clone.GetManagerWave();
 		if (sourceWave != null && cloneWave != null) cloneWave.CopyRuntimeSettingsFrom(sourceWave);
+		// spawn.joinCoreSpawners writes its weight and minimum wave into Core stages' spawners too, so every stage keeps
+		// them. Instantiate keeps the hierarchy's order, so the spawners pair up by index.
+		Spawner[] sourceSpawners = i_source.GetComponentsInChildren<Spawner>(true);
+		Spawner[] cloneSpawners = i_clone.GetComponentsInChildren<Spawner>(true);
+		if (sourceSpawners.Length == cloneSpawners.Length)
+			for (int index = 0; index < sourceSpawners.Length; index++)
+				cloneSpawners[index].CopyModRuntimeSettingsFrom(sourceSpawners[index]);
 		RuntimeContentIdentity identity = i_source.GetComponent<RuntimeContentIdentity>();
 		if (identity == null || !identity.TryGetContentId(out ContentId stageId) || stageId.Namespace == "core") return;
 		Dictionary<UnityEngine.Object, UnityEngine.Object> counterparts = new Dictionary<UnityEngine.Object, UnityEngine.Object>();
@@ -27,8 +34,6 @@ public static class ExternalStageFactory
 		i_clone.CopyModRuntimeSettingsFrom(i_source);
 		foreach (KeyValuePair<UnityEngine.Object, UnityEngine.Object> pair in counterparts)
 		{
-			if (pair.Key is Spawner sourceSpawner && pair.Value is Spawner cloneSpawner)
-				cloneSpawner.CopyModRuntimeSettingsFrom(sourceSpawner);
 			if (pair.Key is NavMap sourceNav && pair.Value is NavMap cloneNav)
 				cloneNav.CopyModRuntimeSettingsFrom(sourceNav, counterparts);
 			if (pair.Key is LightBulb sourceLight && pair.Value is LightBulb cloneLight)
