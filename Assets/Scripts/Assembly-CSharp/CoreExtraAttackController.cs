@@ -35,6 +35,8 @@ public sealed class CoreExtraAttackController : MonoBehaviour
 	private int m_stageIndex;
 	private bool m_cooldownStarted;
 	private float m_endsAt;
+	// The miss clip plays once per attack, like ModularEnemy's.
+	private bool m_missPlayed;
 	private Coroutine m_running;
 
 	public EnemyAttackDefinition Current { get; private set; }
@@ -159,6 +161,7 @@ public sealed class CoreExtraAttackController : MonoBehaviour
 		m_target = i_player;
 		m_stageIndex = 0;
 		m_cooldownStarted = false;
+		m_missPlayed = false;
 		bool moves = i_attack.MovesDuringAttack ?? false;
 		bool tookThinking = !moves && m_npc.GetIsThinking();
 		if (tookThinking) m_npc.SetIsThinking(false);
@@ -244,7 +247,8 @@ public sealed class CoreExtraAttackController : MonoBehaviour
 	// The hit missed: the missAnimation takes over from the same moment and the attack runs until it ends.
 	private void PlayMiss(EnemyAttackDefinition i_attack, float i_clipSeconds)
 	{
-		if (string.IsNullOrEmpty(i_attack.MissAnimation) || !m_driver.HasClip(i_attack.MissAnimation)) return;
+		if (string.IsNullOrEmpty(i_attack.MissAnimation) || !m_driver.HasClip(i_attack.MissAnimation) || m_missPlayed) return;
+		m_missPlayed = true;
 		m_driver.PlayExtra(i_attack.MissAnimation, OnEvent, i_clipSeconds);
 		m_endsAt = Time.time + Mathf.Max(0f, m_driver.GetClipSeconds(i_attack.MissAnimation) - i_clipSeconds);
 	}

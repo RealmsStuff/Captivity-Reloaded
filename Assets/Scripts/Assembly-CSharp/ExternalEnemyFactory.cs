@@ -541,6 +541,8 @@ public sealed class ModularEnemy : Walker
 	private int m_animationAttackHitsRemaining;
 	private int m_animationAttackStageIndex;
 	private bool m_animationAttackCooldownStarted;
+	// The miss clip plays once per attack: hits of its own (or of the attack clip, when it is the same clip) miss too.
+	private bool m_animationAttackMissPlayed;
 	// When the running attack ends: its durationSeconds, or the end of its missAnimation once that takes over.
 	private float m_animationAttackEndsAt;
 	private Path m_navigationPath;
@@ -849,6 +851,7 @@ public sealed class ModularEnemy : Walker
 		m_animationAttackDefinition = definition;
 		m_animationAttackStageIndex = 0;
 		m_animationAttackCooldownStarted = false;
+		m_animationAttackMissPlayed = false;
 		m_modAnimation?.Play(definition.Animation, true);
 		bool eventDrivenHit = m_modAnimation != null && m_modAnimation.HasEvent(definition.Animation, "attackHit");
 		m_animationAttackHitsRemaining = eventDrivenHit ? m_modAnimation.CountEvents(definition.Animation, "attackHit") : 1;
@@ -900,7 +903,8 @@ public sealed class ModularEnemy : Walker
 	private void PlayMissAnimation(EnemyAttackDefinition i_definition, float i_clipSeconds)
 	{
 		if (i_definition == null || string.IsNullOrEmpty(i_definition.MissAnimation) || m_modAnimation == null || m_isDead
-			|| !m_modAnimation.HasClip(i_definition.MissAnimation)) return;
+			|| !m_modAnimation.HasClip(i_definition.MissAnimation) || m_animationAttackMissPlayed) return;
+		m_animationAttackMissPlayed = true;
 		m_modAnimation.Play(i_definition.MissAnimation, true, i_clipSeconds);
 		// The clip it replaces may still hold the attackHit that would have started the cooldown.
 		if (!m_animationAttackCooldownStarted) { m_animationAttackCooldownStarted = true; StartAttackCooldown(); }
