@@ -68,6 +68,10 @@ namespace CaptivityReloaded.Modding
 				result.Report, i_source, "core-stage.special-wave");
 			if (validId && id.Path == "stage/hub" && specialWaves.Count > 0)
 				Error(result, "hub-special-wave", "The Hub cannot define special waves.", i_source);
+			// Stage signals come from a stage's scripts, and Core stages have none, so the rule could never fire.
+			foreach (StageSpecialWaveDefinition specialWave in specialWaves)
+				if (!string.IsNullOrEmpty(specialWave?.TriggerSignal))
+					Error(result, "trigger-signal", "Special wave '" + specialWave.Id + "' uses triggerSignal, but a Core stage has no stage script to send it. Use everyNthWave.", i_source);
 			if (result.Report.IsValid) result.Definition = new CoreStageDefinition(id, i_source, document, specialWaves);
 			return result;
 		}
