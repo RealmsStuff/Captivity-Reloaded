@@ -207,6 +207,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("successOutcome")] public EnemyFinisherOutcomeDefinition SuccessOutcome { get; set; }
 		[JsonProperty("failureOutcome")] public EnemyFinisherOutcomeDefinition FailureOutcome { get; set; }
 		[JsonProperty("statuses")] public Dictionary<string, EnemyFinisherStatusTextDefinition> Statuses { get; set; } = new Dictionary<string, EnemyFinisherStatusTextDefinition>();
+		// Seconds the game holds still when the grab lands, like the half second before a Core grab (0: none).
+		[JsonProperty("startFreezeSeconds")] public float? StartFreezeSeconds { get; set; }
 		// The enemy rides on the player instead of standing beside them; see EnemyFinisherAttachmentDefinition.
 		[JsonProperty("attachment")] public EnemyFinisherAttachmentDefinition Attachment { get; set; }
 		// Seconds the player's pose cross-fades from one phase's clip into the next (0: phases cut).
@@ -800,6 +802,7 @@ namespace CaptivityReloaded.Modding
 					}
 					else ValidateRequiredRange(module.DurationSeconds, 1f, 60f, "finisher-duration", io_report, i_source);
 					ValidateRange(module.PhaseBlendSeconds, 0f, 2f, "finisher-phase-blend", io_report, i_source);
+					ValidateRange(module.StartFreezeSeconds, 0f, 1f, "finisher-start-freeze", io_report, i_source);
 					ValidateRequiredRange(module.MeterMax, 1f, 10000f, "finisher-meter-max", io_report, i_source);
 					ValidateRequiredRange(module.InputPower, 0.01f, 10000f, "finisher-input-power", io_report, i_source);
 					ValidateFinisherInputPattern(module.InputPattern, "finisher-input-pattern", io_report, i_source);

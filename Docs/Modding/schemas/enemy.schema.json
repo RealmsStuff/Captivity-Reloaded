@@ -139,7 +139,8 @@
       "successOutcome": { "$ref": "#/$defs/finisherOutcome" }, "failureOutcome": { "$ref": "#/$defs/finisherOutcome" },
       "statuses": { "$ref": "#/$defs/finisherStatuses" },
       "attachment": { "$ref": "#/$defs/finisherAttachment" },
-      "phaseBlendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" }
+      "phaseBlendSeconds": { "type": "number", "minimum": 0, "maximum": 2, "x-stability": "experimental" },
+      "startFreezeSeconds": { "type": "number", "minimum": 0, "maximum": 1, "x-stability": "experimental" }
     } },
     "finisherAttachment": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["target"], "properties": {
       "target": { "$ref": "#/$defs/playerBone" },

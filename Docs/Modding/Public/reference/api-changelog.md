@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-07: finisher start freeze
+
+- Added optional experimental `downedFinisher.startFreezeSeconds` (0 to 1). When an original enemy's finisher starts, the game holds still for that long, like the half second before a Core grab.
+- New validation code `enemy.stats.finisher-start-freeze` for values outside 0 to 1.
+- Finishers without the field start as before.
+
 ### 2026-11-02: finisher attachment and per-phase contacts
 
 - Added the optional experimental `downedFinisher.attachment` block for original enemies. While attached, the runtime holds the enemy's root at `rootX`/`rootY` in a frame on a player bone (`target`, offset by `offsetX`/`offsetY`, turning with the bone by `followRotation`), easing in and out over `settleSeconds`. The finisher's usual side-by-side alignment does not run while an attachment is set.

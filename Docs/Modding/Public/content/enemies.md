@@ -183,6 +183,8 @@ Each phase can change what the enemy holds for that phase:
 Phases may set `attached` and `contacts` only when the finisher has an `attachment`. When the finisher ends, the enemy is released where its clip last drew it, and physics takes over from there.
 **Experimental:** phase changes cut by default. `phaseBlendSeconds` (0 to 2) on the `downedFinisher` cross-fades the player's pose from the pose it is drawn in into each phase's player clip, the first phase included (from the game's own pose). A phase's own `blendSeconds` (0 to 2) sets how long the change into that phase takes, for two poses far apart: the player's pose cross-fades over it instead of `phaseBlendSeconds`, the enemy's clip and any participants' clips cross-fade over it instead of their `animation.blendSeconds`, and attachment/contact changes ease over it instead of `attachment.settleSeconds`. A bone whose pose turns the other way round (its scale flips sign) turns at once instead of shrinking through zero.
 
+**Experimental:** `startFreezeSeconds` (0 to 1) on the `downedFinisher` holds the game still for that long as the grab lands, the beat a Core grab has before it starts. The pause screen keeps control of the time scale, and the freeze ends early if the finisher ends. The default is 0, no freeze.
+
 ### Independent NPC participants
 
 A phased `downedFinisher` may reserve up to three real secondary original-enemy instances. Each entry in `participants` defines a stable slot ID, the required enemy content ID, its join policy, ranges, pair offset, facing, and optional fallback animation. Phase-specific animations are selected through `participantAnimations` on each phase.
