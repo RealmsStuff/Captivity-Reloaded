@@ -185,6 +185,58 @@ Phases may set `attached` and `contacts` only when the finisher has an `attachme
 
 **Experimental:** `startFreezeSeconds` (0 to 1) on the `downedFinisher` holds the game still for that long as the grab lands, the beat a Core grab has before it starts. The pause screen keeps control of the time scale, and the freeze ends early if the finisher ends. The default is 0, no freeze.
 
+#### Grab reactions (experimental)
+
+A Core grab does more on each thrust than move the actors: the camera shakes, the screen flushes, the player's mouth opens, a moan may play, and clothing marked to drop on an oral thrust falls off. **Experimental:** a finisher phase can do the same with `reactions`. The phase's clips trigger it with `cue` events, named as the Core exporter names a Core grab's animation events:
+
+| Cue | What happens |
+| --- | --- |
+| `finisher.thrust` | A thrust. `amount` is the power, 0 to 3, which picks the camera shake (0.15, 0.25, 0.6 or 0.75 for 0.4 seconds). |
+| `finisher.cum-thrust` | A cum thrust: a thrust with `cumThrust` added and the cum screen effect. Its shakes are 0.3, 0.5, 0.75 or 1. |
+| `audio.player-voice-random` | Rolls `playerVoice`. |
+| `audio.enemy-voice-random` | Rolls `enemyVoice`. |
+| `audio.unique` | Plays `uniqueSounds[index]`. |
+| `finisher.ko` | The player's face goes slack (the KO face and mouth) with the ragdoll screen effect, until the grab ends. |
+
+A cue fires from the finisher enemy's clip or from a participant's, on every loop of a looping clip. In a phase without `reactions`, these cues do nothing, as before.
+
+On every thrust and cum thrust:
+
+1. The player's mouth reacts: the thrust or cum-thrust mouth for the player's pleasure.
+2. The player gains libido and pleasure from `thrust.libido` and `thrust.pleasure` (plus `cumThrust`'s on a cum thrust). These use the scale of a Core animation's thrust powers: a thrust gains libido times 10 (through the rule profile's grab libido multiplier) and pleasure times 2, and costs (libido + pleasure) times 5 strength.
+3. One of `thrust.sounds` plays, and one of `cumThrust.sounds` on a cum thrust.
+4. `playerVoice`, each of `layers` and `enemyVoice` are rolled against their `chance`.
+5. The camera shakes and the screen flushes with the player's libido.
+6. An `oral` phase drops or destroys the clothing marked to do so on an oral thrust.
+7. `struggleDamage` (the sum of the thrust's and the cum thrust's) knocks the struggle meter back and the HUD meter flashes.
+
+A sound set's `chance` runs from 0 to 1 and defaults to 1. A player voice line plays in the player's own voice, so it is silent while the player is muted, and opens their mouth. Every other sound plays at the enemy, at the sound's `volume` (default 1). Sound files are pack-relative WAV or OGG files, up to 32 per list, loaded with the enemy like `sound` event files.
+
+When a phase with `reactions` starts:
+
+- `mutePlayer` mutes the player for the phase. A player who was already muted before the grab stays muted.
+- `oral` keeps the player's oral mouth on for the phase.
+- `"camera": "enemyHips"` keeps the camera on the enemy's `hips` bone. The default, `player`, follows the player as usual.
+
+A later phase without these settings undoes them. When the grab ends, the player's voice, mouth, face and camera are restored. Once any phase has `reactions`, the player's face also shows the orgasm mouth when they climax during the grab.
+
+```json
+{
+  "id": "pound",
+  "durationSeconds": 6,
+  "animation": "finisher-pound",
+  "reactions": {
+    "camera": "enemyHips",
+    "thrust": { "pleasure": 0.1, "libido": 0.1, "struggleDamage": 4, "sounds": ["assets/audio/thrust-1.ogg", "assets/audio/thrust-2.ogg"] },
+    "cumThrust": { "pleasure": 0.3, "libido": 0.2, "sounds": ["assets/audio/cum.ogg"] },
+    "playerVoice": { "chance": 0.33, "sounds": ["assets/audio/moan-1.ogg", "assets/audio/moan-2.ogg"] },
+    "layers": [{ "chance": 0.5, "sounds": ["assets/audio/slap.ogg"] }]
+  }
+}
+```
+
+The phase's clip then carries `{ "time": 0.42, "type": "cue", "cue": "finisher.thrust", "amount": 0 }` where the hips hit their deepest point. Core grabs keep power 2 and 3 for one heavy beat and let the rhythm run at 0.
+
 ### Independent NPC participants
 
 A phased `downedFinisher` may reserve up to three real secondary original-enemy instances. Each entry in `participants` defines a stable slot ID, the required enemy content ID, its join policy, ranges, pair offset, facing, and optional fallback animation. Phase-specific animations are selected through `participantAnimations` on each phase.

@@ -1207,6 +1207,12 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private string m_lastOutcome = "not started";
 	private StatusPlayerHud m_statusHud;
 	private StatusPlayerHudItem m_activeStatus;
+	// Phase reactions (EnemyFinisherReactionsDefinition): whether any phase has them, and what they changed that the
+	// end of the grab restores. A finisher without reactions leaves the player's mouth, mute and camera alone.
+	private bool m_usesReactions;
+	private bool m_playerMuteBeforeFinisher;
+	private bool m_cameraOnEnemyHips;
+	private bool m_playerKnockedOut;
 	private readonly StickCircleGesture m_circleGesture = new StickCircleGesture();
 	private bool m_directionInputReady = true;
 
@@ -1348,6 +1354,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		BeginPlayerAnimation();
 		BeginAttachment();
 		CommonReferences.Instance.GetPlayerController().SetIsForceIgnoreInput(true);
+		BeginReactions();
 		PlayCurrentPhase();
 		try { hud.ShowHudSmasher(this); }
 		catch (Exception exception)
@@ -1507,6 +1514,155 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		foreach (ActiveFinisherParticipant participant in m_participants)
 			if (participant.Started && participant.Controller != null)
 				PlayPhaseClip(participant.Controller, GetParticipantAnimation(participant.Definition), blend);
+		ApplyPhaseReactions();
+	}
+
+	private void BeginReactions()
+	{
+		m_usesReactions = m_definition.Phases != null && m_definition.Phases.Any(i_phase => i_phase?.Reactions != null);
+		m_cameraOnEnemyHips = false;
+		m_playerKnockedOut = false;
+		if (!m_usesReactions) return;
+		m_playerMuteBeforeFinisher = m_player.IsMute();
+		GetPlayerMouth()?.BeginModularGrab();
+	}
+
+	// Like Raper.PlayRaperAnimation for each RaperAnimation: mute, the oral mouth and the camera's focus.
+	private void ApplyPhaseReactions()
+	{
+		if (!m_usesReactions) return;
+		EnemyFinisherReactionsDefinition reactions = GetCurrentPhase()?.Reactions;
+		if (!m_playerMuteBeforeFinisher) m_player.SetIsMute(reactions?.MutePlayer == true);
+		GetPlayerMouth()?.SetModularGrabOral(reactions?.Oral == true);
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame()?.GetCameraXGameCurrent();
+		if (camera == null) return;
+		Transform hips = reactions?.Camera == "enemyHips" ? m_npc.GetComponent<ModularEnemyAnimationController>()?.GetBone("hips") : null;
+		if (hips != null)
+		{
+			camera.SetObjectFocused(hips.gameObject);
+			m_cameraOnEnemyHips = true;
+		}
+		else if (m_cameraOnEnemyHips)
+		{
+			camera.SetObjectFocused(m_player.gameObject);
+			m_cameraOnEnemyHips = false;
+		}
+	}
+
+	private void EndReactions()
+	{
+		if (!m_usesReactions || m_player == null) return;
+		if (m_playerKnockedOut) m_player.GetSkeletonPlayer()?.GetManagerFacePlayer()?.UnKO();
+		m_playerKnockedOut = false;
+		if (!m_playerMuteBeforeFinisher) m_player.SetIsMute(false);
+		if (m_cameraOnEnemyHips)
+		{
+			CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame()?.GetCameraXGameCurrent();
+			if (camera != null) camera.SetObjectFocused(m_player.gameObject);
+			m_cameraOnEnemyHips = false;
+		}
+	}
+
+	private ManagerPlayerMouth GetPlayerMouth()
+	{
+		return m_player?.GetSkeletonPlayer()?.GetManagerFacePlayer()?.GetManagerPlayerMouth();
+	}
+
+	// A cue from an enemy clip (ModularEnemyAnimationController). The running finisher acts on it when the enemy is
+	// its own or a participant and the current phase has reactions; otherwise cues stay markers, as before.
+	public static void HandleCue(EnemyAnimationEventDefinition i_event, NPC i_source)
+	{
+		ModularEnemyFinisher session = s_activeSession;
+		if (session == null || !session.m_isActive || i_event == null || i_source == null || !session.IsSessionActor(i_source)) return;
+		EnemyFinisherReactionsDefinition reactions = session.GetCurrentPhase()?.Reactions;
+		if (reactions == null || session.m_player == null) return;
+		switch (i_event.Cue)
+		{
+		case "finisher.thrust": session.Thrust(reactions, FinisherReactions.Power(i_event.Amount), false); break;
+		case "finisher.cum-thrust": session.Thrust(reactions, FinisherReactions.Power(i_event.Amount), true); break;
+		case "audio.player-voice-random": session.RollPlayerVoice(reactions); break;
+		case "audio.enemy-voice-random": session.RollSound(reactions.EnemyVoice); break;
+		case "audio.unique": session.PlayUniqueSound(reactions, i_event.Index ?? 0); break;
+		case "finisher.ko": session.KnockOutPlayer(); break;
+		}
+	}
+
+	private bool IsSessionActor(NPC i_npc)
+	{
+		if (i_npc == m_npc) return true;
+		foreach (ActiveFinisherParticipant participant in m_participants)
+			if (participant.Started && participant.Npc == i_npc) return true;
+		return false;
+	}
+
+	// Raper.Thrust / Raper.CumThrust (with RaperSmasher's resisting thrust) for a phase's reactions.
+	private void Thrust(EnemyFinisherReactionsDefinition i_reactions, int i_power, bool i_cum)
+	{
+		EnemyFinisherThrustDefinition thrust = i_reactions.Thrust;
+		EnemyFinisherThrustDefinition cum = i_cum ? i_reactions.CumThrust : null;
+		ManagerPlayerMouth mouth = GetPlayerMouth();
+		if (i_cum) mouth?.ModularGrabCumThrust();
+		else mouth?.ModularGrabThrust();
+		FinisherReactions.Gains gains = FinisherReactions.GetGains(thrust, cum);
+		m_player.GainLibido(ExternalRuleProfileFactory.ApplyRapeLibidoGain(gains.Libido));
+		m_player.GainPleasure(gains.Pleasure);
+		m_player.DamageStrength(gains.Strength);
+		PlaySound(thrust?.Sounds, null, thrust?.Volume);
+		if (cum != null) PlaySound(cum.Sounds, null, cum.Volume);
+		RollPlayerVoice(i_reactions);
+		foreach (EnemyFinisherSoundSetDefinition layer in i_reactions.Layers ?? new List<EnemyFinisherSoundSetDefinition>()) RollSound(layer);
+		RollSound(i_reactions.EnemyVoice);
+		CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame()?.GetCameraXGameCurrent();
+		if (camera != null) camera.Shake(FinisherReactions.Shake(i_power, i_cum), FinisherReactions.ShakeSeconds);
+		ManagerPostProcessing postProcessing = CommonReferences.Instance.GetManagerPostProcessing();
+		if (postProcessing != null)
+		{
+			postProcessing.PlayEffectThrust(m_player.GetLibidoCurrent());
+			if (i_cum) postProcessing.PlayEffectCum();
+		}
+		if (i_reactions.Oral == true) m_player.GetSkeletonPlayer()?.HandleOralThrust();
+		if (m_player.IsDead()) return;
+		m_meter = Mathf.Max(0f, m_meter - FinisherReactions.StruggleDamage(thrust, cum));
+		HudSmasher hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames().GetHudSmasher();
+		if (hud != null) hud.Thrust();
+	}
+
+	// Raper.PlayRandomAudioPlayerVoice: the line plays in the player's own voice (silent while muted) and opens the mouth.
+	private void RollPlayerVoice(EnemyFinisherReactionsDefinition i_reactions)
+	{
+		EnemyFinisherSoundSetDefinition voice = i_reactions.PlayerVoice;
+		if (!FinisherReactions.TryPick(voice?.Sounds, voice?.Chance, UnityEngine.Random.value, UnityEngine.Random.value, out string path)) return;
+		ModularEnemyEventAssets assets = m_npc.GetComponent<ModularEnemyEventAssets>();
+		if (assets == null || !assets.TryGetAudio(path, out AudioClip clip) || m_player.IsMute()) return;
+		m_player.PlayAudioVoice(clip);
+		GetPlayerMouth()?.ModularGrabVoice();
+	}
+
+	private void RollSound(EnemyFinisherSoundSetDefinition i_set)
+	{
+		if (i_set != null) PlaySound(i_set.Sounds, i_set.Chance, i_set.Volume);
+	}
+
+	private void PlayUniqueSound(EnemyFinisherReactionsDefinition i_reactions, int i_index)
+	{
+		List<string> sounds = i_reactions.UniqueSounds;
+		if (sounds == null || i_index < 0 || i_index >= sounds.Count) return;
+		m_npc.GetComponent<ModularEnemyEventAssets>()?.PlaySound(sounds[i_index], 1f);
+	}
+
+	private void PlaySound(List<string> i_sounds, float? i_chance, float? i_volume)
+	{
+		if (!FinisherReactions.TryPick(i_sounds, i_chance, UnityEngine.Random.value, UnityEngine.Random.value, out string path)) return;
+		m_npc.GetComponent<ModularEnemyEventAssets>()?.PlaySound(path, i_volume ?? 1f);
+	}
+
+	// Raper.KOPlayer: the player's face goes slack until the grab ends.
+	private void KnockOutPlayer()
+	{
+		if (m_playerKnockedOut) return;
+		m_playerKnockedOut = true;
+		m_player.GetSkeletonPlayer()?.GetManagerFacePlayer()?.KO();
+		CommonReferences.Instance.GetManagerPostProcessing()?.PlayEffectRagdoll();
 	}
 
 	// Restarts an actor's clip for a phase, fading into it over the phase's blendSeconds when it sets one
@@ -1551,6 +1707,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_statusHud.DestroyStatusItem(m_activeStatus);
 			m_activeStatus = null;
 		}
+		EndReactions();
+		GetPlayerMouth()?.EndModularGrab();
 		if (i_applyOutcome)
 		{
 			if (!i_success) AddFailureStatuses();
@@ -3094,6 +3252,7 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 			if (camera != null) camera.Shake(i_event.Amount ?? 0f, 0.1f);
 		}
 		else if (i_event.Type == "spriteEffect") PlaySpriteEffect(i_event);
+		else if (i_event.Type == "cue") ModularEnemyFinisher.HandleCue(i_event, i_owner);
 	}
 
 	private void PlaySpriteEffect(EnemyAnimationEventDefinition i_event)
@@ -3179,7 +3338,7 @@ public sealed class ModularEnemyEventAssets : MonoBehaviour
 		s_sharedAudio[m_definitionId + "|" + i_path] = i_clip;
 	}
 
-	public void PlaySound(string i_path, float i_volume)
+	public bool TryGetAudio(string i_path, out AudioClip o_clip)
 	{
 		if (m_audioLookup == null)
 		{
@@ -3187,8 +3346,13 @@ public sealed class ModularEnemyEventAssets : MonoBehaviour
 			for (int index = 0; index < Mathf.Min(m_audioPaths.Count, m_audioClips.Count); index++)
 				if (!string.IsNullOrEmpty(m_audioPaths[index]) && m_audioClips[index] != null) m_audioLookup[m_audioPaths[index]] = m_audioClips[index];
 		}
-		if (!m_audioLookup.TryGetValue(i_path ?? string.Empty, out AudioClip clip)
-			&& !s_sharedAudio.TryGetValue(m_definitionId + "|" + (i_path ?? string.Empty), out clip)) return;
+		return m_audioLookup.TryGetValue(i_path ?? string.Empty, out o_clip)
+			|| s_sharedAudio.TryGetValue(m_definitionId + "|" + (i_path ?? string.Empty), out o_clip);
+	}
+
+	public void PlaySound(string i_path, float i_volume)
+	{
+		if (!TryGetAudio(i_path, out AudioClip clip)) return;
 		if (m_audioSource == null)
 		{
 			m_audioSource = gameObject.AddComponent<AudioSource>();
@@ -3449,6 +3613,10 @@ public sealed class ModularEnemyAudioLoader : MonoBehaviour
 			foreach (EnemyAnimationEventDefinition animationEvent in clip.Events ?? new List<EnemyAnimationEventDefinition>())
 				if (animationEvent != null && animationEvent.Type == "sound" && paths.Add(animationEvent.File))
 					StartCoroutine(LoadClip(i_assets, i_definition, i_packRoot, animationEvent.File));
+		foreach (EnemyBehaviorModuleDefinition module in i_definition.Behavior?.Modules ?? new List<EnemyBehaviorModuleDefinition>())
+			if (module != null && module.Type == "downedFinisher")
+				foreach (string path in FinisherReactions.GetSoundPaths(module))
+					if (paths.Add(path)) StartCoroutine(LoadClip(i_assets, i_definition, i_packRoot, path));
 	}
 
 	private IEnumerator LoadClip(ModularEnemyEventAssets i_assets, EnemyDefinition i_definition, string i_root, string i_relative)

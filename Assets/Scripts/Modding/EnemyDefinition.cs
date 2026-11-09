@@ -282,7 +282,56 @@ namespace CaptivityReloaded.Modding
 		// How long the change into this phase takes: the player's pose cross-fades over it instead of phaseBlendSeconds,
 		// and the enemy's and participants' clips instead of their animation.blendSeconds.
 		[JsonProperty("blendSeconds")] public float? BlendSeconds { get; set; }
+		// The Core grab reactions this phase's clips drive with cues; see EnemyFinisherReactionsDefinition.
+		[JsonProperty("reactions")] public EnemyFinisherReactionsDefinition Reactions { get; set; }
 	}
+
+	// A phase's share of what a Core RaperAnimation sets up: the player's oral mouth and mute, the camera, and what a
+	// thrust does. The phase's clips (the enemy's and its participants') fire it with cues: finisher.thrust and
+	// finisher.cum-thrust (amount: power 0..3, picking the Core camera shake), audio.player-voice-random,
+	// audio.enemy-voice-random, audio.unique (index into uniqueSounds) and finisher.ko. In a phase without reactions
+	// those cues do nothing, as before.
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherReactionsDefinition
+	{
+		// The player's mouth is full: the oral mouth stays on and oral thrusts drop clothing marked to drop on them.
+		[JsonProperty("oral")] public bool? Oral { get; set; }
+		[JsonProperty("mutePlayer")] public bool? MutePlayer { get; set; }
+		// "player" (the default) or "enemyHips", which keeps the camera on the enemy's hips bone.
+		[JsonProperty("camera")] public string Camera { get; set; }
+		[JsonProperty("thrust")] public EnemyFinisherThrustDefinition Thrust { get; set; }
+		// What a cum thrust adds to a thrust (Core's additional cum powers and cum sounds).
+		[JsonProperty("cumThrust")] public EnemyFinisherThrustDefinition CumThrust { get; set; }
+		// Rolled on every thrust and cum thrust, and on the audio.*-voice-random cues.
+		[JsonProperty("playerVoice")] public EnemyFinisherSoundSetDefinition PlayerVoice { get; set; }
+		[JsonProperty("enemyVoice")] public EnemyFinisherSoundSetDefinition EnemyVoice { get; set; }
+		// Core's player and raper sound layers: each is rolled on every thrust and cum thrust.
+		[JsonProperty("layers")] public List<EnemyFinisherSoundSetDefinition> Layers { get; set; } = new List<EnemyFinisherSoundSetDefinition>();
+		[JsonProperty("uniqueSounds")] public List<string> UniqueSounds { get; set; } = new List<string>();
+	}
+
+	// pleasure and libido are a Core RaperAnimation's thrust powers (0..1 there; a thrust gains libido x 10 through the
+	// rule profile, pleasure x 2, and takes (libido + pleasure) x 5 strength). struggleDamage knocks the struggle meter
+	// back like a Core thrust that resists. One of sounds plays on every thrust.
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherThrustDefinition
+	{
+		[JsonProperty("pleasure")] public float? Pleasure { get; set; }
+		[JsonProperty("libido")] public float? Libido { get; set; }
+		[JsonProperty("struggleDamage")] public float? StruggleDamage { get; set; }
+		[JsonProperty("sounds")] public List<string> Sounds { get; set; } = new List<string>();
+		[JsonProperty("volume")] public float? Volume { get; set; }
+	}
+
+	// One of sounds, played with probability chance (0..1) each time the set is rolled.
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class EnemyFinisherSoundSetDefinition
+	{
+		[JsonProperty("chance")] public float? Chance { get; set; }
+		[JsonProperty("sounds")] public List<string> Sounds { get; set; } = new List<string>();
+		[JsonProperty("volume")] public float? Volume { get; set; }
+	}
+
 
 	[JsonObject(MemberSerialization.OptIn)]
 	public sealed class EnemyFinisherParticipantDefinition
@@ -794,6 +843,7 @@ namespace CaptivityReloaded.Modding
 							ValidateRange(phase.InputPower, 0.01f, 10000f, "finisher-phase-input-power", io_report, i_source);
 							ValidateFinisherInputPattern(phase.InputPattern, "finisher-phase-input-pattern", io_report, i_source);
 							ValidateRange(phase.DecayPerSecond, 0f, 10000f, "finisher-phase-decay", io_report, i_source);
+							ValidateFinisherReactions(phase.Reactions, io_report, i_source);
 							ValidateRange(phase.BlendSeconds, 0f, 2f, "finisher-phase-entry-blend", io_report, i_source);
 							ValidatePlayerFinisherAnimationSource(phase.PlayerAnimation, phase.PlayerAnimationReference, io_report, i_source);
 						}
@@ -829,6 +879,54 @@ namespace CaptivityReloaded.Modding
 		// The player bones a finisher attachment can follow, as player clips name them.
 		public static readonly string[] PlayerBoneNames = { "hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right",
 			"arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face" };
+
+		private static void ValidateFinisherReactions(EnemyFinisherReactionsDefinition i_reactions, ValidationReport io_report, string i_source)
+		{
+			if (i_reactions == null) return;
+			if (i_reactions.Camera != null && i_reactions.Camera != "player" && i_reactions.Camera != "enemyHips")
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-reactions-camera", "Finisher reactions camera must be player or enemyHips.", i_source);
+			ValidateFinisherThrust(i_reactions.Thrust, "thrust", io_report, i_source);
+			ValidateFinisherThrust(i_reactions.CumThrust, "cum-thrust", io_report, i_source);
+			ValidateFinisherSoundSet(i_reactions.PlayerVoice, "player-voice", io_report, i_source);
+			ValidateFinisherSoundSet(i_reactions.EnemyVoice, "enemy-voice", io_report, i_source);
+			if ((i_reactions.Layers?.Count ?? 0) > 8)
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-reactions-layers", "Finisher reactions support at most 8 sound layers.", i_source);
+			foreach (EnemyFinisherSoundSetDefinition layer in i_reactions.Layers ?? new List<EnemyFinisherSoundSetDefinition>())
+			{
+				if (layer == null) io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-reactions-layers", "Finisher reaction sound layers cannot be null.", i_source);
+				else ValidateFinisherSoundSet(layer, "layer", io_report, i_source);
+			}
+			ValidateFinisherSounds(i_reactions.UniqueSounds, "unique", io_report, i_source);
+		}
+
+		private static void ValidateFinisherThrust(EnemyFinisherThrustDefinition i_thrust, string i_name, ValidationReport io_report, string i_source)
+		{
+			if (i_thrust == null) return;
+			ValidateRange(i_thrust.Pleasure, 0f, 10f, "finisher-reactions-" + i_name + "-pleasure", io_report, i_source);
+			ValidateRange(i_thrust.Libido, 0f, 10f, "finisher-reactions-" + i_name + "-libido", io_report, i_source);
+			ValidateRange(i_thrust.StruggleDamage, 0f, 100000f, "finisher-reactions-" + i_name + "-struggle-damage", io_report, i_source);
+			ValidateRange(i_thrust.Volume, 0f, 1f, "finisher-reactions-" + i_name + "-volume", io_report, i_source);
+			ValidateFinisherSounds(i_thrust.Sounds, i_name, io_report, i_source);
+		}
+
+		private static void ValidateFinisherSoundSet(EnemyFinisherSoundSetDefinition i_set, string i_name, ValidationReport io_report, string i_source)
+		{
+			if (i_set == null) return;
+			ValidateRange(i_set.Chance, 0f, 1f, "finisher-reactions-" + i_name + "-chance", io_report, i_source);
+			ValidateRange(i_set.Volume, 0f, 1f, "finisher-reactions-" + i_name + "-volume", io_report, i_source);
+			ValidateFinisherSounds(i_set.Sounds, i_name, io_report, i_source);
+		}
+
+		private static void ValidateFinisherSounds(List<string> i_sounds, string i_name, ValidationReport io_report, string i_source)
+		{
+			if (i_sounds == null) return;
+			if (i_sounds.Count > 32)
+				io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-reactions-" + i_name + "-sound-count", "A finisher reaction sound list holds at most 32 files.", i_source);
+			foreach (string sound in i_sounds)
+				if (!ModPath.IsSafeRelativePath(sound)
+					|| (!sound.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) && !sound.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase)))
+					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-reactions-" + i_name + "-sound", "Finisher reaction sounds must be safe pack-relative WAV or OGG files.", i_source);
+		}
 
 		private static void ValidateFinisherAttachment(EnemyBehaviorModuleDefinition i_module, EnemyVisualDefinition i_visual,
 			ValidationReport io_report, string i_source)
