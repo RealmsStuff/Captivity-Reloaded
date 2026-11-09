@@ -2364,6 +2364,10 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(hair.LegacyId, Is.EqualTo(0));
 			Assert.That(hair.Category, Is.EqualTo("Hair"));
 			Assert.That(hair.HasLoosePresentation, Is.True);
+			CoreClothingDefinition ponytail = result.CoreClothing.Single(item => item.Id == ContentId.Parse("core:clothing/hair-brown-pony-tail"));
+			CoreClothingPieceRecord movingTail = ponytail.Pieces.Single(piece => piece.Slot == "piece/hair-tail");
+			Assert.That(movingTail.Physics, Is.Not.Null);
+			Assert.That(movingTail.Physics.Mode, Is.EqualTo("sway"));
 			CoreClothingDefinition hazmat = result.CoreClothing.Single(item => item.Id == ContentId.Parse("core:clothing/hazmat-suit"));
 			Assert.That(hazmat.LegacyId, Is.EqualTo(78));
 			Assert.That(hazmat.Category, Is.EqualTo("Upper"));

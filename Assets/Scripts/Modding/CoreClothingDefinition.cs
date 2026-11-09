@@ -35,6 +35,7 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("pieceType")] public string PieceType { get; set; } = "standard";
 		[JsonProperty("hidesHair")] public bool HidesHair { get; set; }
 		[JsonProperty("connectedPieces")] public List<string> ConnectedPieces { get; set; } = new List<string>();
+		[JsonProperty("physics")] public ClothingPhysicsDefinition Physics { get; set; }
 	}
 
 	[JsonObject(MemberSerialization.OptIn)]
@@ -148,6 +149,7 @@ namespace CaptivityReloaded.Modding
 				if (piece.PieceType != "standard" && piece.PieceType != "hat") Error(io_result, "piece-type", "pieceType must be standard or hat.", i_source);
 				if (piece.HidesHair && piece.PieceType != "hat") Error(io_result, "piece-hair", "Only hat pieces may hide hair.", i_source);
 				if (piece.SortingOffset < -100 || piece.SortingOffset > 100) Error(io_result, "piece-sorting", "Piece sortingOffset must be between -100 and 100.", i_source);
+				ValidatePhysics(piece.Physics, piece.Id, io_result, i_source);
 				ValidateSprite(piece.Sprite, piece.Id, io_result, i_source);
 			}
 			foreach (CoreClothingPieceRecord piece in i_record.Pieces ?? new List<CoreClothingPieceRecord>())
@@ -155,6 +157,26 @@ namespace CaptivityReloaded.Modding
 					if (!pieceIds.Contains(connected)) Error(io_result, "piece-connection", "Connected piece does not exist: " + connected, i_source);
 			foreach (string category in i_record.IncompatibleCategories ?? new List<string>())
 				if (!IsCategory(category)) Error(io_result, "incompatible-category", "Unknown incompatible clothing category: " + category, i_source);
+		}
+
+		private static void ValidatePhysics(ClothingPhysicsDefinition i_physics, string i_name,
+			CoreClothingCatalogLoadResult io_result, string i_source)
+		{
+			if (i_physics == null) return;
+			bool invalid = i_physics.Mode != "sway"
+				|| (i_physics.Spring.HasValue && (!Finite(i_physics.Spring.Value) || i_physics.Spring.Value < 0.1f || i_physics.Spring.Value > 200f))
+				|| (i_physics.Damping.HasValue && (!Finite(i_physics.Damping.Value) || i_physics.Damping.Value < 0f || i_physics.Damping.Value > 50f))
+				|| (i_physics.Gravity.HasValue && (!Finite(i_physics.Gravity.Value) || i_physics.Gravity.Value < 0f || i_physics.Gravity.Value > 1f))
+				|| (i_physics.MotionInfluence.HasValue && (!Finite(i_physics.MotionInfluence.Value) || i_physics.MotionInfluence.Value < 0f || i_physics.MotionInfluence.Value > 10f))
+				|| (i_physics.MaxAngle.HasValue && (!Finite(i_physics.MaxAngle.Value) || i_physics.MaxAngle.Value < 0f || i_physics.MaxAngle.Value > 90f))
+				|| (i_physics.IdleAmplitude.HasValue && (!Finite(i_physics.IdleAmplitude.Value) || i_physics.IdleAmplitude.Value < 0f || i_physics.IdleAmplitude.Value > 45f))
+				|| (i_physics.IdleFrequency.HasValue && (!Finite(i_physics.IdleFrequency.Value) || i_physics.IdleFrequency.Value < 0f || i_physics.IdleFrequency.Value > 10f));
+			if (invalid) Error(io_result, "piece-physics", "Piece sway physics are invalid: " + i_name, i_source);
+		}
+
+		private static bool Finite(float i_value)
+		{
+			return !float.IsNaN(i_value) && !float.IsInfinity(i_value);
 		}
 
 		private static void ValidateSprite(CoreClothingSpriteReference i_sprite, string i_name, CoreClothingCatalogLoadResult io_result, string i_source)

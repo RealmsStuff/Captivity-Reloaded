@@ -72,6 +72,11 @@ public static class CoreClothingFactory
 				else piece = pieceObject.AddComponent<ClothingPiece>();
 				pieceObject.AddComponent<ModClothingSlotIdentity>().Configure(record.Slot);
 				piece.ConfigureModAttachment(ToAttachment(record));
+				if (record.Physics != null)
+				{
+					ModClothingSway sway = pieceObject.AddComponent<ModClothingSway>();
+					sway.Configure(record.Physics);
+				}
 				piece.ConfigureRipSound(record.PlayRipSound);
 				pieces.Add(record.Id, piece);
 			}
@@ -117,7 +122,7 @@ public static class CoreClothingFactory
 			SortingOffset = i_record.SortingOffset, AttachToBone = i_record.AttachToBone,
 			HideBodyPart = i_record.HideBodyPart, Droppable = i_record.Droppable,
 			Destroyable = i_record.Destroyable, DropOnOralThrust = i_record.DropOnOralThrust,
-			DestroyOnOralThrust = i_record.DestroyOnOralThrust
+			DestroyOnOralThrust = i_record.DestroyOnOralThrust, Physics = i_record.Physics
 		};
 	}
 

@@ -47,7 +47,7 @@ Declare the exact slot ID in the manifest `overrides` list, then target its owne
 | [Player](#player) | 69 |
 | [Core enemy-specific slots](#core-enemy-specific-slots) | 489 |
 | [Enemy anatomy](#enemy-anatomy) | 32 |
-| [Clothing](#clothing) | 413 |
+| [Clothing](#clothing) | 414 |
 | [Weapons and weapon effects](#weapons-and-weapon-effects) | 48 |
 | [Stages and map art](#stages-and-map-art) | 28 |
 | [Legacy compatibility (A-D)](#legacy-compatibility-a-d) | 192 |
@@ -732,6 +732,7 @@ Declare the exact slot ID in the manifest `overrides` list, then target its owne
 | `core:clothing/hair-brown-big/piece/hair` | Garment piece/hair | registered from the reconstructed garment |
 | `core:clothing/hair-brown-pony-tail/icon` | Wardrobe icon | registered from the reconstructed garment |
 | `core:clothing/hair-brown-pony-tail/piece/hair` | Garment piece/hair | registered from the reconstructed garment |
+| `core:clothing/hair-brown-pony-tail/piece/hair-tail` | Garment piece/hair-tail | registered from the reconstructed garment |
 | `core:clothing/hair-default/icon` | Wardrobe icon | registered from the reconstructed garment |
 | `core:clothing/hair-default/piece/hair` | Garment piece/hair | registered from the reconstructed garment |
 | `core:clothing/hair-punk/icon` | Wardrobe icon | registered from the reconstructed garment |
