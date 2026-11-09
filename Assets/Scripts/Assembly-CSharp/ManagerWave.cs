@@ -370,8 +370,8 @@ public class ManagerWave : MonoBehaviour
 		if (m_coroutineWaitForNextWave != null) StopCoroutine(m_coroutineWaitForNextWave);
 		m_coroutineWaitForNextWave = null;
 		StopAllCoroutines();
-		foreach (Spawner spawner in m_spawners) if (spawner != null) { spawner.StopForRuleGoal(); spawner.ClearSpecialWave(); }
-		m_activeSpecialWave = null;
+		foreach (Spawner spawner in m_spawners) if (spawner != null) spawner.StopForRuleGoal();
+		ClearSpecialWaveOverrides();
 		CommonReferences.Instance.GetManagerHud().SetWaveNumber(m_numWaveCurrent, m_isHighscoreAchieved);
 		CommonReferences.Instance.GetManagerHud().GetWaveHud().ShowWaveEnd(0);
 	}
@@ -730,6 +730,14 @@ public class ManagerWave : MonoBehaviour
 			if (roll <= 0f) return index;
 		}
 		return i_weights.Count - 1;
+	}
+
+	// The appearance copies sit at the scene root, so they don't go with the stage: leaving it mid-wave must take them.
+	private void OnDestroy()
+	{
+		foreach (NPC template in m_specialWaveTemplates)
+			if (template != null) Object.Destroy(template.gameObject);
+		m_specialWaveTemplates.Clear();
 	}
 
 	private void ClearSpecialWaveOverrides()
