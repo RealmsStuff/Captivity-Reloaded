@@ -1213,6 +1213,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private bool m_playerMuteBeforeFinisher;
 	private bool m_cameraOnEnemyHips;
 	private bool m_playerKnockedOut;
+	// Set by the first phase with struggle: false; the remaining phases play out without input.
+	private bool m_struggleLost;
+	private StatusPlayerHudItem m_succumbedStatus;
 	private readonly StickCircleGesture m_circleGesture = new StickCircleGesture();
 	private bool m_directionInputReady = true;
 
@@ -1319,6 +1322,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			m_activeStatus = m_statusHud.CreateModularFinisherStatus(m_player.IsDead() ? "mating" : "active");
 		}
 		m_meter = 0f;
+		m_struggleLost = false;
 		m_startedAt = Time.time;
 		m_phaseIndex = 0;
 		m_phaseStartedAt = Time.time;
@@ -1460,6 +1464,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		MaintainActorPhysicsLock();
 		if (!AdvanceFinisherPhase()) return;
 		UpdatePlayerAnimation();
+		if (m_struggleLost) return;
 		m_meter = Mathf.Max(0f, m_meter - GetCurrentDecayPerSecond() * Time.deltaTime);
 		ManagerInput input = CommonReferences.Instance.GetManagerInput();
 		PlayerController controller = CommonReferences.Instance.GetPlayerController();
@@ -1515,6 +1520,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			if (participant.Started && participant.Controller != null)
 				PlayPhaseClip(participant.Controller, GetParticipantAnimation(participant.Definition), blend);
 		ApplyPhaseReactions();
+		if (!m_struggleLost && !(GetCurrentPhase()?.Struggle ?? true)) LoseStruggle();
 	}
 
 	private void BeginReactions()
@@ -1621,7 +1627,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			if (i_cum) postProcessing.PlayEffectCum();
 		}
 		if (i_reactions.Oral == true) m_player.GetSkeletonPlayer()?.HandleOralThrust();
-		if (m_player.IsDead()) return;
+		if (m_struggleLost || m_player.IsDead()) return;
 		m_meter = Mathf.Max(0f, m_meter - FinisherReactions.StruggleDamage(thrust, cum));
 		HudSmasher hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames().GetHudSmasher();
 		if (hud != null) hud.Thrust();
@@ -1663,6 +1669,15 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		m_playerKnockedOut = true;
 		m_player.GetSkeletonPlayer()?.GetManagerFacePlayer()?.KO();
 		CommonReferences.Instance.GetManagerPostProcessing()?.PlayEffectRagdoll();
+	}
+
+	// Like RaperGame.Win: the escape window is over and the remaining phases play out without input.
+	private void LoseStruggle()
+	{
+		m_struggleLost = true;
+		ManagerHudRapeGames hud = CommonReferences.Instance.GetManagerHud().GetManagerHudRapeGames();
+		if (hud != null) hud.HideHudSmasher();
+		if (m_statusHud != null) m_succumbedStatus = m_statusHud.CreateModularFinisherStatus("succumbed");
 	}
 
 	// Restarts an actor's clip for a phase, fading into it over the phase's blendSeconds when it sets one
@@ -1709,6 +1724,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		}
 		EndReactions();
 		GetPlayerMouth()?.EndModularGrab();
+		if (m_succumbedStatus != null && m_statusHud != null) m_statusHud.DestroyStatusItem(m_succumbedStatus);
+		m_succumbedStatus = null;
+		m_struggleLost = false;
 		if (i_applyOutcome)
 		{
 			if (!i_success) AddFailureStatuses();
@@ -1879,8 +1897,13 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	public float GetTimeMax()
 	{
 		if (!HasPhases()) return m_definition?.DurationSeconds ?? 1f;
+		// The escape window ends at the first phase without struggle.
 		float total = 0f;
-		foreach (EnemyFinisherPhaseDefinition phase in m_definition.Phases) total += phase.DurationSeconds;
+		foreach (EnemyFinisherPhaseDefinition phase in m_definition.Phases)
+		{
+			if (!(phase.Struggle ?? true)) break;
+			total += phase.DurationSeconds;
+		}
 		return total;
 	}
 	public KeyCode GetKeyCodeToPress() { return m_keyExpected; }

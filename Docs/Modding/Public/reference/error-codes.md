@@ -352,6 +352,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-phase-animation-missing` | Error | Finisher phase references an unknown enemy animation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-duration` | Error | Each finisher phase durationSeconds must be 0.1..60. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-id` | Error | Finisher phase IDs must be unique semantic names. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-phase-struggle` | Error | Phases with struggle: false must all come after the struggling phases. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.finisher-phase-struggle-first` | Error | The first finisher phase must allow the player to struggle. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phase-total` | Error | Combined finisher phase duration cannot exceed 300 seconds. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-phases` | Error | downedFinisher phases must contain 2..8 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-player-animation` | Error | playerAnimation requires a bounded duration and 1..256 frames. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

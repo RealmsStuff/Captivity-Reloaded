@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-07: finisher phases without struggle
+
+- Added optional experimental `struggle` on `downedFinisher` phases. `false` ends the escape window: the struggle HUD closes, the `succumbed` status card appears, and the remaining phases play out without input before the failure outcome, like a Core grab after the player has lost.
+- New validation codes `enemy.behavior.finisher-phase-struggle` (a struggling phase after a `struggle: false` one) and `enemy.behavior.finisher-phase-struggle-first` (the first phase has `struggle: false`).
+- The HUD timer counts the struggling phases only. Finishers without the field behave as before.
+
 ### 2026-11-07: grab reactions for finisher phases
 
 - Added the optional experimental phase field `reactions` to `downedFinisher` phases. It gives a phase what a Core grab animation sets up for its thrusts: thrust and cum-thrust gains, struggle knock-back, sounds, player and enemy voice lines and sound layers rolled by chance, the oral mouth, muting the player and a camera on the enemy's hips. See [Grab reactions](../content/enemies.md#grab-reactions-experimental).

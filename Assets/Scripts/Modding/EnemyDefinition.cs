@@ -272,6 +272,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("inputPower")] public float? InputPower { get; set; }
 		[JsonProperty("inputPattern")] public string InputPattern { get; set; }
 		[JsonProperty("decayPerSecond")] public float? DecayPerSecond { get; set; }
+		// false: the escape window is over, like a Core grab after the player has lost. The struggle HUD closes
+		// and this and the later phases play out without input. Omitted or true, the player can struggle.
+		[JsonProperty("struggle")] public bool? Struggle { get; set; }
 		[JsonProperty("participantAnimations")] public Dictionary<string, string> ParticipantAnimations { get; set; } = new Dictionary<string, string>();
 		// With a finisher attachment: false lets go (the root stops following and the contacts ease off over
 		// settleSeconds), true holds on again. Omitted, a phase keeps the previous phase's state.
@@ -828,6 +831,7 @@ namespace CaptivityReloaded.Modding
 							io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phases", "downedFinisher phases must contain 2..8 entries.", i_source);
 						HashSet<string> phaseIds = new HashSet<string>(StringComparer.Ordinal);
 						float totalDuration = 0f;
+						bool struggleEnded = false;
 						foreach (EnemyFinisherPhaseDefinition phase in module.Phases)
 						{
 							if (phase == null || !IsSemanticName(phase.Id) || !phaseIds.Add(phase.Id))
@@ -835,6 +839,13 @@ namespace CaptivityReloaded.Modding
 								io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-id", "Finisher phase IDs must be unique semantic names.", i_source);
 								continue;
 							}
+							// struggle: false marks the phases after the escape window. They must form one trailing block.
+							bool struggles = phase.Struggle ?? true;
+							if (struggles && struggleEnded)
+								io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-struggle", "Phases with struggle: false must all come after the struggling phases.", i_source);
+							if (!struggles && phaseIds.Count == 1)
+								io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-struggle-first", "The first finisher phase must allow the player to struggle.", i_source);
+							if (!struggles) struggleEnded = true;
 							if (!IsSemanticName(phase.Animation))
 								io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-phase-animation", "Each finisher phase requires an enemy animation clip name.", i_source);
 							if (!IsFinite(phase.DurationSeconds) || phase.DurationSeconds < 0.1f || phase.DurationSeconds > 60f)

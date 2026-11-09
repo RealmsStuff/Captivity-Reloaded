@@ -501,6 +501,7 @@ Schema form: object.
 | `inputPower` | number | no |  | exclusive min: `0`; max: `10000` |
 | `inputPattern` | enum: `adaptive`, `alternate`, `rotate`, `tap` | no |  |  |
 | `decayPerSecond` | number | no |  | min: `0`; max: `10000` |
+| `struggle` | boolean | no | experimental |  |
 | `participantAnimations` | object map of ref: `name` | no |  | max properties: `3` |
 | `attached` | boolean | no | experimental |  |
 | `contacts` | ref: `finisherContacts` | no | experimental |  |
