@@ -19,6 +19,7 @@
 | `behavior` | ref: `behavior` | no | experimental |  |
 | `animation` | ref: `animation` | no | experimental |  |
 | `animationRefs` | object map of ref: `enemyAnimationId` | no | experimental | max properties: `64` |
+| `playerAnimationRefs` | object map of ref: `playerAnimationId` | no | experimental | max properties: `32`; Inherited enemies only: finisher-phase-N -> playerAnimation for the player's side of the template's grab phase. |
 | `ai` | ref: `ai` | no | experimental |  |
 | `drops` | ref: `drops` | no | experimental |  |
 

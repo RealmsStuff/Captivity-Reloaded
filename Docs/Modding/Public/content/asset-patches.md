@@ -81,6 +81,30 @@ Every legacy-presentation slot requires its Core baseline to be loaded. The game
 - Filename case and `/` separators must be portable across supported platforms.
 - A PNG that is entirely black or transparent is still structurally valid. Inspect extracted legacy artwork before packaging; do not assume every changed Unity texture contains authored art.
 
+## Replacing a Core enemy's animations (experimental)
+
+An asset patch on a Core enemy (`core:enemy/<slug>`) may also replace its animation clips. `animations` maps a semantic clip name from the Core enemy semantics (`ModSDK/AnimationReference/CORE-ENEMY-SEMANTICS.md`) (`idle`, `move`, `attack-primary`, `finisher-phase-3`, ...) to an `enemyAnimation` document; `playerAnimations` maps `finisher-phase-N` to a `playerAnimation` for the player's side of that grab phase. `replacements` becomes optional when either is present.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "assetPatch",
+  "id": "your.pack:patch/zombie-head-tilt",
+  "target": "core:enemy/zombie-1",
+  "animations": { "idle": "your.pack:enemy-animation/zombie-1-idle" },
+  "playerAnimations": { "finisher-phase-1": "your.pack:player-animation/zombie-1-phase-1" }
+}
+```
+
+- The `enemyAnimation` sets `"enemy": "core:enemy/<slug>"` and animates that Core rig's bones by their published names (each enemy's `ModSDK/AnimationReference/NormalizedEnemies/<slug>/rig.json`). Sprite keys name Core sprites by `name`, or load a pack-local PNG with `asset`. The `playerAnimation` uses `core:player-rig/alex`.
+- The game keeps running the enemy's own Animator: its states, transitions, attack hits and grab steps are unchanged, and the Unity animation events on the original clips still fire. Each frame, after the Animator, the replacement is sampled at the state's normalized time scaled to the replacement's own length (wrapped when it loops, clamped when it does not) and its bones' position, rotation, scale, sprite, sorting order and colour are written over the Animator's. Bones and properties it does not animate keep the Animator's pose. During the enemy's grab the player's side is timed by the player's Animator the same way.
+- A replacement may carry cosmetic `sound` and `cameraShake` events and normalized effects. Gameplay events (`attackHit`, `impulse`) and `spriteEffect` are rejected: the Core clip's own events still do that work. A player clip's events are ignored with a warning, because the Core grab keeps its own pleasure and damage.
+- Every instance of the Core enemy plays the replacement, and so do its inherited variants unless they give their own clip for that name (see [Enemies](enemies.md#animating-a-core-enemy-experimental)).
+- Two packs replacing the same clip follow the rules above, with the slot IDs `<target>/animation/<semantic>` and `<target>/player-animation/finisher-phase-N`: the later pack wins only when its manifest lists that slot in `overrides`; otherwise both are dropped and the Core clip stays.
+- Validation errors: `core-animation.semantic` (not one of that enemy's clips), `core-animation.phase` (not one of its grab phases), `core-animation.bone` (not a bone of its rig), `core-animation.event`, `core-animation.owner`, `asset-patch.animation-target` (the target is not a Core enemy). The warning `core-animation.length` reports a replacement whose length differs from the original state's by more than 5%; it still plays, stretched to the state's timing.
+
+Packs using `animations`, `playerAnimations` or `playerAnimationRefs` need a game build with this feature and do not load on 2.2.2.
+
 ## When not to use a patch
 
 Use an additive `weapon`, `clothing`, `enemy`, or other content definition when the original and new content should coexist. Use a rule profile when behavior changes. Asset patches should not silently carry gameplay changes.

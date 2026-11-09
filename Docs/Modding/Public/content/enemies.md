@@ -2,7 +2,7 @@
 
 `spawn.inheritTemplateSpawners: true` adds a variant anywhere its Core template already spawns. The optional experimental `spawn.selectionWeight` controls its relative frequency and defaults to `1`. Existing Core choices each have weight `1`; one variant with weight `0.25` therefore has a `0.25 / (1 + 0.25)`, or 20%, share when competing with one matching Core enemy. Multiple variants add their weights to the denominator.
 
-Inherited enemies extend a stable Core enemy ID. They can currently override bounded statistics, inherited attacks, selected behavior modules, drop rules, animation speed, spawning behavior, and published rig sprites.
+Inherited enemies extend a stable Core enemy ID. They can currently override bounded statistics, inherited attacks, selected behavior modules, drop rules, animation speed, spawning behavior, published rig sprites, and (experimental) any of the template's animation clips, including the player's side of its grab (see [Animating a Core enemy](#animating-a-core-enemy-experimental)).
 
 Only use properties listed for their exact object in the [enemy API reference](../reference/api/enemy.md). Enemy JSON is closed to unknown fields. In particular:
 
@@ -16,6 +16,32 @@ Only use properties listed for their exact object in the [enemy API reference](.
 These names may be reasonable future feature requests, but adding them to a document before the schema and runtime implement them invalidates the pack.
 
 The Zombie I LibreSprite kit in `ModSDK/EnemyTemplates/Zombie1` builds a named-layer 128×128 atlas from the exact Core sprites. It inherits `core:enemy/zombie-1`, including the original rig, animation clips, colliders, and specialized prefab behavior.
+
+## Animating a Core enemy (experimental)
+
+There are two ways to give a Core enemy new animation. Both use normalized clips on the Core rig: an `enemyAnimation` whose tracks name that enemy's published bones (its `ModSDK/AnimationReference/NormalizedEnemies/<slug>/rig.json`), and for the player's side of a grab phase a `playerAnimation` on `core:player-rig/alex`.
+
+- **Replace it in the game**: an [asset patch](asset-patches.md#replacing-a-core-enemys-animations-experimental) on `core:enemy/<slug>` with `animations` and `playerAnimations`. Every instance of that enemy plays the new clips.
+- **Make a variant**: an inherited enemy (`extends`) maps any of its template's semantic clip names to its own clip with `animationRefs`, and grab phases to the player's side with `playerAnimationRefs`. Only the variant plays them; for a name both give, the variant's own clip wins over a replacement of its template.
+
+```json
+{
+  "schemaVersion": 1,
+  "type": "enemy",
+  "id": "your.pack:enemy/zombie-1-tilted",
+  "displayName": "Tilted Zombie",
+  "extends": "core:enemy/zombie-1",
+  "spawn": { "inheritTemplateSpawners": true, "selectionWeight": 0.5 },
+  "animationRefs": { "finisher-phase-1": "your.pack:enemy-animation/tilted-phase-1" },
+  "playerAnimationRefs": { "finisher-phase-1": "your.pack:player-animation/tilted-phase-1" }
+}
+```
+
+A variant's `enemyAnimation` sets `enemy` to the variant itself or to its Core template. Keys are the template's semantic names (`idle`, `move`, `attack-primary`, `finisher-phase-N`, and the rest listed in `ModSDK/AnimationReference/CORE-ENEMY-SEMANTICS.md`); an unknown name is the error `core-animation.semantic`, an unknown grab phase `core-animation.phase`, and a track on a bone the rig does not have `core-animation.bone`.
+
+The enemy's Animator still runs it: states, transitions, attack hits and grab steps are unchanged, and the original clips' Unity events still fire. After the Animator each frame, the new clip is sampled at the state's normalized time scaled to its own length (wrapped when it loops, clamped when it does not) and its bones' position, rotation, scale, sprite, sorting order and colour are written over the Animator's pose. Bones and properties it does not animate keep the Animator's pose. A clip may carry cosmetic `sound` and `cameraShake` events and normalized effects, but not `attackHit`, `impulse` or `spriteEffect` (`core-animation.event`); player clips' events are ignored. A clip whose length differs from the original state's by more than 5% gets the warning `core-animation.length` and is stretched to the state's timing.
+
+Packs that animate a Core enemy need a game build with this feature and do not load on 2.2.2.
 
 ## Fully original enemies (experimental)
 
@@ -36,7 +62,7 @@ After importing from DragonBones, inspect the hierarchy before packaging. `hips`
 
 `animation.clips` contains named procedural clips. Each clip has an ordered list of frames; a frame supplies an atlas `region`, absolute local position, rotation, or scale values for any subset of bones. Sprite regions switch at the authored frame while transforms interpolate between frames. `idle` and `move` are required. Attack definitions reference another clip by name and specify the exact hit time, total duration, ranges, damage, knockback, chance, and cooldown.
 
-Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton. Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name. An enemy whose clips all come from `animationRefs` may still give an `animation` object (for `speedMultiplier` or `blendSeconds`) without `clips`.
+Clips may instead live in separate normalized `enemyAnimation` documents. Map a semantic clip name to its content ID with `animationRefs`, for example `"move": "your.pack:enemy-animation/stalker-move"`. The document's `enemy` must identify the owning enemy. Bone targets are checked against that enemy's declared skeleton (for an inherited enemy, its Core template's rig; see [Animating a Core enemy](#animating-a-core-enemy-experimental)). Numeric tracks support position, rotation, scale, sprite color, and sorting order. Object tracks switch atlas regions by `name`, or load a pack-local PNG directly when the sprite key supplies `asset`. Inline clips and references can be mixed but cannot define the same semantic name. An enemy whose clips all come from `animationRefs` may still give an `animation` object (for `speedMultiplier` or `blendSeconds`) without `clips`.
 
 **Experimental:** `animation.blendSeconds` (0 to 1, default 0) cross-fades an original enemy's bones from the pose they are drawn in into each newly started clip, so switching between idle, move, attack and finisher clips does not snap. Bones the new clip does not animate fade to their rest pose. Events and sprite swaps still start on the new clip's own timeline. A ragdolled enemy gets up from its rest pose without a fade.
 

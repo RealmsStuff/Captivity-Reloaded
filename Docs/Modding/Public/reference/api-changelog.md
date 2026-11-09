@@ -31,6 +31,15 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - New validation code `enemy.stats.finisher-start-freeze` for values outside 0 to 1.
 - Finishers without the field start as before.
 
+### 2026-11-06: animating Core enemies
+
+- Asset patches on a Core enemy (`core:enemy/<slug>`) take optional experimental `animations` (semantic clip name -> `enemyAnimation`) and `playerAnimations` (`finisher-phase-N` -> `playerAnimation`); `replacements` is now optional when either is present. They replace that enemy's clips everywhere it appears. Conflicts follow the asset patch rules with the slot IDs `<target>/animation/<semantic>` and `<target>/player-animation/finisher-phase-N`.
+- Inherited enemies' `animationRefs` now play: each maps one of the template's semantic clip names to the variant's own `enemyAnimation`. Added optional experimental `playerAnimationRefs` (inherited enemies only) for the player's side of the template's grab phases.
+- A pack's `enemyAnimation` may now set `enemy` to a Core enemy (`core:enemy/...`); its tracks name that Core rig's published bones.
+- The Core enemy's Animator keeps running; after it, the override is sampled at the state's normalized time scaled to its own length and written over the bones (position, rotation, scale, sprite, sorting order, colour). The original clips' Unity events still fire. Overrides may carry `sound` and `cameraShake` events and normalized effects.
+- New validation codes `core-animation.semantic`, `core-animation.phase`, `core-animation.bone`, `core-animation.event`, `core-animation.owner`, `core-animation.enemy`, `core-animation.length` (warning), `core-animation.player-events` (warning), `core-animation.audio-file`, `asset-patch.animation-target`, `asset-patch.animation-name`, `asset-patch.animation-id`, `asset-patch.player-animation-name`, `asset-patch.player-animation-id`, `enemy.player-animation-refs.original`, `enemy.player-animation-refs.name`, `enemy.player-animation-refs.id` and `enemy.player-animation-refs.limit`.
+- Packs without these fields are unchanged. Inherited enemies with `animationRefs` used to fail with `enemy-animation.bone-missing`; they now load.
+
 ### 2026-11-02: finisher attachment and per-phase contacts
 
 - Added the optional experimental `downedFinisher.attachment` block for original enemies. While attached, the runtime holds the enemy's root at `rootX`/`rootY` in a frame on a player bone (`target`, offset by `offsetX`/`offsetY`, turning with the bone by `followRotation`), easing in and out over `settleSeconds`. The finisher's usual side-by-side alignment does not run while an attachment is set.
@@ -38,6 +47,7 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - Finisher phases accept `attached` (`false` lets go, `true` holds on again) and their own `contacts`, which replace the attachment's for that phase. Contacts that start, stop or move ease over the phase's `blendSeconds` when set, otherwise over `settleSeconds`; a knee or elbow whose bend changes while held swings across instead of flipping. When the finisher ends, the enemy is released where its clip drew it.
 - New validation codes: the range checks `enemy.stats.finisher-attachment-offset`, `enemy.stats.finisher-attachment-follow-rotation` and `enemy.stats.finisher-attachment-settle`; `enemy.behavior.finisher-attachment-target`, `-sorting`, `-player-sorting` and `-phase` (a phase sets `attached` or `contacts` without an attachment); and `enemy.behavior.finisher-contact-bone`, `-target` and `-value`.
 - Finishers without `attachment` are unchanged.
+
 ### 2026-11-02: miss animations for original-enemy attacks
 
 - Added optional experimental `missAnimation` to original-enemy attacks. When the attack's hit lands on nothing (out of range, out of sight, or a player who cannot be attacked right now), that clip takes over from the same point in its timeline and the attack runs until the clip ends; the attack's cooldown starts then.
