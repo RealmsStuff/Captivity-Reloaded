@@ -86,6 +86,7 @@
     "attack": { "type": "object", "additionalProperties": false, "properties": {
       "index": { "type": "integer", "minimum": 0, "maximum": 31 }, "id": { "$ref": "#/$defs/name" }, "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab", "multiStage"] }, "animation": { "$ref": "#/$defs/name" },
       "missAnimation": { "$ref": "#/$defs/name", "x-stability": "experimental" },
+      "finisher": { "$ref": "#/$defs/name", "x-stability": "experimental" },
       "hitTimeSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "chance": { "type": "number", "minimum": 0, "maximum": 1 },
       "damage": { "type": "number", "minimum": 0, "maximum": 100000 }, "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "ragdollSeconds": { "type": "number", "minimum": 0, "maximum": 30 },
       "cooldownSeconds": { "type": "number", "minimum": 0, "maximum": 600 }, "initiateRange": { "type": "number", "minimum": 0, "maximum": 1000 }, "hitRange": { "type": "number", "minimum": 0, "maximum": 1000 },
@@ -129,6 +130,7 @@
     "speedPulse": { "type": "object", "additionalProperties": false, "required": ["type", "speedBonus", "intervalSeconds", "durationSeconds"], "properties": { "type": { "const": "speedPulse" }, "speedBonus": { "type": "number", "minimum": -1000, "maximum": 1000 }, "intervalSeconds": { "type": "number", "minimum": 0.1, "maximum": 600 }, "durationSeconds": { "type": "number", "minimum": 0.05, "maximum": 600 } } },
     "downedFinisher": { "type": "object", "x-stability": "experimental", "additionalProperties": false, "required": ["type", "triggerRange", "meterMax", "inputPower"], "anyOf": [{ "required": ["durationSeconds"] }, { "required": ["phases"] }], "properties": {
       "type": { "const": "downedFinisher" }, "triggerRange": { "type": "number", "minimum": 0.1, "maximum": 20 },
+      "id": { "$ref": "#/$defs/name", "x-stability": "experimental" }, "weight": { "type": "number", "minimum": 0.001, "maximum": 1000, "x-stability": "experimental" },
       "startDelaySeconds": { "type": "number", "minimum": 0, "maximum": 10 }, "durationSeconds": { "type": "number", "minimum": 1, "maximum": 60 },
       "meterMax": { "type": "number", "minimum": 1, "maximum": 10000 }, "inputPower": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000 },
       "inputPattern": { "enum": ["adaptive", "alternate", "rotate", "tap"] },

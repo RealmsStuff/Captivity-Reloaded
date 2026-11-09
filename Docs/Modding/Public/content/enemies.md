@@ -72,7 +72,7 @@ Standalone attack delivery types are:
 - `hitscan`: verifies range and line of sight and displays the Core tracer.
 - `projectile`: launches an atlas-backed Rigidbody2D projectile toward the player's position at the firing moment. It requires `projectileRegion`, `projectileSpeed`, `projectileLifetimeSeconds`, and `projectileRadius`; `projectileGravityScale` defaults to zero. A non-zero gravity scale produces an aim-compensated ballistic arc. Projectiles are destroyed when they hit the player, a platform, or their lifetime expires.
 - `area`: applies an impact within `areaRadius` around a facing-relative `offsetX` and local `offsetY` from the enemy.
-- `grab`: starts that enemy's `downedFinisher` QTE on a target inside `hitRange`. Consequently, an enemy containing a grab must also define the finisher module.
+- `grab`: starts that enemy's `downedFinisher` QTE on a target inside `hitRange`. Consequently, an enemy containing a grab must also define the finisher module. **Experimental:** with several finishers, the attack's optional `finisher` names the one it starts by id; without it the grab picks one by weight (see [Several finishers](#several-finishers-experimental)).
 - `multiStage`: consumes 2–16 ordered `stages`, with exactly one ordered `attackHit` animation event per stage. Every stage selects `melee`, `hitscan`, `projectile`, `area`, or `grab` and may override damage, knockback, `ragdollSeconds`, range, offsets, or projectile settings; omitted stage values inherit the containing attack.
 
 **Experimental:** an original attack (or stage) with `ragdollSeconds` (0–30) knocks the player down for that long when it lands, after its damage and knockback, and the knockdown counts as a KO in the status cards and diary. A stage without its own value inherits the attack's; a projectile carries it to its impact. Unlike the `onHitRagdoll` module, which ragdolls on every hit, it applies only to that attack, so a heavy punch can floor the player while jabs only push them back. A downed player is then a valid `downedFinisher` target. A hit that ragdolls the player by itself, a grabbed or dead player, and a player in labor are not knocked down again.
@@ -133,7 +133,7 @@ Published behavior modules currently include regeneration, low-health berserk, l
 
 ### Downed-player finisher QTE
 
-Fully original enemies may add one experimental `downedFinisher` behavior module. When the enemy is within `triggerRange` of a ragdolled player, or a player voluntarily exposing themself with the normal `Expose` binding (`S` by default), it starts Captivity's struggle meter. Keyboard, controller, and mobile use the same bounded QTE implementation.
+Fully original enemies may add an experimental `downedFinisher` behavior module (or several, see [Several finishers](#several-finishers-experimental)). When the enemy is within `triggerRange` of a ragdolled player, or a player voluntarily exposing themself with the normal `Expose` binding (`S` by default), it starts Captivity's struggle meter. Keyboard, controller, and mobile use the same bounded QTE implementation.
 
 ```json
 {
@@ -266,6 +266,25 @@ A later phase without these settings undoes them. When the grab ends, the player
 ```
 
 The phase's clip then carries `{ "time": 0.42, "type": "cue", "cue": "finisher.thrust", "amount": 0 }` where the hips hit their deepest point. Core grabs keep power 2 and 3 for one heavy beat and let the rhythm run at 0.
+
+### Several finishers (experimental)
+
+An original enemy may have more than one `downedFinisher` module, for example a pin on the floor and a carry. Each then needs a unique `id` (a semantic name such as `pin` or `carry`); an enemy with one finisher may leave `id` out, and behaves exactly as before. Every finisher keeps its own phases, animations, ranges, outcomes and statuses. The other module types still appear at most once, and an enemy still has at most 8 modules in all.
+
+- A `grab` attack (or an attack with a `grab` stage) may name the finisher it starts in `finisher`. A grab that does not name one picks among all of the enemy's finishers by `weight`.
+- A downed or exposing player: the enemy walks in until it is inside every finisher's `triggerRange`, then picks by `weight` among the finishers whose range reaches the player and whose `startDelaySeconds` has passed. While some finishers cannot start yet, it waits as long as it is still getting closer or one in range is still in its start delay, for at most 3 seconds, then picks among the ones that can.
+- `weight` (0.001 to 1000, default 1) is a relative chance: weights 3 and 1 give the first finisher 75%.
+- Finishers share one cooldown: after any finisher ends, none of that enemy's finishers starts again until the `cooldownSeconds` of the one that just ended have passed. This keeps an enemy from chaining a second finisher straight after the first.
+
+```json
+"attacks": [
+  { "id": "tackle", "type": "grab", "finisher": "pin", "animation": "tackle", "chance": 0.6, "damage": 0, "cooldownSeconds": 4, "initiateRange": 1.4, "hitRange": 1.2, "durationSeconds": 0.8, "hitTimeSeconds": 0.4 }
+],
+"behavior": { "modules": [
+  { "type": "downedFinisher", "id": "pin", "weight": 3, "triggerRange": 1.6, "durationSeconds": 8, "meterMax": 100, "inputPower": 14, "animation": "pin" },
+  { "type": "downedFinisher", "id": "carry", "weight": 1, "triggerRange": 1.2, "durationSeconds": 10, "meterMax": 100, "inputPower": 12, "animation": "carry" }
+] }
+```
 
 ### Independent NPC participants
 

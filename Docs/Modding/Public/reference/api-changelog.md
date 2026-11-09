@@ -40,6 +40,14 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - New validation codes `core-animation.semantic`, `core-animation.phase`, `core-animation.bone`, `core-animation.event`, `core-animation.owner`, `core-animation.enemy`, `core-animation.length` (warning), `core-animation.player-events` (warning), `core-animation.audio-file`, `asset-patch.animation-target`, `asset-patch.animation-name`, `asset-patch.animation-id`, `asset-patch.player-animation-name`, `asset-patch.player-animation-id`, `enemy.player-animation-refs.original`, `enemy.player-animation-refs.name`, `enemy.player-animation-refs.id` and `enemy.player-animation-refs.limit`.
 - Packs without these fields are unchanged. Inherited enemies with `animationRefs` used to fail with `enemy-animation.bone-missing`; they now load.
 
+### 2026-11-06: several finishers per original enemy
+
+- An original enemy may now have several `downedFinisher` behavior modules. Each takes an optional experimental `id` (required and unique when there is more than one) and `weight` (0.001–1000, default 1).
+- Added optional experimental `finisher` to original-enemy attacks: the id of the finisher a `grab` attack (or an attack with a `grab` stage) starts. A grab without it picks a finisher by weight; a downed or exposing player gets one picked by weight among the finishers in range.
+- The finishers share one cooldown: after any of them ends, none starts until that one's `cooldownSeconds` have passed.
+- New validation codes `enemy.behavior.finisher-id`, `enemy.behavior.module-id`, `enemy.attacks.finisher`, `enemy.attacks.finisher-missing` and `enemy.stats.finisher-weight`. `enemy.behavior.module` now allows a repeated `downedFinisher`.
+- Packs with one finisher are unchanged.
+
 ### 2026-11-02: finisher attachment and per-phase contacts
 
 - Added the optional experimental `downedFinisher.attachment` block for original enemies. While attached, the runtime holds the enemy's root at `rootX`/`rootY` in a frame on a player bone (`target`, offset by `offsetX`/`offsetY`, turning with the bone by `followRotation`), easing in and out over `settleSeconds`. The finisher's usual side-by-side alignment does not run while an attachment is set.

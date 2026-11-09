@@ -328,6 +328,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.animation` | Error | Original attacks require an animation clip name. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.animation-missing` | Error | Attack references an unknown animation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.entry` | Error | Attack entries cannot be null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.finisher` | Error | Only an original enemy's grab attack (or an attack with a grab stage) can name a finisher. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.finisher-missing` | Error | Attack  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.grab-finisher` | Error | Grab attacks require the playable starter grab/finisher option. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.hit-time` | Error | hitTimeSeconds cannot exceed durationSeconds. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.hit-timing` | Error | Original attacks require hitTimeSeconds or an attackHit event in their animation clip. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -353,6 +355,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-contact-target` | Error | Finisher contact target must be a player bone:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-contact-value` | Error | Finisher contact  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-draft` | Error | The starter finisher requires the DragonBones project and paired-player draft options. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |
+| `enemy.behavior.finisher-id` | Error | Each downedFinisher needs a unique semantic id when an enemy has more than one. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-original` | Error | downedFinisher is currently supported only by fully original enemies. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-participant-animation` | Error | Participant animation must be a semantic clip name. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-participant-animation-id` | Error | participantAnimations references an unknown participant:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -393,7 +396,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.behavior.finisher-status-empty` | Error | Finisher status  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-key` | Error | Unsupported finisher status:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.finisher-status-title` | Error | Finisher status titles must contain 1..64 characters. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
-| `enemy.behavior.module` | Error | Behavior modules must have unique types. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.module` | Error | Behavior modules must have unique types (only downedFinisher may repeat). | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.behavior.module-id` | Error | Only downedFinisher modules have an id and a weight. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.module-type` | Error | Unsupported behavior module:  | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.modules` | Error | At most 8 behavior modules are supported. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.behavior.on-hit-clothing-id` | Error | onHitEquipClothing clothing must be a clothing content ID. | `Assets/Scripts/Modding/EnemyDefinition.cs` |

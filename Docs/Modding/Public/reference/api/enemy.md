@@ -216,6 +216,7 @@ Schema form: object.
 | `type` | enum: `melee`, `hitscan`, `projectile`, `area`, `grab`, `multiStage` | no |  |  |
 | `animation` | ref: `name` | no |  |  |
 | `missAnimation` | ref: `name` | no | experimental |  |
+| `finisher` | ref: `name` | no | experimental |  |
 | `hitTimeSeconds` | number | no |  | min: `0`; max: `600` |
 | `chance` | number | no |  | min: `0`; max: `1` |
 | `damage` | number | no |  | min: `0`; max: `100000` |
@@ -356,6 +357,8 @@ Schema form: object.
 | --- | --- | --- | --- | --- |
 | `type` | const: `downedFinisher` | yes |  |  |
 | `triggerRange` | number | yes |  | min: `0.1`; max: `20` |
+| `id` | ref: `name` | no | experimental |  |
+| `weight` | number | no | experimental | min: `0.001`; max: `1000` |
 | `startDelaySeconds` | number | no |  | min: `0`; max: `10` |
 | `durationSeconds` | number | no |  | min: `1`; max: `60` |
 | `meterMax` | number | yes |  | min: `1`; max: `10000` |

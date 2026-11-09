@@ -980,7 +980,7 @@ public sealed class ModularEnemy : Walker
 		float range = Resolve(i_stage?.HitRange, i_definition.HitRange, 1f);
 		if (Vector2.Distance(GetPosHips(), i_player.GetPosHips()) > range) return false;
 		ModularEnemyFinisher finisher = GetComponent<ModularEnemyFinisher>();
-		return finisher != null && finisher.TryBeginFromAttack(i_player);
+		return finisher != null && finisher.TryBeginFromAttack(i_player, i_definition.Finisher);
 	}
 
 	private void SpawnProjectileAttack(Player i_player, EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
@@ -1137,7 +1137,11 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private static ModularEnemyFinisher s_activeSession;
 	[SerializeField] private string m_enemyDefinitionId;
 	private NPC m_npc;
+	// The finisher that runs (or ran last); an enemy may have several downedFinisher modules, all in m_definitions.
+	// They share one cooldown: after any of them ends, none starts until that one's cooldownSeconds have passed.
 	private EnemyBehaviorModuleDefinition m_definition;
+	private readonly List<EnemyBehaviorModuleDefinition> m_definitions = new List<EnemyBehaviorModuleDefinition>();
+	private float m_inRangeSince = -1f, m_closestDistance, m_closerAt;
 	private Player m_player;
 	private bool m_isActive;
 	private float m_meter;
@@ -1255,11 +1259,54 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			|| (m_player.GetStateActorCurrent() != StateActor.Ragdoll && !m_player.IsExposing()))
 		{
 			m_downedAt = -1f;
+			m_inRangeSince = -1f;
 			return;
 		}
 		if (m_downedAt < 0f) m_downedAt = Time.time;
-		if (Time.time - m_downedAt < (m_definition.StartDelaySeconds ?? 0.2f)) return;
-		if (Vector2.Distance(m_npc.GetPosFeet(), m_player.GetPosHips()) <= m_definition.TriggerRange.Value) BeginFinisher();
+		// The finishers whose start delay has passed and whose triggerRange reaches the player. The enemy walks in until
+		// every finisher reaches (ShouldApproachDownedPlayer). While some cannot start yet, it waits as long as it is
+		// still getting closer or one in range is still in its start delay, at most 3 seconds; then one of the ready
+		// finishers is picked by weight. One finisher alone starts exactly as before.
+		float distance = Vector2.Distance(m_npc.GetPosFeet(), m_player.GetPosHips());
+		List<EnemyBehaviorModuleDefinition> ready = new List<EnemyBehaviorModuleDefinition>();
+		bool delayed = false;
+		foreach (EnemyBehaviorModuleDefinition item in m_definitions)
+		{
+			if (distance > item.TriggerRange.Value) continue;
+			if (Time.time - m_downedAt >= (item.StartDelaySeconds ?? 0.2f)) ready.Add(item); else delayed = true;
+		}
+		if (ready.Count == 0) { m_inRangeSince = -1f; return; }
+		if (ready.Count < m_definitions.Count)
+		{
+			if (m_inRangeSince < 0f) { m_inRangeSince = m_closerAt = Time.time; m_closestDistance = distance; }
+			if (distance < m_closestDistance - 0.02f) { m_closestDistance = distance; m_closerAt = Time.time; }
+			if ((delayed || Time.time - m_closerAt < 0.5f) && Time.time - m_inRangeSince < 3f) return;
+		}
+		m_inRangeSince = -1f;
+		m_definition = PickByWeight(ready);
+		BeginFinisher();
+	}
+
+	// A weighted random pick (weight defaults to 1).
+	public static EnemyBehaviorModuleDefinition PickByWeight(List<EnemyBehaviorModuleDefinition> i_finishers, float? i_roll01 = null)
+	{
+		if (i_finishers == null || i_finishers.Count == 0) return null;
+		float total = 0f;
+		foreach (EnemyBehaviorModuleDefinition finisher in i_finishers) total += Mathf.Max(0f, finisher.Weight ?? 1f);
+		float roll = (i_roll01 ?? UnityEngine.Random.value) * total;
+		foreach (EnemyBehaviorModuleDefinition finisher in i_finishers)
+		{
+			roll -= Mathf.Max(0f, finisher.Weight ?? 1f);
+			if (roll < 0f) return finisher;
+		}
+		return i_finishers[i_finishers.Count - 1];
+	}
+
+	private float SmallestTriggerRange()
+	{
+		float smallest = float.MaxValue;
+		foreach (EnemyBehaviorModuleDefinition finisher in m_definitions) smallest = Mathf.Min(smallest, finisher.TriggerRange.Value);
+		return smallest;
 	}
 
 	private void FixedUpdate()
@@ -1277,9 +1324,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	public bool ShouldApproachDownedPlayer(Player i_player)
 	{
-		return !m_isActive && m_definition != null && i_player != null && !m_npc.IsDead()
+		return !m_isActive && m_definitions.Count > 0 && i_player != null && !m_npc.IsDead()
 			&& (i_player.GetStateActorCurrent() == StateActor.Ragdoll || i_player.IsExposing())
-			&& Vector2.Distance(m_npc.GetPosFeet(), i_player.GetPosHips()) > m_definition.TriggerRange.Value * 0.85f;
+			&& Vector2.Distance(m_npc.GetPosFeet(), i_player.GetPosHips()) > SmallestTriggerRange() * 0.85f;
 	}
 
 	public bool GetIsActive() { return m_isActive; }
@@ -1289,14 +1336,22 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 			&& s_activeSession.HasOpenLateJoinSlotFor(i_candidate, true);
 	}
 
-	public bool TryBeginFromAttack(Player i_player)
+	public bool TryBeginFromAttack(Player i_player) { return TryBeginFromAttack(i_player, null); }
+
+	// i_finisherId: the attack's finisher, or null to pick one of the enemy's finishers by weight.
+	public bool TryBeginFromAttack(Player i_player, string i_finisherId)
 	{
-		if (m_isActive || m_definition == null || m_npc == null || i_player == null || m_npc.IsDead()
+		if (m_isActive || m_definitions.Count == 0 || m_npc == null || i_player == null || m_npc.IsDead()
 			|| i_player.IsDead() || i_player.GetIsBeingRaped() || Time.time < m_nextAllowed) return false;
+		EnemyBehaviorModuleDefinition chosen = i_finisherId == null ? PickByWeight(m_definitions) : m_definitions.Find(item => item.Id == i_finisherId);
+		if (chosen == null) return false;
+		m_definition = chosen;
 		m_player = i_player;
 		BeginFinisher();
 		return m_isActive;
 	}
+
+	public IReadOnlyList<EnemyBehaviorModuleDefinition> GetFinishers() { return m_definitions; }
 
 	private void BeginFinisher()
 	{
@@ -2965,12 +3020,15 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void Resolve()
 	{
+		EnemyBehaviorModuleDefinition running = m_isActive ? m_definition : null;
+		m_definitions.Clear();
 		m_definition = null;
 		if (string.IsNullOrEmpty(m_enemyDefinitionId)) return;
 		foreach (EnemyDefinition enemy in ModLoaderRuntime.EnemyDefinitions)
 			if (enemy.Id.ToString() == m_enemyDefinitionId)
 			{
-				m_definition = enemy.Behavior?.Modules?.Find(item => item != null && item.Type == "downedFinisher");
+				if (enemy.Behavior?.Modules != null) m_definitions.AddRange(enemy.Behavior.Modules.FindAll(item => item != null && item.Type == "downedFinisher"));
+				m_definition = running != null && m_definitions.Contains(running) ? running : m_definitions.Count > 0 ? m_definitions[0] : null;
 				return;
 			}
 	}
