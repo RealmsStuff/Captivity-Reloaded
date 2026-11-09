@@ -442,6 +442,7 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.spawn.join-enemy` | Error | joinCoreSpawners.enemy must be a core:enemy/... ID:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.join-entry` | Error | joinCoreSpawners entries cannot be null. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.join-minimum-wave` | Error | joinCoreSpawners.minimumWave must be between 0 and 10000. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.spawn.join-null` | Error | joinCoreSpawners must be a list: write [] or leave it out. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.original-inherit` | Error | Original enemies cannot inherit Core template spawners; reference their ID from a stage spawner instead. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.bounty` | Error | Bounty cannot be negative. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs, Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.stats.speed-acceleration` | Error | Acceleration must be between 0.01 and 1000. | `Assets/Editor/Modding/NewEnemyWizardWindow.cs` |

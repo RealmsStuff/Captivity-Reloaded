@@ -6,6 +6,10 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-09: `joinCoreSpawners` may not be null
+
+- `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.
+
 ### 2026-11-07: pack-authored player clip effects
 
 - Player animation effects may now be the pack's own. Experimental: an effect's `source` may be `{ "authoring": "..." }` (the file or tool the pack made it with, 1 to 260 characters) instead of the Core `{ "unityPrefab", "hierarchyPath" }`; `trigger` may be any short name (a lowercase letter, then letters, digits or hyphens, at most 40) such as `drip` or `sweat`, not only `thrust`, `cumThrust` or `unique`; and an effect trigger's `source` may be a pack label with up to eight `+`-joined beat names, such as `pip:splash` or `pip:slam+cum+overflow`, not only the three `enemy:` Core events.
