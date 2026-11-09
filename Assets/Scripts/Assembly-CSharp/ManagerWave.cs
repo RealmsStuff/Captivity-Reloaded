@@ -483,13 +483,16 @@ public class ManagerWave : MonoBehaviour
 			if (!string.IsNullOrEmpty(specialWave.TriggerSignal))
 			{
 				if (!m_signalArmedSpecialWaveIds.Contains(specialWave.Id)) continue;
-				m_signalArmedSpecialWaveIds.Remove(specialWave.Id);
 			}
 			else if (specialWave.EveryNthWave > 0 && m_numWaveCurrent % specialWave.EveryNthWave != 0) continue;
+			// A failed chance roll spends the signal; a passed one keeps it until its wave is the one picked, so a
+			// second armed wave waits for a later wave instead of losing its signal.
 			if (Random.value <= specialWave.Chance) candidates.Add(specialWave);
+			else m_signalArmedSpecialWaveIds.Remove(specialWave.Id);
 		}
 		if (candidates.Count == 0) return;
 		m_activeSpecialWave = PickSpecialWave(candidates);
+		m_signalArmedSpecialWaveIds.Remove(m_activeSpecialWave.Id);
 		if (!TryResolveSpecialWaveEnemies(m_activeSpecialWave, out List<NPC> enemies, out List<float> weights,
 			out List<ContentId> enemyIds))
 		{
