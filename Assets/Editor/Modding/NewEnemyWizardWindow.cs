@@ -452,8 +452,10 @@ namespace CaptivityReloaded.Editor.Modding
 			{
 				if (m_finisherEnemyClips.Count == 0 || m_finisherPlayerClips.Count == 0 || string.IsNullOrEmpty(m_finisherEnemyPath)) throw new InvalidOperationException("Discover the animation clips first.");
 				string root = ProjectPath(m_modFolder), packId = (string)JObject.Parse(File.ReadAllText(FilePath.Combine(root, "manifest.json")))["id"];
-				JObject enemy = JObject.Parse(File.ReadAllText(m_finisherEnemyPath)); JObject behavior = enemy["behavior"] as JObject ?? new JObject(); enemy["behavior"] = behavior;
-				JArray modules = behavior["modules"] as JArray ?? new JArray(); behavior["modules"] = modules;
+				// Assigning a token that is already in the JSON stores a copy, so only new ones are assigned.
+				JObject enemy = JObject.Parse(File.ReadAllText(m_finisherEnemyPath));
+				if (!(enemy["behavior"] is JObject behavior)) enemy["behavior"] = behavior = new JObject();
+				if (!(behavior["modules"] is JArray modules)) behavior["modules"] = modules = new JArray();
 				List<JObject> existingFinishers = modules.OfType<JObject>().Where(i_module => (string)i_module["type"] == "downedFinisher").ToList();
 				JArray existingPhases = existingFinishers.FirstOrDefault()?["phases"] as JArray;
 				if (!m_finisherUsePhases && m_preserveExistingAdditionalPhases && (existingPhases?.Count ?? 0) > 0)
@@ -462,32 +464,37 @@ namespace CaptivityReloaded.Editor.Modding
 				JObject edited = existingFinishers.FirstOrDefault();
 				int editedIndex = edited == null ? -1 : modules.IndexOf(edited);
 				edited?.Remove();
-				JObject finisher = new JObject { ["type"] = "downedFinisher", ["triggerRange"] = m_finisherTriggerRange, ["startDelaySeconds"] = m_finisherStartDelay,
-					["meterMax"] = m_finisherMeterMax, ["inputPower"] = m_finisherInputPower, ["decayPerSecond"] = m_finisherDecay, ["cooldownSeconds"] = m_finisherCooldown,
-					["successOutcome"] = new JObject { ["healthRecovery"] = m_finisherSuccessRecovery, ["enemyStunSeconds"] = m_finisherSuccessStun },
-					["failureOutcome"] = new JObject { ["healthDamage"] = m_finisherFailureHealth, ["strengthDamage"] = m_finisherFailureStrength,
-						["pleasure"] = m_finisherFailurePleasure, ["libido"] = m_finisherFailureLibido, ["playerRagdollSeconds"] = m_finisherFailureRagdoll } };
+				// Start from the finisher being edited and set only what the wizard shows, so the fields it has no
+				// controls for (id, weight, attachment, startFreezeSeconds, phaseBlendSeconds, statuses, ...) stay.
+				JObject finisher = edited == null ? new JObject() : (JObject)edited.DeepClone();
+				finisher["type"] = "downedFinisher"; finisher["triggerRange"] = m_finisherTriggerRange; finisher["startDelaySeconds"] = m_finisherStartDelay;
+				finisher["meterMax"] = m_finisherMeterMax; finisher["inputPower"] = m_finisherInputPower; finisher["decayPerSecond"] = m_finisherDecay; finisher["cooldownSeconds"] = m_finisherCooldown;
+				SetFinisherFields(finisher, "successOutcome", new JObject { ["healthRecovery"] = m_finisherSuccessRecovery, ["enemyStunSeconds"] = m_finisherSuccessStun });
+				SetFinisherFields(finisher, "failureOutcome", new JObject { ["healthDamage"] = m_finisherFailureHealth, ["strengthDamage"] = m_finisherFailureStrength,
+					["pleasure"] = m_finisherFailurePleasure, ["libido"] = m_finisherFailureLibido, ["playerRagdollSeconds"] = m_finisherFailureRagdoll });
 				if (!m_finisherUsePhases && m_finisherParticipants.Any(i_participant => i_participant.JoinPolicy == 0))
 					throw new InvalidDataException("phaseBoundary participants require a phased finisher. Choose startOnly or enable phases.");
-				if (m_finisherParticipants.Count > 0) finisher["participants"] = BuildFinisherParticipants();
+				if (m_finisherParticipants.Count > 0) finisher["participants"] = BuildFinisherParticipants(); else finisher.Remove("participants");
 				if (m_finisherUsePhases)
 				{
 					string phase1 = SemanticSlug(m_finisherPhase1), phase2 = SemanticSlug(m_finisherPhase2);
 					if (string.IsNullOrEmpty(phase1) || string.IsNullOrEmpty(phase2) || phase1 == phase2) throw new InvalidDataException("Two-phase finishers need two different semantic phase IDs.");
-					JArray phases = new JArray(BuildFinisherPhase(phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration, m_finisherInputPattern, false),
-						BuildFinisherPhase(phase2, m_finisherEnemyClipIndex2, m_finisherPlayerClipIndex2, m_finisherDuration2, m_finisherInputPattern2, true));
+					JObject existing1 = existingPhases?.ElementAtOrDefault(0) as JObject, existing2 = existingPhases?.ElementAtOrDefault(1) as JObject;
+					JArray phases = new JArray(BuildFinisherPhase(existing1, phase1, m_finisherEnemyClipIndex, m_finisherPlayerClipIndex, m_finisherDuration, m_finisherInputPattern, false),
+						BuildFinisherPhase(existing2, phase2, m_finisherEnemyClipIndex2, m_finisherPlayerClipIndex2, m_finisherDuration2, m_finisherInputPattern2, true));
 					if (m_preserveExistingAdditionalPhases && existingPhases != null)
 						foreach (JToken phase in existingPhases.Skip(2)) phases.Add(phase.DeepClone());
 					finisher["phases"] = phases;
+					foreach (string single in new[] { "durationSeconds", "animation", "playerAnimationRef", "inputPattern" }) finisher.Remove(single);
 				}
 				else
 				{
 					FinisherEnemyClip enemyClip = m_finisherEnemyClips[ClampEnemyIndex(m_finisherEnemyClipIndex)]; FinisherPlayerClip playerClip = m_finisherPlayerClips[ClampPlayerIndex(m_finisherPlayerClipIndex)];
 					finisher["durationSeconds"] = m_finisherDuration; finisher["animation"] = enemyClip.Semantic; finisher["playerAnimationRef"] = playerClip.Id;
 					finisher["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(m_finisherInputPattern, 0, FinisherInputPatterns.Length - 1)];
+					// These belong to phases only.
+					finisher.Remove("phases"); finisher.Remove("phaseBlendSeconds");
 				}
-				if (edited?["id"] != null) finisher["id"] = edited["id"];
-				if (edited?["weight"] != null) finisher["weight"] = edited["weight"];
 				if (editedIndex >= 0) modules.Insert(editedIndex, finisher); else modules.Add(finisher); string candidate = enemy.ToString(Formatting.Indented);
 				EnemyDefinitionLoadResult definitionValidation = EnemyDefinitionParser.Parse(candidate, packId, m_finisherEnemyPath);
 				if (!definitionValidation.Report.IsValid) throw new InvalidDataException(string.Join("\n", definitionValidation.Report.Issues.Where(i_issue => i_issue.Severity == ValidationSeverity.Error).Take(8).Select(i_issue => i_issue.Message).ToArray()));
@@ -513,19 +520,29 @@ namespace CaptivityReloaded.Editor.Modding
 			catch (Exception exception) { m_statusType = MessageType.Error; m_status = exception.Message; }
 		}
 
-		private JObject BuildFinisherPhase(string i_id, int i_enemyIndex, int i_playerIndex, float i_duration, int i_pattern, bool i_second)
+		// Copies i_values' fields into the object at i_key, keeping its other fields.
+		private static void SetFinisherFields(JObject i_finisher, string i_key, JObject i_values)
+		{
+			if (!(i_finisher[i_key] is JObject target)) { i_finisher[i_key] = i_values; return; }
+			foreach (JProperty property in i_values.Properties()) target[property.Name] = property.Value;
+		}
+
+		// i_existing is the phase this one replaces: the fields the wizard has no controls for (reactions, struggle,
+		// blendSeconds, contacts, ...) stay.
+		private JObject BuildFinisherPhase(JObject i_existing, string i_id, int i_enemyIndex, int i_playerIndex, float i_duration, int i_pattern, bool i_second)
 		{
 			FinisherEnemyClip enemy = m_finisherEnemyClips[ClampEnemyIndex(i_enemyIndex)]; FinisherPlayerClip player = m_finisherPlayerClips[ClampPlayerIndex(i_playerIndex)];
-			JObject result = new JObject { ["id"] = i_id, ["durationSeconds"] = i_duration, ["animation"] = enemy.Semantic, ["playerAnimationRef"] = player.Id,
-				["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(i_pattern, 0, FinisherInputPatterns.Length - 1)],
-				["inputPower"] = m_finisherInputPower, ["decayPerSecond"] = m_finisherDecay };
+			JObject result = i_existing == null ? new JObject() : (JObject)i_existing.DeepClone();
+			result["id"] = i_id; result["durationSeconds"] = i_duration; result["animation"] = enemy.Semantic; result["playerAnimationRef"] = player.Id;
+			result["inputPattern"] = FinisherInputPatterns[Mathf.Clamp(i_pattern, 0, FinisherInputPatterns.Length - 1)];
+			result["inputPower"] = m_finisherInputPower; result["decayPerSecond"] = m_finisherDecay;
 			JObject animations = new JObject();
 			foreach (FinisherParticipantDraft participant in m_finisherParticipants)
 			{
 				string animation = i_second ? participant.Phase2Animation : participant.Phase1Animation;
 				if (!string.IsNullOrWhiteSpace(animation)) animations[SemanticSlug(participant.Id)] = animation.Trim();
 			}
-			if (animations.Count > 0) result["participantAnimations"] = animations;
+			if (animations.Count > 0) result["participantAnimations"] = animations; else result.Remove("participantAnimations");
 			return result;
 		}
 
