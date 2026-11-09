@@ -6,7 +6,7 @@ using UnityEditor.Build.Reporting;
 public static class BuildReleasePlayers
 {
 	private static readonly string[] Scenes = { "Assets/Scenes/Main.unity" };
-	private const string ReleaseVersion = "2.2.2";
+	private const string ReleaseVersion = "2.2.3";
 
 	public static void BuildAll()
 	{
