@@ -14,7 +14,8 @@ namespace CaptivityReloaded.Modding
 		public float DurationSeconds { get; }
 		public bool Loop { get; }
 		public AnimationCurveSampler Sampler { get; }
-		// Cosmetic events only (sound, cameraShake); the original state's Unity events keep firing for gameplay.
+		// Cosmetic events only (sound, cameraShake); the original state's Unity events keep firing for gameplay. An
+		// additional attack's own clip also carries attackHit and impulse.
 		public IReadOnlyList<EnemyAnimationEventDefinition> Events { get; }
 		public NormalizedAnimationPresentation Presentation { get; }
 
@@ -32,7 +33,9 @@ namespace CaptivityReloaded.Modding
 	{
 		public Dictionary<string, CoreAnimationOverrideClip> Enemy { get; } = new Dictionary<string, CoreAnimationOverrideClip>(StringComparer.Ordinal);
 		public Dictionary<string, CoreAnimationOverrideClip> Player { get; } = new Dictionary<string, CoreAnimationOverrideClip>(StringComparer.Ordinal);
-		public bool IsEmpty => Enemy.Count == 0 && Player.Count == 0;
+		// Experimental: an inherited enemy's additionalAttacks whose clips resolved; Enemy holds their clips by name.
+		public List<EnemyAttackDefinition> ExtraAttacks { get; } = new List<EnemyAttackDefinition>();
+		public bool IsEmpty => Enemy.Count == 0 && Player.Count == 0 && ExtraAttacks.Count == 0;
 	}
 
 	// Resolves the two ways a pack changes a Core enemy's animation:
@@ -47,6 +50,7 @@ namespace CaptivityReloaded.Modding
 	{
 		private static readonly Dictionary<string, CoreAnimationOverrideSet> s_sets = new Dictionary<string, CoreAnimationOverrideSet>(StringComparer.Ordinal);
 		private static readonly HashSet<string> CosmeticEvents = new HashSet<string>(new[] { "sound", "cameraShake", "cue" }, StringComparer.Ordinal);
+		private static readonly HashSet<string> AttackEvents = new HashSet<string>(new[] { "sound", "cameraShake", "cue", "attackHit", "impulse" }, StringComparer.Ordinal);
 		// How far an override's length may differ from the original state's before a warning.
 		public const float LengthTolerance = 0.05f;
 
@@ -71,6 +75,7 @@ namespace CaptivityReloaded.Modding
 			foreach (KeyValuePair<string, CoreAnimationOverrideClip> pair in template.Player) merged.Player[pair.Key] = pair.Value;
 			foreach (KeyValuePair<string, CoreAnimationOverrideClip> pair in own.Enemy) merged.Enemy[pair.Key] = pair.Value;
 			foreach (KeyValuePair<string, CoreAnimationOverrideClip> pair in own.Player) merged.Player[pair.Key] = pair.Value;
+			merged.ExtraAttacks.AddRange(own.ExtraAttacks);
 			return merged.IsEmpty ? null : merged;
 		}
 
@@ -144,7 +149,7 @@ namespace CaptivityReloaded.Modding
 			foreach (EnemyDefinition definition in i_enemies ?? new EnemyDefinition[0])
 			{
 				if (definition == null || !definition.Extends.HasValue) continue;
-				if (definition.AnimationReferences.Count == 0 && definition.PlayerAnimationReferences.Count == 0) continue;
+				if (definition.AnimationReferences.Count == 0 && definition.PlayerAnimationReferences.Count == 0 && definition.AdditionalAttacks.Count == 0) continue;
 				ContentId template = definition.Extends.Value;
 				if (!i_map.TryGet(template.ToString(), out CoreAnimationRuntimeEnemy enemy))
 				{
@@ -153,6 +158,13 @@ namespace CaptivityReloaded.Modding
 				}
 				packs.TryGetValue(definition.PackId, out ModPack pack);
 				CoreAnimationOverrideSet set = null;
+				// Clip names only additional attacks play: not Core states, so they may carry attackHit and impulse.
+				HashSet<string> attackClips = new HashSet<string>(StringComparer.Ordinal);
+				foreach (EnemyAttackDefinition attack in definition.AdditionalAttacks)
+				{
+					if (attack?.Animation != null && !enemy.HasSemantic(attack.Animation)) attackClips.Add(attack.Animation);
+					if (attack?.MissAnimation != null && !enemy.HasSemantic(attack.MissAnimation)) attackClips.Add(attack.MissAnimation);
+				}
 				foreach (KeyValuePair<string, string> pair in definition.AnimationReferences)
 				{
 					if (!ContentId.TryParse(pair.Value, out ContentId id))
@@ -160,7 +172,7 @@ namespace CaptivityReloaded.Modding
 						io_report.Add(ValidationSeverity.Error, "enemy.animation-ref-missing", "Unknown normalized enemy animation: " + pair.Value, definition.Source);
 						continue;
 					}
-					CoreAnimationOverrideClip clip = ResolveEnemyClip(enemy, pair.Key, id, template, definition.Id, pack, definition.Source, io_report);
+					CoreAnimationOverrideClip clip = ResolveEnemyClip(enemy, pair.Key, id, template, definition.Id, pack, definition.Source, io_report, attackClips.Contains(pair.Key));
 					if (clip != null) (set = set ?? GetOrAdd(definition.Id.ToString())).Enemy[pair.Key] = clip;
 				}
 				foreach (KeyValuePair<string, string> pair in definition.PlayerAnimationReferences)
@@ -173,7 +185,38 @@ namespace CaptivityReloaded.Modding
 					CoreAnimationOverrideClip clip = ResolvePlayerClip(enemy, pair.Key, id, pack, definition.Source, io_report);
 					if (clip != null) (set = set ?? GetOrAdd(definition.Id.ToString())).Player[pair.Key] = clip;
 				}
+				foreach (EnemyAttackDefinition attack in definition.AdditionalAttacks)
+				{
+					if (attack == null) continue;
+					CoreAnimationOverrideClip clip = null, miss = null;
+					bool hasClip = set != null && set.Enemy.TryGetValue(attack.Animation ?? string.Empty, out clip);
+					if (attack.MissAnimation != null && (set == null || !set.Enemy.TryGetValue(attack.MissAnimation, out miss))) hasClip = false;
+					if (hasClip && CheckExtraAttack(enemy, attack, clip, definition.Source, io_report)) set.ExtraAttacks.Add(attack);
+				}
 			}
+		}
+
+		// An additional attack's timing and projectiles against its clip and the Core rig, as for an original enemy's
+		// attacks: a hit time or attackHit events, one attackHit per multiStage stage, nothing after the attack ends.
+		private static bool CheckExtraAttack(CoreAnimationRuntimeEnemy i_enemy, EnemyAttackDefinition i_attack, CoreAnimationOverrideClip i_clip, string i_source, ValidationReport io_report)
+		{
+			int errors = io_report.Issues.Count(i_issue => i_issue.Severity == ValidationSeverity.Error);
+			int hits = i_clip.Events.Count(i_event => i_event != null && i_event.Type == "attackHit");
+			if (!i_attack.HitTimeSeconds.HasValue && hits == 0)
+				io_report.Add(ValidationSeverity.Error, "core-extra-attack.hit-timing", "Additional attack " + i_attack.Id + " needs hitTimeSeconds or an attackHit event in its clip.", i_source);
+			if (i_attack.Type == "multiStage" && (i_attack.Stages == null || hits != i_attack.Stages.Count))
+				io_report.Add(ValidationSeverity.Error, "core-extra-attack.stage-events", "multiStage attack " + i_attack.Id + " needs exactly one attackHit event per stage in its clip.", i_source);
+			foreach (EnemyAnimationEventDefinition animationEvent in i_clip.Events)
+				if (animationEvent != null && i_attack.DurationSeconds.HasValue && animationEvent.Time > i_attack.DurationSeconds.Value)
+					io_report.Add(ValidationSeverity.Error, "core-extra-attack.event-after-attack", "Animation event at " + animationEvent.Time + " seconds occurs after additional attack " + i_attack.Id + " has ended.", i_source);
+			List<string> regions = new List<string>();
+			if (i_attack.Type == "projectile") regions.Add(i_attack.ProjectileRegion);
+			foreach (EnemyAttackStageDefinition stage in i_attack.Stages ?? new List<EnemyAttackStageDefinition>())
+				if (stage?.Type == "projectile") regions.Add(stage.ProjectileRegion ?? i_attack.ProjectileRegion);
+			foreach (string region in regions)
+				if (!i_enemy.TryGetBone(region ?? string.Empty, out _))
+					io_report.Add(ValidationSeverity.Error, "core-extra-attack.projectile-region", "On a Core enemy, projectileRegion names a bone of its rig (the projectile shows that bone's sprite): " + (region ?? "<null>") + " is not a bone of " + i_enemy.Id + ".", i_source);
+			return io_report.Issues.Count(i_issue => i_issue.Severity == ValidationSeverity.Error) == errors;
 		}
 
 		private static void AddCandidate(Dictionary<string, List<Candidate>> io_slots, List<string> io_order, string i_slot, AssetPatchDefinition i_patch,
@@ -192,10 +235,11 @@ namespace CaptivityReloaded.Modding
 
 		// i_owner: the inherited enemy whose ref this is (its clips may name it or its template), or null for a patch
 		// (the clip must name the patched Core enemy).
+		// i_attackClip: a clip only an additional attack plays (its name is not a Core state).
 		private static CoreAnimationOverrideClip ResolveEnemyClip(CoreAnimationRuntimeEnemy i_enemy, string i_semantic, ContentId i_id, ContentId i_template,
-			ContentId? i_owner, ModPack i_pack, string i_source, ValidationReport io_report)
+			ContentId? i_owner, ModPack i_pack, string i_source, ValidationReport io_report, bool i_attackClip = false)
 		{
-			if (!i_enemy.HasSemantic(i_semantic))
+			if (!i_attackClip && !i_enemy.HasSemantic(i_semantic))
 			{
 				io_report.Add(ValidationSeverity.Error, "core-animation.semantic", "Not one of the Core enemy's clips: " + i_semantic + " on " + i_template + ".", i_source);
 				return null;
@@ -216,10 +260,10 @@ namespace CaptivityReloaded.Modding
 			foreach (NormalizedEffectDefinition effect in animation.Effects)
 				CheckBone(i_enemy, effect?.Target != null && effect.Target.StartsWith("enemy-bone/", StringComparison.Ordinal) ? "bone/" + effect.Target.Substring(11) : effect?.Target, animation, io_report);
 			foreach (EnemyAnimationEventDefinition animationEvent in animation.Events)
-				if (animationEvent != null && !CosmeticEvents.Contains(animationEvent.Type))
+				if (animationEvent != null && !(i_attackClip ? AttackEvents : CosmeticEvents).Contains(animationEvent.Type))
 					io_report.Add(ValidationSeverity.Error, "core-animation.event", "A Core enemy's clip keeps its own gameplay; an override may only carry sound, cameraShake and cue events (not " + animationEvent.Type + "): " + animation.Id, animation.Source);
 			if (io_report.Issues.Count(i_issue => i_issue.Severity == ValidationSeverity.Error) != issues) return null;
-			WarnLength(i_enemy.OriginalSeconds(i_semantic), animation.DurationSeconds, animation.Id + " (" + i_semantic + ")", animation.Source, io_report);
+			if (!i_attackClip) WarnLength(i_enemy.OriginalSeconds(i_semantic), animation.DurationSeconds, animation.Id + " (" + i_semantic + ")", animation.Source, io_report);
 			return new CoreAnimationOverrideClip(animation.Id, animation.PackId, i_pack?.RootPath, animation.Source, animation.DurationSeconds, animation.Loop,
 				animation.CreateSampler(), animation.Events.Where(i_event => i_event != null && i_event.Type != "cue").ToList(), animation.CreatePresentation());
 		}

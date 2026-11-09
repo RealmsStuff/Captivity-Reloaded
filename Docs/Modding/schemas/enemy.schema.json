@@ -17,6 +17,7 @@
     "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" },
     "spawn": { "$ref": "#/$defs/spawn", "x-stability": "experimental" },
     "attacks": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/attack" }, "x-stability": "experimental" },
+    "additionalAttacks": { "description": "Inherited enemies only: new attacks in the original-enemy format, played on the Core rig with a clip from animationRefs. No grab.", "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/additionalAttack" }, "x-stability": "experimental" },
     "behavior": { "$ref": "#/$defs/behavior", "x-stability": "experimental" },
     "animation": { "$ref": "#/$defs/animation", "x-stability": "experimental" },
     "animationRefs": { "type": "object", "maxProperties": 64, "propertyNames": { "$ref": "#/$defs/name" }, "additionalProperties": { "$ref": "#/$defs/enemyAnimationId" }, "x-stability": "experimental" },
@@ -33,7 +34,7 @@
       }
     },
     {
-      "not": { "anyOf": [{ "required": ["extends"] }, { "required": ["playerAnimationRefs"] }] },
+      "not": { "anyOf": [{ "required": ["extends"] }, { "required": ["playerAnimationRefs"] }, { "required": ["additionalAttacks"] }] },
       "required": ["stats", "visual", "ai", "attacks"],
 	  "anyOf": [{ "required": ["animation"], "properties": { "animation": { "required": ["clips"] } } }, { "required": ["animationRefs"] }],
       "properties": {
@@ -100,6 +101,12 @@
       { "if": { "properties": { "type": { "const": "projectile" } }, "required": ["type"] }, "then": { "required": ["projectileRegion", "projectileSpeed", "projectileLifetimeSeconds", "projectileRadius"] } },
       { "if": { "properties": { "type": { "const": "area" } }, "required": ["type"] }, "then": { "required": ["areaRadius"] } },
       { "if": { "properties": { "type": { "const": "multiStage" } }, "required": ["type"] }, "then": { "required": ["stages"] } }
+    ] },
+    "additionalAttack": { "allOf": [
+      { "$ref": "#/$defs/attack" },
+      { "required": ["id", "type", "animation", "chance", "damage", "cooldownSeconds", "initiateRange", "hitRange", "durationSeconds"] },
+      { "not": { "required": ["index"] } },
+      { "properties": { "type": { "enum": ["melee", "hitscan", "projectile", "area", "multiStage"] }, "stages": { "items": { "properties": { "type": { "enum": ["melee", "hitscan", "projectile", "area"] } } } } } }
     ] },
     "attackStage": { "type": "object", "additionalProperties": false, "required": ["type"], "properties": {
       "type": { "enum": ["melee", "hitscan", "projectile", "area", "grab"] },

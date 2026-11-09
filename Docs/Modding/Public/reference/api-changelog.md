@@ -31,6 +31,13 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 - New validation code `enemy.stats.finisher-start-freeze` for values outside 0 to 1.
 - Finishers without the field start as before.
 
+### 2026-11-06: extra attacks on Core enemies
+
+- Inherited enemies take an optional experimental `additionalAttacks` list (at most 8): new attacks in the original-enemy attack format (`melee`, `hitscan`, `projectile`, `area`, `multiStage`; not `grab`), each playing a clip from the enemy's `animationRefs` on its Core template's rig. Clips used only by additional attacks may carry `attackHit` and `impulse` events. On a Core rig `projectileRegion` names a bone, whose current sprite the projectile shows.
+- The Core AI keeps its own attacks; at most once a second the enemy picks between its Core attack and the additional attacks in range by `chance`. An additional attack holds the Core AI while it runs, lands hits through the same delivery as original enemies' attacks, and shares one cooldown with the Core attacks. The Death Hound waits out its charge and the Goblin Marksman its shooting.
+- New validation codes `enemy.additional-attacks.original`, `.limit`, `.entry`, `.id`, `.index`, `.grab`, `.type`, `.animation`, `.miss-animation`, `.hit-time`, and `core-extra-attack.hit-timing`, `.stage-events`, `.event-after-attack`, `.projectile-region`.
+- Packs using `additionalAttacks` need a game build with this feature and do not load on 2.2.2.
+
 ### 2026-11-06: animating Core enemies
 
 - Asset patches on a Core enemy (`core:enemy/<slug>`) take optional experimental `animations` (semantic clip name -> `enemyAnimation`) and `playerAnimations` (`finisher-phase-N` -> `playerAnimation`); `replacements` is now optional when either is present. They replace that enemy's clips everywhere it appears. Conflicts follow the asset patch rules with the slot IDs `<target>/animation/<semantic>` and `<target>/player-animation/finisher-phase-N`.

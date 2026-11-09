@@ -101,6 +101,7 @@ public static class CoreContentAdapter
 				CoreAssetSlotBinder.RegisterCoreEnemySlots(npc, definition.Id);
 				// Plays mod clips in place of its Animator states when a pack replaces them or a variant adds its own.
 				CoreAnimationOverrideDriver.Attach(npc);
+				CoreExtraAttackController.Attach(npc);
 				return;
 			}
 		}

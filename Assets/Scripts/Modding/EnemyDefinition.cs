@@ -486,6 +486,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("animationRefs")] public Dictionary<string, string> AnimationReferences { get; set; } = new Dictionary<string, string>();
 		// Experimental, inherited enemies only: the player's side of the template's grab phases, finisher-phase-N -> playerAnimation ID.
 		[JsonProperty("playerAnimationRefs")] public Dictionary<string, string> PlayerAnimationReferences { get; set; }
+		// Experimental, inherited enemies only: new attacks in the original-enemy format, played on the Core rig.
+		[JsonProperty("additionalAttacks")] public List<EnemyAttackDefinition> AdditionalAttacks { get; set; }
 		[JsonProperty("ai")] public EnemyAiDefinition Ai { get; set; }
 		[JsonProperty("drops")] public EnemyDropsDefinition Drops { get; set; }
 	}
@@ -506,6 +508,7 @@ namespace CaptivityReloaded.Modding
 		public EnemyAnimationDefinition Animation { get; }
 		public IReadOnlyDictionary<string, string> AnimationReferences { get; }
 		public IReadOnlyDictionary<string, string> PlayerAnimationReferences { get; }
+		public IReadOnlyList<EnemyAttackDefinition> AdditionalAttacks { get; }
 		public EnemyAiDefinition Ai { get; }
 		public EnemyDropsDefinition Drops { get; }
 
@@ -525,6 +528,7 @@ namespace CaptivityReloaded.Modding
 			Animation = i_document.Animation ?? new EnemyAnimationDefinition();
 			AnimationReferences = i_document.AnimationReferences ?? new Dictionary<string, string>();
 			PlayerAnimationReferences = i_document.PlayerAnimationReferences ?? new Dictionary<string, string>();
+			AdditionalAttacks = i_document.AdditionalAttacks ?? new List<EnemyAttackDefinition>();
 			Ai = i_document.Ai;
 			Drops = i_document.Drops ?? new EnemyDropsDefinition();
 		}
@@ -661,6 +665,7 @@ namespace CaptivityReloaded.Modding
 			}
 			ValidateAnimationReferences(i_document.AnimationReferences, io_report, i_source);
 			ValidatePlayerAnimationReferences(i_document.PlayerAnimationReferences, i_original, io_report, i_source);
+			ValidateAdditionalAttacks(i_document, i_original, io_report, i_source);
 			if (i_document.Animation != null) ValidateAnimation(i_document.Animation, i_document.AnimationReferences, i_original, i_document.Visual,
 				i_document.Attacks, i_document.Behavior?.Modules, io_report, i_source);
 			else if (i_original && (i_document.AnimationReferences == null || i_document.AnimationReferences.Count == 0))
@@ -744,8 +749,62 @@ namespace CaptivityReloaded.Modding
 			}
 		}
 
+		public const int MaximumAdditionalAttacks = 8;
+
+		// Experimental: an inherited enemy's additionalAttacks use the original-enemy attack format and play a clip from
+		// its animationRefs on the Core rig. Grab is not supported: a Core enemy's grab starts from its own logic.
+		// Clip timing (hit events, stage events) and projectileRegion bones are checked against the Core rig when the
+		// clips resolve (CoreAnimationOverrides).
+		private static void ValidateAdditionalAttacks(EnemyDefinitionDocument i_document, bool i_original, ValidationReport io_report, string i_source)
+		{
+			List<EnemyAttackDefinition> attacks = i_document.AdditionalAttacks;
+			if (attacks == null || attacks.Count == 0) return;
+			if (i_original)
+			{
+				io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.original", "additionalAttacks is for inherited enemies; original enemies list every attack under attacks.", i_source);
+				return;
+			}
+			if (attacks.Count > MaximumAdditionalAttacks)
+				io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.limit", "additionalAttacks supports at most 8 attacks.", i_source);
+			HashSet<string> ids = new HashSet<string>(StringComparer.Ordinal);
+			foreach (EnemyAttackDefinition attack in attacks)
+			{
+				if (attack == null)
+				{
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.entry", "Additional attack entries cannot be null.", i_source);
+					continue;
+				}
+				if (!IsSemanticName(attack.Id) || !ids.Add(attack.Id))
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.id", "Additional attack IDs must be unique semantic names.", i_source);
+				if (attack.Index >= 0)
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.index", "Additional attacks are new attacks: they have an id, not an index.", i_source);
+				bool grab = attack.Type == "grab" || (attack.Stages ?? new List<EnemyAttackStageDefinition>()).Exists(stage => stage != null && stage.Type == "grab");
+				if (grab)
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.grab", "A Core enemy's grab starts from its own logic, so additional attacks cannot grab: " + attack.Id, i_source);
+				else if (!IsAttackDeliveryType(attack.Type) && attack.Type != "multiStage")
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.type", "Additional attacks support melee, hitscan, projectile, area, or multiStage.", i_source);
+				if (string.IsNullOrWhiteSpace(attack.Animation) || i_document.AnimationReferences == null || !i_document.AnimationReferences.ContainsKey(attack.Animation))
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.animation", "An additional attack's animation must be a clip name from this enemy's animationRefs: " + (attack.Animation ?? "<null>"), i_source);
+				if (attack.MissAnimation != null && (i_document.AnimationReferences == null || !i_document.AnimationReferences.ContainsKey(attack.MissAnimation)))
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.miss-animation", "An additional attack's missAnimation must be a clip name from this enemy's animationRefs: " + attack.MissAnimation, i_source);
+				ValidateRequiredRange(attack.Chance, 0f, 1f, "attack-chance", io_report, i_source);
+				ValidateRequiredRange(attack.Damage, 0f, 100000f, "attack-damage", io_report, i_source);
+				ValidateRequiredRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
+				ValidateRequiredRange(attack.InitiateRange, 0f, 1000f, "attack-initiate-range", io_report, i_source);
+				ValidateRequiredRange(attack.HitRange, 0f, 1000f, "attack-hit-range", io_report, i_source);
+				ValidateRequiredRange(attack.DurationSeconds, 0.01f, 600f, "attack-duration", io_report, i_source);
+				ValidateRange(attack.HitTimeSeconds, 0f, 600f, "attack-hit-time", io_report, i_source);
+				ValidateRange(attack.KnockbackX, 0f, 1000f, "attack-knockback-x", io_report, i_source);
+				ValidateRange(attack.KnockbackY, 0f, 1000f, "attack-knockback-y", io_report, i_source);
+				ValidateRange(attack.RagdollSeconds, 0f, 30f, "attack-ragdoll", io_report, i_source);
+				if (attack.HitTimeSeconds.HasValue && attack.DurationSeconds.HasValue && attack.HitTimeSeconds > attack.DurationSeconds)
+					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.hit-time", "hitTimeSeconds cannot exceed durationSeconds.", i_source);
+				if (!grab) ValidateAttackDelivery(attack, null, io_report, i_source, true);
+			}
+		}
+
 		private static void ValidateAttackDelivery(EnemyAttackDefinition i_attack, EnemyVisualDefinition i_visual,
-			ValidationReport io_report, string i_source)
+			ValidationReport io_report, string i_source, bool i_coreRig = false)
 		{
 			ValidateRange(i_attack.OffsetX, -1000f, 1000f, "attack-offset-x", io_report, i_source);
 			ValidateRange(i_attack.OffsetY, -1000f, 1000f, "attack-offset-y", io_report, i_source);
@@ -770,7 +829,7 @@ namespace CaptivityReloaded.Modding
 						stage.KnockbackY ?? i_attack.KnockbackY, stage.HitRange ?? i_attack.HitRange, stage.AreaRadius ?? i_attack.AreaRadius,
 						stage.ProjectileRegion ?? i_attack.ProjectileRegion, stage.ProjectileSpeed ?? i_attack.ProjectileSpeed,
 						stage.ProjectileLifetimeSeconds ?? i_attack.ProjectileLifetimeSeconds, stage.ProjectileRadius ?? i_attack.ProjectileRadius,
-						stage.ProjectileGravityScale ?? i_attack.ProjectileGravityScale, i_visual, io_report, i_source);
+						stage.ProjectileGravityScale ?? i_attack.ProjectileGravityScale, i_visual, io_report, i_source, i_coreRig);
 				}
 				return;
 			}
@@ -779,13 +838,13 @@ namespace CaptivityReloaded.Modding
 			if (IsAttackDeliveryType(i_attack.Type))
 				ValidateAttackDeliveryFields(i_attack.Type, i_attack.Damage, i_attack.KnockbackX, i_attack.KnockbackY, i_attack.HitRange,
 					i_attack.AreaRadius, i_attack.ProjectileRegion, i_attack.ProjectileSpeed, i_attack.ProjectileLifetimeSeconds,
-					i_attack.ProjectileRadius, i_attack.ProjectileGravityScale, i_visual, io_report, i_source);
+					i_attack.ProjectileRadius, i_attack.ProjectileGravityScale, i_visual, io_report, i_source, i_coreRig);
 		}
 
 		private static void ValidateAttackDeliveryFields(string i_type, float? i_damage, float? i_knockbackX, float? i_knockbackY,
 			float? i_hitRange, float? i_areaRadius, string i_projectileRegion, float? i_projectileSpeed,
 			float? i_projectileLifetime, float? i_projectileRadius, float? i_projectileGravity, EnemyVisualDefinition i_visual,
-			ValidationReport io_report, string i_source)
+			ValidationReport io_report, string i_source, bool i_coreRig = false)
 		{
 			ValidateRequiredRange(i_damage, 0f, 100000f, "attack-delivery-damage", io_report, i_source);
 			ValidateRange(i_knockbackX, 0f, 1000f, "attack-delivery-knockback-x", io_report, i_source);
@@ -793,7 +852,9 @@ namespace CaptivityReloaded.Modding
 			ValidateRequiredRange(i_hitRange, 0f, 1000f, "attack-delivery-hit-range", io_report, i_source);
 			if (i_type == "area") ValidateRequiredRange(i_areaRadius, 0.05f, 100f, "attack-area-radius", io_report, i_source);
 			if (i_type != "projectile") return;
-			if (!IsSemanticName(i_projectileRegion) || i_visual?.Regions == null || !i_visual.Regions.ContainsKey(i_projectileRegion))
+			// On a Core rig, projectileRegion names one of its bones (checked when the clips resolve): the projectile shows
+			// that bone's current sprite.
+			if (i_coreRig ? !IsSemanticName(i_projectileRegion) : (!IsSemanticName(i_projectileRegion) || i_visual?.Regions == null || !i_visual.Regions.ContainsKey(i_projectileRegion)))
 				io_report.Add(ValidationSeverity.Error, "enemy.attacks.projectile-region", "Projectile attacks require projectileRegion to reference an atlas region.", i_source);
 			ValidateRequiredRange(i_projectileSpeed, 0.05f, 1000f, "attack-projectile-speed", io_report, i_source);
 			ValidateRequiredRange(i_projectileLifetime, 0.05f, 60f, "attack-projectile-lifetime", io_report, i_source);
