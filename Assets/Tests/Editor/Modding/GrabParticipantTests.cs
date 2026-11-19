@@ -54,6 +54,33 @@ namespace CaptivityReloaded.Modding.Tests
 			}
 		}
 
+		// offsetX and facing are written for a grab facing right. A grab facing left put the extra on the same world side
+		// facing the same world way, so "right of the player, facing them" stood behind the pair facing away.
+		[TestCase(false, 1.25f, "left", true)]
+		[TestCase(true, -1.25f, "left", false)]
+		[TestCase(false, 1.25f, "right", false)]
+		[TestCase(true, -1.25f, "right", true)]
+		public void AParticipant_TurnsWithTheGrab(bool i_ownerFacingLeft, float i_worldOffsetX, string i_facing, bool i_facingLeft)
+		{
+			Assert.That(FinisherType, Is.Not.Null);
+			Vector2 feet = (Vector2)FinisherType.GetMethod("GetParticipantFeet")
+				.Invoke(null, new object[] { new Vector2(10f, 2f), i_ownerFacingLeft, 1.25f, 0.5f });
+			Assert.That(feet.x, Is.EqualTo(10f + i_worldOffsetX).Within(1e-5f));
+			Assert.That(feet.y, Is.EqualTo(2.5f).Within(1e-5f), "offsetY is never mirrored.");
+			object facingLeft = FinisherType.GetMethod("GetParticipantFacingLeft").Invoke(null, new object[] { i_facing, i_ownerFacingLeft });
+			Assert.That(facingLeft, Is.EqualTo(i_facingLeft));
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void APreservingParticipant_KeepsItsOwnFacing(bool i_ownerFacingLeft)
+		{
+			Assert.That(FinisherType, Is.Not.Null);
+			MethodInfo facing = FinisherType.GetMethod("GetParticipantFacingLeft");
+			Assert.That(facing.Invoke(null, new object[] { "preserve", i_ownerFacingLeft }), Is.Null);
+			Assert.That(facing.Invoke(null, new object[] { null, i_ownerFacingLeft }), Is.Null);
+		}
+
 		private static void Set(object i_target, string i_field, object i_value)
 		{
 			for (System.Type type = i_target.GetType(); type != null; type = type.BaseType)

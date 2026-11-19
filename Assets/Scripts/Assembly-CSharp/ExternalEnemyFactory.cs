@@ -2023,9 +2023,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		npc.SetIsThinking(false);
 		npc.SetIsInvulnerable(true, false);
 		Vector2 anchor = m_player.GetPosFeet();
-		npc.PlaceFeetOnPos(anchor + new Vector2(i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
-		if (i_participant.Definition.Facing == "left") npc.SetIsFacingLeft(true);
-		else if (i_participant.Definition.Facing == "right") npc.SetIsFacingLeft(false);
+		bool ownerFacingLeft = m_npc != null && m_npc.GetIsFacingLeft();
+		npc.PlaceFeetOnPos(GetParticipantFeet(anchor, ownerFacingLeft, i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
+		bool? facingLeft = GetParticipantFacingLeft(i_participant.Definition.Facing, ownerFacingLeft);
+		if (facingLeft.HasValue) npc.SetIsFacingLeft(facingLeft.Value);
 		if (i_participant.Body != null)
 		{
 			i_participant.Body.velocity = Vector2.zero;
@@ -2036,6 +2037,21 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		IgnoreParticipantCollisions(npc);
 		PromotePairedSorting(npc.gameObject);
 		i_participant.Started = true;
+	}
+
+	// A participant's offsetX/offsetY and facing are written for a grab facing right, like the pair's clips: when the
+	// grabbing enemy faces left, the offset is mirrored and left and right swap, so the extra stays on the same side
+	// of the pair. "preserve" (null here) keeps the NPC's own facing.
+	public static Vector2 GetParticipantFeet(Vector2 i_anchor, bool i_ownerFacingLeft, float i_offsetX, float i_offsetY)
+	{
+		return i_anchor + new Vector2(i_ownerFacingLeft ? -i_offsetX : i_offsetX, i_offsetY);
+	}
+
+	public static bool? GetParticipantFacingLeft(string i_facing, bool i_ownerFacingLeft)
+	{
+		if (i_facing == "left") return !i_ownerFacingLeft;
+		if (i_facing == "right") return i_ownerFacingLeft;
+		return null;
 	}
 
 	private void IgnoreParticipantCollisions(NPC i_npc)
