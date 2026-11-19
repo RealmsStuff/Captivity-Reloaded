@@ -6,6 +6,16 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: player hit reactions and hit stop
+
+- Added optional experimental `playerReactionRef` to original-enemy attacks, their `multiStage` stages and inherited enemies' `additionalAttacks`: a `playerAnimation` layered on the player when that hit lands, such as the head snapping back from a jab. See [Player hit reactions](../content/enemies.md#player-hit-reactions-experimental).
+  - The player stays free: the clip's bone turns, measured from its first frame, are added to whatever the player is doing, faded in and out. Position, scale, sprite and colour keys are ignored.
+  - Pose it for an attacker in front of the player; a hit from behind plays it turned round. A stage's reaction replaces the attack's; a projectile carries it to its impact.
+  - The clip plays once, lasts at most 2 seconds and has no events. It is skipped when the hit knocks the player down, and stops if they are knocked down or grabbed.
+  - New validation codes `enemy.attacks.player-reaction-ref`, `enemy.attacks.player-reaction-inherited` (inherited Core attack overrides reject the field), `enemy.player-reaction-animation-events` and `enemy.player-reaction-animation-length`.
+- Added the experimental enemy animation event `hitStop`: the game holds still for `durationSeconds` of real time (more than 0, at most 0.25) so a big hit reads as heavy. A hold already running is extended, not stacked, and nothing happens while the game is paused. It is accepted in original enemies' normalized `enemyAnimation` documents only, not in inline `animation.clips` or Core enemy clips (`core-animation.event`), and like other gameplay events not in a looping clip. New validation code `enemy-animation.event-hit-stop`.
+- Packs without these fields are unchanged. Packs that use them need a game build with this feature and do not load on 2.2.2.
+
 ### 2026-11-09: `joinCoreSpawners` may not be null
 
 - `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.
