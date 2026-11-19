@@ -356,6 +356,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.attacks.index` | Error | Inherited attack indexes must be unique values from 0 through 31. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.miss-animation-inherited` | Error | missAnimation is supported only on original-enemy attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.miss-animation-missing` | Error | Attack references an unknown missAnimation clip:  | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.player-reaction-inherited` | Error | playerReactionRef is supported only on original-enemy attacks and additionalAttacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.attacks.player-reaction-ref` | Error | playerReactionRef must be a player-animation content ID. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.projectile-region` | Error | Projectile attacks require projectileRegion to reference an atlas region. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.ragdoll-inherited` | Error | ragdollSeconds is supported only on original-enemy attacks. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.attacks.required` | Error | Original enemies require at least one attack. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
@@ -436,6 +438,8 @@ Regenerate it with `Tools/Documentation/Generate-ValidationCatalog.ps1`. Codes a
 | `enemy.player-animation-refs.limit` | Error | playerAnimationRefs supports at most 32 phases. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.player-animation-refs.name` | Error | playerAnimationRefs keys must be finisher-phase-N. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.player-animation-refs.original` | Error | playerAnimationRefs is for inherited enemies; original enemies name the player's clips in their finisher phases. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
+| `enemy.player-reaction-animation-events` | Error | A playerReactionRef animation cannot have events:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
+| `enemy.player-reaction-animation-length` | Error | A playerReactionRef animation must play once and last at most  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.spawn-on-death-missing` | Error | Enemy references an unknown spawnOnDeath enemy:  | `Assets/Scripts/Modding/ModLoaderBootstrap.cs` |
 | `enemy.spawn.join-count` | Error | joinCoreSpawners accepts at most 32 entries. | `Assets/Scripts/Modding/EnemyDefinition.cs` |
 | `enemy.spawn.join-duplicate` | Error | joinCoreSpawners lists  | `Assets/Scripts/Modding/EnemyDefinition.cs` |

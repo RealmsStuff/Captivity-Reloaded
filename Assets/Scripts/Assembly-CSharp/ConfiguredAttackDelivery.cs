@@ -105,7 +105,7 @@ public static class ConfiguredAttackDelivery
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * Multiplier(i_owner, "KnockbackYMultiplier");
 		projectileObject.AddComponent<ModularEnemyProjectile>().Configure(i_owner, damage, knockbackX, knockbackY,
 			Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f),
-			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f), i_isCoreAttack);
+			Resolve(i_stage?.ProjectileLifetimeSeconds, i_definition.ProjectileLifetimeSeconds, 4f), i_isCoreAttack, PlayerReaction(i_definition, i_stage));
 	}
 
 	// Whether the hit landed. A player who can't be attacked right now takes no damage, so the attack missed.
@@ -115,12 +115,15 @@ public static class ConfiguredAttackDelivery
 		float damage = Resolve(i_stage?.Damage, i_definition.Damage, 0f) * Multiplier(i_owner, "DamageMultiplier");
 		float knockbackX = Resolve(i_stage?.KnockbackX, i_definition.KnockbackX, 0f) * Multiplier(i_owner, "KnockbackXMultiplier");
 		float knockbackY = Resolve(i_stage?.KnockbackY, i_definition.KnockbackY, 0f) * Multiplier(i_owner, "KnockbackYMultiplier");
-		return ApplyHit(i_owner, i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f), i_isCoreAttack);
+		return ApplyHit(i_owner, i_player, damage, knockbackX, knockbackY, Resolve(i_stage?.RagdollSeconds, i_definition.RagdollSeconds, 0f), i_isCoreAttack,
+			PlayerReaction(i_definition, i_stage));
 	}
 
 	// Whether the player took the hit. i_isCoreAttack: the hit also counts as the enemy's current Core attack
-	// landing (its on-hit interaction); false for a Core enemy's additional attack.
-	public static bool ApplyHit(NPC i_owner, Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, bool i_isCoreAttack = true)
+	// landing (its on-hit interaction); false for a Core enemy's additional attack. i_playerReaction: the attack's
+	// playerReactionRef clip, layered on the player when the hit lands.
+	public static bool ApplyHit(NPC i_owner, Player i_player, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, bool i_isCoreAttack = true,
+		EnemyAnimationClipDefinition i_playerReaction = null)
 	{
 		if (i_player == null || i_owner == null || i_owner.IsDead() || i_player.IsDead() || !i_player.GetIsCanBeAttacked() || i_player.GetIsBeingRaped()) return false;
 		bool wasDown = i_player.GetStateActorCurrent() == StateActor.Ragdoll;
@@ -136,8 +139,17 @@ public static class ConfiguredAttackDelivery
 				ManagerDB.KO(i_owner);
 			}
 		}
+		// playerReactionRef: the hit has landed, so the player reacts to it, unless it put them on the floor, where the
+		// ragdoll poses them (ModularPlayerHitReaction skips a ragdolled player).
+		ModularPlayerHitReaction.Play(i_player, i_playerReaction, i_owner.transform.position.x);
 		i_owner.NotifyDirectAttackHit(i_player, i_isCoreAttack);
 		return true;
+	}
+
+	// A stage's own reaction replaces the attack's for that stage.
+	private static EnemyAnimationClipDefinition PlayerReaction(EnemyAttackDefinition i_definition, EnemyAttackStageDefinition i_stage)
+	{
+		return i_stage?.PlayerReaction ?? i_definition?.PlayerReaction;
 	}
 
 	private static Vector2 Origin(NPC i_owner)
