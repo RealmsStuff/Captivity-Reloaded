@@ -6,6 +6,10 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: grab participants turn with the grab
+
+- A finisher participant's `offsetX` and `facing` now follow the grabbing enemy's facing (written for a grab facing right; mirrored, with `left` and `right` swapped, when it faces left), and every participant, late joiners included, is placed from the player's feet as they were when the grab started. Before, both were applied in world space and a late joiner was placed from wherever the phase's clips had moved the player's hips. See [Independent NPC participants](../content/enemies.md#independent-npc-participants).
+
 ### 2026-11-09: `joinCoreSpawners` may not be null
 
 - `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.
