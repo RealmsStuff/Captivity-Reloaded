@@ -997,12 +997,15 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 	private float m_knockbackX;
 	private float m_knockbackY;
 	private float m_ragdollSeconds;
+	private EnemyAnimationClipDefinition m_playerReaction;
 	private bool m_spent;
 
-	public void Configure(NPC i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime, bool i_isCoreAttack = true)
+	public void Configure(NPC i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime, bool i_isCoreAttack = true,
+		EnemyAnimationClipDefinition i_playerReaction = null)
 	{
 		m_isCoreAttack = i_isCoreAttack;
 		m_ragdollSeconds = i_ragdollSeconds;
+		m_playerReaction = i_playerReaction;
 		m_owner = i_owner;
 		m_body = GetComponent<Rigidbody2D>();
 		m_damage = i_damage;
@@ -1024,7 +1027,7 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 		if (player != null)
 		{
 			m_spent = true;
-			if (m_owner != null) ConfiguredAttackDelivery.ApplyHit(m_owner, player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds, m_isCoreAttack);
+			if (m_owner != null) ConfiguredAttackDelivery.ApplyHit(m_owner, player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds, m_isCoreAttack, m_playerReaction);
 			UnityEngine.Object.Destroy(gameObject);
 			return;
 		}
@@ -2890,7 +2893,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		return GetCurrentPhase()?.DecayPerSecond ?? m_definition?.DecayPerSecond ?? 0f;
 	}
 
-	private static string[] GetPlayerBoneNames()
+	internal static string[] GetPlayerBoneNames()
 	{
 		return new[] { "hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face" };
 	}
