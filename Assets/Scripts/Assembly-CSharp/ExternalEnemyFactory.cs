@@ -3237,6 +3237,7 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 			CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame()?.GetCameraXGameCurrent();
 			if (camera != null) camera.Shake(i_event.Amount ?? 0f, 0.1f);
 		}
+		else if (i_event.Type == "hitStop") ModularHitStop.Hold(i_event.DurationSeconds ?? 0f);
 		else if (i_event.Type == "spriteEffect") PlaySpriteEffect(i_event);
 		else if (i_event.Type == "cue") ModularEnemyFinisher.HandleCue(i_event, i_owner);
 	}
