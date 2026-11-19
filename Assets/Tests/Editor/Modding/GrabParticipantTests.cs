@@ -81,6 +81,49 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(facing.Invoke(null, new object[] { null, i_ownerFacingLeft }), Is.Null);
 		}
 
+		// An extra was placed from the player's feet as they are when it joins; their x is the hips', which the grab's
+		// clips have moved by a phase change, so a late joiner landed off by as much. It is now placed from the feet as
+		// they were when the grab started, the same frame the extras taken in at the start use.
+		[Test]
+		public void ALateParticipant_StandsFromWhereTheGrabStarted()
+		{
+			Assert.That(EnemyType, Is.Not.Null);
+			Assert.That(FinisherType, Is.Not.Null);
+			GameObject ownerHost = new GameObject("grab-participant-owner-test"), extraHost = new GameObject("grab-participant-extra-test");
+			try
+			{
+				Component owner = ownerHost.AddComponent(EnemyType);
+				ownerHost.transform.localScale = new Vector3(-1f, 1f, 1f);
+				extraHost.AddComponent<Rigidbody2D>();
+				Component extra = extraHost.AddComponent(EnemyType);
+				Set(extra, "m_distanceFeetFromPos", 1f);
+				Component finisher = ownerHost.AddComponent(FinisherType);
+				Set(finisher, "m_npc", owner);
+				// The anchor the grab captured when it started; the player is not looked at again.
+				Set(finisher, "m_participantAnchor", new Vector2(10f, 2f));
+				Assert.That(Get(finisher, "m_player"), Is.Null);
+				EnemyFinisherParticipantDefinition definition = new EnemyFinisherParticipantDefinition
+				{
+					Id = "assistant", Enemy = "example.multi:enemy/assistant", JoinPolicy = "phaseBoundary", OffsetX = 1.25f, OffsetY = 0.5f, Facing = "left"
+				};
+				System.Type participantType = FinisherType.GetNestedType("ActiveFinisherParticipant", BindingFlags.NonPublic);
+				object participant = System.Activator.CreateInstance(participantType, definition, extra);
+				FinisherType.GetMethod("BeginParticipantControl", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(finisher, new[] { participant });
+
+				Assert.That(participantType.GetField("Started").GetValue(participant), Is.True);
+				Vector2 feet = (Vector2)EnemyType.GetMethod("GetPosFeet").Invoke(extra, null);
+				// The grab faces left: 1.25 to its front is 1.25 to the left in the world, and "left" faces right.
+				Assert.That(feet.x, Is.EqualTo(8.75f).Within(1e-4f));
+				Assert.That(feet.y, Is.EqualTo(2.5f).Within(1e-4f));
+				Assert.That(EnemyType.GetMethod("GetIsFacingLeft").Invoke(extra, null), Is.False);
+			}
+			finally
+			{
+				Object.DestroyImmediate(ownerHost);
+				Object.DestroyImmediate(extraHost);
+			}
+		}
+
 		private static void Set(object i_target, string i_field, object i_value)
 		{
 			for (System.Type type = i_target.GetType(); type != null; type = type.BaseType)

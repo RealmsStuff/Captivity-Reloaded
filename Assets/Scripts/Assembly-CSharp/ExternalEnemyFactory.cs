@@ -1077,6 +1077,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private readonly List<FinisherSortingGroupSnapshot> m_sortingGroupSnapshots = new List<FinisherSortingGroupSnapshot>();
 	private readonly List<ActiveFinisherParticipant> m_participants = new List<ActiveFinisherParticipant>();
 	private readonly List<FinisherColliderPair> m_participantCollisionPairs = new List<FinisherColliderPair>();
+	// Where participants stand from: the player's feet when the grab starts (BeginReservedParticipantControl).
+	private Vector2 m_participantAnchor;
 	private Animator m_playerSkeletonAnimator;
 	private bool m_playerAnimatorWasEnabled;
 	private Rigidbody2D m_playerBody;
@@ -2011,6 +2013,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void BeginReservedParticipantControl()
 	{
+		// The player's feet before any clip poses them (their x is the hips'): an extra that joins at a phase change
+		// is placed from here too, not from where that phase's clip has moved the hips.
+		m_participantAnchor = m_player.GetPosFeet();
 		foreach (ActiveFinisherParticipant participant in m_participants) BeginParticipantControl(participant);
 	}
 
@@ -2022,9 +2027,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		npc.SetIsCanAttack(false);
 		npc.SetIsThinking(false);
 		npc.SetIsInvulnerable(true, false);
-		Vector2 anchor = m_player.GetPosFeet();
 		bool ownerFacingLeft = m_npc != null && m_npc.GetIsFacingLeft();
-		npc.PlaceFeetOnPos(GetParticipantFeet(anchor, ownerFacingLeft, i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
+		npc.PlaceFeetOnPos(GetParticipantFeet(m_participantAnchor, ownerFacingLeft, i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
 		bool? facingLeft = GetParticipantFacingLeft(i_participant.Definition.Facing, ownerFacingLeft);
 		if (facingLeft.HasValue) npc.SetIsFacingLeft(facingLeft.Value);
 		if (i_participant.Body != null)
