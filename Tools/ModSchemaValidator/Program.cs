@@ -8,7 +8,8 @@ string schemaDirectory = Path.Combine(repository, "Docs", "Modding", "schemas");
 string examplesDirectory = args.Length > 1
     ? Path.GetFullPath(args[1])
     : Path.Combine(repository, "ExampleMods");
-if (!Directory.Exists(examplesDirectory))
+bool selfTest = args.Length > 1 && args[1] == "--self-test";
+if (!selfTest && !Directory.Exists(examplesDirectory))
     throw new DirectoryNotFoundException("Validation directory was not found: " + examplesDirectory);
 
 Dictionary<string, JsonSchema> schemas = new(StringComparer.Ordinal);
@@ -42,6 +43,8 @@ foreach (string expected in expectedSchemas)
     if (!schemas.ContainsKey(expected)) throw new FileNotFoundException("Missing public Mod API schema: " + expected + ".schema.json");
 if (schemas.Count != expectedSchemas.Length)
     throw new InvalidDataException("Unexpected public schema inventory; update the validator's explicit v1 schema list.");
+
+if (selfTest) return WeaponSchemaTests.Run(schemas["weapon"]);
 
 List<string> failures = new();
 int validated = 0;

@@ -78,6 +78,11 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 		Gun gun = (Gun)m_weapon;
 		m_player = CommonReferences.Instance.GetPlayer();
 		m_holdTypeCurrent = gun.GetHoldTypeGun();
+		if (gun.GetModHoldPose() != null)
+		{
+			HandleCustomPose(gun.GetModHoldPose());
+			return;
+		}
 		float num = 0f;
 		float num2 = 0f;
 		float num3 = 0f;
@@ -151,6 +156,22 @@ public class ManagerArmWeaponPlayer : MonoBehaviour
 			GetLArmLower().transform.rotation = Quaternion.AngleAxis(num11, Vector3.forward);
 			GetLHand().transform.rotation = Quaternion.AngleAxis(num12, Vector3.forward);
 		}
+	}
+
+	private void HandleCustomPose(CaptivityReloaded.Modding.WeaponHoldPoseDefinition i_pose)
+	{
+		Vector3 aim = CommonReferences.Instance.GetManagerInput().GetAimScreenPosition(GetRArmUpper().transform.position)
+			- Camera.main.WorldToScreenPoint(GetRArmUpper().transform.position);
+		bool left = m_player.GetIsFacingLeft();
+		float angle = Mathf.Atan2(aim.y, left ? -aim.x : aim.x) * Mathf.Rad2Deg;
+		float sign = left ? -1f : 1f;
+		GetRArmUpper().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.RightUpper), Vector3.forward);
+		GetRArmLower().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.RightLower), Vector3.forward);
+		GetRHand().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.RightHand), Vector3.forward);
+		if (!i_pose.UseLeftHand) return;
+		GetLArmUpper().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.LeftUpper), Vector3.forward);
+		GetLArmLower().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.LeftLower), Vector3.forward);
+		GetLHand().transform.rotation = Quaternion.AngleAxis(sign * (angle + i_pose.LeftHand), Vector3.forward);
 	}
 
 	private void HandleHoldOneHanded()

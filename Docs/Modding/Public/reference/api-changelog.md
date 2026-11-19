@@ -6,6 +6,12 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: custom player grips for weapons
+
+- Added the optional experimental root field `holdPose` to weapons: six arm angle offsets (right upper arm, forearm and hand; left the same) and `useLeftHand`, used instead of the `stats.holdType` preset's fixed angles. See [Custom player grips](../content/weapons-and-items.md#custom-player-grips-experimental).
+- `stats.holdType` stays required next to `holdPose` as a fallback. New validation codes `weapon.hold-pose` (an angle outside -360 to 360, or not finite) and `weapon.hold-pose-fallback` (no `stats.holdType`). An unknown field, a missing angle or `"holdPose": null` fail as schema errors.
+- Weapons without the field are unchanged.
+
 ### 2026-11-09: `joinCoreSpawners` may not be null
 
 - `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.

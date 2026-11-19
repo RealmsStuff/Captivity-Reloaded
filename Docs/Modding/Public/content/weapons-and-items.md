@@ -157,3 +157,26 @@ Usables may inherit a Core item with `coreUsableSprites`, or omit `extends` and 
 To reuse a vanilla item's specialized implementation, set `extends` to its `core:item/usable/...` ID and leave `effectMode` as `inherit` (the default). The resulting item retains the Core prefab's presentation, audio, and `HandleUse` behavior. `add` keeps that behavior and appends reviewed JSON effects; `replace` suppresses it. Mods cannot name arbitrary C# classes or methods, so a mechanic with no Core template and no reviewed effect module still needs a new safe runtime module.
 
 The safe effect list currently includes `restoreHealth`, `restoreStrength`, `restoreStamina`, `reducePleasure`, timed `ragdoll`, timed `invulnerability`, bounded `statModifier`, `refillAmmo` (adds `amount` to every carried gun), `fillAllAmmo`, `repairClothing`, and `gainMoney`. Effects execute in JSON order. This provides composable medicine, ammunition, repair, and reward items while intentionally excluding arbitrary method or script names.
+
+## Custom player grips (experimental)
+
+The optional root `holdPose` object overrides the player's preset arm rotations. It is experimental and is **not accepted by official 2.2.3**: use a build containing this runtime update. A weapon without the field follows the existing `stats.holdType` path unchanged.
+
+```json
+"stats": { "holdType": "TwoHanded1" },
+"holdPose": {
+  "rightUpper": -45,
+  "rightLower": 65,
+  "rightHand": 90,
+  "useLeftHand": true,
+  "leftUpper": 60,
+  "leftLower": 75,
+  "leftHand": 80
+}
+```
+
+Supply all six finite angle offsets in degrees, each from -360 through 360, and the boolean `useLeftHand`. The right shoulder's aim angle is added to each offset; facing left reverses the resulting world rotations. The hand's existing weapon attachment is unchanged. With `useLeftHand: false`, the left arm keeps its ordinary animation. A custom pose replaces the preset's arm kick as well as its grip angles; the fallback's OneHanded recoil does not alter it.
+
+`stats.holdType` is required alongside `holdPose`, even for inherited weapons (`weapon.hold-pose-fallback`). It is a fallback for a reader that ignores the optional pose, not a way around old versions' strict validation. An angle outside -360 to 360 is `weapon.hold-pose`. The current public preset strings are `OneHanded`, `TwoHanded1`, `TwoHanded2`, and `TwoHanded3`; the C# enum's `PistolTwoHanded` has zero offsets but is not a published preset string.
+
+The parser, schema, prefab factory and player arm manager carry the pose, and Unity serialization keeps it when a configured gun is cloned. `dotnet run --project Tools/ModSchemaValidator -- . --self-test` runs the schema's positive and negative grip cases; `WeaponHoldPoseTests` in EditMode covers the parser and the clone.

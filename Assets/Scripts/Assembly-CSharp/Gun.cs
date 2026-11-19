@@ -9,6 +9,18 @@ public class Gun : Weapon
 	[SerializeField]
 	private GunHoldType m_gunHoldType;
 
+	[SerializeField] private CaptivityReloaded.Modding.WeaponHoldPoseDefinition m_modHoldPose;
+	// Unity never leaves a serialized class field null: in a built game every gun, Core's included, came out of its
+	// prefab with an all-zero pose here, so every gun would take the custom-pose path and hang straight down at the
+	// floor. Whether a mod set a pose is therefore its own flag, which also survives Instantiate.
+	[SerializeField] private bool m_hasModHoldPose;
+	public CaptivityReloaded.Modding.WeaponHoldPoseDefinition GetModHoldPose() => m_hasModHoldPose ? m_modHoldPose : null;
+	public void ConfigureModHoldPose(CaptivityReloaded.Modding.WeaponHoldPoseDefinition i_pose)
+	{
+		m_modHoldPose = i_pose;
+		m_hasModHoldPose = i_pose != null;
+	}
+
 	[SerializeField]
 	private GunReloadType m_gunReloadType;
 

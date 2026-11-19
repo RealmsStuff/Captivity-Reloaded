@@ -14,7 +14,22 @@
 | `description` | string | no | stable |  |
 | `stats` | ref: `stats` | no | stable |  |
 | `visual` | ref: `visual` | yes | stable |  |
+| `holdPose` | ref: `holdPose` | no | experimental |  |
 | `behavior` | ref: `behavior` | no | experimental |  |
+
+## Definition: `holdPose`
+
+Schema form: object.
+
+| Field | Type | Required | Stability | Constraints and meaning |
+| --- | --- | --- | --- | --- |
+| `rightUpper` | number | yes |  | min: `-360`; max: `360` |
+| `rightLower` | number | yes |  | min: `-360`; max: `360` |
+| `rightHand` | number | yes |  | min: `-360`; max: `360` |
+| `useLeftHand` | boolean | yes |  |  |
+| `leftUpper` | number | yes |  | min: `-360`; max: `360` |
+| `leftLower` | number | yes |  | min: `-360`; max: `360` |
+| `leftHand` | number | yes |  | min: `-360`; max: `360` |
 
 ## Definition: `weaponId`
 

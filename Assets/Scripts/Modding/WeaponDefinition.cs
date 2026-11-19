@@ -4,6 +4,20 @@ using Newtonsoft.Json;
 
 namespace CaptivityReloaded.Modding
 {
+	// Serialized public fields also survive Unity Instantiate of a configured Gun.
+	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
+	public sealed class WeaponHoldPoseDefinition
+	{
+		[JsonProperty("rightUpper", Required = Required.Always)] public float RightUpper;
+		[JsonProperty("rightLower", Required = Required.Always)] public float RightLower;
+		[JsonProperty("rightHand", Required = Required.Always)] public float RightHand;
+		[JsonProperty("useLeftHand", Required = Required.Always)] public bool UseLeftHand;
+		[JsonProperty("leftUpper", Required = Required.Always)] public float LeftUpper;
+		[JsonProperty("leftLower", Required = Required.Always)] public float LeftLower;
+		[JsonProperty("leftHand", Required = Required.Always)] public float LeftHand;
+	}
+
 	[JsonObject(MemberSerialization.OptIn)]
 	public sealed class WeaponStatsDefinition
 	{
@@ -289,6 +303,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("stats")]
 		public WeaponStatsDefinition Stats { get; set; }
 
+		[JsonProperty("holdPose", Required = Required.DisallowNull)]
+		public WeaponHoldPoseDefinition HoldPose { get; set; }
+
 		[JsonProperty("visual", Required = Required.Always)]
 		public WeaponVisualDefinition Visual { get; set; }
 
@@ -306,6 +323,7 @@ namespace CaptivityReloaded.Modding
 		public string DisplayName { get; }
 		public string Description { get; }
 		public WeaponStatsDefinition Stats { get; }
+		public WeaponHoldPoseDefinition HoldPose { get; }
 		public WeaponVisualDefinition Visual { get; }
 		public WeaponBehaviorDefinition Behavior { get; }
 
@@ -318,6 +336,7 @@ namespace CaptivityReloaded.Modding
 			DisplayName = i_document.DisplayName;
 			Description = i_document.Description ?? string.Empty;
 			Stats = i_document.Stats ?? new WeaponStatsDefinition();
+			HoldPose = i_document.HoldPose;
 			Visual = i_document.Visual;
 			Behavior = i_document.Behavior ?? new WeaponBehaviorDefinition();
 		}
@@ -369,6 +388,15 @@ namespace CaptivityReloaded.Modding
 				Error(result, "extends", "coreWeaponSprites requires extends to reference a published Core weapon template.", i_source);
 			if (string.IsNullOrWhiteSpace(document.DisplayName)) Error(result, "display-name", "displayName is required.", i_source);
 			ValidateStats(document.Stats, result.Report, i_source);
+			if (document.HoldPose != null)
+			{
+				WeaponHoldPoseDefinition pose = document.HoldPose;
+				foreach (float angle in new[] { pose.RightUpper, pose.RightLower, pose.RightHand, pose.LeftUpper, pose.LeftLower, pose.LeftHand })
+					if (!IsFiniteRange(angle, -360f, 360f))
+					{ Error(result, "hold-pose", "holdPose angles must be finite degrees between -360 and 360.", i_source); break; }
+				if (document.Stats == null || string.IsNullOrWhiteSpace(document.Stats.HoldType))
+					Error(result, "hold-pose-fallback", "holdPose requires a fallback stats.holdType.", i_source);
+			}
 			if (original) ValidateOriginalStats(document.Stats, result.Report, i_source);
 			ValidateVisual(document.Visual, i_packId, hasTemplate ? extends : default(ContentId), hasTemplate, result.Report, i_source);
 			ValidateBehavior(document.Behavior, document.Visual, hasTemplate ? extends : default(ContentId), hasTemplate, original, result.Report, i_source);
