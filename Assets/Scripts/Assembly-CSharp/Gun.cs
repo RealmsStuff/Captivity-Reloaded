@@ -467,9 +467,24 @@ public class Gun : Weapon
 		// valid coroutine host for the tracer belonging to the final shot.
 		if (!m_isHideShootLine && isActiveAndEnabled && gameObject.activeInHierarchy)
 		{
-			Vector2 i_posOrigin = GetShotOrigin();
+			Vector2 shotOrigin = GetShotOrigin();
+			Vector2 i_posOrigin = PickTracerOrigin(shotOrigin, m_bulletSpawnPointDefault != null, m_bulletSpawnPointDefault != null
+				? (Vector2)m_bulletSpawnPointDefault.transform.position : shotOrigin, i_posEnd);
+			// From the muzzle the line runs to the point that was hit; a shot that hit nothing keeps the aim's direction.
+			if (i_posEnd != Vector2.zero && i_posOrigin != shotOrigin && i_posEnd != i_posOrigin) i_direction = i_posEnd - i_posOrigin;
 			StartCoroutine(CoroutineLineShoot(i_posOrigin, i_direction, i_posEnd));
 		}
+	}
+
+	// Where a shot's line starts. The shot itself is traced from the shoulder (GetShotOrigin), so a muzzle poked
+	// through a wall cannot shoot what is behind it, and the line used to start there too: with a gun held low it
+	// came out of the player's neck, plain to see on the Schockgewehr's thick red beam. It starts at the muzzle now,
+	// unless the shot stopped before it reached the muzzle (a wall right in front of the player).
+	public static Vector2 PickTracerOrigin(Vector2 i_shotOrigin, bool i_hasMuzzle, Vector2 i_muzzle, Vector2 i_posEnd)
+	{
+		if (!i_hasMuzzle) return i_shotOrigin;
+		if (i_posEnd != Vector2.zero && Vector2.Distance(i_shotOrigin, i_posEnd) <= Vector2.Distance(i_shotOrigin, i_muzzle)) return i_shotOrigin;
+		return i_muzzle;
 	}
 
 	private IEnumerator CoroutineLineShoot(Vector2 i_posOrigin, Vector2 i_direction, Vector2 i_pointHit)

@@ -6,6 +6,10 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: shot lines start at the muzzle
+
+- The line drawn for a gun's shot starts at the gun's muzzle instead of the player's shoulder, so a low-held gun's beam (the Schockgewehr's) no longer comes out of the player's neck. The shot is still traced from the shoulder; a shot that stops before the muzzle (a wall right in front) keeps its line from the shoulder. No JSON or validation change.
+
 ### 2026-11-19: custom player grips for weapons
 
 - Added the optional experimental root field `holdPose` to weapons: six arm angle offsets (right upper arm, forearm and hand; left the same) and `useLeftHand`, used instead of the `stats.holdType` preset's fixed angles. See [Custom player grips](../content/weapons-and-items.md#custom-player-grips-experimental).
