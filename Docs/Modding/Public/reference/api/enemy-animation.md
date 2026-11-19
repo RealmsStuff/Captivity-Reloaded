@@ -78,7 +78,7 @@ Schema form: object.
 | Field | Type | Required | Stability | Constraints and meaning |
 | --- | --- | --- | --- | --- |
 | `time` | number | yes |  | min: `0` |
-| `type` | enum: `attackHit`, `impulse`, `sound`, `cameraShake`, `spriteEffect`, `cue` | yes |  |  |
+| `type` | enum: `attackHit`, `impulse`, `sound`, `cameraShake`, `hitStop`, `spriteEffect`, `cue` | yes |  |  |
 | `amount` | number null | no |  |  |
 | `x` | number null | no |  |  |
 | `y` | number null | no |  |  |

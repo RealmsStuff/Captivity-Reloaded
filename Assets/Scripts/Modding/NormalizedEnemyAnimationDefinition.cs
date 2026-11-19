@@ -247,7 +247,7 @@ namespace CaptivityReloaded.Modding
 
 		private static void ValidateEvents(NormalizedEnemyAnimationDocument i_document, NormalizedEnemyAnimationLoadResult io_result, string i_source)
 		{
-			HashSet<string> allowed = new HashSet<string>(new[] { "attackHit", "impulse", "sound", "cameraShake", "spriteEffect", "cue" }, StringComparer.Ordinal);
+			HashSet<string> allowed = new HashSet<string>(new[] { "attackHit", "impulse", "sound", "cameraShake", "hitStop", "spriteEffect", "cue" }, StringComparer.Ordinal);
 			if (i_document.Loop && (i_document.Events?.Any(animationEvent => animationEvent != null && animationEvent.Type != "cue") ?? false))
 				Error(io_result, "event-loop", "Looping enemy animations cannot contain gameplay events. Semantic cues are allowed.", i_source);
 			float previous = -1f;
@@ -285,6 +285,15 @@ namespace CaptivityReloaded.Modding
 			{
 				if (!i_event.Amount.HasValue || !Finite(i_event.Amount.Value) || i_event.Amount.Value < 0f || i_event.Amount.Value > 1f) Error(io_result, "event-camera-shake", "cameraShake requires an amount between 0 and 1.", i_source);
 				if (transformFields || audioFields || effectFields || cueFields) Error(io_result, "event-fields", "cameraShake contains fields belonging to another event type.", i_source);
+			}
+			else if (i_event.Type == "hitStop")
+			{
+				// The game holds still for durationSeconds of real time on a big hit (ModularHitStop).
+				if (!i_event.DurationSeconds.HasValue || !Finite(i_event.DurationSeconds.Value) || i_event.DurationSeconds.Value <= 0f || i_event.DurationSeconds.Value > 0.25f)
+					Error(io_result, "event-hit-stop", "hitStop requires durationSeconds greater than 0 and at most 0.25.", i_source);
+				if (i_event.Amount.HasValue || transformFields || audioFields || cueFields || i_event.Region != null || i_event.Bone != null
+					|| i_event.Scale.HasValue || i_event.SortingOrder.HasValue)
+					Error(io_result, "event-fields", "hitStop contains fields belonging to another event type.", i_source);
 			}
 			else if (i_event.Type == "spriteEffect")
 			{

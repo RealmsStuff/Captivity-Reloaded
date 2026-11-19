@@ -131,6 +131,11 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("knockbackX")] public float? KnockbackX { get; set; }
 		[JsonProperty("knockbackY")] public float? KnockbackY { get; set; }
 		[JsonProperty("ragdollSeconds")] public float? RagdollSeconds { get; set; }
+		// Original enemies and additionalAttacks: a short player animation layered on the player when this attack's hit
+		// lands (a stage's own replaces it for that stage). Posed for an attacker in front of the player; resolved when
+		// the game loads its content (ModLoaderRuntime), played by ModularPlayerHitReaction.
+		[JsonProperty("playerReactionRef")] public string PlayerReactionReference { get; set; }
+		[JsonIgnore] public EnemyAnimationClipDefinition PlayerReaction { get; set; }
 		[JsonProperty("cooldownSeconds")] public float? CooldownSeconds { get; set; }
 		[JsonProperty("initiateRange")] public float? InitiateRange { get; set; }
 		[JsonProperty("hitRange")] public float? HitRange { get; set; }
@@ -157,6 +162,8 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("knockbackX")] public float? KnockbackX { get; set; }
 		[JsonProperty("knockbackY")] public float? KnockbackY { get; set; }
 		[JsonProperty("ragdollSeconds")] public float? RagdollSeconds { get; set; }
+		[JsonProperty("playerReactionRef")] public string PlayerReactionReference { get; set; }
+		[JsonIgnore] public EnemyAnimationClipDefinition PlayerReaction { get; set; }
 		[JsonProperty("hitRange")] public float? HitRange { get; set; }
 		[JsonProperty("areaRadius")] public float? AreaRadius { get; set; }
 		[JsonProperty("offsetX")] public float? OffsetX { get; set; }
@@ -636,6 +643,10 @@ namespace CaptivityReloaded.Modding
 					io_report.Add(ValidationSeverity.Error, "enemy.attacks.ragdoll-inherited", "ragdollSeconds is supported only on original-enemy attacks.", i_source);
 				if (!i_original && attack.MissAnimation != null)
 					io_report.Add(ValidationSeverity.Error, "enemy.attacks.miss-animation-inherited", "missAnimation is supported only on original-enemy attacks.", i_source);
+				ValidatePlayerReactionReference(attack.PlayerReactionReference, io_report, i_source);
+				// An inherited attack hits through the Core enemy's own code, which never sees this definition.
+				if (!i_original && attack.PlayerReactionReference != null)
+					io_report.Add(ValidationSeverity.Error, "enemy.attacks.player-reaction-inherited", "playerReactionRef is supported only on original-enemy attacks and additionalAttacks.", i_source);
 				ValidateRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
 				ValidateRange(attack.InitiateRange, 0f, 1000f, "attack-initiate-range", io_report, i_source);
 				ValidateRange(attack.HitRange, 0f, 1000f, "attack-hit-range", io_report, i_source);
@@ -787,6 +798,7 @@ namespace CaptivityReloaded.Modding
 					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.animation", "An additional attack's animation must be a clip name from this enemy's animationRefs: " + (attack.Animation ?? "<null>"), i_source);
 				if (attack.MissAnimation != null && (i_document.AnimationReferences == null || !i_document.AnimationReferences.ContainsKey(attack.MissAnimation)))
 					io_report.Add(ValidationSeverity.Error, "enemy.additional-attacks.miss-animation", "An additional attack's missAnimation must be a clip name from this enemy's animationRefs: " + attack.MissAnimation, i_source);
+				ValidatePlayerReactionReference(attack.PlayerReactionReference, io_report, i_source);
 				ValidateRequiredRange(attack.Chance, 0f, 1f, "attack-chance", io_report, i_source);
 				ValidateRequiredRange(attack.Damage, 0f, 100000f, "attack-damage", io_report, i_source);
 				ValidateRequiredRange(attack.CooldownSeconds, 0f, 600f, "attack-cooldown", io_report, i_source);
@@ -825,6 +837,7 @@ namespace CaptivityReloaded.Modding
 					ValidateRange(stage.OffsetX, -1000f, 1000f, "attack-stage-offset-x", io_report, i_source);
 					ValidateRange(stage.OffsetY, -1000f, 1000f, "attack-stage-offset-y", io_report, i_source);
 					ValidateRange(stage.RagdollSeconds, 0f, 30f, "attack-stage-ragdoll", io_report, i_source);
+					ValidatePlayerReactionReference(stage.PlayerReactionReference, io_report, i_source);
 					ValidateAttackDeliveryFields(stage.Type, stage.Damage ?? i_attack.Damage, stage.KnockbackX ?? i_attack.KnockbackX,
 						stage.KnockbackY ?? i_attack.KnockbackY, stage.HitRange ?? i_attack.HitRange, stage.AreaRadius ?? i_attack.AreaRadius,
 						stage.ProjectileRegion ?? i_attack.ProjectileRegion, stage.ProjectileSpeed ?? i_attack.ProjectileSpeed,
@@ -1274,6 +1287,12 @@ namespace CaptivityReloaded.Modding
 					|| animationEvent.DurationSeconds.HasValue || animationEvent.Scale.HasValue || animationEvent.SortingOrder.HasValue)
 					io_report.Add(ValidationSeverity.Error, "enemy.behavior.finisher-player-event-fields", "playerAnimation finisher events cannot define fields belonging to enemy-side events.", i_source);
 			}
+		}
+
+		private static void ValidatePlayerReactionReference(string i_reference, ValidationReport io_report, string i_source)
+		{
+			if (i_reference != null && (!ContentId.TryParse(i_reference, out ContentId id) || !id.Path.StartsWith("player-animation/", StringComparison.Ordinal)))
+				io_report.Add(ValidationSeverity.Error, "enemy.attacks.player-reaction-ref", "playerReactionRef must be a player-animation content ID.", i_source);
 		}
 
 		private static void ValidatePlayerFinisherAnimationSource(EnemyAnimationClipDefinition i_clip, string i_reference,
