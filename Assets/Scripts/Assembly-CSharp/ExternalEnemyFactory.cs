@@ -838,7 +838,9 @@ public sealed class ModularEnemy : Walker
 	{
 		if (m_modAnimation == null) m_modAnimation = GetComponent<ModularEnemyAnimationController>();
 		ModularEnemyFinisher finisher = GetComponent<ModularEnemyFinisher>();
-		if (m_modAnimation == null || m_isAttacking || m_isDead || (finisher != null && finisher.GetIsActive())) return;
+		// A grab plays this enemy's clips while it holds it: its own finisher, or another enemy's as a participant.
+		if (m_modAnimation == null || m_isAttacking || m_isDead || (finisher != null && finisher.GetIsActive())
+			|| ModularEnemyFinisher.IsReserved(this)) return;
 		m_modAnimation.Play(Mathf.Abs(GetVelocity().x) > 0.1f ? "move" : "idle");
 	}
 
@@ -1235,6 +1237,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	}
 
 	public bool GetIsActive() { return m_isActive; }
+	// Whether a grab holds the NPC: the enemy whose grab it is, or one of its participants.
+	public static bool IsReserved(NPC i_npc) { return i_npc != null && ReservedParticipants.Contains(i_npc); }
 	public static bool ShouldApproachActiveSession(NPC i_candidate)
 	{
 		return s_activeSession != null && s_activeSession.m_isActive
