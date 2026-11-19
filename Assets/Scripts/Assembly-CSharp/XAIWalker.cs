@@ -7,6 +7,8 @@ public class XAIWalker : XAI
 
 	private Coroutine m_coroutineWaitForClimb;
 
+	private readonly ClimbRetryCounter m_climbRetries = new ClimbRetryCounter();
+
 	public override void Initialize(NPC i_npc)
 	{
 		base.Initialize(i_npc);
@@ -132,7 +134,7 @@ public class XAIWalker : XAI
 			{
 				StopCoroutine(m_coroutineWaitForClimb);
 			}
-			m_coroutineWaitForClimb = StartCoroutine(CoroutineWaitForClimb());
+			m_coroutineWaitForClimb = StartCoroutine(CoroutineWaitForClimb(pos));
 			break;
 		}
 		case NodeConnectionType.Move:
@@ -141,7 +143,7 @@ public class XAIWalker : XAI
 		}
 	}
 
-	private IEnumerator CoroutineWaitForClimb()
+	private IEnumerator CoroutineWaitForClimb(Vector2 i_posClimb)
 	{
 		yield return new WaitForSeconds(0.5f);
 		// A short climb clip can finish before this recovery delay expires. A
@@ -152,6 +154,26 @@ public class XAIWalker : XAI
 		if (m_npc.GetStateActorCurrent() != StateActor.Climbing && m_walker.IsTryingToClimb())
 		{
 			m_walker.CancelPendingClimb();
+			// A climb taller than the jump fails every time. After a few tries at it, place the actor as the game
+			// did before, so it isn't stuck below for good and the wave can still end.
+			if (m_climbRetries.RecordFailure(i_posClimb))
+			{
+				m_npc.PlaceHeadOnPos(i_posClimb);
+			}
+			else if (!m_npc.IsDead())
+			{
+				// The path has already moved past this climb, so the actor would wait under it for good. Planning
+				// again from here brings it back to the climb for another try.
+				Path path = m_xAIStateCurrent == XAIState.Linger ? GetPathToRandomAccesibleNode() : GetPathToPlayer(i_isForceGetPath: true);
+				if (path != null)
+				{
+					m_pathCurrent = path;
+				}
+			}
+		}
+		else
+		{
+			m_climbRetries.Reset();
 		}
 	}
 
