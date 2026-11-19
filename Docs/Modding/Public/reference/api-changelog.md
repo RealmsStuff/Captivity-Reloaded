@@ -6,6 +6,11 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: ground chasers climb to the player's platform
+
+- A `groundChase` enemy below the player now climbs straight up only to a ledge of the platform the player is on, when that ledge is at most one climb (8.5 units) above its feet, it can walk under the ledge without leaving its own platform, and no wall stands in the way. For anything else it follows the stage's navigation route, as Core walkers do. Before, it took the nearest ledge of any platform at the lowest height: in F.E.R.'s theatre it kept climbing the weapon-case platform and walking off it while the player stood on the dining platform beside it. A stage without a route to the player keeps the old rule (the lowest ledge above, as a stepping stone).
+- No schema change and no new validation codes.
+
 ### 2026-11-09: `joinCoreSpawners` may not be null
 
 - `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.
