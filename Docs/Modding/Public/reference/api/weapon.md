@@ -122,6 +122,7 @@ Schema form: object.
 | `semiAutomatic` | boolean | no |  |  |
 | `marketable` | boolean | no |  |  |
 | `holdType` | enum: `OneHanded`, `TwoHanded1`, `TwoHanded2`, `TwoHanded3` | no |  |  |
+| `stock` | boolean | no | experimental |  |
 | `reloadType` | enum: `Magazine`, `PumpAction`, `SingleBarrel` | no |  |  |
 | `weaponType` | enum: `Pistol`, `Smg`, `Shotgun`, `Rifle`, `Special` | no |  |  |
 

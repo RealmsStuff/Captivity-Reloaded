@@ -158,6 +158,30 @@ To reuse a vanilla item's specialized implementation, set `extends` to its `core
 
 The safe effect list currently includes `restoreHealth`, `restoreStrength`, `restoreStamina`, `reducePleasure`, timed `ragdoll`, timed `invulnerability`, bounded `statModifier`, `refillAmmo` (adds `amount` to every carried gun), `fillAllAmmo`, `repairClothing`, and `gainMoney`. Effects execute in JSON order. This provides composable medicine, ammunition, repair, and reward items while intentionally excluding arbitrary method or script names.
 
+## Stock or no stock (experimental)
+
+The player's arms are placed on a gun by a solver, and the gun's shots start at its muzzle. Both are **not in official 2.2.3**. What a gun does up close depends on whether it has a stock:
+
+| | With a stock | Without a stock |
+| --- | --- | --- |
+| Hold | Fixed against the shoulder | Drawn in toward the body when the target is near |
+| Up close | The muzzle is past an enemy who is touching the player, and an enemy on the muzzle is not hit | The gun makes room, so the enemy is in front of the muzzle |
+| Spread | `stats.recoil`, unchanged | `stats.recoil` at full reach, up to twice that drawn all the way in |
+
+The optional `stats.stock` says which a weapon is:
+
+```json
+"stats": { "holdType": "TwoHanded1", "stock": false }
+```
+
+- Left out, a `OneHanded` weapon has no stock and a `TwoHanded1`, `TwoHanded2` or `TwoHanded3` weapon has one. Existing packs need no change.
+- A one-handed gun comes in by up to about 0.6 units, a two-handed one by 0.35 (tucked under the arm). `TwoHanded3` holds the grip hand at the shoulder and has no room to come in, so `"stock": false` changes nothing for it.
+- The gun comes in when the cursor is nearer than the muzzle. With a controller stick or touch aim, which give no distance, it comes in for the nearest living enemy along the aim.
+- A weapon with a `holdPose` (below) keeps its arms exactly as authored and never comes in, whatever `stock` says.
+- Where the muzzle is comes from `visual.muzzleOffsetX` and `visual.muzzleOffsetY` (or the inherited Core gun's muzzle). A long barrel is a real handicap against an enemy at arm's length, so place the muzzle where the barrel ends.
+
+Players can switch muzzle shots off in the options ("Shots start at the muzzle"); the hold and the spread do not depend on that switch.
+
 ## Custom player grips (experimental)
 
 The optional root `holdPose` object overrides the player's preset arm rotations. It is experimental and is **not accepted by official 2.2.3**: use a build containing this runtime update. A weapon without the field follows the existing `stats.holdType` path unchanged.

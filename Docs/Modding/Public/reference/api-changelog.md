@@ -6,6 +6,14 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: solved aiming, shots from the muzzle, stocks
+
+- The player's arms are placed on a gun by a solver instead of fixed angles. With the cursor far away every hold looks as it did. New: the barrel, not the shoulder, points at the cursor; spine, chest and head lean with the aim; a cursor on the player's own shoulder no longer swings the gun round; the gun stops 110 degrees up or down from straight ahead while the facing is locked.
+- The player's bullets and beams start at the gun's muzzle and fly toward the cursor (along the barrel when the cursor is no further out than the muzzle). An enemy whose body covers the muzzle is not hit; the shot goes on to whoever is in front. Something solid between the shoulder and the muzzle still stops the shot. Melee and physical projectiles are unchanged. Players can switch this off in the options ("Shots start at the muzzle", on by default), which restores the shot from the shoulder.
+- Added the experimental `stats.stock` (boolean) for weapons. A gun without a stock is drawn in toward the body for a near target and spreads its shots up to twice as wide while drawn in; a gun with a stock is fixed. Left out, `OneHanded` has no stock and the two-handed holds have one, so existing packs load and behave as their hold type says. See [Stock or no stock](../content/weapons-and-items.md#stock-or-no-stock-experimental).
+- A weapon with a `holdPose` keeps its authored arm angles and is never drawn in. It gains the upper-body lean and the muzzle shot.
+- No validation codes were added. A `stock` that is not `true` or `false` fails as any wrongly typed field does.
+
 ### 2026-11-19: shot lines start at the muzzle
 
 - The line drawn for a gun's shot starts at the gun's muzzle instead of the player's shoulder, so a low-held gun's beam (the Schockgewehr's) no longer comes out of the player's neck. The shot is still traced from the shoulder; a shot that stops before the muzzle (a wall right in front) keeps its line from the shoulder. No JSON or validation change.

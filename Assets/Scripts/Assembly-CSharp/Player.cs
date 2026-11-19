@@ -969,6 +969,11 @@ public class Player : Actor
 		StartCoroutine(CoroutineWaitForNextAttack());
 	}
 
+	public ManagerArmWeaponPlayer GetManagerArmWeaponPlayer()
+	{
+		return m_managerArmWeaponPlayer;
+	}
+
 	public void PresentModWeaponRecoil(Gun i_gun, float i_multiplier = 1f)
 	{
 		if (i_gun != null && i_gun == GetEquippableEquipped()) m_managerArmWeaponPlayer.ShootGun(i_gun, i_multiplier);

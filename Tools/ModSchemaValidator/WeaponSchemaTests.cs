@@ -27,6 +27,8 @@ internal static class WeaponSchemaTests
             foreach (int value in new[] { -361, 361 }) { var bad = weapon.DeepClone(); bad["holdPose"]![field] = value; Check(bad, false, field + " bounds"); }
             var missing = weapon.DeepClone(); missing["holdPose"]!.AsObject().Remove(field); Check(missing, false, field + " required");
         }
+        var stocked = weapon.DeepClone(); stocked["stats"]!["stock"] = false; Check(stocked, true, "stock flag");
+        var badStock = weapon.DeepClone(); badStock["stats"]!["stock"] = "sometimes"; Check(badStock, false, "boolean stock");
         var fallback = weapon.DeepClone(); fallback["stats"]!.AsObject().Remove("holdType"); Check(fallback, false, "fallback required");
         var typo = weapon.DeepClone(); typo["holdPose"]!["typo"] = 0; Check(typo, false, "unknown field");
         var nullPose = weapon.DeepClone(); nullPose["holdPose"] = null; Check(nullPose, false, "null pose");

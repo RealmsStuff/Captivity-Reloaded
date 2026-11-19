@@ -62,6 +62,9 @@ namespace CaptivityReloaded.Modding
 		[JsonProperty("semiAutomatic")] public bool? SemiAutomatic { get; set; }
 		[JsonProperty("marketable")] public bool? Marketable { get; set; }
 		[JsonProperty("holdType")] public string HoldType { get; set; }
+		// Whether the gun is braced against the shoulder. Left out, a one-handed hold has no stock and a two-handed
+		// hold has one. Without a stock the gun is drawn in toward the body for a near target, at a cost in spread.
+		[JsonProperty("stock")] public bool? Stock { get; set; }
 		[JsonProperty("reloadType")] public string ReloadType { get; set; }
 		[JsonProperty("weaponType")] public string WeaponType { get; set; }
 	}

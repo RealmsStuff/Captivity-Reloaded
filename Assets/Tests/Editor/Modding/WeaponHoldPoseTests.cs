@@ -42,6 +42,22 @@ namespace CaptivityReloaded.Modding.Tests
 			Assert.That(WeaponDefinitionParser.Parse(missing.ToString(), "test.pose", "test.json").Report.IsValid, Is.False);
 		}
 
+		// stats.stock is optional and a plain true or false.
+		[Test]
+		public void StockIsAnOptionalBoolean()
+		{
+			JObject doc = Weapon();
+			Assert.That(WeaponDefinitionParser.Parse(doc.ToString(), "test.pose", "test.json").Definition.Stats.Stock, Is.Null);
+			doc["stats"]["stock"] = false;
+			var stockless = WeaponDefinitionParser.Parse(doc.ToString(), "test.pose", "test.json");
+			Assert.That(stockless.Report.IsValid, Is.True);
+			Assert.That(stockless.Definition.Stats.Stock, Is.False);
+			doc["stats"]["stock"] = true;
+			Assert.That(WeaponDefinitionParser.Parse(doc.ToString(), "test.pose", "test.json").Definition.Stats.Stock, Is.True);
+			doc["stats"]["stock"] = "sometimes";
+			Assert.That(WeaponDefinitionParser.Parse(doc.ToString(), "test.pose", "test.json").Report.IsValid, Is.False);
+		}
+
 		[Test]
 		public void PoseRequiresFallbackAndRejectsUnknownFields()
 		{

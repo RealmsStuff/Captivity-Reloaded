@@ -45,7 +45,7 @@
       "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "reloadSeconds": { "type": "number", "minimum": 0.01, "maximum": 60 },
       "equipSeconds": { "type": "number", "minimum": 0, "maximum": 60 }, "weight": { "type": "integer", "minimum": 0, "maximum": 100000 }, "value": { "type": "integer", "minimum": 0, "maximum": 100000000 },
       "infiniteAmmo": { "type": "boolean" }, "semiAutomatic": { "type": "boolean" }, "marketable": { "type": "boolean" },
-      "holdType": { "enum": ["OneHanded", "TwoHanded1", "TwoHanded2", "TwoHanded3"] }, "reloadType": { "enum": ["Magazine", "PumpAction", "SingleBarrel"] },
+      "holdType": { "enum": ["OneHanded", "TwoHanded1", "TwoHanded2", "TwoHanded3"] }, "stock": { "type": "boolean", "x-stability": "experimental" }, "reloadType": { "enum": ["Magazine", "PumpAction", "SingleBarrel"] },
       "weaponType": { "enum": ["Pistol", "Smg", "Shotgun", "Rifle", "Special"] }
     }, "dependentRequired": { "ammoMax": ["magazineSize"], "magazineSize": ["ammoMax"] } },
     "visual": { "type": "object", "additionalProperties": false, "required": ["type", "sprites"], "properties": {
