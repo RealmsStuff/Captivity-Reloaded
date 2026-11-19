@@ -6,6 +6,10 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-19: a climb that keeps failing
+
+- A ground enemy following a stage's `climb` link (Core walkers and `groundChase` enemies alike) now tries a failed climb again: it plans its path again from where it stands, which brings it back under the ledge. After three failed tries at the same climb it is placed on the ledge, as every failed climb was before 2.2.3. Since 2.2.3 a failed climb was cancelled and never tried again, so an enemy under a link taller than its jump stood there for good and the wave could not end. No schema change; links that climbers already manage behave as before.
+
 ### 2026-11-09: `joinCoreSpawners` may not be null
 
 - `"spawn": { "joinCoreSpawners": null }` is now the validation error `enemy.spawn.join-null` on that enemy. Before, it passed validation and then broke the game's enemy build, so the enemies after it did not load either. Write `[]` or leave the field out.
