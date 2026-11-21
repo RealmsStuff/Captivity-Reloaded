@@ -45,7 +45,7 @@ try
                 string url = preview.GetString() ?? string.Empty;
                 try
                 {
-					if (!url.StartsWith(repositoryUrl + "/releases/download/", StringComparison.OrdinalIgnoreCase))
+					if (!BelongsToRepository(url, repositoryUrl))
 						throw new InvalidDataException("preview belongs to another repository");
                     byte[] image = await DownloadBounded(client, url, MaxPreviewBytes);
                     if (image.Length < 24 || image[0] != 0x89 || image[1] != 0x50 || image[2] != 0x4e || image[3] != 0x47)
@@ -68,7 +68,7 @@ try
             string expectedHash = version.GetProperty("sha256").GetString() ?? string.Empty;
             long expectedSize = version.GetProperty("sizeBytes").GetInt64();
             if (!versions.Add(versionText)) failures.Add($"{id}: duplicate version {versionText}");
-            if (!download.StartsWith(repositoryUrl + "/releases/download/", StringComparison.OrdinalIgnoreCase))
+            if (!BelongsToRepository(download, repositoryUrl))
                 failures.Add($"{id} {versionText}: release asset belongs to another repository.");
             if (!releases.Add(id + "@" + versionText)) failures.Add($"Duplicate catalog release: {id}@{versionText}");
             try
@@ -111,6 +111,16 @@ try
 finally
 {
     if (Directory.Exists(extractionRoot)) Directory.Delete(extractionRoot, true);
+}
+
+// An asset is its pack's own when it is a release asset of the pack's repository or a file in that repository
+// (raw.githubusercontent.com/<owner>/<repository>/<ref>/...), the two forms the game accepts.
+static bool BelongsToRepository(string url, string repositoryUrl)
+{
+    if (url.StartsWith(repositoryUrl + "/releases/download/", StringComparison.OrdinalIgnoreCase)) return true;
+    const string github = "https://github.com/";
+    if (!repositoryUrl.StartsWith(github, StringComparison.OrdinalIgnoreCase)) return false;
+    return url.StartsWith("https://raw.githubusercontent.com/" + repositoryUrl.Substring(github.Length) + "/", StringComparison.OrdinalIgnoreCase);
 }
 
 static async Task<byte[]> DownloadBounded(HttpClient client, string url, int maximum)

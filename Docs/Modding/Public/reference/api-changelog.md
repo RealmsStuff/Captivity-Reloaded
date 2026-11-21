@@ -6,6 +6,11 @@ This page records changes to the public mod contract: JSON fields, content IDs, 
 
 Mod API v1 is still being prepared for its first stable release. The schemas and runtime implementation are usable for development, but the [v1 release checklist](v1-release-checklist.md) remains the authority on unfinished verification.
 
+### 2026-11-21: the catalog schema accepts repository assets
+
+- `catalog-v1.schema.json` now accepts what the game has accepted since the catalog moved to repository assets: a `download` or preview image may be a file in the pack's repository (`https://raw.githubusercontent.com/<owner>/<repository>/<ref>/...`) as well as a release asset, and a `download` may end in `.capmod` as well as `.zip`. The catalog validator checks that either form belongs to the pack's `sourceRepository`.
+- No catalog entry that was valid before is refused, and the game's own rules are unchanged.
+
 ### 2026-11-19: grab participants turn with the grab
 
 - A finisher participant's `offsetX` and `facing` now follow the grabbing enemy's facing (written for a grab facing right; mirrored, with `left` and `right` swapped, when it faces left), and every participant, late joiners included, is placed from the player's feet as they were when the grab started. Before, both were applied in world space and a late joiner was placed from wherever the phase's clips had moved the player's hips. See [Independent NPC participants](../content/enemies.md#independent-npc-participants).
