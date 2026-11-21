@@ -10,9 +10,11 @@
     "id": { "$ref": "#/$defs/weaponId", "x-stability": "stable" }, "displayName": { "type": "string", "minLength": 1, "x-stability": "stable" },
     "extends": { "$ref": "#/$defs/coreWeaponId", "x-stability": "stable" }, "description": { "type": "string", "x-stability": "stable" },
     "stats": { "$ref": "#/$defs/stats", "x-stability": "stable" }, "visual": { "$ref": "#/$defs/visual", "x-stability": "stable" },
+    "holdPose": { "$ref": "#/$defs/holdPose", "x-stability": "experimental" },
     "behavior": { "$ref": "#/$defs/behavior", "x-stability": "experimental" }
   },
   "allOf": [
+    { "if": { "required": ["holdPose"] }, "then": { "required": ["stats"], "properties": { "stats": { "required": ["holdType"] } } } },
     { "if": { "properties": { "visual": { "properties": { "type": { "const": "coreWeaponSprites" } }, "required": ["type"] } } }, "then": { "required": ["extends"] } },
     { "if": { "properties": { "visual": { "properties": { "type": { "const": "originalWeaponSprites" } }, "required": ["type"] } } }, "then": {
       "not": { "required": ["extends"] },
@@ -28,6 +30,7 @@
     } }
   ],
   "$defs": {
+    "holdPose": {"type": "object", "additionalProperties": false, "required": ["rightUpper", "rightLower", "rightHand", "useLeftHand", "leftUpper", "leftLower", "leftHand"], "properties": {"rightUpper": {"type": "number", "minimum": -360, "maximum": 360}, "rightLower": {"type": "number", "minimum": -360, "maximum": 360}, "rightHand": {"type": "number", "minimum": -360, "maximum": 360}, "useLeftHand": {"type": "boolean"}, "leftUpper": {"type": "number", "minimum": -360, "maximum": 360}, "leftLower": {"type": "number", "minimum": -360, "maximum": 360}, "leftHand": {"type": "number", "minimum": -360, "maximum": 360}}},
     "weaponId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:item/weapon/[a-z0-9][a-z0-9._/-]*$" },
     "prefabId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*:prefab/[a-z0-9][a-z0-9._/-]*$" },
     "coreWeaponId": { "type": "string", "pattern": "^core:item/weapon/[a-z0-9][a-z0-9._/-]*$" },
@@ -42,7 +45,7 @@
       "knockbackX": { "type": "number", "minimum": 0, "maximum": 1000 }, "knockbackY": { "type": "number", "minimum": 0, "maximum": 1000 }, "reloadSeconds": { "type": "number", "minimum": 0.01, "maximum": 60 },
       "equipSeconds": { "type": "number", "minimum": 0, "maximum": 60 }, "weight": { "type": "integer", "minimum": 0, "maximum": 100000 }, "value": { "type": "integer", "minimum": 0, "maximum": 100000000 },
       "infiniteAmmo": { "type": "boolean" }, "semiAutomatic": { "type": "boolean" }, "marketable": { "type": "boolean" },
-      "holdType": { "enum": ["OneHanded", "TwoHanded1", "TwoHanded2", "TwoHanded3"] }, "reloadType": { "enum": ["Magazine", "PumpAction", "SingleBarrel"] },
+      "holdType": { "enum": ["OneHanded", "TwoHanded1", "TwoHanded2", "TwoHanded3"] }, "stock": { "type": "boolean", "x-stability": "experimental" }, "reloadType": { "enum": ["Magazine", "PumpAction", "SingleBarrel"] },
       "weaponType": { "enum": ["Pistol", "Smg", "Shotgun", "Rifle", "Special"] }
     }, "dependentRequired": { "ammoMax": ["magazineSize"], "magazineSize": ["ammoMax"] } },
     "visual": { "type": "object", "additionalProperties": false, "required": ["type", "sprites"], "properties": {

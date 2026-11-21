@@ -93,6 +93,8 @@ public class ManagerOptions : MonoBehaviour
 
 	private Toggle m_toggleMobileDPad;
 
+	private Toggle m_toggleMuzzleRule;
+
 	private bool m_mobileDPadOriginal;
 
 	private Dropdown m_dropDownDisplayMode;
@@ -398,6 +400,22 @@ public class ManagerOptions : MonoBehaviour
 		}
 	}
 
+	// GunMuzzleRule: shots start at the gun's muzzle (on) or at the shoulder as before (off).
+	private void CreateMuzzleRuleOption()
+	{
+		if (m_toggleMuzzleRule != null) return;
+		m_toggleMuzzleRule = UnityEngine.Object.Instantiate(m_toggleGunFlash, m_toggleGunFlash.transform.parent);
+		m_toggleMuzzleRule.gameObject.name = "toggle_muzzleRule";
+		m_toggleMuzzleRule.onValueChanged = new Toggle.ToggleEvent();
+		Text label = m_toggleMuzzleRule.GetComponentInChildren<Text>(includeInactive: true);
+		if (label != null)
+		{
+			label.text = "Shots start at the muzzle";
+			label.resizeTextForBestFit = true;
+			label.resizeTextMinSize = 12;
+		}
+	}
+
 	private static void ConfigureDropDownText(Dropdown i_dropDown)
 	{
 		Text[] componentsInChildren = i_dropDown.GetComponentsInChildren<Text>(includeInactive: true);
@@ -476,9 +494,14 @@ public class ManagerOptions : MonoBehaviour
 			ConfigureRect(m_dropDownDifficulty.GetComponent<RectTransform>(), new Vector2(165f, -204f), new Vector2(270f, 42f));
 			ConfigureRect(m_lblGameMode.rectTransform, new Vector2(465f, -164f), new Vector2(270f, 32f));
 			ConfigureRect(m_dropDownGameMode.GetComponent<RectTransform>(), new Vector2(465f, -204f), new Vector2(270f, 42f));
-			ConfigureRect(m_toggleGunFlash.GetComponent<RectTransform>(), new Vector2(165f, -270f), new Vector2(270f, 42f));
+			// Two rows of switches fit between the drop-downs and the buttons only at this height; with one row
+			// the switches keep the place they always had.
+			float toggleY = m_toggleMuzzleRule != null ? -256f : -270f, toggleHeight = m_toggleMuzzleRule != null ? 36f : 42f;
+			ConfigureRect(m_toggleGunFlash.GetComponent<RectTransform>(), new Vector2(165f, toggleY), new Vector2(270f, toggleHeight));
 			if (m_toggleMobileDPad != null)
-				ConfigureRect(m_toggleMobileDPad.GetComponent<RectTransform>(), new Vector2(465f, -270f), new Vector2(270f, 42f));
+				ConfigureRect(m_toggleMobileDPad.GetComponent<RectTransform>(), new Vector2(465f, toggleY), new Vector2(270f, toggleHeight));
+			if (m_toggleMuzzleRule != null)
+				ConfigureRect(m_toggleMuzzleRule.GetComponent<RectTransform>(), new Vector2(165f, -298f), new Vector2(270f, 36f));
 		}
 		Vector2 size = m_optionsContainerRect.rect.size;
 		if (m_optionsContainerSize == size)
@@ -544,6 +567,7 @@ public class ManagerOptions : MonoBehaviour
 		PlayerPrefs.SetInt("VolumeHitsound", (int)m_sliderHitsound.value);
 		PlayerPrefs.SetFloat("ControllerAimAssist", m_sliderAimAssist.value / 100f);
 		if (m_toggleMobileDPad != null) PlayerPrefs.SetInt("MobileUseDPad", m_toggleMobileDPad.isOn ? 1 : 0);
+		if (m_toggleMuzzleRule != null) GunMuzzleRule.Enabled = m_toggleMuzzleRule.isOn;
 		InputGlyphLibrary.RefreshMobileControls();
 		if (m_dropDownDifficulty.value >= 0 && m_dropDownDifficulty.value < m_difficultyIds.Count)
 			DifficultyRegistry.SetCurrent(m_difficultyIds[m_dropDownDifficulty.value]);
@@ -605,6 +629,8 @@ public class ManagerOptions : MonoBehaviour
 		m_sliderHitsound.value = PlayerPrefs.GetInt("VolumeHitsound");
 		CreateAimAssistControl();
 		CreateMobileControlsOption();
+		CreateMuzzleRuleOption();
+		m_toggleMuzzleRule.isOn = GunMuzzleRule.Enabled;
 		m_aimAssistOriginal = PlayerPrefs.HasKey("ControllerAimAssist") ? PlayerPrefs.GetFloat("ControllerAimAssist") : 0.35f;
 		m_sliderAimAssist.value = m_aimAssistOriginal * 100f;
 		m_mobileDPadOriginal = PlayerPrefs.GetInt("MobileUseDPad", 0) == 1;
