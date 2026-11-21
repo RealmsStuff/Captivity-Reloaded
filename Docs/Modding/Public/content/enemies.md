@@ -352,6 +352,8 @@ A phased `downedFinisher` may reserve up to three real secondary original-enemy 
 ]
 ```
 
+`offsetX`, `offsetY` and `facing` are written for a grab facing right, like the pair's clips: +x is the way the grabbing enemy faces. When it faces left, the runtime mirrors `offsetX` and swaps `left` and `right`, so the extra stays on the same side of the pair, facing the same way relative to it. `preserve` keeps the NPC's own facing. The offset is measured from the player's feet as they are when the grab starts, before any clip poses the player, so an extra that joins at a phase boundary stands where it would have stood from the start, wherever that phase's clips have moved the player's hips.
+
 `startOnly` slots are checked when the interaction begins and may be marked `required`. `phaseBoundary` slots are optional: matching unreserved enemies inside `approachRange` approach the active interaction, and enemies inside `joinRange` enter at the next phase boundary. They never jump into the middle of a phase. Runtime v1 limits participants to `originalSkeletonAtlas` enemies because each participant needs the modular animation controller.
 
 While participating, each NPC has its AI, attacks, physics, collisions, animation, facing, position, and sorting state controlled by the QTE session. That state is restored on success, failure, cancellation, component disable, or participant removal. The owner and every secondary NPC are reserved so two active interactions cannot claim the same instance.

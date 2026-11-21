@@ -883,7 +883,9 @@ public sealed class ModularEnemy : Walker
 	{
 		if (m_modAnimation == null) m_modAnimation = GetComponent<ModularEnemyAnimationController>();
 		ModularEnemyFinisher finisher = GetComponent<ModularEnemyFinisher>();
-		if (m_modAnimation == null || m_isAttacking || m_isDead || (finisher != null && finisher.GetIsActive())) return;
+		// A grab plays this enemy's clips while it holds it: its own finisher, or another enemy's as a participant.
+		if (m_modAnimation == null || m_isAttacking || m_isDead || (finisher != null && finisher.GetIsActive())
+			|| ModularEnemyFinisher.IsReserved(this)) return;
 		m_modAnimation.Play(Mathf.Abs(GetVelocity().x) > 0.1f ? "move" : "idle");
 	}
 
@@ -1123,6 +1125,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	private readonly List<FinisherSortingGroupSnapshot> m_sortingGroupSnapshots = new List<FinisherSortingGroupSnapshot>();
 	private readonly List<ActiveFinisherParticipant> m_participants = new List<ActiveFinisherParticipant>();
 	private readonly List<FinisherColliderPair> m_participantCollisionPairs = new List<FinisherColliderPair>();
+	// Where participants stand from: the player's feet when the grab starts (BeginReservedParticipantControl).
+	private Vector2 m_participantAnchor;
 	private Animator m_playerSkeletonAnimator;
 	private bool m_playerAnimatorWasEnabled;
 	private Rigidbody2D m_playerBody;
@@ -1283,6 +1287,8 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 	}
 
 	public bool GetIsActive() { return m_isActive; }
+	// Whether a grab holds the NPC: the enemy whose grab it is, or one of its participants.
+	public static bool IsReserved(NPC i_npc) { return i_npc != null && ReservedParticipants.Contains(i_npc); }
 	public static bool ShouldApproachActiveSession(NPC i_candidate)
 	{
 		return s_activeSession != null && s_activeSession.m_isActive
@@ -2055,6 +2061,9 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 
 	private void BeginReservedParticipantControl()
 	{
+		// The player's feet before any clip poses them (their x is the hips'): an extra that joins at a phase change
+		// is placed from here too, not from where that phase's clip has moved the hips.
+		m_participantAnchor = m_player.GetPosFeet();
 		foreach (ActiveFinisherParticipant participant in m_participants) BeginParticipantControl(participant);
 	}
 
@@ -2066,10 +2075,10 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		npc.SetIsCanAttack(false);
 		npc.SetIsThinking(false);
 		npc.SetIsInvulnerable(true, false);
-		Vector2 anchor = m_player.GetPosFeet();
-		npc.PlaceFeetOnPos(anchor + new Vector2(i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
-		if (i_participant.Definition.Facing == "left") npc.SetIsFacingLeft(true);
-		else if (i_participant.Definition.Facing == "right") npc.SetIsFacingLeft(false);
+		bool ownerFacingLeft = m_npc != null && m_npc.GetIsFacingLeft();
+		npc.PlaceFeetOnPos(GetParticipantFeet(m_participantAnchor, ownerFacingLeft, i_participant.Definition.OffsetX ?? 0f, i_participant.Definition.OffsetY ?? 0f));
+		bool? facingLeft = GetParticipantFacingLeft(i_participant.Definition.Facing, ownerFacingLeft);
+		if (facingLeft.HasValue) npc.SetIsFacingLeft(facingLeft.Value);
 		if (i_participant.Body != null)
 		{
 			i_participant.Body.velocity = Vector2.zero;
@@ -2080,6 +2089,21 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		IgnoreParticipantCollisions(npc);
 		PromotePairedSorting(npc.gameObject);
 		i_participant.Started = true;
+	}
+
+	// A participant's offsetX/offsetY and facing are written for a grab facing right, like the pair's clips: when the
+	// grabbing enemy faces left, the offset is mirrored and left and right swap, so the extra stays on the same side
+	// of the pair. "preserve" (null here) keeps the NPC's own facing.
+	public static Vector2 GetParticipantFeet(Vector2 i_anchor, bool i_ownerFacingLeft, float i_offsetX, float i_offsetY)
+	{
+		return i_anchor + new Vector2(i_ownerFacingLeft ? -i_offsetX : i_offsetX, i_offsetY);
+	}
+
+	public static bool? GetParticipantFacingLeft(string i_facing, bool i_ownerFacingLeft)
+	{
+		if (i_facing == "left") return !i_ownerFacingLeft;
+		if (i_facing == "right") return i_ownerFacingLeft;
+		return null;
 	}
 
 	private void IgnoreParticipantCollisions(NPC i_npc)
