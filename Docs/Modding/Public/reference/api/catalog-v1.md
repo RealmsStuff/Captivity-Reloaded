@@ -30,7 +30,7 @@
 | `version` | string | yes |  | min length: `5` |
 | `modApiVersion` | integer | yes |  | min: `1`; max: `1000` |
 | `gameVersion` | string | yes |  | min length: `1` |
-| `download` | string | yes |  | pattern: `^https://github\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+\.[zZ][iI][pP]$` |
+| `download` | string | yes |  | pattern: `^https://(?:github\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+\|raw\.githubusercontent\.com/[^/?#]+/[^/?#]+/[^/?#]+/[^?#]+)\.(?:[zZ][iI][pP]\|[cC][aA][pP][mM][oO][dD])$` |
 | `sha256` | string | yes |  | pattern: `^[a-fA-F0-9]{64}$` |
 | `sizeBytes` | integer | yes |  | min: `1`; max: `268435456` |
 | `dependencies` | array of ref: `dependency` | no |  | max items: `32` |

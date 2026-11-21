@@ -25,7 +25,7 @@
 			"type": "array",
 			"maxItems": 8,
 			"uniqueItems": true,
-			"items": { "type": "string", "pattern": "^https://github\\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+\\.[pP][nN][gG]$" }
+			"items": { "type": "string", "pattern": "^https://(?:github\\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+|raw\\.githubusercontent\\.com/[^/?#]+/[^/?#]+/[^/?#]+/[^?#]+)\\.[pP][nN][gG]$" }
 		  },
           "versions": {
             "type": "array",
@@ -39,7 +39,7 @@
                 "version": { "type": "string", "minLength": 5 },
                 "modApiVersion": { "type": "integer", "minimum": 1, "maximum": 1000 },
                 "gameVersion": { "type": "string", "minLength": 1 },
-                "download": { "type": "string", "pattern": "^https://github\\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+\\.[zZ][iI][pP]$" },
+                "download": { "type": "string", "pattern": "^https://(?:github\\.com/[^/?#]+/[^/?#]+/releases/download/[^/?#]+/[^/?#]+|raw\\.githubusercontent\\.com/[^/?#]+/[^/?#]+/[^/?#]+/[^?#]+)\\.(?:[zZ][iI][pP]|[cC][aA][pP][mM][oO][dD])$" },
                 "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
 				"sizeBytes": { "type": "integer", "minimum": 1, "maximum": 268435456 },
 				"dependencies": {
