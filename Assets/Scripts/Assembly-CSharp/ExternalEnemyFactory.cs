@@ -555,6 +555,10 @@ public sealed class ModularEnemy : Walker
 	private Coroutine m_navigationTraversal;
 	private float m_navigationGravity;
 	private float m_nextDirectClimb;
+	private float m_routeCheckedUntil;
+	private Platform m_routeEnemyPlatform;
+	private Platform m_routePlayerPlatform;
+	private bool m_hasRoute;
 
 	public void ConfigureOriginal(string i_definitionId, List<AttackNPC> i_attacks)
 	{
@@ -697,32 +701,46 @@ public sealed class ModularEnemy : Walker
 		Stage stage = CommonReferences.Instance.GetManagerStages().GetStageCurrent();
 		if (stage == null) return false;
 
-		Ledge best = null;
-		float bestRise = float.PositiveInfinity;
-		float bestHorizontal = float.PositiveInfinity;
+		// The climbable flags control automatic player grabbing. Core XAIWalker does not require them when an AI
+		// navigation route calls TryToClimb, so every ledge counts here too.
+		List<Ledge> ledges = new List<Ledge>();
+		List<ClimbLedge> candidates = new List<ClimbLedge>();
 		foreach (Ledge ledge in stage.GetAllLedges())
 		{
 			if (ledge == null || !ledge.gameObject.activeInHierarchy) continue;
 			BoxCollider2D collider = ledge.GetCollider();
 			Platform platform = collider == null ? null : collider.GetComponent<Platform>();
-			if (platform == null || platform == GetPlatformCurrent()) continue;
-			// These flags control automatic player grabbing. Core XAIWalker does not
-			// require them when an AI navigation route calls TryToClimb.
-			float rise = ledge.GetPos().y - GetPosFeet().y;
-			if (rise < 0.5f || ledge.GetPos().y > i_player.GetPosFeet().y + 0.75f) continue;
-			float horizontal = Mathf.Abs(ledge.GetPos().x - GetPos().x);
-			if (rise < bestRise - 0.1f || (Mathf.Abs(rise - bestRise) <= 0.1f && horizontal < bestHorizontal))
-			{
-				best = ledge;
-				bestRise = rise;
-				bestHorizontal = horizontal;
-			}
+			if (platform == null) continue;
+			ledges.Add(ledge);
+			candidates.Add(new ClimbLedge(ledge.GetPos().x, ledge.GetPos().y, platform.GetInstanceID()));
 		}
-		if (best == null) return false;
-
-		float deltaX = best.GetPos().x - GetPos().x;
+		Platform currentPlatform = GetPlatformCurrent(), playerPlatform = i_player.GetPlatformCurrent();
+		int current = currentPlatform == null ? 0 : currentPlatform.GetInstanceID();
 		Collider2D actorCollider = GetComponent<Collider2D>();
 		float climbReach = (actorCollider == null ? 0.5f : actorCollider.bounds.extents.x) + 0.35f;
+		// Straight up to the player's own platform when it is one climb away and no wall stands before its ledge.
+		// Anything else is the stage's route (XAIWalker follows it, as Core walkers do), which knows the way round.
+		int pick = DirectClimbSelection.PickOnPlayerPlatform(candidates, GetPos().x, GetPosFeet().y, current,
+			playerPlatform == null ? 0 : playerPlatform.GetInstanceID());
+		if (pick >= 0 && IsWalledOffFrom(ledges[pick], climbReach)) pick = -1;
+		// A ledge it would have to leave its own platform to get under is not a straight climb: it would walk off
+		// the edge towards it. That is the stage's route's to solve too.
+		if (pick >= 0 && currentPlatform != null)
+		{
+			Collider2D ground = currentPlatform.GetComponent<Collider2D>();
+			if (ground != null && !DirectClimbSelection.IsOverOwnPlatform(ledges[pick].GetPos().x, ground.bounds.min.x, ground.bounds.max.x, climbReach))
+				pick = -1;
+		}
+		if (pick < 0)
+		{
+			if (HasRouteToPlayer(currentPlatform, playerPlatform)) return false;
+			// No route at all (a stage without navigation): the lowest ledge above, as a stepping stone.
+			pick = DirectClimbSelection.PickSteppingStone(candidates, GetPos().x, GetPosFeet().y, current, i_player.GetPosFeet().y);
+		}
+		if (pick < 0) return false;
+		Ledge best = ledges[pick];
+
+		float deltaX = best.GetPos().x - GetPos().x;
 		if (Mathf.Abs(deltaX) > climbReach)
 		{
 			MoveHorizontal(deltaX < 0f);
@@ -736,6 +754,33 @@ public sealed class ModularEnemy : Walker
 		JumpZeroGravity(jumpTarget, 0.5f);
 		TryToClimb(best);
 		return true;
+	}
+
+	// A wall between the enemy and a ledge it would have to walk to: it would push against the wall for good.
+	private bool IsWalledOffFrom(Ledge i_ledge, float i_climbReach)
+	{
+		float deltaX = i_ledge.GetPos().x - GetPos().x;
+		if (Mathf.Abs(deltaX) <= i_climbReach) return false;
+		return deltaX < 0f ? m_isTouchingLeftWall : m_isTouchingRightWall;
+	}
+
+	// Whether the stage's navigation map leads from here to the player's platform. Asked on every think while the
+	// player is higher, so the answer is kept for a second, or until either of them changes platform.
+	private bool HasRouteToPlayer(Platform i_enemyPlatform, Platform i_playerPlatform)
+	{
+		if (Time.time < m_routeCheckedUntil && i_enemyPlatform == m_routeEnemyPlatform && i_playerPlatform == m_routePlayerPlatform) return m_hasRoute;
+		m_routeCheckedUntil = Time.time + 1f;
+		m_routeEnemyPlatform = i_enemyPlatform;
+		m_routePlayerPlatform = i_playerPlatform;
+		m_hasRoute = false;
+		ManagerStages stages = CommonReferences.Instance == null ? null : CommonReferences.Instance.GetManagerStages();
+		Stage stage = stages == null ? null : stages.GetStageCurrent();
+		NavMap navMap = stage == null ? null : stage.GetNavMap();
+		if (navMap == null || i_enemyPlatform == null || i_playerPlatform == null) return false;
+		NavNode start = navMap.CreateNpcStartNode(this);
+		m_hasRoute = new PathFinder().CreatePathToPlayer(this, start) != null;
+		navMap.DestroyNode(start);
+		return m_hasRoute;
 	}
 
 	private bool NavigateToPlayerPlatform(Player i_player)
@@ -999,12 +1044,15 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 	private float m_knockbackX;
 	private float m_knockbackY;
 	private float m_ragdollSeconds;
+	private EnemyAnimationClipDefinition m_playerReaction;
 	private bool m_spent;
 
-	public void Configure(NPC i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime, bool i_isCoreAttack = true)
+	public void Configure(NPC i_owner, float i_damage, float i_knockbackX, float i_knockbackY, float i_ragdollSeconds, float i_lifetime, bool i_isCoreAttack = true,
+		EnemyAnimationClipDefinition i_playerReaction = null)
 	{
 		m_isCoreAttack = i_isCoreAttack;
 		m_ragdollSeconds = i_ragdollSeconds;
+		m_playerReaction = i_playerReaction;
 		m_owner = i_owner;
 		m_body = GetComponent<Rigidbody2D>();
 		m_damage = i_damage;
@@ -1026,7 +1074,7 @@ public sealed class ModularEnemyProjectile : MonoBehaviour
 		if (player != null)
 		{
 			m_spent = true;
-			if (m_owner != null) ConfiguredAttackDelivery.ApplyHit(m_owner, player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds, m_isCoreAttack);
+			if (m_owner != null) ConfiguredAttackDelivery.ApplyHit(m_owner, player, m_damage, m_knockbackX, m_knockbackY, m_ragdollSeconds, m_isCoreAttack, m_playerReaction);
 			UnityEngine.Object.Destroy(gameObject);
 			return;
 		}
@@ -2914,7 +2962,7 @@ public sealed class ModularEnemyFinisher : MonoBehaviour, ISmasherHudSource
 		return GetCurrentPhase()?.DecayPerSecond ?? m_definition?.DecayPerSecond ?? 0f;
 	}
 
-	private static string[] GetPlayerBoneNames()
+	internal static string[] GetPlayerBoneNames()
 	{
 		return new[] { "hips", "butt", "spine", "chest", "neck", "head", "arm-right-upper", "arm-right-lower", "hand-right", "arm-left-upper", "arm-left-lower", "hand-left", "leg-right-upper", "leg-right-lower", "foot-right", "leg-left-upper", "leg-left-lower", "foot-left", "ear", "face" };
 	}
@@ -3261,6 +3309,7 @@ public sealed class ModularEnemyAnimationController : MonoBehaviour
 			CameraXGame camera = CommonReferences.Instance.GetManagerCamerasXGame()?.GetCameraXGameCurrent();
 			if (camera != null) camera.Shake(i_event.Amount ?? 0f, 0.1f);
 		}
+		else if (i_event.Type == "hitStop") ModularHitStop.Hold(i_event.DurationSeconds ?? 0f);
 		else if (i_event.Type == "spriteEffect") PlaySpriteEffect(i_event);
 		else if (i_event.Type == "cue") ModularEnemyFinisher.HandleCue(i_event, i_owner);
 	}

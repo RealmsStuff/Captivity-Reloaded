@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace CaptivityReloaded.Modding
@@ -209,6 +210,14 @@ namespace CaptivityReloaded.Modding
 		{
 			foreach (EnemyDefinition enemy in i_enemies ?? new EnemyDefinition[0])
 			{
+				foreach (EnemyAttackDefinition attack in (enemy.Attacks ?? new EnemyAttackDefinition[0]).Concat(enemy.AdditionalAttacks ?? new EnemyAttackDefinition[0]))
+				{
+					if (attack == null) continue;
+					ResolvePlayerReactionReference(attack.PlayerReactionReference, i_clip => attack.PlayerReaction = i_clip, enemy.Source, io_report);
+					foreach (EnemyAttackStageDefinition stage in attack.Stages ?? new List<EnemyAttackStageDefinition>())
+						if (stage != null)
+							ResolvePlayerReactionReference(stage.PlayerReactionReference, i_clip => stage.PlayerReaction = i_clip, enemy.Source, io_report);
+				}
 				foreach (EnemyBehaviorModuleDefinition module in enemy.Behavior?.Modules ?? new List<EnemyBehaviorModuleDefinition>())
 				{
 					ResolvePlayerAnimationReference(module.PlayerAnimationReference, i_clip => module.PlayerAnimation = i_clip,
@@ -231,6 +240,24 @@ namespace CaptivityReloaded.Modding
 				return;
 			}
 			i_assign(animation.CreateFinisherClip(io_report));
+		}
+
+		// A hit reaction is layered on a free player for a moment: it only moves bones (its events would fire on every
+		// hit), plays once and is over before the next hit can land.
+		public const float MaximumPlayerReactionSeconds = 2f;
+
+		private static void ResolvePlayerReactionReference(string i_reference, System.Action<EnemyAnimationClipDefinition> i_assign,
+			string i_source, ValidationReport io_report)
+		{
+			ResolvePlayerAnimationReference(i_reference, i_clip =>
+			{
+				if (i_clip.Events != null && i_clip.Events.Count > 0)
+					io_report.Add(ValidationSeverity.Error, "enemy.player-reaction-animation-events", "A playerReactionRef animation cannot have events: " + i_reference, i_source);
+				else if (i_clip.Loop || i_clip.DurationSeconds > MaximumPlayerReactionSeconds)
+					io_report.Add(ValidationSeverity.Error, "enemy.player-reaction-animation-length",
+						"A playerReactionRef animation must play once and last at most " + MaximumPlayerReactionSeconds + " seconds: " + i_reference, i_source);
+				else i_assign(i_clip);
+			}, i_source, io_report);
 		}
 
 		private static void ResolveEnemyAnimationReferences(IEnumerable<EnemyDefinition> i_enemies, ValidationReport io_report)

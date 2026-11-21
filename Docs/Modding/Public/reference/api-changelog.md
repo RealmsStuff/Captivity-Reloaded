@@ -9,6 +9,9 @@ Mod API v1 is still being prepared for its first stable release. The schemas and
 ### 2026-11-19: grab participants turn with the grab
 
 - A finisher participant's `offsetX` and `facing` now follow the grabbing enemy's facing (written for a grab facing right; mirrored, with `left` and `right` swapped, when it faces left), and every participant, late joiners included, is placed from the player's feet as they were when the grab started. Before, both were applied in world space and a late joiner was placed from wherever the phase's clips had moved the player's hips. See [Independent NPC participants](../content/enemies.md#independent-npc-participants).
+### 2026-11-19: a climb that keeps failing
+
+- A ground enemy following a stage's `climb` link (Core walkers and `groundChase` enemies alike) now tries a failed climb again: it plans its path again from where it stands, which brings it back under the ledge. After three failed tries at the same climb it is placed on the ledge, as every failed climb was before 2.2.3. Since 2.2.3 a failed climb was cancelled and never tried again, so an enemy under a link taller than its jump stood there for good and the wave could not end. No schema change; links that climbers already manage behave as before.
 
 ### 2026-11-09: `joinCoreSpawners` may not be null
 

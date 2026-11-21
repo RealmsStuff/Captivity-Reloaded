@@ -50,7 +50,7 @@
     "event": {
       "type": "object", "additionalProperties": false, "required": ["time", "type"],
       "properties": {
-        "time": { "type": "number", "minimum": 0 }, "type": { "enum": ["attackHit", "impulse", "sound", "cameraShake", "spriteEffect", "cue"] },
+        "time": { "type": "number", "minimum": 0 }, "type": { "enum": ["attackHit", "impulse", "sound", "cameraShake", "hitStop", "spriteEffect", "cue"] },
         "amount": { "type": ["number", "null"] }, "x": { "type": ["number", "null"] }, "y": { "type": ["number", "null"] }, "relativeToFacing": { "type": ["boolean", "null"] },
         "file": { "type": ["string", "null"] }, "volume": { "type": ["number", "null"] }, "region": { "type": ["string", "null"] }, "bone": { "type": ["string", "null"] },
         "durationSeconds": { "type": ["number", "null"] }, "scale": { "type": ["number", "null"] }, "sortingOrder": { "type": ["integer", "null"] },

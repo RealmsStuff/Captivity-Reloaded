@@ -9,6 +9,29 @@ public class Gun : Weapon
 	[SerializeField]
 	private GunHoldType m_gunHoldType;
 
+	[SerializeField] private CaptivityReloaded.Modding.WeaponHoldPoseDefinition m_modHoldPose;
+	// Unity never leaves a serialized class field null: in a built game every gun, Core's included, came out of its
+	// prefab with an all-zero pose here, so every gun would take the custom-pose path and hang straight down at the
+	// floor. Whether a mod set a pose is therefore its own flag, which also survives Instantiate.
+	[SerializeField] private bool m_hasModHoldPose;
+	public CaptivityReloaded.Modding.WeaponHoldPoseDefinition GetModHoldPose() => m_hasModHoldPose ? m_modHoldPose : null;
+	public void ConfigureModHoldPose(CaptivityReloaded.Modding.WeaponHoldPoseDefinition i_pose)
+	{
+		m_modHoldPose = i_pose;
+		m_hasModHoldPose = i_pose != null;
+	}
+
+	// stats.stock of a mod weapon. Two flags for the same reason as above: a bool alone cannot say "not set".
+	[SerializeField] private bool m_isModStockSet;
+	[SerializeField] private bool m_modStock;
+
+	// Whether the gun is braced against the shoulder: fixed in place and steady. Without a stock it can be drawn
+	// in toward the body, which spreads its shots. Unless a pack says otherwise, a two-handed hold has a stock.
+	public bool HasStock()
+	{
+		return m_isModStockSet ? m_modStock : m_gunHoldType != GunHoldType.OneHanded && m_gunHoldType != GunHoldType.PistolTwoHanded;
+	}
+
 	[SerializeField]
 	private GunReloadType m_gunReloadType;
 
@@ -403,13 +426,14 @@ public class Gun : Weapon
 		int mask = LayerMask.GetMask("Actor", "BodyPart", "Platform", "InvisibleWall", "Interactable", "Trap");
 		Vector2 vector = GetShotOrigin();
 		Vector2 vector2 = CommonReferences.Instance.GetUtilityTools().GetPosMousePerspectiveCamera();
+		bool fromMuzzle = TryGetMuzzleLine(vector2, out MuzzleLine line);
 		float valueTotal = ExternalRuleProfileFactory.ApplyGunDamageMultiplier(CommonReferences.Instance.GetPlayer().GetStat("DamageMultiplierGun").GetValueTotal());
 		for (int i = 0; i < m_bulletsExtraPerShot + 1; i++)
 		{
-			Vector2 vector3 = vector2 - vector;
+			Vector2 vector3 = fromMuzzle ? line.Direction : vector2 - vector;
 			vector3.Normalize();
 			vector3 *= GetRuleProfileRange() * m_shootDistance01;
-			float num = m_recoilBase01;
+			float num = m_recoilBase01 * GetAimSpreadMultiplier();
 			if (CommonReferences.Instance.GetPlayer().IsStatusEffectAppliedAlready("BPrec"))
 			{
 				num *= 0.5f;
@@ -420,11 +444,12 @@ public class Gun : Weapon
 				SpawnModProjectile(vector3.normalized, (float)m_damage * valueTotal * i_damageMultiplier * GetAmmunitionDamageMultiplier());
 				continue;
 			}
-			RaycastHit2D[] i_hits = Physics2D.RaycastAll(vector, vector3, GetRuleProfileRange() * m_shootDistance01, mask);
+			RaycastHit2D[] i_hits = fromMuzzle ? TraceFromMuzzle(line, vector3, mask)
+				: Physics2D.RaycastAll(vector, vector3, GetRuleProfileRange() * m_shootDistance01, mask);
 			Bullet bullet = new Bullet(this, m_owner, vector3, i_hits,
 				(float)m_damage * valueTotal * i_damageMultiplier * GetAmmunitionDamageMultiplier(),
 				m_knockbackX, m_knockbackY, m_penetration + GetAmmunitionPenetrationBonus());
-			bullet.HandleHits();
+			HandleHitsFrom(bullet, fromMuzzle, line);
 			list.Add(bullet);
 		}
 		return list;
@@ -455,9 +480,24 @@ public class Gun : Weapon
 		// valid coroutine host for the tracer belonging to the final shot.
 		if (!m_isHideShootLine && isActiveAndEnabled && gameObject.activeInHierarchy)
 		{
-			Vector2 i_posOrigin = GetShotOrigin();
+			Vector2 shotOrigin = m_hasTracedOrigin ? m_tracedOrigin : GetShotOrigin();
+			Vector2 i_posOrigin = PickTracerOrigin(shotOrigin, m_bulletSpawnPointDefault != null, m_bulletSpawnPointDefault != null
+				? (Vector2)m_bulletSpawnPointDefault.transform.position : shotOrigin, i_posEnd);
+			// From the muzzle the line runs to the point that was hit; a shot that hit nothing keeps the aim's direction.
+			if (i_posEnd != Vector2.zero && i_posOrigin != shotOrigin && i_posEnd != i_posOrigin) i_direction = i_posEnd - i_posOrigin;
 			StartCoroutine(CoroutineLineShoot(i_posOrigin, i_direction, i_posEnd));
 		}
+	}
+
+	// Where a shot's line starts. The shot itself is traced from the shoulder (GetShotOrigin), so a muzzle poked
+	// through a wall cannot shoot what is behind it, and the line used to start there too: with a gun held low it
+	// came out of the player's neck, plain to see on the Schockgewehr's thick red beam. It starts at the muzzle now,
+	// unless the shot stopped before it reached the muzzle (a wall right in front of the player).
+	public static Vector2 PickTracerOrigin(Vector2 i_shotOrigin, bool i_hasMuzzle, Vector2 i_muzzle, Vector2 i_posEnd)
+	{
+		if (!i_hasMuzzle) return i_shotOrigin;
+		if (i_posEnd != Vector2.zero && Vector2.Distance(i_shotOrigin, i_posEnd) <= Vector2.Distance(i_shotOrigin, i_muzzle)) return i_shotOrigin;
+		return i_muzzle;
 	}
 
 	private IEnumerator CoroutineLineShoot(Vector2 i_posOrigin, Vector2 i_direction, Vector2 i_pointHit)
@@ -731,6 +771,11 @@ public class Gun : Weapon
 		if (i_stats.InfiniteAmmo.HasValue) m_isAmmoInfinite = i_stats.InfiniteAmmo.Value;
 		if (i_stats.SemiAutomatic.HasValue) m_isSemiFire = i_stats.SemiAutomatic.Value;
 		if (!string.IsNullOrWhiteSpace(i_stats.HoldType) && System.Enum.TryParse(i_stats.HoldType, true, out GunHoldType holdType)) m_gunHoldType = holdType;
+		if (i_stats.Stock.HasValue)
+		{
+			m_isModStockSet = true;
+			m_modStock = i_stats.Stock.Value;
+		}
 		if (!string.IsNullOrWhiteSpace(i_stats.ReloadType) && System.Enum.TryParse(i_stats.ReloadType, true, out GunReloadType reloadType)) m_gunReloadType = reloadType;
 		if (!string.IsNullOrWhiteSpace(i_stats.WeaponType) && System.Enum.TryParse(i_stats.WeaponType, true, out WeaponType weaponType)) m_weaponType = weaponType;
 		ConfigureModWeaponBase(i_stats.EquipSeconds, i_stats.Marketable);
@@ -765,6 +810,89 @@ public class Gun : Weapon
 		ConfigureModPickup(i_canDrop: true);
 		SetModItemIcon(i_icon);
 		ConfigureModWeaponStats(i_stats);
+	}
+
+	// A shot under the muzzle rule (GunMuzzleRule, MuzzleShot): where it starts, which way it flies before spread,
+	// whether something solid between shoulder and muzzle stops it, and which bodies stand on the muzzle.
+	private struct MuzzleLine
+	{
+		public Vector2 Shoulder, Muzzle, Direction;
+		public bool IsBlocked;
+		public RaycastHit2D[] BlockHits;
+		public Collider2D[] OnMuzzle;
+	}
+
+	// The origin the shot being handled was traced from, for its tracer line (LineShoot is called from inside
+	// Bullet.HandleHits).
+	private Vector2 m_tracedOrigin;
+	private bool m_hasTracedOrigin;
+
+	// A gun without a stock that the player has drawn in toward the body spreads its shots wider.
+	private float GetAimSpreadMultiplier()
+	{
+		Player player = m_owner as Player;
+		if (!m_isOwnerPlayer || player == null) return 1f;
+		ManagerArmWeaponPlayer arms = player.GetManagerArmWeaponPlayer();
+		return arms == null ? 1f : arms.GetSpreadMultiplier(this);
+	}
+
+	private Vector2 GetShoulderPosition()
+	{
+		return m_owner.GetSkeleton().GetBone("rArmUpper").transform.position;
+	}
+
+	private static object BodyOf(Collider2D i_collider)
+	{
+		BodyPartActor part = i_collider.GetComponent<BodyPartActor>();
+		return part == null ? null : (object)part.GetOwner();
+	}
+
+	// What stops a bullet: the same things Bullet.HandleHits stops at.
+	private static bool IsSolidForShots(RaycastHit2D i_hit)
+	{
+		Interactable interactable = i_hit.collider.GetComponent<Interactable>();
+		if (interactable == null) interactable = i_hit.collider.GetComponentInParent<Interactable>();
+		if (interactable != null && interactable.IsObstructionPaths()) return true;
+		return i_hit.collider.GetComponent<Platform>() != null || i_hit.collider.gameObject.layer == LayerMask.NameToLayer("Platform");
+	}
+
+	// The muzzle rule applies to the player's shots from a gun that has a muzzle, while it is switched on.
+	private bool TryGetMuzzleLine(Vector2 i_aim, out MuzzleLine o_line)
+	{
+		o_line = default;
+		Player player = m_owner as Player;
+		if (!GunMuzzleRule.Enabled || !m_isOwnerPlayer || player == null || m_bulletSpawnPointDefault == null) return false;
+		o_line.Shoulder = GetShoulderPosition();
+		o_line.Muzzle = m_bulletSpawnPointDefault.transform.position;
+		// Without a solved aim the gun lies along the line from the shoulder to the cursor, as it always did.
+		ManagerArmWeaponPlayer arms = player.GetManagerArmWeaponPlayer();
+		if (arms == null || !arms.TryGetBarrelDirection(out Vector2 barrel)) barrel = i_aim - o_line.Shoulder;
+		o_line.Direction = CaptivityReloaded.Modding.MuzzleShot.Direction(o_line.Muzzle, barrel, i_aim);
+		Vector2 along = o_line.Muzzle - o_line.Shoulder;
+		if (along.sqrMagnitude > 1e-6f)
+		{
+			RaycastHit2D[] inside = Physics2D.RaycastAll(o_line.Shoulder, along.normalized, along.magnitude,
+				LayerMask.GetMask("Platform", "InvisibleWall", "Interactable", "Trap"));
+			o_line.IsBlocked = CaptivityReloaded.Modding.MuzzleShot.TryFindBlock(inside, IsSolidForShots, BodyOf, out o_line.BlockHits);
+			if (o_line.IsBlocked) o_line.Direction = along.normalized;
+		}
+		o_line.OnMuzzle = Physics2D.OverlapCircleAll(o_line.Muzzle, CaptivityReloaded.Modding.MuzzleShot.CoverRadius, LayerMask.GetMask("BodyPart"));
+		return true;
+	}
+
+	private RaycastHit2D[] TraceFromMuzzle(MuzzleLine i_line, Vector2 i_direction, int i_mask)
+	{
+		if (i_line.IsBlocked) return i_line.BlockHits;
+		return CaptivityReloaded.Modding.MuzzleShot.HitsPastTheMuzzle(
+			Physics2D.RaycastAll(i_line.Muzzle, i_direction, GetRuleProfileRange() * m_shootDistance01, i_mask), i_line.OnMuzzle, BodyOf);
+	}
+
+	private void HandleHitsFrom(Bullet i_bullet, bool i_fromMuzzle, MuzzleLine i_line)
+	{
+		m_hasTracedOrigin = i_fromMuzzle;
+		m_tracedOrigin = i_line.IsBlocked ? i_line.Shoulder : i_line.Muzzle;
+		try { i_bullet.HandleHits(); }
+		finally { m_hasTracedOrigin = false; }
 	}
 
 	private Vector2 GetShotOrigin()
@@ -1223,12 +1351,14 @@ public class Gun : Weapon
 		int mask = LayerMask.GetMask("Actor", "BodyPart", "Platform", "InvisibleWall", "Interactable", "Trap");
 		Vector2 origin = GetShotOrigin();
 		Vector2 aim = CommonReferences.Instance.GetUtilityTools().GetPosMousePerspectiveCamera();
-		Vector2 direction = (aim - origin).normalized;
-		RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, GetRuleProfileRange() * m_shootDistance01, mask);
+		bool fromMuzzle = TryGetMuzzleLine(aim, out MuzzleLine line);
+		Vector2 direction = fromMuzzle ? line.Direction.normalized : (aim - origin).normalized;
+		RaycastHit2D[] hits = fromMuzzle ? TraceFromMuzzle(line, direction, mask)
+			: Physics2D.RaycastAll(origin, direction, GetRuleProfileRange() * m_shootDistance01, mask);
 		float damage = m_damage * i_damageMultiplier * GetAmmunitionDamageMultiplier()
 			* ExternalRuleProfileFactory.ApplyGunDamageMultiplier(CommonReferences.Instance.GetPlayer().GetStat("DamageMultiplierGun").GetValueTotal());
-		new Bullet(this, m_owner, direction, hits, damage, m_knockbackX, m_knockbackY,
-			m_penetration + GetAmmunitionPenetrationBonus()).HandleHits();
+		HandleHitsFrom(new Bullet(this, m_owner, direction, hits, damage, m_knockbackX, m_knockbackY,
+			m_penetration + GetAmmunitionPenetrationBonus()), fromMuzzle, line);
 	}
 
 	public List<Bullet> AlternateAttack()
@@ -1396,6 +1526,15 @@ public class Gun : Weapon
 	public Transform GetTransformPointSpawnBullet()
 	{
 		return m_bulletSpawnPointDefault.transform;
+	}
+
+	// The muzzle in the gun's own space, x along the barrel: what the aim needs to point the barrel at the cursor.
+	public bool TryGetMuzzleInGunSpace(out Vector2 o_muzzle)
+	{
+		o_muzzle = Vector2.zero;
+		if (m_bulletSpawnPointDefault == null) return false;
+		o_muzzle = transform.InverseTransformPoint(m_bulletSpawnPointDefault.transform.position);
+		return true;
 	}
 
 	public int GetBulletsPerShot()
